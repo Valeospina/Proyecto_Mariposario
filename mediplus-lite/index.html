@@ -43,8 +43,8 @@
         <link rel="stylesheet" href="css/responsive.css">
 		
     </head>
-    <body>
-	
+
+   <body class="user"> <!-- Cambia 'admin' por 'user' si es un usuario normal -->
 		<!-- Preloader -->
         <div class="preloader">
             <div class="loader">
@@ -87,10 +87,10 @@
                     <!-- Contact -->
                     <ul class="top-link">
                         <li><a href="usuario.html">Usuario</a></li>
-                        <li><a href="tienda.html">Tienda</a></li>
-                        <li><a href="eventos.html">Eventos</a></li>
-                        <li><a href="pago.html">Pago</a></li>
-                        <li><a href="admin.html">Admin</a></li>
+                        <li><a href="reservas.html">Reservas</a></li>
+                        <li><a href="pago.html">Pago</a></li>						
+                        <!-- Admin section visible only for admins -->
+                        <li class="admin"><a href="admin.html">Admin</a></li>
                     </ul>
                     <!-- End Contact -->
                 </div>
@@ -128,11 +128,10 @@
                             <nav class="navigation">
                                 <ul class="nav menu">
                                     <li class="active"><a href="index.html">Inicio</a></li>
-                                    <li><a href="usuario.html">Usuario</a></li>
                                     <li><a href="tienda.html">Tienda</a></li>
                                     <li><a href="eventos.html">Eventos</a></li>
-                                    <li><a href="pago.html">Pago</a></li>
-                                    <li><a href="admin.html">Administración</a></li>
+                                    <li><a href="contacto.html">Contacto</a></li>
+                        
                                 </ul>
                             </nav>
                         </div>
@@ -150,10 +149,14 @@
     <!-- End Header Inner -->
 </header>
 
-			<!--/ End Header Inner -->
-		</header>
-		<!-- End Header Area -->
-		
+<!--/ End Header Inner -->
+</header>
+<!-- End Header Area -->
+
+
+
+
+  
 		<!-- Slider Area -->
 		<section class="slider">
 			<div class="hero-slider">
