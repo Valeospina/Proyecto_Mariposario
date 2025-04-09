@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="keywords" content="Site keywords here">
+    <meta name="description" content="">
+    <meta name='copyright' content=''>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Mediplus - Mis Pedidos</title>
+		<!-- Favicon -->
+        <link rel="icon" href="img/favicon.png">
+		
+		<!-- Google Fonts -->
+		<link href="https://fonts.googleapis.com/css?family=Poppins:200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
+
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<!-- Nice Select CSS -->
+		<link rel="stylesheet" href="css/nice-select.css">
+		<!-- Font Awesome CSS -->
+        <link rel="stylesheet" href="css/font-awesome.min.css">
+		<!-- icofont CSS -->
+        <link rel="stylesheet" href="css/icofont.css">
+		<!-- Slicknav -->
+		<link rel="stylesheet" href="css/slicknav.min.css">
+		<!-- Owl Carousel CSS -->
+        <link rel="stylesheet" href="css/owl-carousel.css">
+		<!-- Datepicker CSS -->
+		<link rel="stylesheet" href="css/datepicker.css">
+		<!-- Animate CSS -->
+        <link rel="stylesheet" href="css/animate.min.css">
+		<!-- Magnific Popup CSS -->
+        <link rel="stylesheet" href="css/magnific-popup.css">
+		
+		<!-- Medipro CSS -->
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="css/responsive.css">
+
+    <!-- Estilo personalizado para Mis Pedidos -->
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .order-list {
+            list-style: none;
+            padding: 0;
+        }
+        .order-item {
+            background-color: white;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .order-item h2 {
+            margin-top: 0;
+        }
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        .progress-step {
+            width: 24%;
+            text-align: center;
+            padding: 10px;
+            background-color: #ddd;
+            border-radius: 4px;
+        }
+        .progress-step.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .progress-step.completed {
+            background-color: #2196F3;
+            color: white;
+        }
+        .order-details {
+            margin-top: 10px;
+        }
+        .order-details span {
+            font-weight: bold;
+        }
+        .status-date {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #2196F3;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 15px;
+        }
+        .btn:hover {
+            background-color: #0b7dda;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Preloader -->
+    <div class="preloader">
+        <div class="loader">
+            <div class="loader-outter"></div>
+            <div class="loader-inner"></div>
+            <div class="indicator">
+                <svg width="16px" height="12px">
+                    <polyline id="back" points="1 6 4 6 6 11 10 1 12 6 15 6"></polyline>
+                    <polyline id="front" points="1 6 4 6 6 11 10 1 12 6 15 6"></polyline>
+                </svg>
+            </div>
+        </div>
+    </div>
+    <!-- End Preloader -->
+
+    <!-- Header -->
+    <header class="header">
+        <div class="topbar">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-md-5 col-12">
+                        <ul class="top-link">
+                            <li><a href="index.html">Inicio</a></li>
+                            <li><a href="tienda.html">Tienda</a></li>
+                            <li><a href="eventos.html">Eventos</a></li>
+                            <li><a href="contact.html">Contacto</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-6 col-md-7 col-12">
+                        <ul class="top-contact">
+                            <li><i class="fa fa-phone"></i>+880 1234 56789</li>
+                            <li><i class="fa fa-envelope"></i><a href="mailto:support@yourmail.com">support@yourmail.com</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <div class="container">
+        <h1>Mis Pedidos</h1>
+        <ul class="order-list">
+            <li class="order-item">
+                <h2>Pedido #12345</h2>
+                <div class="progress-bar">
+                    <div class="progress-step active">Pedido Recibido</div>
+                    <div class="progress-step completed">En Preparación</div>
+                    <div class="progress-step">En Tránsito</div>
+                    <div class="progress-step">Entregado</div>
+                </div>
+                <div class="order-details">
+                    <p><span>Producto(s):</span> Producto A, Producto B</p>
+                    <p><span>Total:</span> $130.00</p>
+                    <p class="status-date">Fecha Estimada de Entrega: 12 de abril, 2025</p>
+                </div>
+                <a href="#" class="btn">Ver Detalles</a>
+            </li>
+            <li class="order-item">
+                <h2>Pedido #12346</h2>
+                <div class="progress-bar">
+                    <div class="progress-step active">Pedido Recibido</div>
+                    <div class="progress-step">En Preparación</div>
+                    <div class="progress-step">En Tránsito</div>
+                    <div class="progress-step">Entregado</div>
+                </div>
+                <div class="order-details">
+                    <p><span>Producto(s):</span> Producto C</p>
+                    <p><span>Total:</span> $50.00</p>
+                    <p class="status-date">Fecha Estimada de Entrega: 15 de abril, 2025</p>
+                </div>
+                <a href="#" class="btn">Ver Detalles</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Scripts de Mediplus -->
+    <!-- Fin Contenido -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.nav.js"></script>
+    <script src="js/slicknav.min.js"></script>
+    <script src="js/jquery.scrollUp.min.js"></script>
+    <script src="js/niceselect.js"></script>
+    <script src="js/tilt.jquery.min.js"></script>
+    <script src="js/owl-carousel.js"></script>
+    <script src="js/jquery.counterup.min.js"></script>
+    <script src="js/steller.js"></script>
+    <script src="js/wow.min.js"></script>
+    <script src="js/jquery.magnific-popup.min.js"></script>
+    <script src="js/waypoints.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
