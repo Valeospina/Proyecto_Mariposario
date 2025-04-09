@@ -52,13 +52,40 @@
                 <div class="loader-inner"></div>
 
                 <div class="indicator"> 
-                    <svg width="16px" height="12px">
-                        <polyline id="back" points="1 6 4 6 6 11 10 1 12 6 15 6"></polyline>
-                        <polyline id="front" points="1 6 4 6 6 11 10 1 12 6 15 6"></polyline>
-                    </svg>
+					<svg width="32px" height="32px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+						<g>
+						  <!-- Ala trasera izquierda -->
+						  <path d="M32 32 C22 20, 10 40, 28 40" fill="none" stroke="#ffffff" stroke-width="2"/>
+					  
+						  <!-- Ala trasera derecha -->
+						  <path d="M32 32 C42 20, 54 40, 36 40" fill="none" stroke="#ffffff" stroke-width="2"/>
+					  
+						  <!-- Ala delantera izquierda animada -->
+						  <path d="M32 32 C18 14, 4 34, 24 36" fill="none" stroke="#80B78D" stroke-width="2">
+							<animate attributeName="d" dur="1s" repeatCount="indefinite"
+							  values="
+								M32 32 C18 14, 4 34, 24 36;
+								M32 32 C16 16, 2 32, 22 36;
+								M32 32 C18 14, 4 34, 24 36"/>
+						  </path>
+					  
+						  <!-- Ala delantera derecha animada -->
+						  <path d="M32 32 C46 14, 60 34, 40 36" fill="none" stroke="#80B78D" stroke-width="2">
+							<animate attributeName="d" dur="1s" repeatCount="indefinite"
+							  values="
+								M32 32 C46 14, 60 34, 40 36;
+								M32 32 C48 16, 62 32, 42 36;
+								M32 32 C46 14, 60 34, 40 36"/>
+						  </path>
+					  
+						  <!-- Cuerpo -->
+						  <line x1="32" y1="30" x2="32" y2="40" stroke="#ffffff" stroke-width="2" />
+						</g>
+					  </svg>
                 </div>
             </div>
         </div>
+
         <!-- End Preloader -->
 		
 		<!-- Header Area -->

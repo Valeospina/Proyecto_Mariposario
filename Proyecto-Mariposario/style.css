@@ -623,7 +623,7 @@ body.admin .admin {
 	line-height: 42px;
 }
 .slider .single-slider h1 span{
-	color:#81BAE6;
+	color:#d49ad5;
 }
 .slider .single-slider p {
 	color: #fff;
@@ -637,7 +637,7 @@ body.admin .admin {
 
 .slider .single-slider .btn{
 	color:#fff;
-	background:#81BAE6;
+	background:#d49ad5;
 	font-weight:500;
 	display:inline-block;
 	margin:0;
@@ -653,7 +653,7 @@ body.admin .admin {
 
 
 .slider .single-slider .btn.primary:before{
-	background:#81BAE6;
+	background:#d49ad5;
 }
 .slider .owl-carousel .owl-nav {
 	margin: 0;
@@ -868,7 +868,7 @@ body.admin .admin {
 	right: -72px;
 	top: 60px;
 	width: 118px;
-	border-bottom: 3px dotted #1a76d1;
+	border-bottom: 3px dotted #676767;
 }
 .Feautes .single-features.last::before{
 	display:none;
@@ -878,7 +878,7 @@ body.admin .admin {
 }
 .Feautes .single-features .signle-icon i{
 	font-size:50px;
-	color:#A6D5DE;
+	color:#0a3511;
 	position:absolute;
 	left:50%;
 	margin-left:-50px;
@@ -894,8 +894,8 @@ body.admin .admin {
 	transition:all 0.4s ease;
 }
 .Feautes .single-features:hover .signle-icon i{
-	background:#1A76D1;
-	color:#fff;
+	background:#D3F8E2;
+	color:#0a3511;
 	border-color:transparent;
 }
 .Feautes .single-features h3{
@@ -921,7 +921,7 @@ body.admin .admin {
 	padding:120px 0;
 }
 .fun-facts{
-	background:url('img/fun-bg.jpg');
+	background:url('img/flowers-orchid-bg.jpg');
 	background-size:cover;
 	background-repeat:no-repeat;
 }
@@ -995,7 +995,7 @@ body.admin .admin {
 	bottom:0;
 	height:2px;
 	width:50px;
-	background:#1a76d1;
+	background:#155724;
 }
 .why-choose .choose-left p{
 	margin-bottom:35px;
@@ -1015,7 +1015,7 @@ body.admin .admin {
 	width:15px;
 	line-height:15px;
 	text-align:center;
-	background:#1a76d1;
+	background:#155724;
 	color:#fff;
 	font-size:14px;
 	border-radius:100%;
@@ -1029,7 +1029,7 @@ body.admin .admin {
 .why-choose .choose-right{
 	height:100%;
 	width:100%;
-	background-image:url('img/video-bg.jpg');
+	background-image:url('img/video-bg.jpeg');
 	background-size:cover;
 	background-position:center;
 	background-repeat:no-repeat;
@@ -1048,7 +1048,7 @@ body.admin .admin {
 	margin-left: -35px;
 	margin-top: -35px;
 	font-size: 21px;
-	background: #d11a7f;
+	background: #81BAE6;
 	padding-left: 4px;
 }
 .why-choose .choose-right .video:hover{
@@ -1089,7 +1089,7 @@ body.admin .admin {
 	Start Call to action CSS
 =================================*/
 .call-action{
-	background-image:url('img/call-bg.jpg');
+	background-image:url('img/mariposa3-bg.png');
 	background-size:cover;
 	background-position:center;
 	position:relative;
@@ -1111,17 +1111,17 @@ body.admin .admin {
 	font-size: 15px;
 }
 .call-action .content .btn{
-	background:#fff;
+	background:#d49ad5;
 	margin-right:20px;
 	font-weight:500;
 	border:1px solid #fff;
-	color:#1a76d1;
+	color:#000000;
 }
 .call-action .content .btn:before{
-	background:#1A76D1;
+	background:#d49ad5;
 }
 .call-action .content .btn:hover{
-	background:#1A76D1;
+	background:#d49ad5;
 	color:#fff;
 }
 .call-action .content .btn:last-child{
@@ -1134,12 +1134,12 @@ body.admin .admin {
 	color: #fff !important;
 }
 .call-action .content .second:before{
-	background:#fff;
+	background:#d49ad5;
 }
 .call-action .content .second:hover{
 	color:#1A76D1;
 	border-color:transparent;
-	background:#fff;
+	background:#d49ad5;
 }
 .call-action .content .second i{
 	margin-left:10px;
@@ -3988,7 +3988,7 @@ body.admin .admin {
 .footer .footer-top{
 	padding:100px 0px;
 	position:relative;
-	background:#1A76D1;
+	background:#80B78D;
 }
 .footer .footer-top:before{
 	position:absolute;
@@ -4172,7 +4172,7 @@ body.admin .admin {
 	color:#2C2D3F;
 }
 .footer .copyright{
-	background:#1A76D1;
+	background:#80B78D;
 	padding:25px 0px 25px 0px;
 	text-align:center;
 }
