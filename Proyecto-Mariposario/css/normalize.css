@@ -170,7 +170,7 @@ input,
 select,
 optgroup,
 textarea {
-	color: #424646;
+	
     font-family: 'Poppins', sans-serif;
 	font-weight:400;
 	font-size: 14px;
@@ -181,7 +181,7 @@ h1, h2, h3, h4, h5, h6 {
 	margin: 0;
 }
 p {
-	color:#757575;
+	
 	margin: 0;
 	line-height:24px;
 	font-weight:400;
@@ -234,7 +234,7 @@ big {
 
 h1,h2,h3,h4,h5,h6{
 	font-weight:500;
-	color:#2C2D3F;
+	
 }
 a,button{
 	-webkit-transition:all 0.3s ease;
@@ -483,7 +483,7 @@ Preloader Area CSS
 	text-transform: capitalize;
 	margin-bottom: 24px;
 	position: relative;
-	color: #2C2D3F;
+	
 }
 .section-title p{
 	font-size:15px;
@@ -611,11 +611,6 @@ html {
 	box-sizing: inherit;
 }
 
-body {
-	background: #fff;
-	/* Fallback for when there is no custom background color defined. */
-	position:relative;
-}
 
 hr {
 	background-color: #ccc;
