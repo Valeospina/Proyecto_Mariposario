@@ -1,0 +1,94 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  body {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url(../img/butterfly-wild.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: #fff;
+  }
+
+  
+  .container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-around;
+    transition:  all .5s ease-out;
+  }
+  
+  .card {
+    background-color: rgba(54, 75, 51, 0.602);
+    border-radius: 16px;
+    padding: 40px 30px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    text-align: center;
+  }
+  
+  .card h2 {
+    margin-bottom: 10px;
+    font-size: 24px;
+    color: #d6fffe;
+  }
+  
+  .card p {
+    font-size: 14px;
+    color: #ebfdff;
+    margin-bottom: 25px;
+  }
+  
+  form input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    transition: border 0.3s ease;
+  }
+  
+  form input:focus {
+    border-color: #764ba2;
+    outline: none;
+  }
+  
+  button {
+    background: #764ba2;
+    color: white;
+    border: none;
+    padding: 12px;
+    width: 100%;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    font-size: 16px;
+  }
+  
+  button:hover {
+    background: #5a3e91;
+  }
+  
+  .back-link {
+    margin-top: 15px;
+  }
+  
+  .back-link a {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 14px;
+    transition: color 0.3s ease;
+  }
+  
+  .back-link a:hover {
+    color: #6d5994;
+  }
+  

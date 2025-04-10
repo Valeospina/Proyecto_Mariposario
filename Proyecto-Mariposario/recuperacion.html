@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recuperar Contraseña</title>
+  <link rel="stylesheet" href="./css/recuperacion.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+  <link rel="icon" href="img/favicon.png">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>¿Olvidaste tu contraseña?</h2>
+      <p>Ingresa tu correo y te enviaremos un enlace para restablecerla.</p>
+      <form id="resetForm">
+        <input type="email" placeholder="Correo electrónico" required />
+        <button type="submit">Enviar enlace</button>
+      </form>
+      <div class="back-link">
+        <a href="./login.html">Volver al inicio de sesión</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="./js/recuperacion.js"></script>
+</body>
+</html>
