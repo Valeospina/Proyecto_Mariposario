@@ -1,31 +1,29 @@
 <!doctype html>
-<html class="no-js" lang="zxx">
+<html class="no-js" lang="es">
     <head>
         <!-- Meta Tags -->
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="keywords" content="Site keywords here">
-		<meta name="description" content="">
-		<meta name='copyright' content=''>
+		<meta name="keywords" content="Eco Mariposas, perfil de usuario, jardín, naturaleza, mariposas">
+		<meta name="description" content="Panel de usuario de Eco Mariposas, un espacio donde puedes gestionar tus pedidos, eventos y notificaciones.">
+		<meta name='copyright' content='Eco Mariposas'>
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		
 		<!-- Title -->
-        <title>Perfil</title>
+        <title>Mi Perfil | Eco Mariposas</title>
 		
 		<!-- Favicon -->
         <link rel="icon" href="img/favicon.png">
 		
 		<!-- Google Fonts -->
-		<link href="https://fonts.googleapis.com/css?family=Poppins:200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 		<!-- Bootstrap CSS -->
 		<link rel="stylesheet" href="css/bootstrap.min.css">
 		<!-- Nice Select CSS -->
 		<link rel="stylesheet" href="css/nice-select.css">
 		<!-- Font Awesome CSS -->
-        <link rel="stylesheet" href="css/font-awesome.min.css">
-		<!-- icofont CSS -->
-        <link rel="stylesheet" href="css/icofont.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 		<!-- Slicknav -->
 		<link rel="stylesheet" href="css/slicknav.min.css">
 		<!-- Owl Carousel CSS -->
@@ -41,7 +39,218 @@
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="css/responsive.css">
-		
+        
+        <!-- Custom CSS -->
+        <style>
+            :root {
+                --primary-color: #80B78D;
+                --secondary-color: #5A9367;
+                --text-color: #333;
+                --light-color: #f9f9f9;
+                --dark-color: #222;
+                --grey-color: #f4f4f4;
+                --border-color: #e9e9e9;
+            }
+            
+            body {
+                font-family: 'Poppins', sans-serif;
+                background-color: #f8f9fa;
+            }
+            
+            .user-sidebar {
+                background-color: white;
+                border-radius: 10px;
+                box-shadow: 0 0 15px rgba(0,0,0,0.05);
+                padding: 25px;
+                margin-bottom: 30px;
+            }
+            
+            .profile-info {
+                text-align: center;
+                padding-bottom: 20px;
+                border-bottom: 1px solid var(--border-color);
+                margin-bottom: 20px;
+            }
+            
+            .profile-info img {
+                width: 120px;
+                height: 120px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 4px solid var(--primary-color);
+                margin-bottom: 15px;
+            }
+            
+            .sidebar-menu li {
+                margin-bottom: 10px;
+            }
+            
+            .sidebar-menu li a {
+                color: var(--text-color);
+                padding: 10px 15px;
+                display: block;
+                border-radius: 5px;
+                transition: all 0.3s ease;
+            }
+            
+            .sidebar-menu li a:hover, .sidebar-menu li a.active {
+                background-color: var(--primary-color);
+                color: white;
+            }
+            
+            .sidebar-menu li a i {
+                margin-right: 10px;
+            }
+            
+            .user-main-content {
+                background-color: white;
+                border-radius: 10px;
+                padding: 30px;
+                box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            }
+            
+            .user-dashboard .card {
+                border: none;
+                border-radius: 10px;
+                padding: 25px 20px;
+                margin-bottom: 30px;
+                box-shadow: 0 0 15px rgba(0,0,0,0.05);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            
+            .user-dashboard .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            }
+            
+            .user-dashboard .card h3 {
+                color: var(--primary-color);
+                margin-bottom: 15px;
+                font-size: 22px;
+            }
+            
+            .user-dashboard .card p {
+                margin-bottom: 20px;
+                font-size: 14px;
+                color: #666;
+            }
+            
+            .user-dashboard .card .card-icon {
+                font-size: 36px;
+                margin-bottom: 15px;
+                color: var(--primary-color);
+            }
+            
+            .btn-primary {
+                background-color: var(--primary-color);
+                border-color: var(--primary-color);
+                padding: 10px 25px;
+                font-weight: 500;
+                border-radius: 5px;
+                transition: all 0.3s ease;
+            }
+            
+            .btn-primary:hover {
+                background-color: var(--secondary-color);
+                border-color: var(--secondary-color);
+            }
+            
+            .stats-number {
+                font-size: 32px;
+                font-weight: 600;
+                color: var(--primary-color);
+                margin-bottom: 5px;
+            }
+            
+            .activity-feed {
+                margin-top: 30px;
+            }
+            
+            .activity-item {
+                padding: 15px;
+                border-bottom: 1px solid var(--border-color);
+                display: flex;
+                align-items: center;
+            }
+            
+            .activity-icon {
+                width: 40px;
+                height: 40px;
+                background-color: var(--primary-color);
+                border-radius: 50%;
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 15px;
+            }
+            
+            .activity-content {
+                flex: 1;
+            }
+            
+            .activity-content h4 {
+                font-size: 16px;
+                margin-bottom: 5px;
+            }
+            
+            .activity-content p {
+                font-size: 12px;
+                color: #888;
+                margin: 0;
+            }
+            
+            .footer {
+                background-color: #2c3e50;
+                color: #ecf0f1;
+            }
+            
+            .footer-top {
+                padding: 70px 0 50px;
+            }
+            
+            .footer h2 {
+                color: white;
+                font-size: 20px;
+                margin-bottom: 25px;
+                position: relative;
+                padding-bottom: 10px;
+            }
+            
+            .footer h2:after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 50px;
+                height: 2px;
+                background-color: var(--primary-color);
+            }
+            
+            .footer .social li a {
+                width: 36px;
+                height: 36px;
+                line-height: 36px;
+                background-color: rgba(255, 255, 255, 0.1);
+                border-radius: 5px;
+                color: white;
+                display: block;
+                text-align: center;
+            }
+            
+            .footer .social li a:hover {
+                background-color: var(--primary-color);
+            }
+            
+            .preloader .indicator svg {
+                animation: spin 1.5s linear infinite;
+            }
+            
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
     </head>
     <body>
 	
@@ -85,7 +294,6 @@
                 </div>
             </div>
         </div>
-
         <!-- End Preloader -->
 		
 		<!-- Header Area -->
@@ -108,7 +316,7 @@
 							<!-- Top Contact -->
 							<ul class="top-contact">
 								<li><i class="fa fa-phone"></i>+506 6252 5969</li>
-								<li><i class="fa fa-envelope"></i><a href="mailto:support@yourmail.com">soportejardinlapaz@gmail.com</a></li>
+								<li><i class="fa fa-envelope"></i><a href="mailto:soportejardinlapaz@gmail.com">soportejardinlapaz@gmail.com</a></li>
 							</ul>
 							<!-- End Top Contact -->
 						</div>
@@ -127,17 +335,19 @@
 						<!-- Sidebar -->
 						<div class="user-sidebar">
 							<div class="profile-info">
-								<img src="img/user-profile.jpg" alt="Profile Picture">
+								<img src="img/user-profile.jpg" alt="Foto de perfil">
 								<h3>Hola, Usuario</h3>
-								<p>Bienvenido al panel de control</p>
+								<p>Miembro desde: Abril 2023</p>
+                                <a href="user-settings.html" class="btn btn-sm btn-primary">Editar Perfil</a>
 							</div>
 							<ul class="sidebar-menu">
-								<li><a href="user-profile.html">Perfil</a></li>
-								<li><a href="MisPedidos.html">Mis Pedidos</a></li>
-								<li><a href="user-events.html">Eventos</a></li>
-								<li><a href="user-notifications.html">Notificaciones</a></li>
-								<li><a href="user-settings.html">Configuración</a></li>
-								<li><a href="logout.html">Cerrar sesión</a></li>
+								<li><a href="user-profile.html" class="active"><i class="fas fa-user"></i> Perfil</a></li>
+								<li><a href="MisPedidos.html"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
+								<li><a href="user-events.html"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
+								<li><a href="user-notifications.html"><i class="fas fa-bell"></i> Notificaciones <span class="badge badge-primary">3</span></a></li>
+								<li><a href="user-favorites.html"><i class="fas fa-heart"></i> Favoritos</a></li>
+								<li><a href="user-settings.html"><i class="fas fa-cog"></i> Configuración</a></li>
+								<li><a href="logout.html"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
 							</ul>
 						</div>
 						<!-- End Sidebar -->
@@ -146,10 +356,37 @@
 						<!-- Main Content -->
 						<div class="user-main-content">
 							<h2>Bienvenido al Panel de Usuario</h2>
+                            <p>Administra tu experiencia en Eco Mariposas desde aquí.</p>
+                            
+                            <!-- Stats Summary -->
+                            <div class="row mb-4">
+                                <div class="col-lg-4 col-md-4 col-6">
+                                    <div class="text-center">
+                                        <div class="stats-number">5</div>
+                                        <div class="stats-text">Pedidos Totales</div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-6">
+                                    <div class="text-center">
+                                        <div class="stats-number">2</div>
+                                        <div class="stats-text">Eventos Asistidos</div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-12 mt-md-0 mt-3">
+                                    <div class="text-center">
+                                        <div class="stats-number">8</div>
+                                        <div class="stats-text">Productos Favoritos</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
 							<div class="user-dashboard">
 								<div class="row">
 									<div class="col-lg-4 col-md-6 col-12">
 										<div class="card">
+                                            <div class="card-icon">
+                                                <i class="fas fa-shopping-bag"></i>
+                                            </div>
 											<h3>Mis Pedidos</h3>
 											<p>Revisa tu historial de pedidos y el estado de los mismos.</p>
 											<a href="MisPedidos.html" class="btn btn-primary">Ver Pedidos</a>
@@ -157,6 +394,9 @@
 									</div>
 									<div class="col-lg-4 col-md-6 col-12">
 										<div class="card">
+                                            <div class="card-icon">
+                                                <i class="fas fa-calendar-alt"></i>
+                                            </div>
 											<h3>Mis Eventos</h3>
 											<p>Consulta los eventos a los que estás registrado y su estado.</p>
 											<a href="user-events.html" class="btn btn-primary">Ver Eventos</a>
@@ -164,6 +404,9 @@
 									</div>
 									<div class="col-lg-4 col-md-6 col-12">
 										<div class="card">
+                                            <div class="card-icon">
+                                                <i class="fas fa-bell"></i>
+                                            </div>
 											<h3>Notificaciones</h3>
 											<p>Consulta las notificaciones recientes sobre tus actividades.</p>
 											<a href="user-notifications.html" class="btn btn-primary">Ver Notificaciones</a>
@@ -171,6 +414,47 @@
 									</div>
 								</div>
 							</div>
+                            
+                            <!-- Activity Feed -->
+                            <div class="activity-feed">
+                                <h3>Actividad Reciente</h3>
+                                <div class="activity-item">
+                                    <div class="activity-icon">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <h4>Nuevo pedido realizado</h4>
+                                        <p>Has realizado un pedido de plantas nativas. #ORD-2596</p>
+                                    </div>
+                                    <div class="activity-time">
+                                        Hace 2 días
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon">
+                                        <i class="fas fa-calendar-check"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <h4>Inscripción a evento confirmada</h4>
+                                        <p>Te has inscrito al taller "Conservación de Mariposas"</p>
+                                    </div>
+                                    <div class="activity-time">
+                                        Hace 1 semana
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon">
+                                        <i class="fas fa-heart"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <h4>Nuevo favorito añadido</h4>
+                                        <p>Has añadido "Kit Jardín de Mariposas" a tus favoritos</p>
+                                    </div>
+                                    <div class="activity-time">
+                                        Hace 2 semanas
+                                    </div>
+                                </div>
+                            </div>
 						</div>
 						<!-- End Main Content -->
 					</div>
@@ -187,51 +471,62 @@
 					<div class="row">
 						<div class="col-lg-3 col-md-6 col-12">
 							<div class="single-footer">
-								<h2>About Us</h2>
-								<p>Lorem ipsum dolor sit amet consectetur adipisicing elit do eiusmod tempor incididunt ut labore dolore magna.</p>
+								<h2>Sobre Nosotros</h2>
+								<p>Eco Mariposas es un emprendimiento dedicado a la conservación de mariposas y educación ambiental en Costa Rica. Trabajamos para promover ecosistemas saludables y sostenibles.</p>
 								<!-- Social -->
 								<ul class="social">
-									<li><a href="#"><i class="icofont-facebook"></i></a></li>
-									<li><a href="#"><i class="icofont-google-plus"></i></a></li>
-									<li><a href="#"><i class="icofont-twitter"></i></a></li>
-									<li><a href="#"><i class="icofont-vimeo"></i></a></li>
-									<li><a href="#"><i class="icofont-pinterest"></i></a></li>
+									<li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+									<li><a href="#"><i class="fab fa-instagram"></i></a></li>
+									<li><a href="#"><i class="fab fa-twitter"></i></a></li>
+									<li><a href="#"><i class="fab fa-youtube"></i></a></li>
+									<li><a href="#"><i class="fab fa-pinterest-p"></i></a></li>
 								</ul>
 								<!-- End Social -->
 							</div>
 						</div>
 						<div class="col-lg-3 col-md-6 col-12">
 							<div class="single-footer f-link">
-								<h2>Quick Links</h2>
+								<h2>Enlaces Rápidos</h2>
 								<div class="row">
 									<div class="col-lg-6 col-md-6 col-12">
 										<ul>
-											<li><a href="#">Home</a></li>
-											<li><a href="#">About Us</a></li>
-											<li><a href="#">Services</a></li>
-											<li><a href="#">Our Cases</a></li>
-											<li><a href="#">Other Links</a></li>	
+											<li><a href="index.html">Inicio</a></li>
+											<li><a href="about.html">Sobre Nosotros</a></li>
+											<li><a href="services.html">Servicios</a></li>
+											<li><a href="gallery.html">Galería</a></li>
+											<li><a href="blog.html">Blog</a></li>	
 										</ul>
 									</div>
 									<div class="col-lg-6 col-md-6 col-12">
 										<ul>
-											<li><a href="#">Consuling</a></li>
-											<li><a href="#">Finance</a></li>
-											<li><a href="#">Testimonials</a></li>
-											<li><a href="#">FAQ</a></li>
-											<li><a href="#">Contact Us</a></li>	
+											<li><a href="workshops.html">Talleres</a></li>
+											<li><a href="conservation.html">Conservación</a></li>
+											<li><a href="testimonials.html">Testimonios</a></li>
+											<li><a href="faq.html">Preguntas Frecuentes</a></li>
+											<li><a href="contact.html">Contáctanos</a></li>	
 										</ul>
 									</div>
 								</div>
 							</div>
 						</div>
 						<div class="col-lg-3 col-md-6 col-12">
+							<div class="single-footer">
+								<h2>Boletín Informativo</h2>
+								<p>Suscríbete para recibir actualizaciones sobre eventos, talleres y nuevos productos.</p>
+								<form class="newsletter-form">
+									<input type="email" placeholder="Tu correo electrónico" required>
+									<button type="submit" class="btn btn-primary">Suscribir</button>
+								</form>
+							</div>
+						</div>
+						<div class="col-lg-3 col-md-6 col-12">
 							<div class="single-footer f-link">
-								<h2>Contact Us</h2>
+								<h2>Contáctanos</h2>
 								<ul>
-									<li><a href="#"><i class="icofont-location-pin"></i>200 metros sur de la escuela bajo la paz</a></li>
-									<li><a href="#"><i class="icofont-phone"></i>+506 6252-5969</a></li>
-									<li><a href="#"><i class="icofont-envelope"></i>soportejardinlapaz@gmail.com</a></li>
+									<li><a href="#"><i class="fas fa-map-marker-alt"></i>200 metros sur de la escuela bajo la paz</a></li>
+									<li><a href="tel:+50662525969"><i class="fas fa-phone-alt"></i>+506 6252-5969</a></li>
+									<li><a href="mailto:soportejardinlapaz@gmail.com"><i class="fas fa-envelope"></i>soportejardinlapaz@gmail.com</a></li>
+									<li><a href="#"><i class="fas fa-clock"></i>Lunes - Sábado: 8:00 AM - 5:00 PM</a></li>
 								</ul>
 							</div>
 						</div>
@@ -241,7 +536,18 @@
 			<!-- Footer Bottom -->
 			<div class="footer-bottom">
 				<div class="container">
-					<p>&copy; Eco Mariposas. Todos los derechos reservados.</p>
+					<div class="row">
+						<div class="col-12">
+							<p>&copy; 2023 Eco Mariposas. Todos los derechos reservados.</p>
+						</div>
+						<div class="col-12">
+							<ul class="footer-bottom-links">
+								<li><a href="privacy-policy.html">Política de Privacidad</a></li>
+								<li><a href="terms-conditions.html">Términos y Condiciones</a></li>
+								<li><a href="cookie-policy.html">Política de Cookies</a></li>
+							</ul>
+						</div>
+					</div>
 				</div>
 			</div>
 		</footer>
@@ -266,7 +572,28 @@
 		<script src="js/jquery.magnific-popup.min.js"></script>
 		<script src="js/waypoints.min.js"></script>
 		<script src="js/main.js"></script>
+		
+		<!-- Custom Script -->
+		<script>
+			$(document).ready(function(){
+				// Activar contador de estadísticas con animación
+				$('.stats-number').each(function () {
+					$(this).prop('Counter', 0).animate({
+						Counter: $(this).text()
+					}, {
+						duration: 2000,
+						easing: 'swing',
+						step: function (now) {
+							$(this).text(Math.ceil(now));
+						}
+					});
+				});
+                
+                // Notificación de bienvenida
+                setTimeout(function(){
+                    alert("¡Bienvenido a tu panel de usuario en Eco Mariposas! Aquí podrás gestionar todas tus actividades y preferencias.");
+                }, 3000);
+			});
+		</script>
 	</body>
 </html>
-
-  
