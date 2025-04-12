@@ -1,41 +1,480 @@
-<section class="pricing-table section">
-    <div class="container">
-      <div class="section-title">
-        <h2>Factura Proforma</h2>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <p><strong>Cliente:</strong> Juan Pérez</p>
-          <div class="table-responsive">
-            <table class="table table-bordered">
-              <thead class="thead-dark">
-                <tr>
-                  <th>Producto</th>
-                  <th>Cantidad</th>
-                  <th>Precio Unitario</th>
-                  <th>Subtotal</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Libro de mariposas</td>
-                  <td>2</td>
-                  <td>₡4,000</td>
-                  <td>₡8,000</td>
-                </tr>
-                <tr>
-                  <td>Entrada a evento</td>
-                  <td>1</td>
-                  <td>₡3,500</td>
-                  <td>₡3,500</td>
-                </tr>
-              </tbody>
-            </table>
+<!doctype html>
+<html class="no-js" lang="es">
+
+<head>
+  <!-- Meta Tags -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="keywords" content="Eco Mariposas, perfil de usuario, jardín, naturaleza, mariposas">
+  <meta name="description"
+    content="Panel de usuario de Eco Mariposas, un espacio donde puedes gestionar tus pedidos, eventos y notificaciones.">
+  <meta name='copyright' content='Eco Mariposas'>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Title -->
+  <title>Pago | Eco Mariposas</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="img/favicon.png">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <!-- Nice Select CSS -->
+  <link rel="stylesheet" href="css/nice-select.css">
+  <!-- Font Awesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <!-- Slicknav -->
+  <link rel="stylesheet" href="css/slicknav.min.css">
+  <!-- Owl Carousel CSS -->
+  <link rel="stylesheet" href="css/owl-carousel.css">
+  <!-- Datepicker CSS -->
+  <link rel="stylesheet" href="css/datepicker.css">
+  <!-- Animate CSS -->
+  <link rel="stylesheet" href="css/animate.min.css">
+  <!-- Magnific Popup CSS -->
+  <link rel="stylesheet" href="css/magnific-popup.css">
+
+  <!-- Medipro CSS -->
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9fa;
+    }
+
+    .containerUsuario {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .factura-container {
+  width: 80%; /* Ajusta el tamaño al 80% del ancho de la pantalla */
+  max-width: 600px; /* Limita el tamaño máximo a 600px */
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+    .factura-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .factura-header h2 {
+      margin: 0;
+    }
+
+    .factura-detalle {
+      margin-bottom: 20px;
+    }
+
+    .factura-detalle table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .factura-detalle th,
+    .factura-detalle td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    .factura-detalle th {
+      background-color: #f0f0f0;
+      text-align: left;
+    }
+
+    .btn-pago {
+    display: inline-block;
+    background-color: #62b069;
+    color: white;
+    padding: 14px 30px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    transition: background-color 0.3s ease;
+  }
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      position: relative;
+    }
+
+    .close {
+      color: #aaa;
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .modal form label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+
+    .modal form input,
+    .modal form select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .modal form button {
+      margin-top: 15px;
+      background-color: #62b069;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    
+  </style>
+</head>
+
+<body>
+ 		<!-- Preloader -->
+     <div class="preloader">
+      <div class="loader">
+          <div class="loader-outter"></div>
+          <div class="loader-inner"></div>
+
+          <div class="indicator"> 
+    <svg width="32px" height="32px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <g>
+        <!-- Ala trasera izquierda -->
+        <path d="M32 32 C22 20, 10 40, 28 40" fill="none" stroke="#ffffff" stroke-width="2"/>
+      
+        <!-- Ala trasera derecha -->
+        <path d="M32 32 C42 20, 54 40, 36 40" fill="none" stroke="#ffffff" stroke-width="2"/>
+      
+        <!-- Ala delantera izquierda animada -->
+        <path d="M32 32 C18 14, 4 34, 24 36" fill="none" stroke="#80B78D" stroke-width="2">
+        <animate attributeName="d" dur="1s" repeatCount="indefinite"
+          values="
+          M32 32 C18 14, 4 34, 24 36;
+          M32 32 C16 16, 2 32, 22 36;
+          M32 32 C18 14, 4 34, 24 36"/>
+        </path>
+      
+        <!-- Ala delantera derecha animada -->
+        <path d="M32 32 C46 14, 60 34, 40 36" fill="none" stroke="#80B78D" stroke-width="2">
+        <animate attributeName="d" dur="1s" repeatCount="indefinite"
+          values="
+          M32 32 C46 14, 60 34, 40 36;
+          M32 32 C48 16, 62 32, 42 36;
+          M32 32 C46 14, 60 34, 40 36"/>
+        </path>
+      
+        <!-- Cuerpo -->
+        <line x1="32" y1="30" x2="32" y2="40" stroke="#ffffff" stroke-width="2" />
+      </g>
+      </svg>
           </div>
-          <h4 class="mt-4">Total a Pagar: ₡11,500</h4>
-          <p class="mt-3"><strong>Instrucciones:</strong> Realizar el pago vía SINPE móvil al número <strong>123456789</strong>. Enviar comprobante al correo <strong>pagos@mariposario.com</strong>.</p>
-        </div>
       </div>
+  </div>
+
+        <!-- End Preloader -->
+			
+		<!-- Header Area -->
+		<header class="header">
+			<!-- Topbar -->
+			<div class="topbar">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-6 col-md-5 col-12">
+							<!-- Contact -->
+							<ul class="top-link">
+								<li><a href="usuario.html">Usuario</a></li>
+								<li><a href="reservas.html">Reservas</a></li>
+							</ul>
+							<!-- End Contact -->
+						</div>
+						<div class="col-lg-6 col-md-7 col-12">
+							<!-- Top Contact -->
+							<ul class="top-contact">
+								<li><i class="fa fa-phone"></i>+506 8888 8888</li>
+								<li><i class="fa fa-envelope"></i><a href="mailto:info@mariposario.com">info@mariposario.com</a></li>
+							</ul>
+							<!-- End Top Contact -->
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- End Topbar -->
+
+			<!-- Header Inner -->
+			<div class="header-inner">
+				<div class="container">
+					<div class="inner">
+						<div class="row">
+							<div class="col-lg-3 col-md-3 col-12">
+								<!-- Start Logo -->
+								<div class="logo">
+									<a href="index.html"><img src="img/logo.png" alt="Logo Mariposario"></a>
+								</div>
+								<!-- End Logo -->
+								<!-- Mobile Nav -->
+								<div class="mobile-nav"></div>
+								<!-- End Mobile Nav -->
+							</div>
+							<div class="col-lg-7 col-md-9 col-12">
+								<!-- Main Menu -->
+								<div class="main-menu">
+									<nav class="navigation">
+										<ul class="nav menu">
+                                            <li><a href="index.html">Inicio</a></li>
+                                            <li class="active"><a href="tienda.html">Tienda</a></li>
+											<li><a href="eventos.html">Eventos</a></li>
+											<li><a href="contact.html">Contacto</a></li>
+								
+										</ul>
+									</nav>
+								</div>
+								<!--/ End Main Menu -->
+							</div>
+							<div class="col-lg-2 col-12">
+								<div class="get-quote">
+									<a href="carrito.html" class="btn btn-carrito" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: transparent; box-shadow: none;">
+										<i class="fa fa-shopping-cart icono-carrito" style="color: #42764D; font-size: 20px;"></i>
+									</a>																						  
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- End Header Inner -->
+		</header>
+
+	<!--/ End Header Inner -->
+	</header>
+	<!-- End Header Area -->
+
+  <div class="factura-container">
+    <div class="factura-header">
+      <h2>Resumen de Compra</h2>
+      <p>Jardín de Mariposas</p>
     </div>
-  </section>
-  
+
+    <div class="factura-detalle">
+      <table>
+        <thead>
+          <tr>
+            <th>Descripción</th>
+            <th>Cantidad</th>
+            <th>Precio Unitario</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Entrada General</td>
+            <td>2</td>
+            <td>₡4,000</td>
+            <td>₡8,000</td>
+          </tr>
+          <tr>
+            <td>Souvenir Mariposa</td>
+            <td>1</td>
+            <td>₡2,500</td>
+            <td>₡2,500</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th colspan="3">Total</th>
+            <th>₡10,500</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div style="text-align: center;">
+      <button class="btn-pago" onclick="abrirModal()">Proceder al Pago</button>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="modalPago" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="cerrarModal()">&times;</span>
+      <h3>Formulario de Pago</h3>
+      <form action="#" method="post">
+        <label for="nombre">Nombre completo</label>
+        <input type="text" id="nombre" name="nombre" required>
+
+        <label for="correo">Correo electrónico</label>
+        <input type="email" id="correo" name="correo" required>
+
+        <label for="metodo">Método de pago</label>
+        <select id="metodo" name="metodo" required>
+          <option value="">Seleccione una opción</option>
+          <option value="sinpe">SINPE Móvil</option>
+          <option value="tarjeta">Transferencia bancaria</option>
+          <option value="efectivo">Pago en sitio</option>
+        </select>
+
+        <label for="monto">Monto a pagar</label>
+        <input type="text" id="monto" name="monto" value="₡10,500" readonly>
+
+        <button type="submit">Confirmar Pago</button>
+      </form>
+    </div>
+  </div>
+
+		<!-- Footer Area -->
+		<footer id="footer" class="footer">
+			<!-- Footer Top -->
+			<div class="footer-top">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-3 col-md-6 col-12">
+							<div class="single-footer">
+								<h2>Sobre Nosotros</h2>
+								<p>Eco Mariposas es un emprendimiento dedicado a la conservación de mariposas y educación ambiental en Costa Rica. Trabajamos para promover ecosistemas saludables y sostenibles.</p>
+								<!-- Social -->
+								<ul class="social">
+									<li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+									<li><a href="#"><i class="fab fa-instagram"></i></a></li>
+									<li><a href="#"><i class="fab fa-twitter"></i></a></li>
+									<li><a href="#"><i class="fab fa-youtube"></i></a></li>
+									<li><a href="#"><i class="fab fa-pinterest-p"></i></a></li>
+								</ul>
+								<!-- End Social -->
+							</div>
+						</div>
+						<div class="col-lg-3 col-md-6 col-12">
+							<div class="single-footer f-link">
+								<h2>Enlaces Rápidos</h2>
+								<div class="row">
+									<div class="col-lg-6 col-md-6 col-12">
+										<ul>
+											<li><a href="index.html">Inicio</a></li>
+											<li><a href="about.html">Sobre Nosotros</a></li>
+											<li><a href="services.html">Servicios</a></li>
+											<li><a href="gallery.html">Galería</a></li>
+											<li><a href="blog.html">Blog</a></li>	
+										</ul>
+									</div>
+									<div class="col-lg-6 col-md-6 col-12">
+										<ul>
+											<li><a href="workshops.html">Talleres</a></li>
+											<li><a href="conservation.html">Conservación</a></li>
+											<li><a href="testimonials.html">Testimonios</a></li>
+											<li><a href="faq.html">Preguntas Frecuentes</a></li>
+											<li><a href="contact.html">Contáctanos</a></li>	
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-3 col-md-6 col-12">
+							<div class="single-footer">
+								<h2>Boletín Informativo</h2>
+								<p>Suscríbete para recibir actualizaciones sobre eventos, talleres y nuevos productos.</p>
+								<form class="newsletter-form">
+									<input type="email" placeholder="Tu correo electrónico" required>
+									<button type="submit" class="btn btn-primary">Suscribir</button>
+								</form>
+							</div>
+						</div>
+						<div class="col-lg-3 col-md-6 col-12">
+							<div class="single-footer f-link">
+								<h2>Contáctanos</h2>
+								<ul>
+									<li><a href="#"><i class="fas fa-map-marker-alt"></i>200 metros sur de la escuela bajo la paz</a></li>
+									<li><a href="tel:+50662525969"><i class="fas fa-phone-alt"></i>+506 6252-5969</a></li>
+									<li><a href="mailto:soportejardinlapaz@gmail.com"><i class="fas fa-envelope"></i>soportejardinlapaz@gmail.com</a></li>
+									<li><a href="#"><i class="fas fa-clock"></i>Lunes - Sábado: 8:00 AM - 5:00 PM</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Footer Bottom -->
+			<div class="footer-bottom">
+				<div class="container">
+					<div class="row">
+						<div class="col-12">
+							<p>&copy; 2023 Eco Mariposas. Todos los derechos reservados.</p>
+						</div>
+						<div class="col-12">
+							<ul class="footer-bottom-links">
+								<li><a href="privacy-policy.html">Política de Privacidad</a></li>
+								<li><a href="terms-conditions.html">Términos y Condiciones</a></li>
+								<li><a href="return-policy.html">Política de Reembolso</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</footer>
+		<!-- End Footer Area -->
+
+		<!-- jQuery -->
+		<script src="js/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/jquery.nice-select.min.js"></script>
+		<script src="js/jquery.slicknav.min.js"></script>
+		<script src="js/owl.carousel.min.js"></script>
+		<script src="js/jquery.magnific-popup.min.js"></script>
+		<script src="js/datepicker.min.js"></script>
+		<script src="js/main.js"></script>
+
+		<script>
+			// Mostrar modal
+			function abrirModal() {
+				document.getElementById("modalPago").style.display = "block";
+			}
+
+			// Cerrar modal
+			function cerrarModal() {
+				document.getElementById("modalPago").style.display = "none";
+			}
+
+			// Cerrar modal si se hace clic fuera del contenido
+			window.onclick = function(event) {
+				const modal = document.getElementById("modalPago");
+				if (event.target === modal) {
+					cerrarModal();
+				}
+			}
+		</script>
+	</body>
+</html>
