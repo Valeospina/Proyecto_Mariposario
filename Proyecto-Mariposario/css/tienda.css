@@ -71,19 +71,19 @@ body {
 
 .product-price span {
     font-size: 1rem;
-    color: #28a745;
+    color: #d49ad5;
     font-weight: bold;
 }
 
 .btn.agregar-carrito {
-    background-color: #42764D;
+    background-color: #d49ad5;
     color: #fff;
     border-radius: 20px;
     border: none;
 }
 
 .btn.agregar-carrito:hover {
-    background-color: #42764D;
+    background-color: #d49ad5;
 }
 
 select.form-control {
@@ -91,16 +91,16 @@ select.form-control {
 }
 
 /*=======================
-	Start Fun Facts CSS
+	Start Fun Facts Fondo Mariposa
 =========================*/
 .imagen-facts{
 	position:relative;
 }
 .imagen-facts.section{
-	padding:120px 0;
+	padding:90px 0;
 }
 .imagen-facts {
-    background: url('/img/MariposaFondoTienda.jpg') no-repeat center center;
+    background: url('/img/MariposaFondo.jpg') no-repeat center center;
     background-size: cover;
     background-repeat:no-repeat;
 }
@@ -155,6 +155,7 @@ select.form-control {
 /*===================
 	End Fun Facts
 =====================*/
+
 .form-inline .form-control,
 .form-inline .btn {
     margin: 5px;
@@ -163,7 +164,7 @@ select.form-control {
 
 .overlay-form-container {
     position: relative;
-    top: -95px; /* Sube el formulario */
+    top: -55px; /* Sube el formulario */
 }
 
 .form-busqueda .form-control,
@@ -171,3 +172,69 @@ select.form-control {
     min-width: 200px;
     width: 100%;
 }
+
+/*=======================
+	Start Fun Facts Fondo Orquidea
+=========================*/
+.orquidea-facts{
+	position:relative;
+}
+.orquidea-facts.section{
+	padding:120px 0;
+}
+.orquidea-facts {
+    background: url('/img/OrquideaFondoTienda.jpg') no-repeat center center;
+    background-size: cover;
+    background-repeat:no-repeat;
+}
+.orquidea-facts .single-fun {
+	
+}
+.orquidea-facts .single-fun i {
+	position: absolute;
+	left: 0;
+	font-size: 62px;
+	color: #fff;
+	height: 70px;
+	width: 70px;
+	line-height: 67px;
+	font-size: 28px;
+	text-align: center;
+	padding: 0;
+	margin: 0;
+	border: 2px solid #fff;
+	border-radius: 0px;
+	top: 50%;
+	margin-top: -35px;
+	-webkit-transition: all 0.4s ease;
+	-moz-transition: all 0.4s ease;
+	transition: all 0.4s ease;
+	border-radius: 50%;
+}
+.orquidea-facts .single-fun:hover i{
+	color:#1A76D1;
+	background:#fff;
+	border-color:transparent;
+}
+.orquidea-facts .single-fun .content {
+	padding-left: 80px;
+}
+.orquidea-facts .single-fun span {
+	color: #fff;
+	font-weight: 600;
+	font-size: 30px;
+	position: relative;
+	display: block;
+	-webkit-transition: all 0.4s ease;
+	-moz-transition: all 0.4s ease;
+	transition: all 0.4s eas;
+	display: block;
+	margin-bottom: 7px;
+}
+.fun-facts .single-fun p{
+	color:#fff;
+	font-size:15px;
+}
+/*===================
+	End Fun Facts
+=====================*/
