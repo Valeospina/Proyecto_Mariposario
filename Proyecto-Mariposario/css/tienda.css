@@ -90,6 +90,20 @@ select.form-control {
     border-radius: 25px;
 }
 
+.btn-carrito {
+    transition: background-color 0.3s ease;
+}
+
+.btn-carrito:hover {
+    background-color: transparent; 
+}
+
+
+
+
+
+
+
 /*=======================
 	Start Fun Facts CSS
 =========================*/
