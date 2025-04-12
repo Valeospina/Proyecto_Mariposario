@@ -1,0 +1,1185 @@
+<!doctype html>
+<html class="no-js" lang="es">
+
+<head>
+    <!-- Meta Tags -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="keywords" content="Eco Mariposas, notificaciones, usuario, jardín, naturaleza, mariposas">
+    <meta name="description"
+        content="Centro de notificaciones de Eco Mariposas, donde puedes gestionar y ver todas tus alertas y mensajes importantes.">
+    <meta name='copyright' content='Eco Mariposas'>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Title -->
+    <title>Mis Notificaciones | Eco Mariposas</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="img/favicon.png">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- Nice Select CSS -->
+    <link rel="stylesheet" href="css/nice-select.css">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Slicknav -->
+    <link rel="stylesheet" href="css/slicknav.min.css">
+    <!-- Owl Carousel CSS -->
+    <link rel="stylesheet" href="css/owl-carousel.css">
+    <!-- Datepicker CSS -->
+    <link rel="stylesheet" href="css/datepicker.css">
+    <!-- Animate CSS -->
+    <link rel="stylesheet" href="css/animate.min.css">
+    <!-- Magnific Popup CSS -->
+    <link rel="stylesheet" href="css/magnific-popup.css">
+
+    <!-- Medipro CSS -->
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/notificaciones.css">
+    <style>
+
+/* Notificaciones CSS - Eco Mariposas
+   Este archivo contiene los estilos específicos para la página de notificaciones
+*/
+
+:root {
+    --primary-color: #80B78D;
+    --secondary-color: #5A9367;
+    --text-color: #333;
+    --light-color: #f9f9f9;
+    --dark-color: #222;
+    --grey-color: #f4f4f4;
+    --border-color: #e9e9e9;
+    
+    /* Colores para tipos de notificaciones */
+    --order-color: #4A90E2;
+    --event-color: #F5A623;
+    --system-color: #8E44AD;
+    --promo-color: #E74C3C;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8f9fa;
+}
+
+.containerUsuario {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Header de notificaciones */
+.notifications-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.notifications-header h2 {
+    margin-bottom: 0;
+    font-size: 28px;
+    color: var(--text-color);
+}
+
+.notification-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.mark-all-read {
+    white-space: nowrap;
+}
+
+.notification-filter {
+    min-width: 200px;
+}
+
+/* Estadísticas de notificaciones */
+.notification-stats {
+    display: flex;
+    background-color: var(--grey-color);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 25px;
+}
+
+.stats-item {
+    flex: 1;
+    text-align: center;
+    padding: 0 15px;
+}
+
+.stats-item:first-child {
+    border-right: 1px solid var(--border-color);
+}
+
+.stats-number {
+    display: block;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+}
+
+.stats-text {
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+/* Contenedor de notificaciones */
+.notifications-container {
+    margin-bottom: 30px;
+}
+
+/* Estilos de los items de notificación */
+.notification-item {
+    display: flex;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    background-color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    position: relative;
+    border-left: 4px solid transparent;
+}
+
+.notification-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Estilos para notificaciones no leídas */
+.notification-item.unread {
+    background-color: rgba(128, 183, 141, 0.05);
+    border-left-color: var(--primary-color);
+}
+
+.notification-item.unread::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 8px;
+    height: 8px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+}
+
+/* Iconos de notificación */
+.notification-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    flex-shrink: 0;
+    color: white;
+    font-size: 20px;
+}
+
+.notification-icon.order {
+    background-color: var(--order-color);
+}
+
+.notification-icon.event {
+    background-color: var(--event-color);
+}
+
+.notification-icon.system {
+    background-color: var(--system-color);
+}
+
+.notification-icon.promo {
+    background-color: var(--promo-color);
+}
+
+/* Contenido de la notificación */
+.notification-content {
+    flex: 1;
+}
+
+.notification-content h4 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.notification-content p {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+}
+
+/* Metadatos de notificación */
+.notification-meta {
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: #888;
+}
+
+.notification-time {
+    margin-right: 15px;
+}
+
+.notification-time i, 
+.notification-category i {
+    margin-right: 5px;
+}
+
+.notification-category {
+    font-weight: 500;
+}
+
+/* Acciones de notificación */
+.notification-item .notification-actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 15px;
+}
+
+.notification-item .notification-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    margin-bottom: 5px;
+    transition: all 0.2s ease;
+}
+
+.notification-item .notification-actions button:hover {
+    background-color: var(--grey-color);
+    color: var(--primary-color);
+}
+
+.notification-item .notification-actions button:last-child {
+    margin-bottom: 0;
+}
+
+.btn-mark-read:hover {
+    color: var(--secondary-color);
+}
+
+.btn-delete:hover {
+    color: #E74C3C;
+}
+
+/* Botón de cargar más */
+.load-more-container {
+    text-align: center;
+    margin: 30px 0;
+}
+
+#loadMoreBtn {
+    padding: 10px 25px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+#loadMoreBtn:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Configuración de notificaciones */
+.notification-settings {
+    background-color: var(--grey-color);
+    border-radius: 8px;
+    padding: 25px;
+    margin-top: 40px;
+}
+
+.notification-settings h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 20px;
+    color: var(--text-color);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+.notification-preferences {
+    margin-bottom: 25px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.custom-control-label {
+    cursor: pointer;
+    padding-left: 5px;
+}
+
+.custom-switch .custom-control-label::before {
+    background-color: #ccc;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.notification-settings-actions {
+    text-align: right;
+}
+
+.save-notification-settings {
+    padding: 10px 25px;
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.save-notification-settings:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+/* Estilos de Badge */
+.badge-primary {
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 10px;
+    padding: 3px 6px;
+    border-radius: 10px;
+    margin-left: 5px;
+}
+
+/* Estilos de tiempo vacío */
+.activity-time {
+    color: #888;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.notification-item {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Estilos para el filtro de selección */
+.form-control {
+    height: 38px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(128, 183, 141, 0.25);
+}
+
+/* Estilos de botones */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover, 
+.btn-primary:focus {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    background-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    color: white;
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .notifications-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .notifications-header h2 {
+        margin-bottom: 15px;
+    }
+    
+    .notification-actions {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .notification-filter {
+        width: 100%;
+    }
+    
+    .notification-stats {
+        flex-direction: column;
+    }
+    
+    .stats-item:first-child {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .notification-item {
+        flex-direction: column;
+    }
+    
+    .notification-icon {
+        margin-bottom: 15px;
+        margin-right: 0;
+        align-self: flex-start;
+    }
+    
+    .notification-item .notification-actions {
+        flex-direction: row;
+        margin-left: 0;
+        margin-top: 15px;
+        justify-content: flex-start;
+    }
+    
+    .notification-item .notification-actions button {
+        margin-bottom: 0;
+        margin-right: 10px;
+    }
+    
+    .activity-time {
+        position: static;
+        margin-top: 5px;
+        display: block;
+    }
+}
+
+/* Estilos para la barra lateral */
+.user-sidebar {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.profile-info {
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+}
+
+.profile-info img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.sidebar-menu li {
+    margin-bottom: 10px;
+}
+
+.sidebar-menu li a {
+    color: var(--text-color);
+    padding: 10px 15px;
+    display: block;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.sidebar-menu li a:hover, 
+.sidebar-menu li a.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.sidebar-menu li a i {
+    margin-right: 10px;
+}
+
+/* Estilos del contenedor principal */
+.user-main-content {
+    background-color: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.05);
+}
+
+/* Preloader */
+.preloader .indicator svg {
+    animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Estilos adicionales para botones pequeños */
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+/* Estilos para checkboxes de notificación */
+.custom-control {
+    position: relative;
+    display: block;
+    min-height: 1.5rem;
+    padding-left: 1.5rem;
+}
+
+.custom-control-input {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+}
+
+.custom-control-label {
+    position: relative;
+    margin-bottom: 0;
+    vertical-align: top;
+}
+
+.custom-control-label::before {
+    position: absolute;
+    top: 0.25rem;
+    left: -1.5rem;
+    display: block;
+    width: 1rem;
+    height: 1rem;
+    pointer-events: none;
+    content: "";
+    background-color: #fff;
+    border: 1px solid #adb5bd;
+    border-radius: 0.25rem;
+}
+
+.custom-switch .custom-control-label::before {
+    left: -2.25rem;
+    width: 1.75rem;
+    pointer-events: all;
+    border-radius: 0.5rem;
+}
+
+.custom-switch .custom-control-label::after {
+    top: calc(0.25rem + 2px);
+    left: calc(-2.25rem + 2px);
+    width: calc(1rem - 4px);
+    height: calc(1rem - 4px);
+    background-color: #adb5bd;
+    border-radius: 0.5rem;
+    transition: transform 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    position: absolute;
+    content: "";
+}
+
+.custom-switch .custom-control-input:checked ~ .custom-control-label::after {
+    background-color: #fff;
+    transform: translateX(0.75rem);
+}
+
+/* Estilos para visualizaciones en tablet */
+@media (min-width: 768px) and (max-width: 992px) {
+    .container {
+        max-width: 95%;
+    }
+    
+    .notification-actions {
+        margin-top: 15px;
+    }
+}
+
+/* Estilos para pantallas muy pequeñas */
+@media (max-width: 480px) {
+    .notifications-header h2 {
+        font-size: 24px;
+    }
+    
+    .notification-content h4 {
+        font-size: 15px;
+    }
+    
+    .notification-content p {
+        font-size: 13px;
+    }
+    
+    .user-main-content {
+        padding: 20px 15px;
+    }
+    
+    .notification-settings {
+        padding: 20px 15px;
+    }
+}
+
+/* Efecto hover en las notificaciones */
+.notification-item:hover .notification-content h4 {
+    color: var(--primary-color);
+}
+
+/* Estilos para los enlaces en el contenido de notificaciones */
+.notification-content a {
+    color: var(--primary-color);
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.notification-content a:hover {
+    color: var(--secondary-color);
+    text-decoration: underline;
+}
+
+/* Estilos para manejar notificaciones vacías */
+.empty-notifications {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: var(--light-color);
+    border-radius: 8px;
+    display: none;
+}
+
+.empty-notifications i {
+    font-size: 48px;
+    color: #ccc;
+    margin-bottom: 15px;
+}
+
+.empty-notifications h3 {
+    font-size: 20px;
+    color: var(--text-color);
+    margin-bottom: 10px;
+}
+
+.empty-notifications p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+    </style>
+
+
+
+
+
+</head>
+
+<body>
+
+    <!-- Preloader -->
+    <div class="preloader">
+        <div class="loader">
+            <div class="loader-outter"></div>
+            <div class="loader-inner"></div>
+
+            <div class="indicator">
+                <svg width="32px" height="32px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                    <g>
+                        <!-- Ala trasera izquierda -->
+                        <path d="M32 32 C22 20, 10 40, 28 40" fill="none" stroke="#ffffff" stroke-width="2" />
+
+                        <!-- Ala trasera derecha -->
+                        <path d="M32 32 C42 20, 54 40, 36 40" fill="none" stroke="#ffffff" stroke-width="2" />
+
+                        <!-- Ala delantera izquierda animada -->
+                        <path d="M32 32 C18 14, 4 34, 24 36" fill="none" stroke="#80B78D" stroke-width="2">
+                            <animate attributeName="d" dur="1s" repeatCount="indefinite" values="
+                                M32 32 C18 14, 4 34, 24 36;
+                                M32 32 C16 16, 2 32, 22 36;
+                                M32 32 C18 14, 4 34, 24 36" />
+                        </path>
+
+                        <!-- Ala delantera derecha animada -->
+                        <path d="M32 32 C46 14, 60 34, 40 36" fill="none" stroke="#80B78D" stroke-width="2">
+                            <animate attributeName="d" dur="1s" repeatCount="indefinite" values="
+                                M32 32 C46 14, 60 34, 40 36;
+                                M32 32 C48 16, 62 32, 42 36;
+                                M32 32 C46 14, 60 34, 40 36" />
+                        </path>
+
+                        <!-- Cuerpo -->
+                        <line x1="32" y1="30" x2="32" y2="40" stroke="#ffffff" stroke-width="2" />
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </div>
+    <!-- End Preloader -->
+
+    <!-- Header Area -->
+    <header class="header">
+        <!-- Topbar -->
+        <div class="topbar">
+            <div class="containerUsuario">
+                <div class="row">
+                    <div class="col-lg-6 col-md-5 col-12">
+                        <!-- Contact -->
+                        <ul class="top-link">
+                            <li><a href="index.html">Inicio</a></li>
+                            <li><a href="tienda.html">Tienda</a></li>
+                            <li><a href="eventos.html">Eventos</a></li>
+                            <li><a href="contact.html">Contacto</a></li>
+                        </ul>
+                        <!-- End Contact -->
+                    </div>
+                    <div class="col-lg-6 col-md-7 col-12">
+                        <!-- Top Contact -->
+                        <ul class="top-contact">
+                            <li><i class="fa fa-phone"></i>+506 6252 5969</li>
+                            <li><i class="fa fa-envelope"></i><a
+                                    href="mailto:soportejardinlapaz@gmail.com">soportejardinlapaz@gmail.com</a></li>
+                        </ul>
+                        <!-- End Top Contact -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Topbar -->
+    </header>
+    <!-- End Header Area -->
+
+    <!-- Panel de Usuario -->
+    <section class="user-panel section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-4 col-12">
+                    <!-- Sidebar -->
+                    <div class="user-sidebar">
+                        <div class="profile-info">
+                            <img src="img/user-profile.jpg" alt="Foto de perfil">
+                            <h3>Hola, Usuario</h3>
+                            <p>Miembro desde: Abril 2023</p>
+                            <a href="user-settings.html" class="btn btn-sm btn-primary">Editar Perfil</a>
+                        </div>
+                        <ul class="sidebar-menu">
+                            <li><a href="usuario.html"><i class="fas fa-user"></i> Perfil</a></li>
+                            <li><a href="MisPedidos.html"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
+                            <li><a href="user-events.html"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
+                            <li><a href="notificaciones.html" class="active"><i class="fas fa-bell"></i> Notificaciones
+                                    <span class="badge badge-primary">3</span></a></li>
+                            <li><a href="user-favorites.html"><i class="fas fa-heart"></i> Favoritos</a></li>
+                            <li><a href="user-settings.html"><i class="fas fa-cog"></i> Configuración</a></li>
+                            <li><a href="logout.html"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
+                        </ul>
+                    </div>
+                    <!-- End Sidebar -->
+                </div>
+                <div class="col-lg-9 col-md-8 col-12">
+                    <!-- Main Content -->
+                    <div class="user-main-content">
+                        <div class="notifications-header">
+                            <h2>Centro de Notificaciones</h2>
+                            <div class="notification-actions">
+                                <a href="#" class="btn btn-sm btn-outline-primary mark-all-read"><i
+                                        class="fas fa-check-double"></i> Marcar todas como leídas</a>
+                                <div class="notification-filter">
+                                    <select class="form-control" id="notificationFilter">
+                                        <option value="all">Todas las notificaciones</option>
+                                        <option value="unread">No leídas</option>
+                                        <option value="read">Leídas</option>
+                                        <option value="pedidos">Pedidos</option>
+                                        <option value="eventos">Eventos</option>
+                                        <option value="sistema">Sistema</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notification Count -->
+                        <div class="notification-stats">
+                            <div class="stats-item">
+                                <span class="stats-number">3</span>
+                                <span class="stats-text">Sin leer</span>
+                            </div>
+                            <div class="stats-item">
+                                <span class="stats-number">8</span>
+                                <span class="stats-text">Total</span>
+                            </div>
+                        </div>
+
+                        <!-- Notifications Container -->
+                        <div class="notifications-container">
+                            <!-- Notification Item - Unread -->
+                            <div class="notification-item unread" data-type="pedidos">
+                                <div class="notification-icon order">
+                                    <i class="fas fa-box"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <h4>Tu pedido ha sido enviado</h4>
+                                    <p>Tu pedido #ORD-2596 ha sido enviado y llegará en 2-3 días hábiles.</p>
+                                    <div class="notification-meta">
+                                        <span class="notification-time"><i class="far fa-clock"></i> Hace 2 horas</span>
+                                        <span class="notification-category">Pedidos</span>
+                                    </div>
+                                </div>
+                                <div class="notification-actions">
+                                    <button class="btn-mark-read" title="Marcar como leída"><i
+                                            class="fas fa-check"></i></button>
+                                    <button class="btn-delete" title="Eliminar"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+
+                            <!-- Notification Item - Unread -->
+                            <div class="notification-item unread" data-type="eventos">
+                                <div class="notification-icon event">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <h4>Recordatorio: Taller de Conservación</h4>
+                                    <p>El taller "Conservación de Mariposas" comienza mañana a las 9:00 AM. ¡Te
+                                        esperamos!</p>
+                                    <div class="notification-meta">
+                                        <span class="notification-time"><i class="far fa-clock"></i> Hace 6 horas</span>
+                                        <span class="notification-category">Eventos</span>
+                                    </div>
+                                </div>
+                                <div class="notification-actions">
+                                    <button class="btn-mark-read" title="Marcar como leída"><i
+                                            class="fas fa-check"></i></button>
+                                    <button class="btn-delete" title="Eliminar"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+
+                            <!-- Notification Item - Unread -->
+                            <div class="notification-item unread" data-type="sistema">
+                                <div class="notification-icon system">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <h4>Actualización de la política de privacidad</h4>
+                                    <p>Hemos actualizado nuestra política de privacidad. Por favor, revísala en tu
+                                        próxima visita.</p>
+                                    <div class="notification-meta">
+                                        <span class="notification-time"><i class="far fa-clock"></i> Hace 1 día</span>
+                                        <span class="notification-category">Sistema</span>
+                                    </div>
+                                </div>
+                                <div class="notification-actions">
+                                    <button class="btn-mark-read" title="Marcar como leída"><i
+                                            class="fas fa-check"></i></button>
+                                    <button class="btn-delete" title="Eliminar"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+
+                            <!-- Notification Item - Read -->
+                            <div class="notification-item" data-type="pedidos">
+                                <div class="notification-icon order">
+                                    <i class="fas fa-credit-card"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <h4>Pago confirmado</h4>
+                                    <p>El pago para tu pedido #ORD-2596 ha sido procesado correctamente. Gracias por tu
+                                        compra.</p>
+                                    <div class="notification-meta">
+                                        <span class="notification-time"><i class="far fa-clock"></i> Hace 3 días</span>
+                                        <span class="notification-category">Pedidos</span>
+                                    </div>
+                                </div>
+                                <div class="notification-actions">
+                                    <button class="btn-delete" title="Eliminar"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+
+                            <!-- Notification Item - Read -->
+                            <div class="notification-item" data-type="sistema">
+                                <div class="notification-icon promo">
+                                    <i class="fas fa-percentage"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <h4>¡Descuentos en Kits de Jardín!</h4>
+                                    <p>Por tiempo limitado, 15% de descuento en todos nuestros kits de jardín para
+                                        mariposas. ¡No te lo pierdas!</p>
+                                    <div class="notification-meta">
+                                        <span class="notification-time"><i class="far fa-clock"></i> Hace 1
+                                            semana</span>
+                                        <span class="notification-category">Promociones</span>
+                                    </div>
+                                </div>
+                                <div class="notification-actions">
+                                    <button class="btn-delete" title="Eliminar"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+
+                            <!-- Notification Item - Read -->
+                            <div class="notification-item" data-type="eventos">
+                                <div class="notification-icon event">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <h4>Registro completado: Taller de Conservación</h4>
+                                    <p>Tu inscripción al taller "Conservación de Mariposas" ha sido confirmada. Te
+                                        enviaremos más detalles pronto.</p>
+                                    <div class="notification-meta">
+                                        <span class="notification-time"><i class="far fa-clock"></i> Hace 2
+                                            semanas</span>
+                                        <span class="notification-category">Eventos</span>
+                                    </div>
+                                </div>
+                                <div class="notification-actions">
+                                    <button class="btn-delete" title="Eliminar"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+
+                            <!-- Notification Item - Read -->
+                            <div class="notification-item" data-type="sistema">
+                                <div class="notification-icon system">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <h4>Bienvenido a Eco Mariposas</h4>
+                                    <p>Gracias por registrarte en nuestra plataforma. Explora nuestros productos y
+                                        eventos para comenzar tu experiencia.</p>
+                                    <div class="notification-meta">
+                                        <span class="notification-time"><i class="far fa-clock"></i> Hace 1 mes</span>
+                                        <span class="notification-category">Sistema</span>
+                                    </div>
+                                </div>
+                                <div class="notification-actions">
+                                    <button class="btn-delete" title="Eliminar"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+
+                            <!-- Notification Item - Read -->
+                            <div class="notification-item" data-type="pedidos">
+                                <div class="notification-icon order">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <h4>¿Qué te pareció tu compra?</h4>
+                                    <p>Nos encantaría saber tu opinión sobre tu reciente compra. Haz clic para dejar una
+                                        reseña.</p>
+                                    <div class="notification-meta">
+                                        <span class="notification-time"><i class="far fa-clock"></i> Hace 2 meses</span>
+                                        <span class="notification-category">Pedidos</span>
+                                    </div>
+                                </div>
+                                <div class="notification-actions">
+                                    <button class="btn-delete" title="Eliminar"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Load More -->
+                        <div class="load-more-container">
+                            <button id="loadMoreBtn" class="btn btn-outline-primary">Cargar más notificaciones</button>
+                        </div>
+
+                        <!-- Notification Settings -->
+                        <div class="notification-settings">
+                            <h3>Configuración de notificaciones</h3>
+                            <div class="notification-preferences">
+                                <div class="form-group">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input" id="notifyEmail" checked>
+                                        <label class="custom-control-label" for="notifyEmail">Recibir notificaciones por
+                                            correo electrónico</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input" id="notifyOrders" checked>
+                                        <label class="custom-control-label" for="notifyOrders">Actualizaciones de
+                                            pedidos</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input" id="notifyEvents" checked>
+                                        <label class="custom-control-label" for="notifyEvents">Recordatorios de
+                                            eventos</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input" id="notifyPromos" checked>
+                                        <label class="custom-control-label" for="notifyPromos">Promociones y ofertas
+                                            especiales</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input" id="notifySystem">
+                                        <label class="custom-control-label" for="notifySystem">Actualizaciones del
+                                            sistema</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="notification-settings-actions">
+                                <button class="btn btn-primary save-notification-settings">Guardar preferencias</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Main Content -->
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End Panel de Usuario -->
+
+    <!-- Footer Area -->
+    <footer id="footer" class="footer">
+        <!-- Footer Top -->
+        <div class="footer-top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6 col-12">
+                        <div class="single-footer">
+                            <h2>Sobre Nosotros</h2>
+                            <p>Eco Mariposas es un emprendimiento dedicado a la conservación de mariposas y educación
+                                ambiental en Costa Rica. Trabajamos para promover ecosistemas saludables y sostenibles.
+                            </p>
+                            <!-- Social -->
+                            <ul class="social">
+                                <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+                                <li><a href="#"><i class="fab fa-instagram"></i></a></li>
+                                <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+                                <li><a href="#"><i class="fab fa-youtube"></i></a></li>
+                                <li><a href="#"><i class="fab fa-pinterest-p"></i></a></li>
+                            </ul>
+                            <!-- End Social -->
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-12">
+                        <div class="single-footer f-link">
+                            <h2>Enlaces Rápidos</h2>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-12">
+                                    <ul>
+                                        <li><a href="index.html">Inicio</a></li>
+                                        <li><a href="about.html">Sobre Nosotros</a></li>
+                                        <li><a href="services.html">Servicios</a></li>
+                                        <li><a href="gallery.html">Galería</a></li>
+                                        <li><a href="blog.html">Blog</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-12">
+                                    <ul>
+                                        <li><a href="workshops.html">Talleres</a></li>
+                                        <li><a href="conservation.html">Conservación</a></li>
+                                        <li><a href="testimonials.html">Testimonios</a></li>
+                                        <li><a href="faq.html">Preguntas Frecuentes</a></li>
+                                        <li><a href="contact.html">Contáctanos</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-12">
+                        <div class="single-footer">
+                            <h2>Boletín Informativo</h2>
+                            <p>Suscríbete para recibir actualizaciones sobre eventos, talleres y nuevos productos.</p>
+                            <form class="newsletter-form">
+                                <input type="email" placeholder="Tu correo electrónico" required>
+                                <button type="submit" class="btn btn-primary">Suscribir</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-12">
+                        <div class="single-footer f-link">
+                            <h2>Contáctanos</h2>
+                            <ul>
+                                <li><a href="#"><i class="fas fa-map-marker-alt"></i>200 metros sur de la escuela bajo
+                                        la paz</a></li>
+                                <li><a href="tel:+50662525969"><i class="fas fa-phone-alt"></i>+506 6252-5969</a></li>
+                                <li><a href="mailto:soportejardinlapaz@gmail.com"><i
+                                            class="fas fa-envelope"></i>soportejardinlapaz@gmail.com</a></li>
+                                <li><a href="#"><i class="fas fa-clock"></i>Lunes - Sábado: 8:00 AM - 5:00 PM</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <p>&copy; 2023 Eco Mariposas. Todos los derechos reservados.</p>
+                    </div>
+                    <div class="col-12">
+                        <ul class="footer-bottom-links">
+                            <li><a href="privacy-policy.html">Política de Privacidad</a></li>
+                            <li><a href="terms-conditions.html">Términos y Condiciones</a></li>
+                            <li><a href="cookie-policy.html">Política de Cookies</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- End Footer Area -->
+
+    <!-- Scroll Up -->
+    <a href="#" class="scroll-up"><i class="fa fa-chevron-up"></i></a>
+    <!-- End Scroll Up -->
+
+    <!-- JS Files -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.nav.js"></script>
+    <script src="js/slicknav.min.js"></script>
+    <script src="js/jquery.scrollUp.min.js"></script>
+    <script src="js/niceselect.js"></script>
+    <script src="js/tilt.jquery.min.js"></script>
+    <script src="js/owl-carousel.js"></script>
+    <script src="js/jquery.counterup.min.js"></script>
+    <script src="js/steller.js"></script>
+    <script src="js/wow.min.js"></script>
+    <script src="js/jquery.magnific-popup.min.js"></script>
+    <script src="js/waypoints.min.js"></script>
+    <script src="js/main.js"></script>
+
+    <!-- Custom Script -->
+    <script src="js/notificaciones.js"></script>
+
+</body>
+
+</html>
