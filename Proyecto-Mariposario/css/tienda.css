@@ -104,9 +104,8 @@ select.form-control {
     background-size: cover;
     background-repeat:no-repeat;
 }
-.imagen-facts .single-fun {
+
 	
-}
 .imagen-facts .single-fun i {
 	position: absolute;
 	left: 0;
@@ -148,7 +147,7 @@ select.form-control {
 	display: block;
 	margin-bottom: 7px;
 }
-.fun-facts .single-fun p{
+.imagen-facts .single-fun p{
 	color:#fff;
 	font-size:15px;
 }
@@ -187,9 +186,7 @@ select.form-control {
     background-size: cover;
     background-repeat:no-repeat;
 }
-.orquidea-facts .single-fun {
-	
-}
+
 .orquidea-facts .single-fun i {
 	position: absolute;
 	left: 0;
