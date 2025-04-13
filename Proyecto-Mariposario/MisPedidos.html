@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,21 +9,21 @@
     <meta name='copyright' content=''>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Mediplus - Mis Pedidos</title>
+		<!-- Title -->
+        <title>Mi Perfil | Eco Mariposas</title>
+		
 		<!-- Favicon -->
         <link rel="icon" href="img/favicon.png">
 		
 		<!-- Google Fonts -->
-		<link href="https://fonts.googleapis.com/css?family=Poppins:200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 		<!-- Bootstrap CSS -->
 		<link rel="stylesheet" href="css/bootstrap.min.css">
 		<!-- Nice Select CSS -->
 		<link rel="stylesheet" href="css/nice-select.css">
 		<!-- Font Awesome CSS -->
-        <link rel="stylesheet" href="css/font-awesome.min.css">
-		<!-- icofont CSS -->
-        <link rel="stylesheet" href="css/icofont.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 		<!-- Slicknav -->
 		<link rel="stylesheet" href="css/slicknav.min.css">
 		<!-- Owl Carousel CSS -->
@@ -49,7 +50,7 @@
             margin: 0;
             padding: 0;
         }
-    
+
         /* Estilos del contenedor */
         .containerPedidos {
             max-width: 1200px;
@@ -59,7 +60,7 @@
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-    
+
         /* Título de la página */
         h1 {
             text-align: center;
@@ -67,13 +68,13 @@
             font-size: 2.5em;
             color: #42764D;
         }
-    
+
         /* Estilos para la lista de pedidos */
         .order-list {
             list-style: none;
             padding: 0;
         }
-    
+
         /* Estilo de los items de pedidos */
         .order-item {
             background-color: #fff;
@@ -83,26 +84,26 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease-in-out;
         }
-    
+
         .order-item:hover {
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             transform: translateY(-5px);
         }
-    
+
         /* Título de cada pedido */
         .order-item h2 {
             margin-top: 0;
             font-size: 1.5em;
             color: #333;
         }
-    
+
         /* Barra de progreso */
         .progress-bar {
             display: flex;
             justify-content: space-between;
             margin: 20px 0;
         }
-    
+
         .progress-step {
             width: 24%;
             text-align: center;
@@ -114,34 +115,34 @@
             color: #666;
             transition: all 0.3s ease;
         }
-    
+
         .progress-step.active {
             background-color: #80b78d;
             color: white;
         }
-    
+
         .progress-step.completed {
             background-color: #4cc1d7;
             color: white;
         }
-    
+
         /* Detalles del pedido */
         .order-details {
             margin-top: 10px;
             font-size: 1em;
             color: #666;
         }
-    
+
         .order-details span {
             font-weight: bold;
             color: #333;
         }
-    
+
         .status-date {
             font-size: 0.9em;
             color: #999;
         }
-    
+
         /* Estilo del botón */
         .btn {
             display: inline-block;
@@ -155,11 +156,11 @@
             text-align: center;
             transition: background-color 0.3s ease;
         }
-    
+
         .btn:hover {
             background-color: #3e8e41;
         }
-    
+
         /* Estilo para el preloader */
         .preloader {
             position: fixed;
@@ -173,7 +174,7 @@
             align-items: center;
             z-index: 9999;
         }
-    
+
         .loader-outter {
             border: 3px solid #81BAE6;
             border-radius: 50%;
@@ -182,58 +183,266 @@
             height: 50px;
             animation: rotate 1s linear infinite;
         }
-    
+
         @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
+
+        :root {
+                --primary-color: #80B78D;
+                --secondary-color: #5A9367;
+                --text-color: #333;
+                --light-color: #f9f9f9;
+                --dark-color: #222;
+                --grey-color: #f4f4f4;
+                --border-color: #e9e9e9;
+            }
+                    
+            .user-sidebar {
+                background-color: white;
+                border-radius: 10px;
+                box-shadow: 0 0 15px rgba(0,0,0,0.05);
+                padding: 25px;
+                margin-bottom: 30px;
+            }
+            
+            .profile-info {
+                text-align: center;
+                padding-bottom: 20px;
+                border-bottom: 1px solid var(--border-color);
+                margin-bottom: 20px;
+            }
+            
+            .profile-info img {
+                width: 120px;
+                height: 120px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 4px solid var(--primary-color);
+                margin-bottom: 15px;
+            }
+            
+            .sidebar-menu li {
+                margin-bottom: 10px;
+            }
+            
+            .sidebar-menu li a {
+                color: var(--text-color);
+                padding: 10px 15px;
+                display: block;
+                border-radius: 5px;
+                transition: all 0.3s ease;
+            }
+            
+            .sidebar-menu li a:hover, .sidebar-menu li a.active {
+                background-color: var(--primary-color);
+                color: white;
+            }
+            
+            .sidebar-menu li a i {
+                margin-right: 10px;
+            }
+            
+            .user-main-content {
+                background-color: white;
+                border-radius: 10px;
+                padding: 30px;
+                box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            }
+            
+            .user-dashboard .card {
+                border: none;
+                border-radius: 10px;
+                padding: 25px 20px;
+                margin-bottom: 30px;
+                box-shadow: 0 0 15px rgba(0,0,0,0.05);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            
+            .user-dashboard .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            }
+            
+            .user-dashboard .card h3 {
+                color: var(--primary-color);
+                margin-bottom: 15px;
+                font-size: 22px;
+            }
+            
+            .user-dashboard .card p {
+                margin-bottom: 20px;
+                font-size: 14px;
+                color: #666;
+            }
+            
+            .user-dashboard .card .card-icon {
+                font-size: 36px;
+                margin-bottom: 15px;
+                color: var(--primary-color);
+            }
+            
+            .btn-primary {
+                background-color: var(--primary-color);
+                border-color: var(--primary-color);
+                padding: 10px 25px;
+                font-weight: 500;
+                border-radius: 5px;
+                transition: all 0.3s ease;
+            }
+            
+            .btn-primary:hover {
+                background-color: var(--secondary-color);
+                border-color: var(--secondary-color);
+            }
+            
+            .stats-number {
+                font-size: 32px;
+                font-weight: 600;
+                color: var(--primary-color);
+                margin-bottom: 5px;
+            }
+            
+            .activity-feed {
+                margin-top: 30px;
+            }
+            
+            .activity-item {
+                padding: 15px;
+                border-bottom: 1px solid var(--border-color);
+                display: flex;
+                align-items: center;
+            }
+            
+            .activity-icon {
+                width: 40px;
+                height: 40px;
+                background-color: var(--primary-color);
+                border-radius: 50%;
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 15px;
+            }
+            
+            .activity-content {
+                flex: 1;
+            }
+            
+            .activity-content h4 {
+                font-size: 16px;
+                margin-bottom: 5px;
+            }
+            
+            .activity-content p {
+                font-size: 12px;
+                color: #888;
+                margin: 0;
+            }
+            
+            .footer {
+                background-color: #2c3e50;
+                color: #ecf0f1;
+            }
+            
+            .footer-top {
+                padding: 70px 0 50px;
+            }
+            
+            .footer h2 {
+                color: white;
+                font-size: 20px;
+                margin-bottom: 25px;
+                position: relative;
+                padding-bottom: 10px;
+            }
+            
+            .footer h2:after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 50px;
+                height: 2px;
+                background-color: var(--primary-color);
+            }
+            
+            .footer .social li a {
+                width: 36px;
+                height: 36px;
+                line-height: 36px;
+                background-color: rgba(255, 255, 255, 0.1);
+                border-radius: 5px;
+                color: white;
+                display: block;
+                text-align: center;
+            }
+            
+            .footer .social li a:hover {
+                background-color: var(--primary-color);
+            }
+            
+            .preloader .indicator svg {
+                animation: spin 1.5s linear infinite;
+            }
+            
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
     </style>
-    
+
 </head>
+
 <body>
 
-		<!-- Preloader -->
-        <div class="preloader">
-            <div class="loader">
-                <div class="loader-outter"></div>
-                <div class="loader-inner"></div>
+    <!-- Preloader -->
+    <div class="preloader">
+        <div class="loader">
+            <div class="loader-outter"></div>
+            <div class="loader-inner"></div>
 
-                <div class="indicator"> 
-					<svg width="32px" height="32px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-						<g>
-						  <!-- Ala trasera izquierda -->
-						  <path d="M32 32 C22 20, 10 40, 28 40" fill="none" stroke="#ffffff" stroke-width="2"/>
-					  
-						  <!-- Ala trasera derecha -->
-						  <path d="M32 32 C42 20, 54 40, 36 40" fill="none" stroke="#ffffff" stroke-width="2"/>
-					  
-						  <!-- Ala delantera izquierda animada -->
-						  <path d="M32 32 C18 14, 4 34, 24 36" fill="none" stroke="#80B78D" stroke-width="2">
-							<animate attributeName="d" dur="1s" repeatCount="indefinite"
-							  values="
+            <div class="indicator">
+                <svg width="32px" height="32px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                    <g>
+                        <!-- Ala trasera izquierda -->
+                        <path d="M32 32 C22 20, 10 40, 28 40" fill="none" stroke="#ffffff" stroke-width="2" />
+
+                        <!-- Ala trasera derecha -->
+                        <path d="M32 32 C42 20, 54 40, 36 40" fill="none" stroke="#ffffff" stroke-width="2" />
+
+                        <!-- Ala delantera izquierda animada -->
+                        <path d="M32 32 C18 14, 4 34, 24 36" fill="none" stroke="#80B78D" stroke-width="2">
+                            <animate attributeName="d" dur="1s" repeatCount="indefinite" values="
 								M32 32 C18 14, 4 34, 24 36;
 								M32 32 C16 16, 2 32, 22 36;
-								M32 32 C18 14, 4 34, 24 36"/>
-						  </path>
-					  
-						  <!-- Ala delantera derecha animada -->
-						  <path d="M32 32 C46 14, 60 34, 40 36" fill="none" stroke="#80B78D" stroke-width="2">
-							<animate attributeName="d" dur="1s" repeatCount="indefinite"
-							  values="
+								M32 32 C18 14, 4 34, 24 36" />
+                        </path>
+
+                        <!-- Ala delantera derecha animada -->
+                        <path d="M32 32 C46 14, 60 34, 40 36" fill="none" stroke="#80B78D" stroke-width="2">
+                            <animate attributeName="d" dur="1s" repeatCount="indefinite" values="
 								M32 32 C46 14, 60 34, 40 36;
 								M32 32 C48 16, 62 32, 42 36;
-								M32 32 C46 14, 60 34, 40 36"/>
-						  </path>
-					  
-						  <!-- Cuerpo -->
-						  <line x1="32" y1="30" x2="32" y2="40" stroke="#ffffff" stroke-width="2" />
-						</g>
-					  </svg>
-                </div>
+								M32 32 C46 14, 60 34, 40 36" />
+                        </path>
+
+                        <!-- Cuerpo -->
+                        <line x1="32" y1="30" x2="32" y2="40" stroke="#ffffff" stroke-width="2" />
+                    </g>
+                </svg>
             </div>
         </div>
+    </div>
 
-        <!-- End Preloader -->
+    <!-- End Preloader -->
 
     <!-- Header -->
     <header class="header">
@@ -251,7 +460,8 @@
                     <div class="col-lg-6 col-md-7 col-12">
                         <ul class="top-contact">
                             <li><i class="fa fa-phone"></i>+880 1234 56789</li>
-                            <li><i class="fa fa-envelope"></i><a href="mailto:support@yourmail.com">support@yourmail.com</a></li>
+                            <li><i class="fa fa-envelope"></i><a
+                                    href="mailto:support@yourmail.com">support@yourmail.com</a></li>
                         </ul>
                     </div>
                 </div>
@@ -259,44 +469,78 @@
         </div>
     </header>
 
-    <!-- Contenido Principal -->
-    <div class="container">
-        <h1>Mis Pedidos</h1>
-        <ul class="order-list">
-            <li class="order-item">
-                <h2>Pedido #12345</h2>
-                <div class="progress-bar">
-                    <div class="progress-step active">Pedido Recibido</div>
-                    <div class="progress-step completed">En Preparación</div>
-                    <div class="progress-step">En Tránsito</div>
-                    <div class="progress-step">Entregado</div>
-                </div>
-                <div class="order-details">
-                    <p><span>Producto(s):</span> Producto A, Producto B</p>
-                    <p><span>Total:</span> $130.00</p>
-                    <p class="status-date">Fecha Estimada de Entrega: 12 de abril, 2025</p>
-                </div>
-                <a href="#" class="btn">Ver Detalles</a>
-            </li>
-            <li class="order-item">
-                <h2>Pedido #12346</h2>
-                <div class="progress-bar">
-                    <div class="progress-step active">Pedido Recibido</div>
-                    <div class="progress-step">En Preparación</div>
-                    <div class="progress-step">En Tránsito</div>
-                    <div class="progress-step">Entregado</div>
-                </div>
-                <div class="order-details">
-                    <p><span>Producto(s):</span> Producto C</p>
-                    <p><span>Total:</span> $50.00</p>
-                    <p class="status-date">Fecha Estimada de Entrega: 15 de abril, 2025</p>
-                </div>
-                <a href="#" class="btn">Ver Detalles</a>
-            </li>
-        </ul>
-    </div>
 
-    
+    <!-- Panel de Usuario -->
+    <section class="user-panel section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-4 col-12">
+                    <!-- Sidebar -->
+                    <div class="user-sidebar">
+                        <div class="profile-info">
+                            <img src="img/user-profile.jpg" alt="Foto de perfil">
+                            <h3>Hola, Usuario</h3>
+                            <p>Miembro desde: Abril 2023</p>
+                            <a href="user-settings.html" class="btn btn-sm btn-primary">Editar Perfil</a>
+                        </div>
+                        <ul class="sidebar-menu">
+                            <li><a href="usuario.html"><i class="fas fa-user"></i> Perfil</a></li>
+                            <li><a href="MisPedidos.html"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
+                            <li><a href="user-events.html"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
+                            <li><a href="notificaciones.html" class="active"><i class="fas fa-bell"></i> Notificaciones
+                                    <span class="badge badge-primary">3</span></a></li>
+                            <li><a href="user-favorites.html"><i class="fas fa-heart"></i> Favoritos</a></li>
+                            <li><a href="user-settings.html"><i class="fas fa-cog"></i> Configuración</a></li>
+                            <li><a href="logout.html"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
+                        </ul>
+                    </div>
+                    <!-- End Sidebar -->
+                </div>
+                <div class="col-lg-9 col-md-8 col-12">
+                    <!-- Main Content -->
+                    <div class="user-main-content">
+
+
+                        <!-- Contenido Principal -->
+                        <div class="container">
+                            <h1>Mis Pedidos</h1>
+                            <ul class="order-list">
+                                <li class="order-item">
+                                    <h2>Pedido #12345</h2>
+                                    <div class="progress-bar">
+                                        <div class="progress-step active">Pedido Recibido</div>
+                                        <div class="progress-step completed">En Preparación</div>
+                                        <div class="progress-step">En Tránsito</div>
+                                        <div class="progress-step">Entregado</div>
+                                    </div>
+                                    <div class="order-details">
+                                        <p><span>Producto(s):</span> Producto A, Producto B</p>
+                                        <p><span>Total:</span> $130.00</p>
+                                        <p class="status-date">Fecha Estimada de Entrega: 12 de abril, 2025</p>
+                                    </div>
+                                    <a href="#" class="btn">Ver Detalles</a>
+                                </li>
+                                <li class="order-item">
+                                    <h2>Pedido #12346</h2>
+                                    <div class="progress-bar">
+                                        <div class="progress-step active">Pedido Recibido</div>
+                                        <div class="progress-step">En Preparación</div>
+                                        <div class="progress-step">En Tránsito</div>
+                                        <div class="progress-step">Entregado</div>
+                                    </div>
+                                    <div class="order-details">
+                                        <p><span>Producto(s):</span> Producto C</p>
+                                        <p><span>Total:</span> $50.00</p>
+                                        <p class="status-date">Fecha Estimada de Entrega: 15 de abril, 2025</p>
+                                    </div>
+                                    <a href="#" class="btn">Ver Detalles</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 		<!-- Footer Area -->
 		<footer id="footer" class="footer">
 			<!-- Footer Top -->
@@ -391,21 +635,23 @@
 		<a href="#" class="scroll-up"><i class="fa fa-chevron-up"></i></a>
 		<!-- End Scroll Up -->
 
-    <!-- Scripts de Mediplus -->
-    <!-- Fin Contenido -->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.nav.js"></script>
-    <script src="js/slicknav.min.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
-    <script src="js/niceselect.js"></script>
-    <script src="js/tilt.jquery.min.js"></script>
-    <script src="js/owl-carousel.js"></script>
-    <script src="js/jquery.counterup.min.js"></script>
-    <script src="js/steller.js"></script>
-    <script src="js/wow.min.js"></script>
-    <script src="js/jquery.magnific-popup.min.js"></script>
-    <script src="js/waypoints.min.js"></script>
-    <script src="js/main.js"></script>
+		<!-- JS Files -->
+        <script src="js/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/jquery.nav.js"></script>
+		<script src="js/slicknav.min.js"></script>
+		<script src="js/jquery.scrollUp.min.js"></script>
+		<script src="js/niceselect.js"></script>
+		<script src="js/tilt.jquery.min.js"></script>
+		<script src="js/owl-carousel.js"></script>
+		<script src="js/jquery.counterup.min.js"></script>
+		<script src="js/steller.js"></script>
+		<script src="js/wow.min.js"></script>
+		<script src="js/jquery.magnific-popup.min.js"></script>
+		<script src="js/waypoints.min.js"></script>
+		<script src="js/main.js"></script>
+
+  
 </body>
+
 </html>
