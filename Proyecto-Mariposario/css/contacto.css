@@ -1,20 +1,29 @@
 .breadcrumbs {
-    background-image: url('/img/MariposaFondo.jpg'); /* Cambia por tu ruta real */
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    padding: 100px 0;
-    position: relative;
-    color: white;
-  }
-  
-  .breadcrumbs.overlay::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.3); /* Oscurecimiento suave */
-    z-index: 1;
-  }
+	background: url('img/MariposaFondoTienda.jpg') no-repeat center center;
+  background-size: cover;
+  background-repeat:no-repeat;
+	position: relative;
+	color: white;
+	padding: 100px 0; /* Altura ajustable del área del fondo */
+}
+
+.breadcrumbs::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	/*background: rgba(0, 0, 0, 0.4); /* Oscurece un poco la imagen para mejor lectura del texto */
+	z-index: 0;
+}
+
+.breadcrumbs .container,
+.breadcrumbs .bread-inner,
+.breadcrumbs h2,
+.breadcrumbs .bread-list {
+	position: relative;
+	z-index: 1;
+}
+
   

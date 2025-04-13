@@ -247,16 +247,16 @@ select.form-control {
   
 
   .custom-btn {
-	color: white; /* Cambia el color del texto a blanco */
+	color: white; 
   }
 
 
   /* Imagen fondo de carrito */
   .bg-custom {
-	background-image: url('img/CatalogoMariposafondo.jpg'); /* Reemplaza 'tu_imagen.jpg' con el nombre de tu imagen */
-	background-size: cover; /* La imagen cubre todo el contenedor */
-	background-position: center; /* Centra la imagen dentro del contenedor */
-	background-attachment: fixed; /* Fija la imagen de fondo al hacer scroll */
-	height: 100%; /* Asegura que el fondo ocupe toda la altura */
-	width: 100%; /* Asegura que el fondo ocupe todo el ancho */
+	background-image: url('img/CatalogoMariposafondo.jpg'); 
+	background-size: cover; 
+	background-position: center; 
+	background-attachment: fixed; 
+	height: 100%; 
+	width: 100%;
   }
