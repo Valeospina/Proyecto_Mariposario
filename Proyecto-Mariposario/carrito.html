@@ -38,12 +38,14 @@
 		<!-- Animate CSS -->
         <link rel="stylesheet" href="css/animate.min.css">
 		<!-- Magnific Popup CSS -->
-        <link rel="stylesheet" href="css/magnific-popup.css">
-		
+        <link rel="stylesheet" href="css/magnific-popup.css">		
 		<!-- Medipro CSS -->
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="css/responsive.css">
+
+		<!-- Tienda CSS -->
+		<link rel="stylesheet" href="css/tienda.css">
 		
     </head>
 
@@ -141,9 +143,10 @@
 									<nav class="navigation">
 										<ul class="nav menu">
                                             <li><a href="index.html">Inicio</a></li>
-                                            <li class="active"><a href="tienda.html">Tienda</a></li>
+											<li><a href="tienda.html">Tienda</a></li>
 											<li><a href="eventos.html">Eventos</a></li>
 											<li><a href="contact.html">Contacto</a></li>
+
 								
 										</ul>
 									</nav>
@@ -168,51 +171,132 @@
 	</header>
 	<!-- End Header Area -->
 
-                            <div class="container my-5">
+                            <div class="container my-5 bg-custom">
                                 <div class="row">
                                   <!-- Columna izquierda: Resumen -->
                                   <div class="col-md-4">
                                     <div class="card p-3 mb-3">
-                                      <p>Subtotal (1 producto): <strong>US$23.99</strong></p>
+										<div class="user-sidebar">
+											<div class="profile-info text-center"> 
+												<h3 style="color: #d49ad5;">Hola, Usuario</h3>
+												<p>Miembro desde: Abril 2023</p>
+											  </div>
+										</div>
+                                      <div class="form-check mb-3">
+                                        </label>
+                                      </div>
+                                      <hr>
+                                      <div class="text-center">
+                                        <p><strong>Puntos Optenidos por Compras</strong></p><br>
+                                        <h3 style="color: #d49ad5;"><strong>23</strong></h3>
+										<br>
+                                        <button class="btn btn-outline-primary btn-sm">Aplicar Puntos Compra</button>
+                                      </div>
+                                    </div>
+                                  </div>
+                              
+                                  <!-- Columna derecha: Productos -->
+								  <hr>
+                                  <div class="col-md-8">
+                                    <div class="card mb-5">
+                                      <div class="row g-0 align-items-center">
+                                        <div class="col-md-2">
+                                          
+                                        </div>
+                                        <div class="col-md-9">
+                                          <div class="card-body">
+
+											<!-- Producto Agregado 1 -->
+                                            <div class="row g-0 align-items-center">
+												<div class="col-md-3 d-flex justify-content-center align-items-center">
+												  <img src="img/Morpho_Helenor_1.jpg" alt="Producto 1" class="img-fluid 120">
+												</div>
+												<div class="col-md-9">
+													<div class="card-body d-flex flex-column justify-content-center align-items-center">
+													<h5 class="card-title"><strong>Morpho Helenor</strong></h5>
+													<p class="card-text text-success"><strong>Disponible</strong></p>
+													<p class="card-text"><small class="text-muted"><strong>40 en stock</strong></small></p>
+													<div class="d-flex align-items-center mb-2">
+													  <button class="btn btn-outline-secondary btn-sm">-</button>
+													  <input type="number" value="1" class="form-control form-control-sm mx-2" style="width: 60px;">
+													  <button class="btn btn-outline-secondary btn-sm">+</button>
+													</div>
+													<div>
+													  <a href="#" class="text-decoration-none me-2">Eliminar</a>
+													  <a href="#" class="text-decoration-none me-2">Guardar para más tarde</a>
+													  <a href="#" class="text-decoration-none">Compartir</a>
+													</div>
+													<h5 class="mt-2 text-end" style="color: #d49ad5;"><strong>₡12,500.00</strong></h5>
+												  </div>
+												</div>
+											  </div>
+											  <hr>
+
+                                            <!-- Producto Agregado 2 --> 
+											 <hr>
+											<div class="row g-0 align-items-center">
+												<div class="col-md-3 d-flex justify-content-center align-items-center">
+												  <img src="img/Greta_morgane_oto_3.jpg" alt="Producto 1" class="img-fluid 100">
+												</div>
+												<div class="col-md-9">
+													<div class="card-body d-flex flex-column justify-content-center align-items-center">
+													<h5 class="card-title"><strong>Greta Morgane Oto</strong></h5>
+													<p class="card-text text-success"><strong>Disponible</strong></p>
+													<p class="card-text"><small class="text-muted"><strong>15 en stock</strong></small></p>
+													<div class="d-flex align-items-center mb-2">
+													  <button class="btn btn-outline-secondary btn-sm">-</button>
+													  <input type="number" value="1" class="form-control form-control-sm mx-2" style="width: 60px;">
+													  <button class="btn btn-outline-secondary btn-sm">+</button>
+													</div>
+													<div>
+													  <a href="#" class="text-decoration-none me-2">Eliminar</a>
+													  <a href="#" class="text-decoration-none me-2">Guardar para más tarde</a>
+													  <a href="#" class="text-decoration-none">Compartir</a>
+													</div>
+													<h5 class="mt-2 text-end" style="color: #d49ad5;"><strong>₡13,000.00</strong></h5>
+												  </div>
+												</div>
+											  </div>
+											  <hr>
+
+											 <!-- Producto Agregado 3 -->
+											  <hr>
+											 <div class="row g-0 align-items-center">
+												<div class="col-md-3 d-flex justify-content-center align-items-center">
+												  <img src="img/Miltoniopsis Roezlii_5.jpg" alt="Producto 1" class="img-fluid img-small">
+												</div>
+												<div class="col-md-9">
+													<div class="card-body d-flex flex-column justify-content-center align-items-center">
+													<h5 class="card-title"><strong>Orquidea Miltoniopsis Roezlii</strong></h5>
+													<p class="card-text text-success"><strong>Disponible</strong></p>
+													<p class="card-text"><small class="text-muted"><strong>40 en stock</strong></small></p>
+													<div class="d-flex align-items-center mb-2">
+													  <button class="btn btn-outline-secondary btn-sm">-</button>
+													  <input type="number" value="1" class="form-control form-control-sm mx-2" style="width: 60px;">
+													  <button class="btn btn-outline-secondary btn-sm">+</button>
+													</div>
+													<div>
+													  <a href="#" class="text-decoration-none me-2">Eliminar</a>
+													  <a href="#" class="text-decoration-none me-2">Guardar para más tarde</a>
+													  <a href="#" class="text-decoration-none">Compartir</a>
+													</div>
+													<h5 class="mt-2 text-end" style="color: #d49ad5;"><strong>₡12,000.00</strong></h5>
+												  </div>
+												</div>
+											  </div>
+											  <hr>
+
+                                          <!-- Modulo para proceder al pago -->
+										  <hr>
+											<p><strong>Subtotal (3 productos):</strong></p>
+											<h3 style="color: #d49ad5;"> <strong>₡37,500.00</strong></h3><br>
                                       <div class="form-check mb-3">
                                         <input class="form-check-input" type="checkbox" value="" id="regalo">
                                         <label class="form-check-label" for="regalo">
                                           Este pedido es un regalo
                                         </label>
                                       </div>
-									  <a href="pago.html" class="btn btn-warning w-100">Proceder al pago</a>
-                                      <hr>
-                                      <div class="text-center">
-                                        <p><strong>Prime</strong></p>
-                                        <p class="text-muted">Envío más rápido. Prueba gratis por 30 días</p>
-                                        <button class="btn btn-outline-primary btn-sm">Prueba Prime</button>
-                                      </div>
-                                    </div>
-                                  </div>
-                              
-                                  <!-- Columna derecha: Productos -->
-                                  <div class="col-md-8">
-                                    <div class="card mb-3">
-                                      <div class="row g-0 align-items-center">
-                                        <div class="col-md-3">
-                                          <img src="https://via.placeholder.com/150" class="img-fluid p-2" alt="Producto">
-                                        </div>
-                                        <div class="col-md-9">
-                                          <div class="card-body">
-                                            <h5 class="card-title">Nombre del producto</h5>
-                                            <p class="card-text text-success">Disponible</p>
-                                            <p class="card-text"><small class="text-muted">Color: Negro</small></p>
-                                            <div class="d-flex align-items-center mb-2">
-                                              <button class="btn btn-outline-secondary btn-sm">-</button>
-                                              <input type="number" value="1" class="form-control form-control-sm mx-2" style="width: 60px;">
-                                              <button class="btn btn-outline-secondary btn-sm">+</button>
-                                            </div>
-                                            <div>
-                                              <a href="#" class="text-decoration-none me-2">Eliminar</a>
-                                              <a href="#" class="text-decoration-none me-2">Guardar para más tarde</a>
-                                              <a href="#" class="text-decoration-none">Compartir</a>
-                                            </div>
-                                            <h5 class="mt-2 text-end text-primary">US$23.99</h5>
+									  <a href="pago.html" class="btn btn-warning w-100 text-white">Proceder al pago</a>
                                           </div>
                                         </div>
                                       </div>
@@ -220,6 +304,8 @@
                                   </div>
                                 </div>
                               </div>
+							  <br><br><br><br><br><br><br><br><br><br><br>
+
 
             <!-- Footer Area -->
 			<footer id="footer" class="footer">
