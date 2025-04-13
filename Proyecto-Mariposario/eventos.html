@@ -167,109 +167,65 @@
 	</header>
 	<!-- End Header Area -->
 
-<!-- Sección de Búsqueda y Filtro de Eventos -->
-<div id="imagen-facts" class="imagen-facts section">
-	<div class="overlay-form-container">
-		<form method="GET" action="#">
-			<div class="row justify-content-center align-items-center">
-				<!-- Campo de búsqueda -->
-				<div class="col-md-8 col-lg-5">
-					<div class="form-group">
-						<input type="text" name="buscar_evento" class="form-control" placeholder="Buscar por nombre del evento">
-					</div>
-				</div>
-				<!-- Botón de búsqueda -->
-				<div class="col-md-3 col-lg-2">
-					<div class="form-group">
-						<button class="btn btn-primary w-100" type="submit">
-							<i class="fa fa-search"></i> Buscar
-						</button>
-					</div>
-				</div>
-				<!-- Filtro por tipo -->
-				<div class="col-md-2 col-lg-2">
-					<div class="form-group">
-						<select class="form-control" name="tipo_evento">
-							<option value="">Filtrar por tipo</option>
-							<option value="1">Talleres</option>
-							<option value="2">Visitas Guiadas</option>
-							<option value="3">Charlas</option>
-						</select>
-					</div>
+<!-- Sección de Lista de Eventos con Estilo Booking -->
+<section class="container mt-5">
+	<h2 class="mb-4">Eventos disponibles</h2>
+
+	<!-- Evento: Taller de Mariposas -->
+	<div class="card mb-4 shadow-sm border-0" style="max-width: 100%;">
+		<div class="row g-0 align-items-center">
+			<div class="col-md-4">
+				<img src="img/pupa-de-Graphium-agamemnon-lifeder-1.jpg" class="img-fluid rounded-start w-100 h-100" style="object-fit: cover; min-height: 220px;" alt="Taller de Mariposas">
+			</div>
+			<div class="col-md-8">
+				<div class="card-body">
+					<h5 class="card-title">Taller de Mariposas</h5>
+					<p class="card-text text-muted">Conoce el ciclo de vida de las mariposas. Cupo limitado.</p>
+					<p class="card-text"><strong>Incluye:</strong> materiales, guía profesional, refrigerio y certificado.</p>
+					<p class="card-text fw-bold text-success">₡5,000.00</p>
+					<a href="Reserva.html" class="btn btn-success text-white">Reservar</a>
 				</div>
 			</div>
-		</form>
+		</div>
 	</div>
-	<div class="text-center mt-4">
-		<h1 style="color: white; font-size: 4rem; font-weight: bold; text-shadow: 2px 2px 5px rgba(0,0,0,0.6);">
-			Eventos
-		</h1>
+
+	<!-- Evento: Visita Guiada -->
+	<div class="card mb-4 shadow-sm border-0" style="max-width: 100%;">
+		<div class="row g-0 align-items-center">
+			<div class="col-md-4">
+				<img src="img/butterfly_gardens-361291.webp" class="img-fluid rounded-start w-100 h-100" style="object-fit: cover; min-height: 220px;" alt="Visita Guiada">
+			</div>
+			<div class="col-md-8">
+				<div class="card-body">
+					<h5 class="card-title">Visita Guiada</h5>
+					<p class="card-text text-muted">Recorrido especial por el jardín con guía experto.</p>
+					<p class="card-text"><strong>Incluye:</strong> entrada al jardín, guía naturalista, recorrido de 1 hora.</p>
+					<p class="card-text fw-bold text-success">₡3,500.00</p>
+					<a href="Reserva.html" class="btn btn-success text-white">Reservar</a>
+				</div>
+			</div>
+		</div>
 	</div>
-</div>
 
-<!-- Lista de Eventos -->
-<section class="products section">
-	<div class="container">
-
-		<!-- Talleres -->
-		<h2 class="mb-4 mt-5">Talleres</h2>
-		<div class="row">
-			<div class="col-lg-3 col-md-4 col-12 mb-4">
-				<div class="single-product shadow rounded p-3 h-100 d-flex flex-column">
-					<div class="product-img">
-						<img src="img/pupa-de-Graphium-agamemnon-lifeder-1.jpg" alt="Taller de Mariposas" class="img-fluid">
-					</div>
-					<div class="product-content flex-grow-1">
-						<h4 class="mt-3">Taller de Mariposas</h4>
-						<p class="text-muted">Conoce el ciclo de vida de las mariposas. Cupo limitado.</p>
-						<div class="product-price mb-3"><span>₡5,000.00</span></div>
-					</div>
-					<a href="Reserva.html" class="btn btn-success mt-auto" style="color: white; font-weight: bold;">Reservar</a>
+	<!-- Evento: Charla de Orquídeas -->
+	<div class="card mb-4 shadow-sm border-0" style="max-width: 100%;">
+		<div class="row g-0 align-items-center">
+			<div class="col-md-4">
+				<img src="img/orquideas-de-exterior-scaled.jpg" class="img-fluid rounded-start w-100 h-100" style="object-fit: cover; min-height: 220px;" alt="Charla de Orquídeas">
+			</div>
+			<div class="col-md-8">
+				<div class="card-body">
+					<h5 class="card-title">Charla de Orquídeas</h5>
+					<p class="card-text text-muted">Aprende sobre variedades nativas y su conservación.</p>
+					<p class="card-text"><strong>Incluye:</strong> charla guiada, folleto informativo, café y degustación.</p>
+					<p class="card-text fw-bold text-success">₡4,000.00</p>
+					<a href="Reserva.html" class="btn btn-success text-white">Reservar</a>
 				</div>
 			</div>
-			<!-- Puedes agregar más talleres aquí -->
 		</div>
-
-		<!-- Visitas Guiadas -->
-		<h2 class="mb-4 mt-5">Visitas Guiadas</h2>
-		<div class="row">
-			<div class="col-lg-3 col-md-4 col-12 mb-4">
-				<div class="single-product shadow rounded p-3 h-100 d-flex flex-column">
-					<div class="product-img">
-						<img src="img/butterfly_gardens-361291.webp" alt="Visita Guiada" class="img-fluid">
-					</div>
-					<div class="product-content flex-grow-1">
-						<h4 class="mt-3">Visita Guiada</h4>
-						<p class="text-muted">Recorrido especial por el jardín con guía experto.</p>
-						<div class="product-price mb-3"><span>₡3,500.00</span></div>
-					</div>
-					<a href="Reserva.html" class="btn btn-success mt-auto" style="color: white; font-weight: bold;">Reservar</a>
-				</div>
-			</div>
-			<!-- Puedes agregar más visitas guiadas aquí -->
-		</div>
-
-		<!-- Charlas -->
-		<h2 class="mb-4 mt-5">Charlas</h2>
-		<div class="row">
-			<div class="col-lg-3 col-md-4 col-12 mb-4">
-				<div class="single-product shadow rounded p-3 h-100 d-flex flex-column">
-					<div class="product-img">
-						<img src="img/orquideas-de-exterior-scaled.jpg" alt="Charla de Orquídeas" class="img-fluid">
-					</div>
-					<div class="product-content flex-grow-1">
-						<h4 class="mt-3">Charla de Orquídeas</h4>
-						<p class="text-muted">Aprende sobre variedades nativas y su conservación.</p>
-						<div class="product-price mb-3"><span>₡4,000.00</span></div>
-					</div>
-					<a href="Reserva.html" class="btn btn-success mt-auto" style="color: white; font-weight: bold;">Reservar</a>
-				</div>
-			</div>
-			<!-- Puedes agregar más charlas aquí -->
-		</div>
-
 	</div>
 </section>
+
 
 <!--------------------------------------------------------------------------------------------------------------->
 			
