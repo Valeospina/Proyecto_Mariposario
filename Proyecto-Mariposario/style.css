@@ -722,6 +722,8 @@ main {
 	padding: 0;
 	height: 230px;
 }
+
+
 .schedule .schedule-inner {
 	position: relative;
 	transform: translateY(-50%);
