@@ -222,5 +222,6 @@ CREATE TABLE Carrito_Producto (
     FOREIGN KEY (ID_Producto) REFERENCES Producto(ID_Producto)
 );
 
+ALTER TABLE Reserva ADD Estado ENUM('Pendiente', 'Aprobada') DEFAULT 'Pendiente';
 
 
