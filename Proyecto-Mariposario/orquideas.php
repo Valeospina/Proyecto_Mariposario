@@ -8,7 +8,7 @@
         <meta name='copyright' content=''>
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <title>Jardin De Mariposas - Mariposas</title> <link rel="icon" href="img/favicon.png">
+        <title>Jardin De Mariposas - Orquídeas</title> <link rel="icon" href="img/favicon.png">
         <link rel="stylesheet" href="./css/tienda.css">
 
         <link href="https://fonts.googleapis.com/css?family=Poppins:200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
@@ -72,7 +72,8 @@
                                     <nav class="navigation">
                                         <ul class="nav menu">
                                             <li><a href="index.html">Inicio</a></li>
-                                            <li class="active"><a href="mariposas.php">Mariposas</a></li> <li><a href="orquideas.php">Orquideas</a></li>
+                                            <li><a href="mariposas.php">Mariposas</a></li>
+                                            <li class="active"><a href="orquideas.php">Orquídeas</a></li>
                                         </ul>
                                     </nav>
                                 </div>
@@ -92,11 +93,11 @@
 
         <div id="orquidea-facts" class="orquidea-facts section">
             <div class="overlay-form-container">
-                <form method="GET" action="mariposas.php"> <div class="row justify-content-center align-items-center">
+                <form method="GET" action="orquideas.php"> <div class="row justify-content-center align-items-center">
                         <div class="col-md-8 col-lg-5">
                             <div class="form-group">
                                 <?php
-                                include 'db.php'; // Include the database connection file
+                                include 'DB.php'; // Include the database connection file
                                     $searchTerm = isset($_GET['buscar']) ? htmlspecialchars($_GET['buscar']) : '';
                                 ?>
                                 <input type="text" name="buscar" class="form-control" placeholder="Buscar por nombre de producto" style="height: 45px; padding: 6px 12px;" value="<?php echo $searchTerm; ?>">
@@ -136,14 +137,15 @@
                             $param_values[] = '%' . $searchTerm . '%';
                         }
 
-                        // Add category filter condition for 'Mariposas'
+                        // Add category filter condition for 'Orquídeas'
+                        // If no category is selected in the dropdown, default to 'Orquídeas'
                         if (!empty($selectedCategory)) {
                             $conditions[] = "Categoria = ?";
                             $param_types .= 's'; // 's' for string
                             $param_values[] = $selectedCategory;
                         } else {
-                            // Default to show only Mariposas if no category filter is active on this page
-                            $conditions[] = "Categoria = 'Mariposas'"; // No need to bind if it's a fixed string
+                            // Default to show only Orquídeas if no category filter is active on this page
+                            $conditions[] = "Categoria = 'Orquídeas'"; // No need to bind if it's a fixed string
                         }
 
                         // Append conditions to SQL query
@@ -153,7 +155,6 @@
 
                         try {
                             // Prepare the statement
-                            // This is line 170 where the Fatal error was occurring if $conn was null
                             $stmt = $conn->prepare($sql);
 
                             if ($stmt === false) {

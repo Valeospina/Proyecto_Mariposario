@@ -1,187 +1,209 @@
 <?php
-session_start(); // Start the session at the very beginning of the script
+session_start(); // Inicia la sesión al principio de todo
 
-// Initialize the cart if it doesn't exist in the session
-if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [];
+// --- Simulación de datos de usuario (reemplazar con tu lógica de inicio de sesión real) ---
+if (!isset($_SESSION['user_logged_in']) || $_SESSION['user_logged_in'] !== true) {
+    // Si el usuario no está logueado, establece datos por defecto
+    $_SESSION['user_name'] = 'Usuario'; // Nombre por defecto
+    $_SESSION['user_avatar'] = 'img/default-avatar.png'; // Ruta a una imagen de avatar por defecto
+    $_SESSION['user_points'] = 0;
+    $_SESSION['user_logged_in'] = false; // Indica que el usuario no está realmente logueado
+} else {
+    // Si el usuario ya está logueado, puedes cargar sus datos reales desde la base de datos o donde los almacenes
+    // Por ejemplo, si tienes un array $_SESSION['user_data'] con 'name', 'avatar', 'points'
+    // $_SESSION['user_name'] = $_SESSION['user_data']['name'];
+    // $_SESSION['user_avatar'] = $_SESSION['user_data']['avatar'];
+    // $_SESSION['user_points'] = $_SESSION['user_data']['points'];
 }
 
-// --- Handle "Add to Cart" requests ---
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['producto_id'])) {
-    $producto_id = intval($_POST['producto_id']);
-    $nombre = htmlspecialchars($_POST['nombre']);
-    $precio = floatval($_POST['precio']);
-    $cantidad = 1; // Default quantity when adding an item
+// Define la variable $response al inicio para evitar errores de referencia
+$response = ['success' => false, 'message' => ''];
 
-    // Check if the product is already in the cart
-    if (isset($_SESSION['cart'][$producto_id])) {
-        // If it exists, just increase the quantity
-        $_SESSION['cart'][$producto_id]['cantidad'] += $cantidad;
-    } else {
-        // If not, add the new product to the cart
-        $_SESSION['cart'][$producto_id] = [
-            'nombre' => $nombre,
-            'precio' => $precio,
-            'cantidad' => $cantidad
-        ];
-    }
+// --- Lógica para Peticiones AJAX (POST y GET para el carrito) ---
+// Identificamos si la petición es AJAX y qué tipo de petición es
+if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
 
-    // Optional: Redirect back to the tienda.html or mariposas.html after adding
-    // This prevents form resubmission on page refresh
-    header('Location: carrito.php'); // Redirect to show the updated cart
-    exit();
-}
+    // Si es una solicitud POST, se asume que es para AGREGAR, ACTUALIZAR o ELIMINAR del carrito
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $action = $_POST['action'] ?? ''; // Obtener la acción solicitada
 
-// --- Handle "Remove from Cart" requests ---
-if (isset($_GET['remove_item'])) {
-    $remove_id = intval($_GET['remove_item']);
-    if (isset($_SESSION['cart'][$remove_id])) {
-        unset($_SESSION['cart'][$remove_id]); // Remove the item from the cart
-    }
-    header('Location: carrito.php'); // Redirect to show the updated cart
-    exit();
-}
+        if ($action === 'add') {
+            // Lógica para AGREGAR un producto (ya existente)
+            if (isset($_POST['id'], $_POST['nombre'], $_POST['precio'])) {
+                $id = filter_var($_POST['id'], FILTER_SANITIZE_NUMBER_INT);
+                $nombre = filter_var($_POST['nombre'], FILTER_SANITIZE_STRING);
+                $precio = filter_var($_POST['precio'], FILTER_VALIDATE_FLOAT);
 
-// --- Handle "Update Quantity" requests ---
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_quantity'])) {
-    $update_id = intval($_POST['update_quantity']);
-    $new_quantity = intval($_POST['new_quantity']);
+                if ($id !== false && $id > 0 && $nombre !== false && $precio !== false && $precio >= 0) {
+                    if (!isset($_SESSION['carrito'])) {
+                        $_SESSION['carrito'] = [];
+                    }
 
-    if (isset($_SESSION['cart'][$update_id])) {
-        if ($new_quantity > 0) {
-            $_SESSION['cart'][$update_id]['cantidad'] = $new_quantity;
+                    $found = false;
+                    foreach ($_SESSION['carrito'] as &$item) {
+                        if ($item['id'] == $id) {
+                            $item['cantidad']++;
+                            $found = true;
+                            break;
+                        }
+                    }
+                    unset($item);
+
+                    if (!$found) {
+                        $_SESSION['carrito'][] = [
+                            'id' => $id,
+                            'nombre' => $nombre,
+                            'precio' => $precio,
+                            'cantidad' => 1
+                        ];
+                    }
+
+                    // Acumular puntos solo cuando se agrega un producto al carrito
+                    // Puedes definir una lógica más compleja para los puntos, por ejemplo, 10 puntos por cada ₡1000 gastados
+                    if ($_SESSION['user_logged_in']) { // Solo acumula puntos si el usuario está "logueado"
+                        $_SESSION['user_points'] += 10; // Ejemplo: 10 puntos por cada producto agregado
+                    }
+
+
+                    $response['success'] = true;
+                    $response['message'] = 'Producto agregado al carrito.';
+                    $response['total_items'] = array_sum(array_column($_SESSION['carrito'], 'cantidad'));
+                    $response['user_points'] = $_SESSION['user_points']; // Enviar los puntos actualizados
+                } else {
+                    $response['message'] = 'Datos de producto inválidos.';
+                }
+            } else {
+                $response['message'] = 'Faltan datos para agregar el producto.';
+            }
+        } elseif ($action === 'update_quantity') {
+            // Lógica para ACTUALIZAR la cantidad de un producto
+            if (isset($_POST['id'], $_POST['cantidad'])) {
+                $id = filter_var($_POST['id'], FILTER_SANITIZE_NUMBER_INT);
+                $cantidad = filter_var($_POST['cantidad'], FILTER_SANITIZE_NUMBER_INT);
+
+                if ($id !== false && $id > 0 && $cantidad !== false && $cantidad >= 0) {
+                    if (isset($_SESSION['carrito'])) {
+                        foreach ($_SESSION['carrito'] as &$item) {
+                            if ($item['id'] == $id) {
+                                $item['cantidad'] = $cantidad;
+                                $response['success'] = true;
+                                $response['message'] = 'Cantidad actualizada.';
+                                break;
+                            }
+                        }
+                        unset($item); // Romper la referencia
+                    }
+                    if (!$response['success']) {
+                        $response['message'] = 'Producto no encontrado en el carrito.';
+                    }
+                } else {
+                    $response['message'] = 'Datos de actualización de cantidad inválidos.';
+                }
+            } else {
+                $response['message'] = 'Faltan datos para actualizar la cantidad.';
+            }
+        } elseif ($action === 'remove') {
+            // Lógica para ELIMINAR un producto
+            if (isset($_POST['id'])) {
+                $id = filter_var($_POST['id'], FILTER_SANITIZE_NUMBER_INT);
+
+                if ($id !== false && $id > 0) {
+                    if (isset($_SESSION['carrito'])) {
+                        $initial_count = count($_SESSION['carrito']);
+                        $_SESSION['carrito'] = array_filter($_SESSION['carrito'], function($item) use ($id) {
+                            return $item['id'] != $id;
+                        });
+                        // Reindexar el array para evitar problemas con foreach y empty()
+                        $_SESSION['carrito'] = array_values($_SESSION['carrito']);
+
+                        if (count($_SESSION['carrito']) < $initial_count) {
+                            $response['success'] = true;
+                            $response['message'] = 'Producto eliminado del carrito.';
+                        } else {
+                            $response['message'] = 'Producto no encontrado en el carrito.';
+                        }
+                    } else {
+                        $response['message'] = 'El carrito está vacío.';
+                    }
+                } else {
+                    $response['message'] = 'ID de producto inválido para eliminar.';
+                }
+            } else {
+                $response['message'] = 'Falta ID del producto para eliminar.';
+            }
         } else {
-            // If quantity is 0 or less, remove the item
-            unset($_SESSION['cart'][$update_id]);
+            $response['message'] = 'Acción POST no reconocida.';
         }
     }
-    header('Location: carrito.php'); // Redirect to show the updated cart
-    exit();
+    // Si es una solicitud GET y se pide la cantidad de ítems
+    else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'get_count') {
+        $total_items = 0;
+        if (isset($_SESSION['carrito']) && is_array($_SESSION['carrito'])) {
+            foreach ($_SESSION['carrito'] as $item) {
+                $total_items += $item['cantidad'];
+            }
+        }
+        $response['success'] = true;
+        $response['total_items'] = $total_items;
+        $response['message'] = 'Cantidad de items obtenida.'; // Mensaje opcional
+        $response['user_name'] = $_SESSION['user_name'];
+        $response['user_avatar'] = $_SESSION['user_avatar'];
+        $response['user_points'] = $_SESSION['user_points'];
+
+    }
+    // Si es una solicitud GET que no es para obtener la cantidad
+    else {
+        $response['message'] = 'Método de solicitud o acción no permitida para AJAX.';
+    }
+
+    // Calcular el total de ítems en el carrito después de la acción para enviarlo siempre
+    $response['total_items'] = 0;
+    if (isset($_SESSION['carrito']) && is_array($_SESSION['carrito'])) {
+        foreach ($_SESSION['carrito'] as $item) {
+            $response['total_items'] += $item['cantidad'];
+        }
+    }
+    // Calcular el nuevo subtotal para el item actualizado (si aplica)
+    if ($action === 'update_quantity' && $response['success'] && isset($id)) {
+        foreach ($_SESSION['carrito'] as $item) {
+            if ($item['id'] == $id) {
+                $response['new_subtotal'] = $item['precio'] * $item['cantidad'];
+                break;
+            }
+        }
+    }
+
+    // Siempre que sea una petición AJAX, devolvemos JSON y salimos
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit(); // ¡Muy importante para detener la ejecución y no enviar HTML!
 }
 
+// --- Lógica para la Visualización de la Página del Carrito (Petición HTTP normal) ---
+// Si no es una petición AJAX, entonces mostramos la página completa del carrito
+// (Este bloque no se ejecuta si la petición es AJAX, gracias al exit() de arriba)
 
-// Calculate total cart value
-$total_carrito = 0;
-foreach ($_SESSION['cart'] as $item) {
-    $total_carrito += $item['precio'] * $item['cantidad'];
+// Ejemplo básico de cómo podrías mostrar el carrito
+$carrito_actual = $_SESSION['carrito'] ?? []; // Obtener el carrito de la sesión
+$total_carrito_final = 0; // Usar una variable diferente para evitar conflictos
+foreach ($carrito_actual as $item) {
+    $total_carrito_final += $item['precio'] * $item['cantidad'];
 }
-
 ?>
-
-<!doctype html>
-<html class="no-js" lang="zxx">
+<!DOCTYPE html>
+<html lang="es">
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="keywords" content="Site keywords here" />
-    <meta name="description" content="" />
-    <meta name="copyright" content="" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/tienda.css">
+    <link rel="stylesheet" href="css/custom-cart-user.css">
 
-    <title>Carrito de Compras - Jardin De Mariposas</title>
-
-    <link rel="icon" href="img/favicon.png" />
-    <link rel="stylesheet" href="./css/tienda.css" />
-
-    <link
-        href="https://fonts.googleapis.com/css?family=Poppins:200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap"
-        rel="stylesheet" />
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
-    <link rel="stylesheet" href="css/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/nice-select.css" />
-    <link rel="stylesheet" href="css/font-awesome.min.css" />
-    <link rel="stylesheet" href="css/icofont.css" />
-    <link rel="stylesheet" href="css/slicknav.min.css" />
-    <link rel="stylesheet" href="css/owl-carousel.css" />
-    <link rel="stylesheet" href="css/datepicker.css" />
-    <link rel="stylesheet" href="css/animate.min.css" />
-    <link rel="stylesheet" href="css/magnific-popup.css" />
-    <link rel="stylesheet" href="css/tienda.css" />
-
-    <link rel="stylesheet" href="css/normalize.css" />
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="css/responsive.css" />
-
-    <style>
-        /* Estilos específicos para el carrito */
-        .cart-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .cart-table th,
-        .cart-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-
-        .cart-table th {
-            background-color: #f2f2f2;
-        }
-
-        .cart-total {
-            text-align: right;
-            margin-top: 20px;
-            font-size: 1.2em;
-            font-weight: bold;
-        }
-
-        .btn-remove {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .btn-remove:hover {
-            background-color: #c82333;
-        }
-
-        .quantity-input {
-            width: 60px;
-            padding: 5px;
-            text-align: center;
-        }
-    </style>
 </head>
-
-<body class="user">
-    <div class="preloader">
-        <div class="loader">
-            <div class="loader-outter"></div>
-            <div class="loader-inner"></div>
-            <div class="indicator">
-                <svg width="32px" height="32px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                    <g>
-                        <path d="M32 32 C22 20, 10 40, 28 40" fill="none" stroke="#ffffff" stroke-width="2"/>
-                        <path d="M32 32 C42 20, 54 40, 36 40" fill="none" stroke="#ffffff" stroke-width="2"/>
-                        <path d="M32 32 C18 14, 4 34, 24 36" fill="none" stroke="#80B78D" stroke-width="2">
-                            <animate attributeName="d" dur="1s" repeatCount="indefinite"
-                                values="
-                                M32 32 C18 14, 4 34, 24 36;
-                                M32 32 C16 16, 2 32, 22 36;
-                                M32 32 C18 14, 4 34, 24 36"/>
-                        </path>
-                        <path d="M32 32 C46 14, 60 34, 40 36" fill="none" stroke="#80B78D" stroke-width="2">
-                            <animate attributeName="d" dur="1s" repeatCount="indefinite"
-                                values="
-                                M32 32 C46 14, 60 34, 40 36;
-                                M32 32 C48 16, 62 32, 42 36;
-                                M32 32 C46 14, 60 34, 40 36"/>
-                        </path>
-                        <line x1="32" y1="30" x2="32" y2="40" stroke="#ffffff" stroke-width="2" />
-                    </g>
-                </svg>
-            </div>
-        </div>
-    </div>
+<body>
     <header class="header">
         <div class="topbar">
             <div class="container">
@@ -189,20 +211,23 @@ foreach ($_SESSION['cart'] as $item) {
                     <div class="col-lg-6 col-md-5 col-12">
                         <ul class="top-link">
                             <li>
-                                <a href="usuario.html" style="text-decoration: none;">
-                                    <i class="fas fa-user" style="font-size: 18px; color: #80B78D; padding: 6px;"></i>
-                                    <span style="color: #2C2D3F;">Usuario</span>
+                                <a href="usuario.html" class="user-profile-link">
+                                    <img src="<?php echo htmlspecialchars($_SESSION['user_avatar']); ?>" alt="Avatar de Usuario" class="user-avatar">
+                                    <div class="user-info-text">
+                                        <span class="user-greeting">Hola, <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+                                        <span class="user-points-display" id="user-points-display"><?php echo htmlspecialchars($_SESSION['user_points']); ?> Puntos</span>
+                                    </div>
                                 </a>
                             </li>
-                            <li class="admin"><a href="admin.html">Admin</a></li>
+                            <li class="admin-link"><a href="admin.html">Admin</a></li>
                         </ul>
-                        </div>
+                    </div>
                     <div class="col-lg-6 col-md-7 col-12">
                         <ul class="top-contact">
                             <li><i class="fa fa-phone"></i>+506 8888 8888</li>
                             <li><i class="fa fa-envelope"></i><a href="mailto:info@mariposario.com">info@mariposario.com</a></li>
                         </ul>
-                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -212,26 +237,36 @@ foreach ($_SESSION['cart'] as $item) {
                     <div class="row">
                         <div class="col-lg-3 col-md-3 col-12">
                             <div class="logo">
-                                <a href="index.html"><img src="img/logo.png" alt="Logo Mariposario" /></a>
+                                <a href="index.html"><img src="img/logo.png" alt="Logo Mariposario"></a>
                             </div>
                             <div class="mobile-nav"></div>
-                            </div>
+                        </div>
                         <div class="col-lg-7 col-md-9 col-12">
                             <div class="main-menu">
                                 <nav class="navigation">
                                     <ul class="nav menu">
                                         <li><a href="index.html">Inicio</a></li>
-                                        <li><a href="tienda.html">Volver a tienda</a></li>
-                                        <li class="active"><a href="mariposas.html">Mariposas</a></li>
+                                        <li><a href="mariposas.php">Mariposas</a></li>
+                                        <li><a href="orquideas.php">Orquideas</a></li>
                                     </ul>
                                 </nav>
                             </div>
-                            </div>
+                        </div>
                         <div class="col-lg-2 col-12">
                             <div class="get-quote">
-                                <a href="carrito.php" class="btn btn-carrito"
-                                    style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: transparent; box-shadow: none;">
-                                    <i class="fa fa-shopping-cart icono-carrito" style="color: #42764D; font-size: 20px;"></i>
+                                <a href="carrito.php" class="btn btn-primary btn-shopping-cart">
+                                    <i class="fa fa-shopping-cart cart-icon"></i>
+                                    <span class="cart-item-count" id="cart-item-count">
+                                        <?php
+                                            $total_items_header = 0;
+                                            if (isset($_SESSION['carrito']) && is_array($_SESSION['carrito'])) {
+                                                foreach ($_SESSION['carrito'] as $item) {
+                                                    $total_items_header += $item['cantidad'];
+                                                }
+                                            }
+                                            echo $total_items_header;
+                                        ?>
+                                    </span>
                                 </a>
                             </div>
                         </div>
@@ -239,81 +274,59 @@ foreach ($_SESSION['cart'] as $item) {
                 </div>
             </div>
         </div>
-        </header>
-    <div class="breadcrumbs overlay">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 col-md-12 col-12">
-                    <div class="breadcrumbs-content">
-                        <h1 class="page-title">Carrito de Compras</h1>
-                        <p>Revisa y gestiona los productos en tu carrito.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <section class="shopping-cart section">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <div class="cart-main">
-                        <div class="cart-table-wrapper">
-                            <table class="cart-table">
-                                <thead>
-                                    <tr>
-                                        <th>Producto</th>
-                                        <th>Precio Unitario</th>
-                                        <th>Cantidad</th>
-                                        <th>Subtotal</th>
-                                        <th>Acción</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if (!empty($_SESSION['cart'])): ?>
-                                        <?php foreach ($_SESSION['cart'] as $id => $item): ?>
-                                            <tr>
-                                                <td><?php echo $item['nombre']; ?></td>
-                                                <td>$<?php echo number_format($item['precio'], 2); ?></td>
-                                                <td>
-                                                    <form method="POST" action="carrito.php" style="display:inline-block;">
-                                                        <input type="hidden" name="update_quantity" value="<?php echo $id; ?>">
-                                                        <input type="number" name="new_quantity" value="<?php echo $item['cantidad']; ?>" min="1" class="quantity-input" onchange="this.form.submit()">
-                                                    </form>
-                                                </td>
-                                                <td>$<?php echo number_format($item['precio'] * $item['cantidad'], 2); ?></td>
-                                                <td>
-                                                    <a href="carrito.php?remove_item=<?php echo $id; ?>" class="btn-remove">Eliminar</a>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    <?php else: ?>
-                                        <tr>
-                                            <td colspan="5" style="text-align: center;">Tu carrito está vacío.</td>
-                                        </tr>
-                                    <?php endif; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="cart-total">
-                            Total: $<?php echo number_format($total_carrito, 2); ?>
-                        </div>
-                        <div class="shopping-cart-button">
-                            <div class="row">
-                                <div class="col-md-6 col-12 text-left">
-                                    <a href="mariposas.php" class="btn btn-primary">Continuar Comprando</a>
+    </header>
+
+    <div class="container my-5">
+        <h2 class="mb-4">Tu Carrito de Compras</h2>
+        <?php if (empty($carrito_actual)): ?>
+            <div class="alert alert-info">Tu carrito está vacío. ¡Agrega algunos productos!</div>
+        <?php else: ?>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Precio Unitario</th>
+                        <th>Cantidad</th>
+                        <th>Subtotal</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="cart-items-body"> <?php foreach ($carrito_actual as $item): ?>
+                    <tr data-product-id="<?php echo htmlspecialchars($item['id']); ?>"> <td><?php echo htmlspecialchars($item['nombre']); ?></td>
+                        <td class="product-price" data-price="<?php echo htmlspecialchars($item['precio']); ?>">₡<?php echo number_format($item['precio'], 2, ',', '.'); ?></td>
+                        <td>
+                            <div class="input-group" style="width: 120px;">
+                                <div class="input-group-prepend">
+                                    <button class="btn btn-outline-secondary btn-sm update-quantity" type="button" data-action="decrease" data-id="<?php echo htmlspecialchars($item['id']); ?>">-</button>
                                 </div>
-                                <div class="col-md-6 col-12 text-right">
-                                    <?php if (!empty($_SESSION['cart'])): ?>
-                                        <a href="pago.html" class="btn btn-success">Proceder al Pago</a>
-                                    <?php endif; ?>
+                                <input type="text" class="form-control form-control-sm text-center product-quantity" value="<?php echo htmlspecialchars($item['cantidad']); ?>" data-id="<?php echo htmlspecialchars($item['id']); ?>" readonly>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary btn-sm update-quantity" type="button" data-action="increase" data-id="<?php echo htmlspecialchars($item['id']); ?>">+</button>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
+                        </td>
+                        <td class="product-subtotal" data-subtotal="<?php echo htmlspecialchars($item['precio'] * $item['cantidad']); ?>">₡<?php echo number_format($item['precio'] * $item['cantidad'], 2, ',', '.'); ?></td>
+                        <td>
+                            <button class="btn btn-sm btn-danger remove-cart-item" data-id="<?php echo htmlspecialchars($item['id']); ?>">Eliminar</button>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-right"><strong>Total del Carrito:</strong></td>
+                        <td id="total-carrito-display"><strong>₡<?php echo number_format($total_carrito_final, 2, ',', '.'); ?></strong></td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+            <div class="text-right">
+                <a href="mariposas.php" class="btn btn-secondary">Seguir Comprando</a>
+                <button class="btn btn-success">Proceder al Pago</button>
             </div>
-        </div>
-    </section>
+        <?php endif; ?>
+    </div>
+
     <footer id="footer" class="footer">
         <div class="footer-top">
             <div class="container">
@@ -327,7 +340,7 @@ foreach ($_SESSION['cart'] as $item) {
                                 <li><a href="#"><i class="icofont-instagram"></i></a></li>
                                 <li><a href="#"><i class="icofont-twitter"></i></a></li>
                             </ul>
-                            </div>
+                        </div>
                     </div>
 
                     <div class="col-lg-3 col-md-6 col-12">
@@ -383,7 +396,8 @@ foreach ($_SESSION['cart'] as $item) {
                 </div>
             </div>
         </div>
-        </footer>
+    </footer>
+
     <script src="js/jquery.min.js"></script>
     <script src="js/jquery-migrate-3.0.0.js"></script>
     <script src="js/jquery-ui.min.js"></script>
@@ -404,5 +418,7 @@ foreach ($_SESSION['cart'] as $item) {
     <script src="http://cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.3/waypoints.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/carrito.js"></script>
+    <script src="js/user-cart-updates.js"></script>
 </body>
 </html>
