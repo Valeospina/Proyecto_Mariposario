@@ -12,31 +12,21 @@
     <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
     <title>Login Jardin de Mariposas La paz</title>
     <link rel="icon" href="img/favicon.png">
-
-		<!-- Medipro CSS -->
-        <link rel="stylesheet" href="css/normalize.css">
-  
+    <link rel="stylesheet" href="css/normalize.css">
 </head>
 
 <body>
-
 
 <!-- Preloader -->
 <div class="preloader">
     <div class="loader">
         <div class="loader-outter"></div>
         <div class="loader-inner"></div>
-
         <div class="indicator"> 
             <svg width="32px" height="32px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                 <g>
-                  <!-- Ala trasera izquierda -->
                   <path d="M32 32 C22 20, 10 40, 28 40" fill="none" stroke="#ffffff" stroke-width="2"/>
-              
-                  <!-- Ala trasera derecha -->
                   <path d="M32 32 C42 20, 54 40, 36 40" fill="none" stroke="#ffffff" stroke-width="2"/>
-              
-                  <!-- Ala delantera izquierda animada -->
                   <path d="M32 32 C18 14, 4 34, 24 36" fill="none" stroke="#80B78D" stroke-width="2">
                     <animate attributeName="d" dur="1s" repeatCount="indefinite"
                       values="
@@ -44,8 +34,6 @@
                         M32 32 C16 16, 2 32, 22 36;
                         M32 32 C18 14, 4 34, 24 36"/>
                   </path>
-              
-                  <!-- Ala delantera derecha animada -->
                   <path d="M32 32 C46 14, 60 34, 40 36" fill="none" stroke="#80B78D" stroke-width="2">
                     <animate attributeName="d" dur="1s" repeatCount="indefinite"
                       values="
@@ -53,124 +41,84 @@
                         M32 32 C48 16, 62 32, 42 36;
                         M32 32 C46 14, 60 34, 40 36"/>
                   </path>
-              
-                  <!-- Cuerpo -->
                   <line x1="32" y1="30" x2="32" y2="40" stroke="#ffffff" stroke-width="2" />
                 </g>
-              </svg>
+            </svg>
+        </div>
+    </div>
+</div>
+<!-- End Preloader -->
+
+<div class="container-form sign-up">
+    <div class="welcome-back">
+        <div class="message">
+            <h2>Bienvenido a Jardin de Mariposas La paz</h2>
+            <p>Si ya tienes una cuenta por favor inicia sesion aqui</p>
+            <button class="sign-up-btn">Iniciar Sesion</button>
+        </div>
+    </div>
+    <form class="formulario" action="registro.php" method="POST">
+        <h2 class="create-account">Crear una cuenta</h2>
+        <div class="iconos">
+            <div class="border-icon"><i class='bx bxl-instagram'></i></div>
+            <div class="border-icon"><i class='bx bxl-google'></i></div>
+            <div class="border-icon"><i class='bx bxl-facebook-circle'></i></div>
+        </div>
+        <p class="cuenta-gratis">Crear una cuenta gratis</p>
+        <input type="text" name="nombre" placeholder="Nombre" required>
+        <input type="email" name="email" placeholder="Email" required autocomplete="email">
+        <input type="password" name="password" placeholder="Contraseña" required autocomplete="new-password">
+        <input type="submit" value="Registrarse">
+    </form>
+</div>
+
+<div class="container-form sign-in">
+    <form class="formulario" action="login.php" method="POST">
+        <h2 class="create-account">Iniciar Sesion</h2>
+        <div class="iconos">
+            <div class="border-icon"><i class='bx bxl-instagram'></i></div>
+            <div class="border-icon"><i class='bx bxl-google'></i></div>
+            <div class="border-icon"><i class='bx bxl-facebook-circle'></i></div>
+        </div>
+        <p class="cuenta-gratis">¿Aun no tienes una cuenta?</p>
+        <input type="email" name="email" placeholder="Email" required autocomplete="email">
+        <input type="password" name="password" placeholder="Contraseña" required autocomplete="current-password">
+        <input type="submit" value="Iniciar Sesion">
+        <p class="forgot-password">
+            <a href="./recuperacion.html"><i class='bx bx-lock-open'></i> Recuperar contraseña</a>
+        </p>
+    </form>
+    <div class="welcome-back">
+        <div class="message">
+            <h2>Bienvenido de nuevo</h2>
+            <p>Si aun no tienes una cuenta por favor registrese aqui</p>
+            <button class="sign-in-btn">Registrarse</button>
         </div>
     </div>
 </div>
 
-<!-- End Preloader -->
-
-
-
-    
-    <div class="container-form sign-up">
-        <div class="welcome-back">
-            <div class="message">
-                <h2>Bienvenido a Jardin de Mariposas La paz</h2>
-                <p>Si ya tienes una cuenta por favor inicia sesion aqui</p>
-                <button class="sign-up-btn">Iniciar Sesion</button>
-            </div>
-        </div>
-        <form class="formulario">
-            <h2 class="create-account">Crear una cuenta</h2>
-            <div class="iconos">
-                <div class="border-icon">
-                    <i class='bx bxl-instagram'></i>
-                </div>
-                <div class="border-icon">
-                    <i class='bx bxl-google' ></i>
-                </div>
-                <div class="border-icon">
-                    <i class='bx bxl-facebook-circle' ></i>
-                </div>
-            </div>
-            <p class="cuenta-gratis">Crear una cuenta gratis</p>
-            <input type="text" placeholder="Nombre">
-            <input type="email" placeholder="Email">
-            <input type="password" placeholder="Contraseña">
-            <a href="./index.html">
-            <input type="button" value="Registrarse">
-            </a>
-        </form>
-    </div>
-    <div class="container-form sign-in">
-        <form class="formulario">
-            <h2 class="create-account">Iniciar Sesion</h2>
-            <div class="iconos">
-                <div class="border-icon">
-                    <i class='bx bxl-instagram'></i>
-                </div>
-                <div class="border-icon">
-                    <i class='bx bxl-google' ></i>
-                </div>
-                <div class="border-icon">
-                    <i class='bx bxl-facebook-circle' ></i>
-                </div>
-            </div>
-            <p class="cuenta-gratis">¿Aun no tienes una cuenta?</p>
-            <input type="email" placeholder="Email">
-            <input type="password" placeholder="Contraseña">
-            <a href="./index.html">
-            <input type="button" value="Iniciar Sesion">
-            </a>
-            <p  class="forgot-password">
-    <a href="./recuperacion.html"><i class='bx bx-lock-open'></i> Recuperar contraseña</a>
-</p>
-
-        </form>
-        <div class="welcome-back">
-            <div class="message">
-                <h2>Bienvenido de nuevo</h2>
-                <p>Si aun no tienes una cuenta por favor registrese aqui</p>
-                <button class="sign-in-btn">Registrarse</button>
-            </div>
-        </div>
-    </div>
-    <script src="./js/login.js"></script>
-    <!-- jquery Min JS -->
-			<script src="js/jquery.min.js"></script>
-			<!-- jquery Migrate JS -->
-			<script src="js/jquery-migrate-3.0.0.js"></script>
-			<!-- jquery Ui JS -->
-			<script src="js/jquery-ui.min.js"></script>
-			<!-- Easing JS -->
-			<script src="js/easing.js"></script>
-			<!-- Color JS -->
-			<script src="js/colors.js"></script>
-			<!-- Popper JS -->
-			<script src="js/popper.min.js"></script>
-			<!-- Bootstrap Datepicker JS -->
-			<script src="js/bootstrap-datepicker.js"></script>
-			<!-- Jquery Nav JS -->
-			<script src="js/jquery.nav.js"></script>
-			<!-- Slicknav JS -->
-			<script src="js/slicknav.min.js"></script>
-			<!-- ScrollUp JS -->
-			<script src="js/jquery.scrollUp.min.js"></script>
-			<!-- Niceselect JS -->
-			<script src="js/niceselect.js"></script>
-			<!-- Tilt Jquery JS -->
-			<script src="js/tilt.jquery.min.js"></script>
-			<!-- Owl Carousel JS -->
-			<script src="js/owl-carousel.js"></script>
-			<!-- counterup JS -->
-			<script src="js/jquery.counterup.min.js"></script>
-			<!-- Steller JS -->
-			<script src="js/steller.js"></script>
-			<!-- Wow JS -->
-			<script src="js/wow.min.js"></script>
-			<!-- Magnific Popup JS -->
-			<script src="js/jquery.magnific-popup.min.js"></script>
-			<!-- Counter Up CDN JS -->
-			<script src="http://cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.3/waypoints.min.js"></script>
-			<!-- Bootstrap JS -->
-			<script src="js/bootstrap.min.js"></script>
-			<!-- Main JS -->
-			<script src="js/main.js"></script>
+<!-- Scripts -->
+<script src="./js/login.js"></script>
+<script src="js/jquery.min.js"></script>
+<script src="js/jquery-migrate-3.0.0.js"></script>
+<script src="js/jquery-ui.min.js"></script>
+<script src="js/easing.js"></script>
+<script src="js/colors.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap-datepicker.js"></script>
+<script src="js/jquery.nav.js"></script>
+<script src="js/slicknav.min.js"></script>
+<script src="js/jquery.scrollUp.min.js"></script>
+<script src="js/niceselect.js"></script>
+<script src="js/tilt.jquery.min.js"></script>
+<script src="js/owl-carousel.js"></script>
+<script src="js/jquery.counterup.min.js"></script>
+<script src="js/steller.js"></script>
+<script src="js/wow.min.js"></script>
+<script src="js/jquery.magnific-popup.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.3/waypoints.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/main.js"></script>
 </body>
 
 </html>
