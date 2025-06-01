@@ -16,14 +16,14 @@ if ($_POST) {
         $login_stmt->execute();
         $result = $login_stmt->get_result();
 
-        // ✅ Verificar si el correo existe
+
         if ($result->num_rows === 0) {
             echo "<script>
                     alert('El correo ingresado no está registrado. Por favor, verifica tu correo.');
                     window.location.href = './login.html';
                   </script>";
             exit;
-        }
+        } 
 
         $user = $result->fetch_assoc();
 
