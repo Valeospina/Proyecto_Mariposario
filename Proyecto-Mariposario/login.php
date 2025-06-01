@@ -16,47 +16,51 @@ if ($_POST) {
         $login_stmt->execute();
         $result = $login_stmt->get_result();
 
-        if ($result->num_rows > 0) {
-            $user = $result->fetch_assoc();
+        // ✅ Verificar si el correo existe
+        if ($result->num_rows === 0) {
+            echo "<script>
+                    alert('El correo ingresado no está registrado. Por favor, verifica tu correo.');
+                    window.location.href = './login.html';
+                  </script>";
+            exit;
+        }
 
-            if (password_verify($password, $user['Contrasena'])) {
-                $_SESSION['user_id'] = $user['ID_Usuario'];
-                $_SESSION['user_name'] = $user['Nombre'];
-                $_SESSION['user_email'] = $user['Correo'];
-                $_SESSION['user_role'] = $user['ID_Rol'];
-                $_SESSION['role_name'] = $user['NombreRol'];
+        $user = $result->fetch_assoc();
 
-                if ($user['ID_Rol'] == 1) {
-                    $emp_stmt = $conn->prepare("SELECT ID_Empleado FROM Empleado WHERE ID_Usuario = ?");
-                    $emp_stmt->bind_param("i", $user['ID_Usuario']);
-                    $emp_stmt->execute();
-                    $emp_result = $emp_stmt->get_result();
+        // ✅ Verificar contraseña
+        if (password_verify($password, $user['Contrasena'])) {
+            // Guardar datos en sesión
+            $_SESSION['user_id'] = $user['ID_Usuario'];
+            $_SESSION['user_name'] = $user['Nombre'];
+            $_SESSION['user_email'] = $user['Correo'];
+            $_SESSION['user_role'] = $user['ID_Rol'];
+            $_SESSION['role_name'] = $user['NombreRol'];
 
-                    if ($emp_result->num_rows > 0) {
-                        $empleado = $emp_result->fetch_assoc();
-                        $act_stmt = $conn->prepare("INSERT INTO Registro_Actividad (ID_Empleado, Fecha_Hora, Accion, Detalle) VALUES (?, NOW(), 'Login', 'Usuario inició sesión exitosamente')");
-                        $act_stmt->bind_param("i", $empleado['ID_Empleado']);
-                        $act_stmt->execute();
-                        $act_stmt->close();
-                    }
-                    $emp_stmt->close();
+            // Registrar actividad si es empleado
+            if ($user['ID_Rol'] == 1) {
+                $emp_stmt = $conn->prepare("SELECT ID_Empleado FROM Empleado WHERE ID_Usuario = ?");
+                $emp_stmt->bind_param("i", $user['ID_Usuario']);
+                $emp_stmt->execute();
+                $emp_result = $emp_stmt->get_result();
+
+                if ($emp_result->num_rows > 0) {
+                    $empleado = $emp_result->fetch_assoc();
+                    $act_stmt = $conn->prepare("INSERT INTO Registro_Actividad (ID_Empleado, Fecha_Hora, Accion, Detalle) VALUES (?, NOW(), 'Login', 'Usuario inició sesión exitosamente')");
+                    $act_stmt->bind_param("i", $empleado['ID_Empleado']);
+                    $act_stmt->execute();
+                    $act_stmt->close();
                 }
-
-                echo "<script>
-                        alert('¡Bienvenido " . htmlspecialchars($user['Nombre']) . "!');
-                        window.location.href = './index.html';
-                      </script>";
-                exit;
-            } else {
-                echo "<script>
-                        alert('Contraseña incorrecta. Por favor, intenta nuevamente.');
-                        window.location.href = './login.html';
-                      </script>";
-                exit;
+                $emp_stmt->close();
             }
+
+            echo "<script>
+                    alert('¡Bienvenido " . htmlspecialchars($user['Nombre']) . "!');
+                    window.location.href = './index.html';
+                  </script>";
+            exit;
         } else {
             echo "<script>
-                    alert('Usuario no encontrado. Por favor, verifica tu correo electrónico.');
+                    alert('Contraseña incorrecta. Por favor, intenta nuevamente.');
                     window.location.href = './login.html';
                   </script>";
             exit;

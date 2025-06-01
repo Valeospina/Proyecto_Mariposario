@@ -10,7 +10,7 @@ if ($_POST) {
     if (empty($nombre) || empty($email) || empty($password) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         echo "<script>
                 alert('Por favor, completa todos los campos correctamente.');
-                window.location.href = 'registro.html';
+                window.location.href = 'login.html';
               </script>";
         exit;
     }
@@ -33,7 +33,7 @@ if ($_POST) {
     // Encriptar la contraseña
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-    // Insertar nuevo usuario (asume que ID_Usuario es AUTO_INCREMENT)
+    // Insertar nuevo usuario
     $insert_query = "INSERT INTO Usuario (ID_Rol, Nombre, Correo, Contrasena) VALUES (2, ?, ?, ?)";
     $insert_stmt = $conn->prepare($insert_query);
     $insert_stmt->bind_param("sss", $nombre, $email, $hashed_password);
@@ -61,7 +61,7 @@ if ($_POST) {
     } else {
         echo "<script>
                 alert('Error al registrar usuario. Por favor, intenta nuevamente.');
-                window.location.href = './registro.html';
+                window.location.href = './login.html';
               </script>";
         exit;
     }
