@@ -1,23 +1,49 @@
 <?php
 session_start(); // Inicia la sesión al principio de todo
 
-// --- Simulación de datos de usuario (reemplazar con tu lógica de inicio de sesión real) ---
-if (!isset($_SESSION['user_logged_in']) || $_SESSION['user_logged_in'] !== true) {
-    // Si el usuario no está logueado, establece datos por defecto
-    $_SESSION['user_name'] = 'Usuario'; // Nombre por defecto
-    $_SESSION['user_avatar'] = 'img/default-avatar.png'; // Ruta a una imagen de avatar por defecto
+// --- Simulación de datos de usuario 
+// Initialize session variables if they don't exist
+if (!isset($_SESSION['user_logged_in'])) {
+    $_SESSION['user_logged_in'] = false;
+}
+if (!isset($_SESSION['user_name'])) {
+    $_SESSION['user_name'] = 'Usuario';
+}
+if (!isset($_SESSION['user_avatar'])) {
+    $_SESSION['user_avatar'] = 'img/default-avatar.png';
+}
+if (!isset($_SESSION['user_points'])) {
     $_SESSION['user_points'] = 0;
-    $_SESSION['user_logged_in'] = false; // Indica que el usuario no está realmente logueado
-} else {
-    // Si el usuario ya está logueado, puedes cargar sus datos reales desde la base de datos o donde los almacenes
-    // Por ejemplo, si tienes un array $_SESSION['user_data'] con 'name', 'avatar', 'points'
-    // $_SESSION['user_name'] = $_SESSION['user_data']['name'];
-    // $_SESSION['user_avatar'] = $_SESSION['user_data']['avatar'];
-    // $_SESSION['user_points'] = $_SESSION['user_data']['points'];
+}
+// Ensure $_SESSION['carrito'] is always an array
+if (!isset($_SESSION['carrito']) || !is_array($_SESSION['carrito'])) {
+    $_SESSION['carrito'] = [];
 }
 
 // Define la variable $response al inicio para evitar errores de referencia
 $response = ['success' => false, 'message' => ''];
+
+// Function to calculate total items in cart
+function getTotalCartItems() {
+    $total_items = 0;
+    if (isset($_SESSION['carrito']) && is_array($_SESSION['carrito'])) {
+        foreach ($_SESSION['carrito'] as $item) {
+            $total_items += $item['cantidad'];
+        }
+    }
+    return $total_items;
+}
+
+// Function to calculate cart total amount
+function getCartTotalAmount() {
+    $total_amount = 0;
+    if (isset($_SESSION['carrito']) && is_array($_SESSION['carrito'])) {
+        foreach ($_SESSION['carrito'] as $item) {
+            $total_amount += $item['precio'] * $item['cantidad'];
+        }
+    }
+    return $total_amount;
+}
 
 // --- Lógica para Peticiones AJAX (POST y GET para el carrito) ---
 // Identificamos si la petición es AJAX y qué tipo de petición es
@@ -28,17 +54,15 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
         $action = $_POST['action'] ?? ''; // Obtener la acción solicitada
 
         if ($action === 'add') {
-            // Lógica para AGREGAR un producto (ya existente)
+            // Lógica para AGREGAR un producto
             if (isset($_POST['id'], $_POST['nombre'], $_POST['precio'])) {
                 $id = filter_var($_POST['id'], FILTER_SANITIZE_NUMBER_INT);
                 $nombre = filter_var($_POST['nombre'], FILTER_SANITIZE_STRING);
                 $precio = filter_var($_POST['precio'], FILTER_VALIDATE_FLOAT);
+                // Assuming imagen_url might be passed, if not, it will be an empty string
+                $imagen_url = filter_var($_POST['imagen_url'] ?? '', FILTER_SANITIZE_URL); 
 
                 if ($id !== false && $id > 0 && $nombre !== false && $precio !== false && $precio >= 0) {
-                    if (!isset($_SESSION['carrito'])) {
-                        $_SESSION['carrito'] = [];
-                    }
-
                     $found = false;
                     foreach ($_SESSION['carrito'] as &$item) {
                         if ($item['id'] == $id) {
@@ -47,27 +71,26 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
                             break;
                         }
                     }
-                    unset($item);
+                    unset($item); // Break the reference
 
                     if (!$found) {
                         $_SESSION['carrito'][] = [
                             'id' => $id,
                             'nombre' => $nombre,
                             'precio' => $precio,
-                            'cantidad' => 1
+                            'cantidad' => 1,
+                            'imagen_url' => $imagen_url // Add image URL to cart item
                         ];
                     }
 
                     // Acumular puntos solo cuando se agrega un producto al carrito
-                    // Puedes definir una lógica más compleja para los puntos, por ejemplo, 10 puntos por cada ₡1000 gastados
-                    if ($_SESSION['user_logged_in']) { // Solo acumula puntos si el usuario está "logueado"
-                        $_SESSION['user_points'] += 10; // Ejemplo: 10 puntos por cada producto agregado
+                    if ($_SESSION['user_logged_in']) {
+                        $_SESSION['user_points'] += 10; // Example: 10 points per product added
                     }
-
 
                     $response['success'] = true;
                     $response['message'] = 'Producto agregado al carrito.';
-                    $response['total_items'] = array_sum(array_column($_SESSION['carrito'], 'cantidad'));
+                    $response['total_items'] = getTotalCartItems();
                     $response['user_points'] = $_SESSION['user_points']; // Enviar los puntos actualizados
                 } else {
                     $response['message'] = 'Datos de producto inválidos.';
@@ -81,20 +104,33 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
                 $id = filter_var($_POST['id'], FILTER_SANITIZE_NUMBER_INT);
                 $cantidad = filter_var($_POST['cantidad'], FILTER_SANITIZE_NUMBER_INT);
 
-                if ($id !== false && $id > 0 && $cantidad !== false && $cantidad >= 0) {
+                if ($id !== false && $id > 0 && $cantidad !== false) { // Allow quantity to be 0 for removal
                     if (isset($_SESSION['carrito'])) {
-                        foreach ($_SESSION['carrito'] as &$item) {
+                        $found = false;
+                        foreach ($_SESSION['carrito'] as $key => &$item) {
                             if ($item['id'] == $id) {
-                                $item['cantidad'] = $cantidad;
-                                $response['success'] = true;
-                                $response['message'] = 'Cantidad actualizada.';
+                                if ($cantidad > 0) {
+                                    $item['cantidad'] = $cantidad;
+                                    $response['success'] = true;
+                                    $response['message'] = 'Cantidad actualizada.';
+                                } else {
+                                    // If quantity is 0, remove the item
+                                    unset($_SESSION['carrito'][$key]);
+                                    $_SESSION['carrito'] = array_values($_SESSION['carrito']); // Reindex array
+                                    $response['success'] = true;
+                                    $response['message'] = 'Producto eliminado del carrito.';
+                                }
+                                $found = true;
                                 break;
                             }
                         }
                         unset($item); // Romper la referencia
-                    }
-                    if (!$response['success']) {
-                        $response['message'] = 'Producto no encontrado en el carrito.';
+
+                        if (!$found) {
+                            $response['message'] = 'Producto no encontrado en el carrito.';
+                        }
+                    } else {
+                        $response['message'] = 'El carrito está vacío.';
                     }
                 } else {
                     $response['message'] = 'Datos de actualización de cantidad inválidos.';
@@ -135,43 +171,34 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
             $response['message'] = 'Acción POST no reconocida.';
         }
     }
-    // Si es una solicitud GET y se pide la cantidad de ítems
-    else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'get_count') {
-        $total_items = 0;
-        if (isset($_SESSION['carrito']) && is_array($_SESSION['carrito'])) {
-            foreach ($_SESSION['carrito'] as $item) {
-                $total_items += $item['cantidad'];
-            }
-        }
-        $response['success'] = true;
-        $response['total_items'] = $total_items;
-        $response['message'] = 'Cantidad de items obtenida.'; // Mensaje opcional
-        $response['user_name'] = $_SESSION['user_name'];
-        $response['user_avatar'] = $_SESSION['user_avatar'];
-        $response['user_points'] = $_SESSION['user_points'];
+    // Si es una solicitud GET y se pide la cantidad de ítems o el carrito completo (para actualizar)
+    else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        $action = $_GET['action'] ?? '';
 
+        if ($action === 'get_count') {
+            $response['success'] = true;
+            $response['total_items'] = getTotalCartItems();
+            $response['message'] = 'Cantidad de items obtenida.';
+            $response['user_name'] = $_SESSION['user_name'];
+            $response['user_avatar'] = $_SESSION['user_avatar'];
+            $response['user_points'] = $_SESSION['user_points'];
+        } elseif ($action === 'get_cart_data') {
+            // Return the entire cart data for dynamic update on the cart page
+            $response['success'] = true;
+            $response['carrito'] = $_SESSION['carrito'] ?? [];
+            $response['total_items'] = getTotalCartItems();
+            $response['cart_total_amount'] = getCartTotalAmount();
+        } else {
+            $response['message'] = 'Acción GET no reconocida.';
+        }
     }
-    // Si es una solicitud GET que no es para obtener la cantidad
     else {
-        $response['message'] = 'Método de solicitud o acción no permitida para AJAX.';
+        $response['message'] = 'Método de solicitud no permitido para AJAX.';
     }
 
     // Calcular el total de ítems en el carrito después de la acción para enviarlo siempre
-    $response['total_items'] = 0;
-    if (isset($_SESSION['carrito']) && is_array($_SESSION['carrito'])) {
-        foreach ($_SESSION['carrito'] as $item) {
-            $response['total_items'] += $item['cantidad'];
-        }
-    }
-    // Calcular el nuevo subtotal para el item actualizado (si aplica)
-    if ($action === 'update_quantity' && $response['success'] && isset($id)) {
-        foreach ($_SESSION['carrito'] as $item) {
-            if ($item['id'] == $id) {
-                $response['new_subtotal'] = $item['precio'] * $item['cantidad'];
-                break;
-            }
-        }
-    }
+    $response['total_items'] = getTotalCartItems();
+    $response['cart_total_amount'] = getCartTotalAmount(); // Also send total amount
 
     // Siempre que sea una petición AJAX, devolvemos JSON y salimos
     header('Content-Type: application/json');
@@ -179,28 +206,45 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
     exit(); // ¡Muy importante para detener la ejecución y no enviar HTML!
 }
 
-// --- Lógica para la Visualización de la Página del Carrito (Petición HTTP normal) ---
-// Si no es una petición AJAX, entonces mostramos la página completa del carrito
-// (Este bloque no se ejecuta si la petición es AJAX, gracias al exit() de arriba)
 
-// Ejemplo básico de cómo podrías mostrar el carrito
+// Ejemplo básico de cómo mostrar el carrito
 $carrito_actual = $_SESSION['carrito'] ?? []; // Obtener el carrito de la sesión
-$total_carrito_final = 0; // Usar una variable diferente para evitar conflictos
-foreach ($carrito_actual as $item) {
-    $total_carrito_final += $item['precio'] * $item['cantidad'];
-}
+$total_carrito_final = getCartTotalAmount();
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carrito de Compras</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="css/carrito.css">
-    <link rel="stylesheet" href="css/custom-cart-user.css">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="keywords" content="Site keywords here">
+        <meta name="description" content="">
+        <meta name='copyright' content=''>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <title>Jardin De Mariposas - Mariposas</title> <link rel="icon" href="img/favicon.png">
+        <link rel="stylesheet" href="./css/tienda.css">
+
+       
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Poppins:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/nice-select.css">
+        <link rel="stylesheet" href="css/font-awesome.min.css">
+        <link rel="stylesheet" href="css/icofont.css">
+        <link rel="stylesheet" href="css/slicknav.min.css">
+        <link rel="stylesheet" href="css/owl-carousel.css">
+        <link rel="stylesheet" href="css/datepicker.css">
+        <link rel="stylesheet" href="css/animate.min.css">
+        <link rel="stylesheet" href="css/magnific-popup.css">
+        <link rel="stylesheet" href="css/tienda.css">
+
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="css/responsive.css">
+        <link rel="stylesheet" href="css/carrito.css">
 
 </head>
     <body>
@@ -211,15 +255,11 @@ foreach ($carrito_actual as $item) {
                         <div class="col-lg-6 col-md-5 col-12">
                             <ul class="top-link">
                                 <li>
-                                    <a href="usuario.html" class="user-profile-link">
-                                        <img src="<?php echo htmlspecialchars($_SESSION['user_avatar']); ?>" alt="Avatar de Usuario" class="user-avatar">
-                                        <div class="user-info-text">
-                                            <span class="user-greeting">Hola, <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
-                                            <span class="user-points-display" id="user-points-display"><?php echo htmlspecialchars($_SESSION['user_points']); ?> Puntos</span>
-                                        </div>
+                                    <a href="usuario.html" style="text-decoration: none;">
+                                        <i class="fas fa-user" style="font-size: 18px; color: #80B78D; padding: 6px;"></i>
+                                        <span style="color: #2C2D3F;">Usuario</span>
                                     </a>
                                 </li>
-                                <li class="admin-link"><a href="admin.html">Admin</a></li>
                             </ul>
                         </div>
                         <div class="col-lg-6 col-md-7 col-12">
@@ -246,28 +286,21 @@ foreach ($carrito_actual as $item) {
                                     <nav class="navigation">
                                         <ul class="nav menu">
                                             <li><a href="index.html">Inicio</a></li>
-											<li><a href="tienda.html">Tienda</a></li>
-											<li><a href="eventos.html">Eventos</a></li>
-											<li><a href="contact.html">Contacto</a></li>
-                                            <li class="active"><a href="carrito.php">Carrito</a></li>
+                                            <li><a href="tienda.html">Tienda</a></li>
+                                            <li><a href="mariposas.php">Mariposas</a></li> 
+                                            <li><a href="orquideas.php">Orquideas</a></li>
+                                            <li><a href="eventos.html">Eventos</a></li>
+                                    
                                         </ul>
                                     </nav>
                                 </div>
                             </div>
                             <div class="col-lg-2 col-12">
                                 <div class="get-quote">
-                                    <a href="carrito.php" class="btn btn-primary btn-shopping-cart">
-                                        <i class="fa fa-shopping-cart cart-icon"></i>
-                                        <span class="cart-item-count" id="cart-item-count">
-                                            <?php
-                                                $total_items_header = 0;
-                                                if (isset($_SESSION['carrito']) && is_array($_SESSION['carrito'])) {
-                                                    foreach ($_SESSION['carrito'] as $item) {
-                                                        $total_items_header += $item['cantidad'];
-                                                    }
-                                                }
-                                                echo $total_items_header;
-                                            ?>
+                                    <a href="carrito.php" class="btn btn-carrito" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: transparent; box-shadow: none;">
+                                        <i class="fa fa-shopping-cart icono-carrito" style="color: #42764D; font-size: 20px;"></i>
+                                        <span id="cart-item-count" class="badge badge-pill badge-danger" style="position: absolute; top: -5px; right: -5px; background-color: #dc3545; color: white; font-size: 10px; padding: 3px 6px; border-radius: 50%;">
+                                            <?php echo getTotalCartItems(); ?>
                                         </span>
                                     </a>
                                 </div>
@@ -278,42 +311,66 @@ foreach ($carrito_actual as $item) {
             </div>
         </header>
 
-        <div class="carrito-wrapper my-5">
-            <h2 class="carrito-titulo mb-4">Tu Carrito de Compras</h2>
-                <?php if (empty($carrito_actual)): ?>
-                    <div class="alert alert-info carrito-alerta">Tu carrito está vacío. ¡Agrega algunos productos!</div>
-                <?php else: ?>
-                    <div class="carrito-items-list">
-                        <?php foreach ($carrito_actual as $item): ?>
-                            <div class="carrito-item-card d-flex align-items-center" data-product-id="<?php echo htmlspecialchars($item['id']); ?>">
-                                <div class="carrito-producto-imagen">
-                                    <img src="ruta/a/imagen/<?php echo htmlspecialchars($item['id']); ?>.jpg" alt="<?php echo htmlspecialchars($item['nombre']); ?>">
-                                </div>
-                                <div class="carrito-producto-detalles flex-grow-1 ms-3">
-                                    <h5 class="carrito-producto-nombre mb-1"><?php echo htmlspecialchars($item['nombre']); ?></h5>
-                                    <div class="carrito-precio mb-2">₡<?php echo number_format($item['precio'], 2, ',', '.'); ?></div>
-                                    <div class="carrito-cantidad d-flex align-items-center">
-                                        <button class="btn btn-outline-secondary btn-sm update-quantity" type="button" data-action="decrease" data-id="<?php echo htmlspecialchars($item['id']); ?>">−</button>
-                                        <input type="text" class="form-control form-control-sm text-center mx-2 carrito-input-cantidad" value="<?php echo htmlspecialchars($item['cantidad']); ?>" data-id="<?php echo htmlspecialchars($item['id']); ?>" readonly>
-                                        <button class="btn btn-outline-secondary btn-sm update-quantity" type="button" data-action="increase" data-id="<?php echo htmlspecialchars($item['id']); ?>">+</button>
-                                    </div>
-                                </div>
-                                <div class="carrito-subtotal text-end">
-                                    <p class="mb-1">Subtotal:</p>
-                                    <strong class="product-subtotal" data-subtotal="<?php echo htmlspecialchars($item['precio'] * $item['cantidad']); ?>">₡<?php echo number_format($item['precio'] * $item['cantidad'], 2, ',', '.'); ?></strong>
-                                    <button class="btn btn-sm btn-danger mt-2 remove-cart-item" data-id="<?php echo htmlspecialchars($item['id']); ?>">Eliminar</button>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-
-                    <div class="carrito-total-container mt-4 text-end">
-                        <h4>Total del Carrito: <span id="total-carrito-display">₡<?php echo number_format($total_carrito_final, 2, ',', '.'); ?></span></h4>
-                        <a href="mariposas.php" class="btn btn-outline-secondary me-2">Seguir Comprando</a>
-                        <button class="btn btn-success">Proceder al Pago</button>
-                    </div>
-                <?php endif; ?>
+    <div class="container my-5">
+        <h2 class="text-center mb-4">Tu Carrito de Compras</h2>
+        <?php if (empty($carrito_actual)): ?>
+            <div class="alert alert-info text-center" role="alert">
+                Tu carrito está vacío. ¡Explora nuestros productos y agrega algunos!
             </div>
+        <?php else: ?>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Producto</th>
+                            <th>Precio Unitario</th>
+                            <th>Cantidad</th>
+                            <th>Subtotal</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-items-body">
+                        <?php foreach ($carrito_actual as $item): ?>
+                            <tr data-id="<?php echo htmlspecialchars($item['id']); ?>" class="carrito-item-row">
+                                <td data-label="Producto:" class="d-flex align-items-center">
+                                    <?php if (!empty($item['imagen_url'])): ?>
+                                        <div class="carrito-producto-imagen me-3">
+                                            <img src="<?php echo htmlspecialchars($item['imagen_url']); ?>" alt="<?php echo htmlspecialchars($item['nombre']); ?>">
+                                        </div>
+                                    <?php endif; ?>
+                                    <span class="carrito-producto-nombre"><?php echo htmlspecialchars($item['nombre']); ?></span>
+                                </td>
+                                <td data-label="Precio Unitario:" class="carrito-precio">₡<?php echo number_format($item['precio'], 2, ',', '.'); ?></td>
+                                <td data-label="Cantidad:">
+                                    <div class="input-group input-group-sm quantity-control">
+                                        <button class="btn btn-outline-secondary btn-decrease-quantity" type="button" data-id="<?php echo htmlspecialchars($item['id']); ?>">-</button>
+                                        <input type="text" class="form-control text-center product-quantity" value="<?php echo htmlspecialchars($item['cantidad']); ?>" data-id="<?php echo htmlspecialchars($item['id']); ?>" data-price="<?php echo htmlspecialchars($item['precio']); ?>" readonly>
+                                        <button class="btn btn-outline-secondary btn-increase-quantity" type="button" data-id="<?php echo htmlspecialchars($item['id']); ?>">+</button>
+                                    </div>
+                                </td>
+                                <td data-label="Subtotal:" class="item-subtotal">₡<?php echo number_format($item['precio'] * $item['cantidad'], 2, ',', '.'); ?></td>
+                                <td data-label="Acciones:" class="carrito-item-actions">
+                                    <button class="btn btn-danger btn-sm btn-remove-item" data-id="<?php echo htmlspecialchars($item['id']); ?>">
+                                        <i class="fa fa-trash"></i> Eliminar
+                                    </button>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-right"><strong>Total del Carrito:</strong></td>
+                            <td id="cart-total-amount"><strong>₡<?php echo number_format($total_carrito_final, 2, ',', '.'); ?></strong></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        <div class="text-right mt-3">
+            <button class="btn btn-success btn-lg btn-proceed-to-checkout">Proceder al Pago</button>
+        </div>
+        <?php endif; ?>
+    </div>
 
         <footer id="footer" class="footer">
             <div class="footer-top">
@@ -322,7 +379,8 @@ foreach ($carrito_actual as $item) {
                         <div class="col-lg-3 col-md-6 col-12">
                             <div class="single-footer">
                                 <h2>Sobre Nosotros</h2>
-                                <p>Somos un proyecto dedicado a la conservación y apreciación de mariposas y orquídeas en Costa Rica. Promovemos el turismo sostenible y la educación ambiental.</p>
+                                <p>Somos un proyecto dedicado a la conservación y apreciación de mariposas y orquídeas en Costa Rica. 
+                                    Promovemos el turismo sostenible y la educación ambiental.</p>
                                 <ul class="social">
                                     <li><a href="#"><i class="icofont-facebook"></i></a></li>
                                     <li><a href="#"><i class="icofont-instagram"></i></a></li>
@@ -385,7 +443,6 @@ foreach ($carrito_actual as $item) {
                 </div>
             </div>
         </footer>
-
         <script src="js/jquery.min.js"></script>
         <script src="js/jquery-migrate-3.0.0.js"></script>
         <script src="js/jquery-ui.min.js"></script>
@@ -398,15 +455,153 @@ foreach ($carrito_actual as $item) {
         <script src="js/jquery.scrollUp.min.js"></script>
         <script src="js/niceselect.js"></script>
         <script src="js/tilt.jquery.min.js"></script>
-        <script src="js/owl-carousel.js"></script>
-        <script src="js/jquery.counterup.min.js"></script>
-        <script src="js/steller.js"></script>
-        <script src="js/wow.min.js"></script>
-        <script src="js/jquery.magnific-popup.min.js"></script>
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.3/waypoints.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script src="js/main.js"></script>
-        <script src="js/carrito.js"></script>
-        <script src="js/user-cart-updates.js"></script>
+        <script>
+            $(document).ready(function() {
+                // Function to update cart display
+                function updateCartDisplay() {
+                    $.ajax({
+                        url: 'carrito.php?action=get_cart_data',
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                let cartItemsBody = $('#cart-items-body');
+                                cartItemsBody.empty(); // Clear existing items
+
+                                if (response.carrito.length === 0) {
+                                    $('.container.my-5').html('<h2 class="text-center mb-4">Tu Carrito de Compras</h2><div class="alert alert-info text-center" role="alert">Tu carrito está vacío. ¡Explora nuestros productos y agrega algunos!</div>');
+                                } else {
+                                    response.carrito.forEach(function(item) {
+                                        let subtotal = (item.precio * item.cantidad).toFixed(2);
+                                    let newRow = `
+                                        <tr data-id="${item.id}" class="carrito-item-row">
+                                            <td data-label="Producto:" class="d-flex align-items-center">
+                                                ${item.imagen_url ? `
+                                                    <div class="carrito-producto-imagen me-3">
+                                                        <img src="${item.imagen_url}" alt="${item.nombre}">
+                                                    </div>
+                                                ` : ''}
+                                                <span class="carrito-producto-nombre">${item.nombre}</span>
+                                            </td>
+                                            <td data-label="Precio Unitario:" class="carrito-precio">₡${parseFloat(item.precio).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                                            <td data-label="Cantidad:">
+                                                <div class="input-group input-group-sm quantity-control">
+                                                    <button class="btn btn-outline-secondary btn-decrease-quantity" type="button" data-id="${item.id}">-</button>
+                                                    <input type="text" class="form-control text-center product-quantity" value="${item.cantidad}" data-id="${item.id}" data-price="${item.precio}" readonly>
+                                                    <button class="btn btn-outline-secondary btn-increase-quantity" type="button" data-id="${item.id}">+</button>
+                                                </div>
+                                            </td>
+                                            <td data-label="Subtotal:" class="item-subtotal">₡${parseFloat(subtotal).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                                            <td data-label="Acciones:" class="carrito-item-actions">
+                                                <button class="btn btn-danger btn-sm btn-remove-item" data-id="${item.id}">
+                                                    <i class="fa fa-trash"></i> Eliminar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `;
+                                        cartItemsBody.append(newRow);
+                                    });
+                                    $('#cart-total-amount strong').text('₡' + parseFloat(response.cart_total_amount).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                                    $('#cart-item-count').text(response.total_items);
+                                }
+                            } else {
+                                console.error('Error al obtener datos del carrito:', response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('AJAX Error:', status, error);
+                        }
+                    });
+                }
+
+                // Event listener for increasing quantity
+                $(document).on('click', '.btn-increase-quantity', function() {
+                    let productId = $(this).data('id');
+                    let quantityInput = $(this).closest('.quantity-control').find('.product-quantity');
+                    let currentQuantity = parseInt(quantityInput.val());
+                    let newQuantity = currentQuantity + 1;
+                    updateCartItemQuantity(productId, newQuantity);
+                });
+
+                // Event listener for decreasing quantity
+                $(document).on('click', '.btn-decrease-quantity', function() {
+                    let productId = $(this).data('id');
+                    let quantityInput = $(this).closest('.quantity-control').find('.product-quantity');
+                    let currentQuantity = parseInt(quantityInput.val());
+                    let newQuantity = currentQuantity - 1;
+                    if (newQuantity >= 0) { // Allow decreasing to 0 to trigger removal
+                        updateCartItemQuantity(productId, newQuantity);
+                    }
+                });
+
+                // Event listener for removing item
+                $(document).on('click', '.btn-remove-item', function() {
+                    let productId = $(this).data('id');
+                    removeCartItem(productId);
+                });
+
+                function updateCartItemQuantity(id, quantity) {
+                    $.ajax({
+                        url: 'carrito.php',
+                        method: 'POST',
+                        dataType: 'json',
+                        data: {
+                            action: 'update_quantity',
+                            id: id,
+                            cantidad: quantity
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                updateCartDisplay(); // Refresh the entire cart table
+                                updateHeaderCartCount(response.total_items); // Update header count
+                                // You might also want to update points here if points are tied to quantity changes
+                                if (response.user_points !== undefined) {
+                                    $('#user-points-display').text(response.user_points + ' Puntos');
+                                }
+                            } else {
+                                alert('Error al actualizar la cantidad: ' + response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('AJAX Error:', status, error);
+                            alert('Error de comunicación con el servidor.');
+                        }
+                    });
+                }
+
+                function removeCartItem(id) {
+                    $.ajax({
+                        url: 'carrito.php',
+                        method: 'POST',
+                        dataType: 'json',
+                        data: {
+                            action: 'remove',
+                            id: id
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                updateCartDisplay(); // Refresh the entire cart table
+                                updateHeaderCartCount(response.total_items); // Update header count
+                                // You might also want to update points here if removal affects points
+                            } else {
+                                alert('Error al eliminar el producto: ' + response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('AJAX Error:', status, error);
+                            alert('Error de comunicación con el servidor.');
+                        }
+                    });
+                }
+
+                // Function to update the cart item count in the header
+                function updateHeaderCartCount(count) {
+                    $('#cart-item-count').text(count);
+                }
+
+                // Initial load: Ensure cart display is correct
+                updateCartDisplay();
+            });
+        </script>
     </body>
 </html>

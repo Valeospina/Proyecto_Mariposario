@@ -211,6 +211,7 @@ CREATE TABLE Carrito (
     ID_Usuario INT NOT NULL,
     Fecha_Creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
     Estado ENUM('activo','finalizado','cancelado') DEFAULT 'activo',
+    Imagen_URL TEXT,
     FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
 );
 
@@ -218,6 +219,7 @@ CREATE TABLE Carrito_Producto (
     ID_Carrito INT,
     ID_Producto INT,
     Cantidad INT DEFAULT 1,
+    Imagen_URL TEXT,
     PRIMARY KEY (ID_Carrito, ID_Producto),
     FOREIGN KEY (ID_Carrito) REFERENCES Carrito(ID_Carrito) ON DELETE CASCADE,
     FOREIGN KEY (ID_Producto) REFERENCES Producto(ID_Producto)

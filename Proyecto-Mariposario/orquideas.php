@@ -85,6 +85,7 @@
                                 <div class="get-quote">
                                     <a href="carrito.php" class="btn btn-carrito" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: transparent; box-shadow: none;">
                                         <i class="fa fa-shopping-cart icono-carrito" style="color: #42764D; font-size: 20px;"></i>
+                                        <span id="cart-item-count" class="badge badge-pill badge-danger" style="position: absolute; top: -5px; right: -5px; background-color: #dc3545; color: white; font-size: 10px; padding: 3px 6px; border-radius: 50%;">0</span>
                                     </a>
                                 </div>
                             </div>
@@ -333,5 +334,6 @@
         <script src="http://cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.3/waypoints.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/main.js"></script>
+            <script src="js/cart_interaction.js"></script>
     </body>
 </html>
