@@ -155,47 +155,83 @@
 </head>
 <body>
 
-<div class="container mt-5">
-  <h2 class="text-center mb-4">Reservar Evento</h2>
-    
-<form action="reserva.php" method="POST" class="row g-3">
-  <div class="col-md-6">
-    <label for="nombre" class="form-label">Nombre completo</label>
-    <input type="text" class="form-control" id="nombre" name="nombre" required>
-  </div>
-
-  <div class="col-md-6">
-    <label for="correo" class="form-label">Correo electrónico</label>
-    <input type="email" class="form-control" id="correo" name="correo" required>
-  </div>
-
-  <div class="col-md-6">
-    <label for="fecha" class="form-label">Fecha del evento</label>
-    <input type="date" class="form-control" id="fecha" name="fecha" required>
-  </div>
-
-  <div class="col-md-6">
-    <label for="personas" class="form-label">Cantidad de personas</label>
-    <input type="number" class="form-control" id="personas" name="personas" min="1" required>
-  </div>
-
-  <div class="col-12">
-    <label for="evento" class="form-label">Selecciona un evento</label>
-    <select class="form-control" id="evento" name="evento" required>
-      <option value="">Elige un evento</option>
-      <option value="Taller de Mariposas">Taller de Mariposas</option>
-      <option value="Visita Guiada">Visita Guiada</option>
-      <option value="Charla de Orquídeas">Charla de Orquídeas</option>
-    </select>
-  </div>
-
-  <div class="col-12 text-center">
-    <button type="submit" class="btn btn-success mt-3" style="color: white; font-weight: bold;">Reservar</button>
-    <hr>
-  </div>
-</form>
-
-</div>
+	<section class="appointment">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="section-title">
+								<h2>Reserva tu Evento con Nosotros</h2>
+								<p>Selecciona tu evento, fecha y salón disponible para realizar tu reserva.</p>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-6 col-md-12 col-12">
+							<form class="form" action="reserva.php" method="post">
+								<div class="row">
+									<div class="col-lg-6 col-md-6 col-12">
+										<div class="form-group">
+											<input name="nombre" type="text" placeholder="Nombre Completo" required>
+										</div>
+									</div>
+									<div class="col-lg-6 col-md-6 col-12">
+										<div class="form-group">
+											<input name="email" type="email" placeholder="Correo Electrónico" required>
+										</div>
+									</div>
+									<div class="col-lg-6 col-md-6 col-12">
+										<div class="form-group">
+											<input name="telefono" type="text" placeholder="Teléfono" required>
+										</div>
+									</div>
+									<div class="col-lg-6 col-md-6 col-12">
+										<div class="form-group">
+											<select name="evento" class="form-control" id="evento" required>
+												<option value="">-- Selecciona un evento --</option>
+												<option value="1">Taller de Mariposas</option>
+												<option value="2">Visita Guiada</option>
+												<option value="3">Charla de Orquídeas</option>
+											</select>
+										</div>
+									</div>
+									<div class="col-lg-6 col-md-6 col-12">
+										<div class="form-group">
+											<input type="date" name="fecha" class="form-control" required>
+										</div>
+									</div>
+									<div class="col-lg-6 col-md-6 col-12">
+										<div class="form-group">
+											<input name="personas" type="number" placeholder="Cantidad de Personas" required>
+										</div>
+									</div>
+									<div class="col-lg-12 col-md-12 col-12">
+										<div class="form-group">
+											<textarea name="mensaje" placeholder="¿Algo más que debamos saber? (opcional)"></textarea>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-lg-5 col-md-4 col-12">
+										<div class="form-group">
+											<div class="button">
+												<button type="submit" class="btn">Reservar Evento</button>
+											</div>
+										</div>
+									</div>
+									<div class="col-lg-7 col-md-8 col-12">
+										<p>(Nos pondremos en contacto contigo para confirmar tu reserva)</p>
+									</div>
+								</div>
+							</form>
+						</div>
+						<div class="col-lg-6 col-md-12">
+							<div class="appointment-image">
+								<img src="img/reserva-removebg-preview.png" alt="Reservas">
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
 
 </body>
 </html>
