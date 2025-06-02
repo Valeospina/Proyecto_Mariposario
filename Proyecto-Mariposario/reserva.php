@@ -1,11 +1,8 @@
 
 <?php
 require_once 'ReservaManager.php';
+include 'DB.php';
 
-
-// Conectar a la base de datos
-$pdo = new PDO('mysql:host=localhost;dbname=mariposarioDB', 'root', '');
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 // Crear instancia del gestor de reservas
 $reservaManager = new ReservaManager($pdo);
