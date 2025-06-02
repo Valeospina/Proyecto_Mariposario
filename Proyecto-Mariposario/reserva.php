@@ -1,26 +1,43 @@
+
 <?php
 require_once 'ReservaManager.php';
 
-// Configura conexión PDO a base de datos
-$pdo = new PDO('mysql:host=localhost;dbname=mariposario', 'root', '');
+
+// Conectar a la base de datos
+$pdo = new PDO('mysql:host=localhost;dbname=mariposarioDB', 'root', '');
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+// Crear instancia del gestor de reservas
 $reservaManager = new ReservaManager($pdo);
 
-// Crear reserva con datos de formulario (POST)
+// Validar eventos disponibles
+$eventosValidos = [
+    "Taller de Mariposas" => 1,
+    "Visita Guiada" => 2,
+    "Charla de Orquídeas" => 3
+];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $evento_id = $_POST['evento_id'];
-    $fecha = $_POST['fecha_reserva'];
-    $usuario = $_POST['usuario'];
-    $cantidad = $_POST['cantidad_personas'];
+    $nombre = $_POST['nombre'];
+    $correo = $_POST['correo'];
+    $fecha = $_POST['fecha'];
+    $cantidad = $_POST['personas'];
+    $eventoNombre = $_POST['evento'];
+
+    if (!isset($eventosValidos[$eventoNombre])) {
+        echo "<div style='color: red; text-align: center; font-weight: bold;'>Evento no válido.</div>";
+        exit;
+    }
+
+    $evento_id = $eventosValidos[$eventoNombre];
+    $usuario = "$nombre ($correo)";
 
     $resultado = $reservaManager->crearReserva($evento_id, $fecha, $usuario, $cantidad);
 
     if ($resultado['success']) {
-        echo $resultado['message'];
+        echo "<div style='color: green; text-align: center; font-weight: bold;'>¡Reserva realizada correctamente!</div>";
     } else {
-        echo "Error: " . $resultado['message'];
+        echo "<div style='color: red; text-align: center;'>Error: " . $resultado['message'] . "</div>";
     }
 }
-
 ?>
