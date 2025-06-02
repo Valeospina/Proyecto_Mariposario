@@ -152,13 +152,153 @@
             border-radius: 5px;
             text-decoration: none;
             margin-top: 20px;
+            margin-right: 10px;
             font-weight: bold;
             text-align: center;
             transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
         }
 
         .btn:hover {
             background-color: #3e8e41;
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-review {
+            background-color: #f39c12;
+        }
+
+        .btn-review:hover {
+            background-color: #e67e22;
+        }
+
+        /* Estilo para el modal de reseñas */
+        .review-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .review-modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 30px;
+            border: none;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #80b78d;
+        }
+
+        .review-form h3 {
+            color: #42764D;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .star-rating {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .star {
+            font-size: 24px;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            margin: 0 2px;
+        }
+
+        .star:hover,
+        .star.active {
+            color: #ffc107;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9e9e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            resize: vertical;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #80b78d;
+            box-shadow: 0 0 0 3px rgba(128, 183, 141, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: #80b78d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            background-color: #3e8e41;
+        }
+
+        .rating-text {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
         }
 
         /* Estilo para el preloader */
@@ -499,8 +639,6 @@
                 <div class="col-lg-9 col-md-8 col-12">
                     <!-- Main Content -->
                     <div class="user-main-content">
-
-
                         <!-- Contenido Principal -->
                         <div class="container">
                             <h1>Mis Pedidos</h1>
@@ -519,6 +657,9 @@
                                         <p class="status-date">Fecha Estimada de Entrega: 12 de abril, 2025</p>
                                     </div>
                                     <a href="#" class="btn">Ver Detalles</a>
+                                    <button class="btn btn-review" onclick="openReviewModal('12345')">
+                                        <i class="fas fa-star"></i> Dar mi Opinión
+                                    </button>
                                 </li>
                                 <li class="order-item">
                                     <h2>Pedido #12346</h2>
@@ -534,6 +675,9 @@
                                         <p class="status-date">Fecha Estimada de Entrega: 15 de abril, 2025</p>
                                     </div>
                                     <a href="#" class="btn">Ver Detalles</a>
+                                    <button class="btn btn-review" onclick="openReviewModal('12346')">
+                                        <i class="fas fa-star"></i> Dar mi Opinión
+                                    </button>
                                 </li>
                             </ul>
                         </div>
@@ -541,6 +685,43 @@
                 </div>
             </div>
         </div>
+    </section>
+
+    <!-- Modal de Reseña -->
+    <div id="reviewModal" class="review-modal">
+        <div class="review-modal-content">
+            <span class="close" onclick="closeReviewModal()">&times;</span>
+            <form class="review-form" onsubmit="submitReview(event)">
+                <h3>¿Cómo estuvo tu pedido?</h3>
+                
+                <div class="star-rating">
+                    <span class="star" data-rating="1">★</span>
+                    <span class="star" data-rating="2">★</span>
+                    <span class="star" data-rating="3">★</span>
+                    <span class="star" data-rating="4">★</span>
+                    <span class="star" data-rating="5">★</span>
+                </div>
+                <div class="rating-text">Haz clic en las estrellas para calificar</div>
+                
+                <div class="form-group">
+                    <label for="reviewText">Cuéntanos tu experiencia:</label>
+                    <textarea 
+                        id="reviewText" 
+                        class="form-control" 
+                        rows="4" 
+                        placeholder="Escribe aquí tu opinión sobre el pedido..."
+                        required>
+                    </textarea>
+                </div>
+                
+                <input type="hidden" id="selectedRating" value="0">
+                <input type="hidden" id="currentOrderId" value="">
+                
+                <button type="submit" class="btn-submit">Enviar Reseña</button>
+            </form>
+        </div>
+    </div>
+
 		<!-- Footer Area -->
 		<footer id="footer" class="footer">
 			<!-- Footer Top -->
@@ -651,6 +832,131 @@
 		<script src="js/waypoints.min.js"></script>
 		<script src="js/main.js"></script>
 
+		<!-- Script para el modal de reseñas -->
+		<script>
+			let selectedRating = 0;
+
+			// Función para abrir el modal de reseña
+			function openReviewModal(orderId) {
+				document.getElementById('reviewModal').style.display = 'block';
+				document.getElementById('currentOrderId').value = orderId;
+				resetForm();
+			}
+
+			// Función para cerrar el modal de reseña
+			function closeReviewModal() {
+				document.getElementById('reviewModal').style.display = 'none';
+			}
+
+			// Función para resetear el formulario
+			function resetForm() {
+				selectedRating = 0;
+				document.getElementById('selectedRating').value = 0;
+				document.getElementById('reviewText').value = '';
+				updateStarDisplay();
+				document.querySelector('.rating-text').textContent = 'Haz clic en las estrellas para calificar';
+			}
+
+			// Configurar eventos para las estrellas
+			document.addEventListener('DOMContentLoaded', function() {
+				const stars = document.querySelectorAll('.star');
+				
+				stars.forEach(star => {
+					star.addEventListener('click', function() {
+						selectedRating = parseInt(this.getAttribute('data-rating'));
+						document.getElementById('selectedRating').value = selectedRating;
+						updateStarDisplay();
+						updateRatingText();
+					});
+
+					star.addEventListener('mouseover', function() {
+						const rating = parseInt(this.getAttribute('data-rating'));
+						highlightStars(rating);
+					});
+				});
+
+				// Restaurar estrellas al salir del hover
+				document.querySelector('.star-rating').addEventListener('mouseleave', function() {
+					updateStarDisplay();
+				});
+			});
+
+			// Función para actualizar la visualización de las estrellas
+			function updateStarDisplay() {
+				const stars = document.querySelectorAll('.star');
+				stars.forEach((star, index) => {
+					if (index < selectedRating) {
+						star.classList.add('active');
+					} else {
+						star.classList.remove('active');
+					}
+				});
+			}
+
+			// Función para resaltar estrellas en hover
+			function highlightStars(rating) {
+				const stars = document.querySelectorAll('.star');
+				stars.forEach((star, index) => {
+					if (index < rating) {
+						star.classList.add('active');
+					} else {
+						star.classList.remove('active');
+					}
+				});
+			}
+
+			// Función para actualizar el texto de calificación
+			function updateRatingText() {
+				const ratingTexts = [
+					'',
+					'Muy malo',
+					'Malo',
+					'Regular',
+					'Bueno',
+					'Excelente'
+				];
+				document.querySelector('.rating-text').textContent = ratingTexts[selectedRating];
+			}
+
+			// Función para enviar la reseña
+			function submitReview(event) {
+				event.preventDefault();
+				
+				const orderId = document.getElementById('currentOrderId').value;
+				const rating = document.getElementById('selectedRating').value;
+				const reviewText = document.getElementById('reviewText').value;
+				
+				if (rating == 0) {
+					alert('Por favor selecciona una calificación.');
+					return;
+				}
+				
+				if (reviewText.trim() === '') {
+					alert('Por favor escribe tu opinión.');
+					return;
+				}
+				
+				// Aquí puedes agregar la lógica para enviar la reseña al servidor
+				// Por ejemplo, usar AJAX para enviar los datos
+				
+				// Simulamos el envío exitoso
+				alert(`¡Gracias por tu reseña!\n\nPedido: ${orderId}\nCalificación: ${rating} estrellas\nOpinión: ${reviewText}`);
+				
+				// Cerrar el modal
+				closeReviewModal();
+				
+				// Aquí podrías actualizar la interfaz para mostrar que ya se envió la reseña
+				// Por ejemplo, cambiar el botón "Dar mi Opinión" por "Reseña enviada"
+			}
+
+			// Cerrar modal al hacer clic fuera de él
+			window.addEventListener('click', function(event) {
+				const modal = document.getElementById('reviewModal');
+				if (event.target === modal) {
+					closeReviewModal();
+				}
+			});
+		</script>
   
 </body>
 
