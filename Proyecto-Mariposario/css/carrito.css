@@ -722,3 +722,44 @@ body {
     opacity: 1;
     transform: scale(1);
 }
+
+/* ------------------------------------------------------------- */
+/* SECCIÓN DE PUNTOS EN EL CARRITO */
+/* ------------------------------------------------------------- */
+.carrito-puntos-wrapper {
+    background: linear-gradient(135deg, #f9f2cc, #ffffff); /* Fondo con color personalizado */
+    border-left: 6px solid #397550; /* Borde del mismo color */
+    border-radius: 12px;
+    color: var(--primary-dark);
+    transition: all 0.3s ease-in-out;
+}
+
+.carrito-puntos-wrapper:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+}
+
+.carrito-puntos-wrapper .puntos-texto h5 {
+    font-weight: 600;
+    color: var(--primary-dark);
+}
+
+.puntos-numero {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #397550; /* También actualizamos el color del número */
+}
+
+.carrito-puntos-wrapper .puntos-acciones .btn {
+    border-radius: 20px;
+    transition: 0.2s ease-in-out;
+}
+
+.carrito-puntos-wrapper .puntos-acciones .btn:hover {
+    transform: translateY(-1px);
+}
+
+/* Variables recomendadas si aún no existen */
+:root {
+    --accent-color: #78b68f;
+    --primary-dark: #1f2d3d;
+}

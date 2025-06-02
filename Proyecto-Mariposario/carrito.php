@@ -313,6 +313,21 @@ $total_carrito_final = getCartTotalAmount();
 
     <div class="container my-5">
         <h2 class="text-center mb-4">Tu Carrito de Compras</h2>
+
+        <!-- INICIO SECCIÓN DE PUNTOS DEL CLIENTE -->
+            <div class="carrito-puntos-wrapper mb-4 p-4 shadow-sm">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                    <div class="puntos-texto">
+                        <h5 class="mb-1">¡Hola Usuario! Tienes <span class="puntos-numero">0</span> puntos disponibles </h5>
+                        <p class="mb-0 text-muted">Canjéalos en tu próxima compra o acumula más para obtener mejores beneficios en tus proximas compras y reservas.</p>
+                    </div>
+                    <div class="puntos-acciones d-flex gap-2">
+                        <button class="btn btn-primary btn-sm">Canjear Puntos</button>
+                    </div>
+                </div>
+            </div>
+            <!-- FIN SECCIÓN DE PUNTOS DEL CLIENTE -->
+
         <?php if (empty($carrito_actual)): ?>
             <div class="alert alert-info text-center" role="alert">
                 Tu carrito está vacío. ¡Explora nuestros productos y agrega algunos!
