@@ -199,226 +199,214 @@ foreach ($carrito_actual as $item) {
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="css/tienda.css">
+    <link rel="stylesheet" href="css/carrito.css">
     <link rel="stylesheet" href="css/custom-cart-user.css">
 
 </head>
-<body>
-    <header class="header">
-        <div class="topbar">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-6 col-md-5 col-12">
-                        <ul class="top-link">
-                            <li>
-                                <a href="usuario.html" class="user-profile-link">
-                                    <img src="<?php echo htmlspecialchars($_SESSION['user_avatar']); ?>" alt="Avatar de Usuario" class="user-avatar">
-                                    <div class="user-info-text">
-                                        <span class="user-greeting">Hola, <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
-                                        <span class="user-points-display" id="user-points-display"><?php echo htmlspecialchars($_SESSION['user_points']); ?> Puntos</span>
-                                    </div>
-                                </a>
-                            </li>
-                            <li class="admin-link"><a href="admin.html">Admin</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-lg-6 col-md-7 col-12">
-                        <ul class="top-contact">
-                            <li><i class="fa fa-phone"></i>+506 8888 8888</li>
-                            <li><i class="fa fa-envelope"></i><a href="mailto:info@mariposario.com">info@mariposario.com</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="header-inner">
-            <div class="container">
-                <div class="inner">
+    <body>
+        <header class="header">
+            <div class="topbar">
+                <div class="container">
                     <div class="row">
-                        <div class="col-lg-3 col-md-3 col-12">
-                            <div class="logo">
-                                <a href="index.html"><img src="img/logo.png" alt="Logo Mariposario"></a>
-                            </div>
-                            <div class="mobile-nav"></div>
+                        <div class="col-lg-6 col-md-5 col-12">
+                            <ul class="top-link">
+                                <li>
+                                    <a href="usuario.html" class="user-profile-link">
+                                        <img src="<?php echo htmlspecialchars($_SESSION['user_avatar']); ?>" alt="Avatar de Usuario" class="user-avatar">
+                                        <div class="user-info-text">
+                                            <span class="user-greeting">Hola, <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+                                            <span class="user-points-display" id="user-points-display"><?php echo htmlspecialchars($_SESSION['user_points']); ?> Puntos</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="admin-link"><a href="admin.html">Admin</a></li>
+                            </ul>
                         </div>
-                        <div class="col-lg-7 col-md-9 col-12">
-                            <div class="main-menu">
-                                <nav class="navigation">
-                                    <ul class="nav menu">
-                                        <li><a href="index.html">Inicio</a></li>
-                                        <li><a href="mariposas.php">Mariposas</a></li>
-                                        <li><a href="orquideas.php">Orquideas</a></li>
-                                    </ul>
-                                </nav>
-                            </div>
+                        <div class="col-lg-6 col-md-7 col-12">
+                            <ul class="top-contact">
+                                <li><i class="fa fa-phone"></i>+506 8888 8888</li>
+                                <li><i class="fa fa-envelope"></i><a href="mailto:info@mariposario.com">info@mariposario.com</a></li>
+                            </ul>
                         </div>
-                        <div class="col-lg-2 col-12">
-                            <div class="get-quote">
-                                <a href="carrito.php" class="btn btn-primary btn-shopping-cart">
-                                    <i class="fa fa-shopping-cart cart-icon"></i>
-                                    <span class="cart-item-count" id="cart-item-count">
-                                        <?php
-                                            $total_items_header = 0;
-                                            if (isset($_SESSION['carrito']) && is_array($_SESSION['carrito'])) {
-                                                foreach ($_SESSION['carrito'] as $item) {
-                                                    $total_items_header += $item['cantidad'];
+                    </div>
+                </div>
+            </div>
+            <div class="header-inner">
+                <div class="container">
+                    <div class="inner">
+                        <div class="row">
+                            <div class="col-lg-3 col-md-3 col-12">
+                                <div class="logo">
+                                    <a href="index.html"><img src="img/logo.png" alt="Logo Mariposario"></a>
+                                </div>
+                                <div class="mobile-nav"></div>
+                            </div>
+                            <div class="col-lg-7 col-md-9 col-12">
+                                <div class="main-menu">
+                                    <nav class="navigation">
+                                        <ul class="nav menu">
+                                            <li><a href="index.html">Inicio</a></li>
+											<li><a href="tienda.html">Tienda</a></li>
+											<li><a href="eventos.html">Eventos</a></li>
+											<li><a href="contact.html">Contacto</a></li>
+                                            <li class="active"><a href="carrito.php">Carrito</a></li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-12">
+                                <div class="get-quote">
+                                    <a href="carrito.php" class="btn btn-primary btn-shopping-cart">
+                                        <i class="fa fa-shopping-cart cart-icon"></i>
+                                        <span class="cart-item-count" id="cart-item-count">
+                                            <?php
+                                                $total_items_header = 0;
+                                                if (isset($_SESSION['carrito']) && is_array($_SESSION['carrito'])) {
+                                                    foreach ($_SESSION['carrito'] as $item) {
+                                                        $total_items_header += $item['cantidad'];
+                                                    }
                                                 }
-                                            }
-                                            echo $total_items_header;
-                                        ?>
-                                    </span>
-                                </a>
+                                                echo $total_items_header;
+                                            ?>
+                                        </span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <div class="container my-5">
-        <h2 class="mb-4">Tu Carrito de Compras</h2>
-        <?php if (empty($carrito_actual)): ?>
-            <div class="alert alert-info">Tu carrito está vacío. ¡Agrega algunos productos!</div>
-        <?php else: ?>
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th>Precio Unitario</th>
-                        <th>Cantidad</th>
-                        <th>Subtotal</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="cart-items-body"> <?php foreach ($carrito_actual as $item): ?>
-                    <tr data-product-id="<?php echo htmlspecialchars($item['id']); ?>"> <td><?php echo htmlspecialchars($item['nombre']); ?></td>
-                        <td class="product-price" data-price="<?php echo htmlspecialchars($item['precio']); ?>">₡<?php echo number_format($item['precio'], 2, ',', '.'); ?></td>
-                        <td>
-                            <div class="input-group" style="width: 120px;">
-                                <div class="input-group-prepend">
-                                    <button class="btn btn-outline-secondary btn-sm update-quantity" type="button" data-action="decrease" data-id="<?php echo htmlspecialchars($item['id']); ?>">-</button>
+        <div class="carrito-wrapper my-5">
+            <h2 class="carrito-titulo mb-4">Tu Carrito de Compras</h2>
+                <?php if (empty($carrito_actual)): ?>
+                    <div class="alert alert-info carrito-alerta">Tu carrito está vacío. ¡Agrega algunos productos!</div>
+                <?php else: ?>
+                    <div class="carrito-items-list">
+                        <?php foreach ($carrito_actual as $item): ?>
+                            <div class="carrito-item-card d-flex align-items-center" data-product-id="<?php echo htmlspecialchars($item['id']); ?>">
+                                <div class="carrito-producto-imagen">
+                                    <img src="ruta/a/imagen/<?php echo htmlspecialchars($item['id']); ?>.jpg" alt="<?php echo htmlspecialchars($item['nombre']); ?>">
                                 </div>
-                                <input type="text" class="form-control form-control-sm text-center product-quantity" value="<?php echo htmlspecialchars($item['cantidad']); ?>" data-id="<?php echo htmlspecialchars($item['id']); ?>" readonly>
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary btn-sm update-quantity" type="button" data-action="increase" data-id="<?php echo htmlspecialchars($item['id']); ?>">+</button>
+                                <div class="carrito-producto-detalles flex-grow-1 ms-3">
+                                    <h5 class="carrito-producto-nombre mb-1"><?php echo htmlspecialchars($item['nombre']); ?></h5>
+                                    <div class="carrito-precio mb-2">₡<?php echo number_format($item['precio'], 2, ',', '.'); ?></div>
+                                    <div class="carrito-cantidad d-flex align-items-center">
+                                        <button class="btn btn-outline-secondary btn-sm update-quantity" type="button" data-action="decrease" data-id="<?php echo htmlspecialchars($item['id']); ?>">−</button>
+                                        <input type="text" class="form-control form-control-sm text-center mx-2 carrito-input-cantidad" value="<?php echo htmlspecialchars($item['cantidad']); ?>" data-id="<?php echo htmlspecialchars($item['id']); ?>" readonly>
+                                        <button class="btn btn-outline-secondary btn-sm update-quantity" type="button" data-action="increase" data-id="<?php echo htmlspecialchars($item['id']); ?>">+</button>
+                                    </div>
+                                </div>
+                                <div class="carrito-subtotal text-end">
+                                    <p class="mb-1">Subtotal:</p>
+                                    <strong class="product-subtotal" data-subtotal="<?php echo htmlspecialchars($item['precio'] * $item['cantidad']); ?>">₡<?php echo number_format($item['precio'] * $item['cantidad'], 2, ',', '.'); ?></strong>
+                                    <button class="btn btn-sm btn-danger mt-2 remove-cart-item" data-id="<?php echo htmlspecialchars($item['id']); ?>">Eliminar</button>
                                 </div>
                             </div>
-                        </td>
-                        <td class="product-subtotal" data-subtotal="<?php echo htmlspecialchars($item['precio'] * $item['cantidad']); ?>">₡<?php echo number_format($item['precio'] * $item['cantidad'], 2, ',', '.'); ?></td>
-                        <td>
-                            <button class="btn btn-sm btn-danger remove-cart-item" data-id="<?php echo htmlspecialchars($item['id']); ?>">Eliminar</button>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="3" class="text-right"><strong>Total del Carrito:</strong></td>
-                        <td id="total-carrito-display"><strong>₡<?php echo number_format($total_carrito_final, 2, ',', '.'); ?></strong></td>
-                        <td></td>
-                    </tr>
-                </tfoot>
-            </table>
-            <div class="text-right">
-                <a href="mariposas.php" class="btn btn-secondary">Seguir Comprando</a>
-                <button class="btn btn-success">Proceder al Pago</button>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <div class="carrito-total-container mt-4 text-end">
+                        <h4>Total del Carrito: <span id="total-carrito-display">₡<?php echo number_format($total_carrito_final, 2, ',', '.'); ?></span></h4>
+                        <a href="mariposas.php" class="btn btn-outline-secondary me-2">Seguir Comprando</a>
+                        <button class="btn btn-success">Proceder al Pago</button>
+                    </div>
+                <?php endif; ?>
             </div>
-        <?php endif; ?>
-    </div>
 
-    <footer id="footer" class="footer">
-        <div class="footer-top">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-3 col-md-6 col-12">
-                        <div class="single-footer">
-                            <h2>Sobre Nosotros</h2>
-                            <p>Somos un proyecto dedicado a la conservación y apreciación de mariposas y orquídeas en Costa Rica. Promovemos el turismo sostenible y la educación ambiental.</p>
-                            <ul class="social">
-                                <li><a href="#"><i class="icofont-facebook"></i></a></li>
-                                <li><a href="#"><i class="icofont-instagram"></i></a></li>
-                                <li><a href="#"><i class="icofont-twitter"></i></a></li>
-                            </ul>
+        <footer id="footer" class="footer">
+            <div class="footer-top">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <div class="single-footer">
+                                <h2>Sobre Nosotros</h2>
+                                <p>Somos un proyecto dedicado a la conservación y apreciación de mariposas y orquídeas en Costa Rica. Promovemos el turismo sostenible y la educación ambiental.</p>
+                                <ul class="social">
+                                    <li><a href="#"><i class="icofont-facebook"></i></a></li>
+                                    <li><a href="#"><i class="icofont-instagram"></i></a></li>
+                                    <li><a href="#"><i class="icofont-twitter"></i></a></li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="col-lg-3 col-md-6 col-12">
-                        <div class="single-footer f-link">
-                            <h2>Enlaces Rápidos</h2>
-                            <div class="row">
-                                <div class="col-12">
-                                    <ul>
-                                        <li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Inicio</a></li>
-                                        <li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Reservaciones</a></li>
-                                        <li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Galería</a></li>
-                                        <li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Eventos</a></li>
-                                        <li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Contáctanos</a></li>
-                                    </ul>
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <div class="single-footer f-link">
+                                <h2>Enlaces Rápidos</h2>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <ul>
+                                            <li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Inicio</a></li>
+                                            <li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Reservaciones</a></li>
+                                            <li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Galería</a></li>
+                                            <li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Eventos</a></li>
+                                            <li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Contáctanos</a></li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="col-lg-3 col-md-6 col-12">
-                        <div class="single-footer">
-                            <h2>Horario de Atención</h2>
-                            <p>Visítanos para vivir una experiencia rodeado de naturaleza y belleza.</p>
-                            <ul class="time-sidual">
-                                <li class="day">Lunes - Viernes <span>8:00 - 17:00</span></li>
-                                <li class="day">Sábado <span>9:00 - 16:00</span></li>
-                                <li class="day">Domingo <span>Cerrado</span></li>
-                            </ul>
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <div class="single-footer">
+                                <h2>Horario de Atención</h2>
+                                <p>Visítanos para vivir una experiencia rodeado de naturaleza y belleza.</p>
+                                <ul class="time-sidual">
+                                    <li class="day">Lunes - Viernes <span>8:00 - 17:00</span></li>
+                                    <li class="day">Sábado <span>9:00 - 16:00</span></li>
+                                    <li class="day">Domingo <span>Cerrado</span></li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="col-lg-3 col-md-6 col-12">
-                        <div class="single-footer">
-                            <h2>Boletín</h2>
-                            <p>Suscríbete para recibir noticias sobre nuestras mariposas, orquídeas y próximos eventos especiales.</p>
-                            <form action="#" method="get" target="_blank" class="newsletter-inner">
-                                <input name="email" placeholder="Tu correo electrónico" class="common-input" required type="email">
-                                <button class="button"><i class="icofont icofont-paper-plane"></i></button>
-                            </form>
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <div class="single-footer">
+                                <h2>Boletín</h2>
+                                <p>Suscríbete para recibir noticias sobre nuestras mariposas, orquídeas y próximos eventos especiales.</p>
+                                <form action="#" method="get" target="_blank" class="newsletter-inner">
+                                    <input name="email" placeholder="Tu correo electrónico" class="common-input" required type="email">
+                                    <button class="button"><i class="icofont icofont-paper-plane"></i></button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="copyright">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="copyright-content">
-                            <p>© 2025 Mariposas y Orquídeas | Todos los derechos reservados</p>
+            <div class="copyright">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="copyright-content">
+                                <p>© 2025 Mariposas y Orquídeas | Todos los derechos reservados</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </footer>
+        </footer>
 
-    <script src="js/jquery.min.js"></script>
-    <script src="js/jquery-migrate-3.0.0.js"></script>
-    <script src="js/jquery-ui.min.js"></script>
-    <script src="js/easing.js"></script>
-    <script src="js/colors.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap-datepicker.js"></script>
-    <script src="js/jquery.nav.js"></script>
-    <script src="js/slicknav.min.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
-    <script src="js/niceselect.js"></script>
-    <script src="js/tilt.jquery.min.js"></script>
-    <script src="js/owl-carousel.js"></script>
-    <script src="js/jquery.counterup.min.js"></script>
-    <script src="js/steller.js"></script>
-    <script src="js/wow.min.js"></script>
-    <script src="js/jquery.magnific-popup.min.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.3/waypoints.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/carrito.js"></script>
-    <script src="js/user-cart-updates.js"></script>
-</body>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/jquery-migrate-3.0.0.js"></script>
+        <script src="js/jquery-ui.min.js"></script>
+        <script src="js/easing.js"></script>
+        <script src="js/colors.js"></script>
+        <script src="js/popper.min.js"></script>
+        <script src="js/bootstrap-datepicker.js"></script>
+        <script src="js/jquery.nav.js"></script>
+        <script src="js/slicknav.min.js"></script>
+        <script src="js/jquery.scrollUp.min.js"></script>
+        <script src="js/niceselect.js"></script>
+        <script src="js/tilt.jquery.min.js"></script>
+        <script src="js/owl-carousel.js"></script>
+        <script src="js/jquery.counterup.min.js"></script>
+        <script src="js/steller.js"></script>
+        <script src="js/wow.min.js"></script>
+        <script src="js/jquery.magnific-popup.min.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.3/waypoints.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/main.js"></script>
+        <script src="js/carrito.js"></script>
+        <script src="js/user-cart-updates.js"></script>
+    </body>
 </html>

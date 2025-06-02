@@ -24,6 +24,7 @@
         <link rel="stylesheet" href="css/animate.min.css">
         <link rel="stylesheet" href="css/magnific-popup.css">
         <link rel="stylesheet" href="css/tienda.css">
+        
 
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="style.css">
@@ -72,15 +73,17 @@
                                     <nav class="navigation">
                                         <ul class="nav menu">
                                             <li><a href="index.html">Inicio</a></li>
+                                            <li><a href="tienda.html">Tienda</a></li>
                                             <li><a href="mariposas.php">Mariposas</a></li>
                                             <li class="active"><a href="orquideas.php">Orquídeas</a></li>
+                                            <li><a href="eventos.html">Eventos</a></li>
                                         </ul>
                                     </nav>
                                 </div>
                             </div>
                             <div class="col-lg-2 col-12">
                                 <div class="get-quote">
-                                    <a href="carrito.html" class="btn btn-carrito" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: transparent; box-shadow: none;">
+                                    <a href="carrito.php" class="btn btn-carrito" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: transparent; box-shadow: none;">
                                         <i class="fa fa-shopping-cart icono-carrito" style="color: #42764D; font-size: 20px;"></i>
                                     </a>
                                 </div>
@@ -91,148 +94,154 @@
             </div>
         </header>
 
-        <div id="orquidea-facts" class="orquidea-facts section">
-            <div class="overlay-form-container">
-                <form method="GET" action="orquideas.php"> <div class="row justify-content-center align-items-center">
-                        <div class="col-md-8 col-lg-5">
-                            <div class="form-group">
-                                <?php
-                                include 'DB.php'; // Include the database connection file
-                                    $searchTerm = isset($_GET['buscar']) ? htmlspecialchars($_GET['buscar']) : '';
-                                ?>
-                                <input type="text" name="buscar" class="form-control" placeholder="Buscar por nombre de producto" style="height: 45px; padding: 6px 12px;" value="<?php echo $searchTerm; ?>">
+        <body class="orquidea">
+            <?php
+                include 'DB.php';
+                $searchTerm = isset($_GET['buscar']) ? htmlspecialchars($_GET['buscar']) : '';
+                $selectedCategory = 'Orquídeas'; // NUEVO: categoría establecida directamente
+                ?>
+
+                <div id="orquidea-facts" class="orquidea-facts section">
+                    <div class="overlay-form-container">
+                        <form method="GET" action="orquideas.php">
+                            <div class="row justify-content-center align-items-center">
+                                <div class="col-md-8 col-lg-5">
+                                    <div class="form-group">
+                                        <input type="text" name="buscar" class="form-control" placeholder="Buscar por nombre de producto" 
+                                        style="height: 45px; padding: 6px 12px;" value="<?php echo $searchTerm; ?>">
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-lg-2">
+                                    <div class="form-group">
+                                        <button class="btn btn-primary w-100" type="submit">
+                                            <i class="fa fa-search"></i> <strong>Buscar</strong>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-3 col-lg-2">
-                            <div class="form-group">
-                                <button class="btn btn-primary w-100" type="submit">
-                                    <i class="fa fa-search"></i> <strong>Buscar</strong>
-                                </button>
-                            </div>
-                        </div>
+                        </form>
                     </div>
-                </form>
-            </div>
-        </div>
+                </div>
 
-        <section class="products section">
-            <div class="container">
-                <div class="row">
-                    <?php
-                    // Check if the connection is successful before proceeding
-                    if ($conn && !$conn->connect_error) { // Ensure $conn is not null and connection is good
-                        // Build the SQL query
-                        $sql = "SELECT ID_Producto, Nombre, Descripcion, Precio, Imagen_URL FROM producto WHERE 1";
+            <section class="products section">
+                <div class="container">
+                    <div class="row">
+                        <?php
+                        // Check if the connection is successful before proceeding
+                        if ($conn && !$conn->connect_error) { // Ensure $conn is not null and connection is good
+                            // Build the SQL query
+                            $sql = "SELECT ID_Producto, Nombre, Descripcion, Precio, Imagen_URL FROM producto WHERE 1";
 
-                        $param_types = ''; // Stores the types of parameters (e.g., 's' for string)
-                        $param_values = []; // Stores the actual parameter values
+                            $param_types = ''; // Stores the types of parameters (e.g., 's' for string)
+                            $param_values = []; // Stores the actual parameter values
 
-                        $conditions = [];
+                            $conditions = [];
 
-                        // Add search term condition
-                        if (!empty($searchTerm)) {
-                            $conditions[] = "(Nombre LIKE ? OR Descripcion LIKE ?)";
-                            $param_types .= 'ss'; // 's' for string
-                            $param_values[] = '%' . $searchTerm . '%';
-                            $param_values[] = '%' . $searchTerm . '%';
-                        }
-
-                        // Add category filter condition for 'Orquídeas'
-                        // If no category is selected in the dropdown, default to 'Orquídeas'
-                        if (!empty($selectedCategory)) {
-                            $conditions[] = "Categoria = ?";
-                            $param_types .= 's'; // 's' for string
-                            $param_values[] = $selectedCategory;
-                        } else {
-                            // Default to show only Orquídeas if no category filter is active on this page
-                            $conditions[] = "Categoria = 'Orquídeas'"; // No need to bind if it's a fixed string
-                        }
-
-                        // Append conditions to SQL query
-                        if (!empty($conditions)) {
-                            $sql .= " AND " . implode(" AND ", $conditions);
-                        }
-
-                        try {
-                            // Prepare the statement
-                            $stmt = $conn->prepare($sql);
-
-                            if ($stmt === false) {
-                                throw new Exception("Error al preparar la consulta: " . $conn->error);
+                            // Add search term condition
+                            if (!empty($searchTerm)) {
+                                $conditions[] = "(Nombre LIKE ? OR Descripcion LIKE ?)";
+                                $param_types .= 'ss'; // 's' for string
+                                $param_values[] = '%' . $searchTerm . '%';
+                                $param_values[] = '%' . $searchTerm . '%';
                             }
 
-                            // Bind parameters if there are any
-                            if (!empty($param_values)) {
-                                // Use call_user_func_array for dynamic binding
-                                // We need to create an array of references for bind_param
-                                $bind_params_array = [];
-                                $bind_params_array[] = $param_types;
-                                foreach ($param_values as $key => $value) {
-                                    $bind_params_array[] = &$param_values[$key]; // Pass by reference
-                                }
-                                call_user_func_array([$stmt, 'bind_param'], $bind_params_array);
-                            }
-
-                            // Execute the statement
-                            $stmt->execute();
-
-                            // Get the result set
-                            $result = $stmt->get_result();
-
-                            // Fetch all rows into an array
-                            $productos = [];
-                            if ($result) { // Check if get_result returned a valid result object
-                                while ($row = $result->fetch_assoc()) {
-                                    $productos[] = $row;
-                                }
-                            }
-                            
-                            // Close the statement
-                            $stmt->close();
-
-                            if (empty($productos)) {
-                                echo '<div class="col-12 text-center py-5">';
-                                echo '<h3>No se encontraron productos que coincidan con tu búsqueda.</h3>';
-                                echo '</div>';
+                            // Add category filter condition for 'Orquídeas'
+                            // If no category is selected in the dropdown, default to 'Orquídeas'
+                            if (!empty($selectedCategory)) {
+                                $conditions[] = "Categoria = ?";
+                                $param_types .= 's'; // 's' for string
+                                $param_values[] = $selectedCategory;
                             } else {
-                                foreach ($productos as $producto) {
-                                    ?>
-                                    <div class="col-lg-3 col-md-4 col-12 mb-4">
-                                        <div class="single-product shadow rounded p-3 h-100">
-                                            <div class="product-img">
-                                                <img src="<?php echo htmlspecialchars($producto['Imagen_URL']); ?>" alt="<?php echo htmlspecialchars($producto['Nombre']); ?>" class="img-fluid">
-                                            </div>
-                                            <div class="product-content">
-                                                <h4><strong><?php echo htmlspecialchars($producto['Nombre']); ?></strong></h4>
-                                                <p class="text-muted"><?php echo htmlspecialchars($producto['Descripcion']); ?></p>
-                                                <div class="product-price"><span><strong>₡<?php echo number_format($producto['Precio'], 2, ',', '.'); ?></strong></span></div>
-                                                <button type="button" class="btn btn-primary agregar-carrito mt-2"
-                                                    data-id="<?php echo htmlspecialchars($producto['ID_Producto']); ?>"
-                                                    data-nombre="<?php echo htmlspecialchars($producto['Nombre']); ?>"
-                                                    data-precio="<?php echo htmlspecialchars($producto['Precio']); ?>">
-                                                    <i class="fa fa-cart-plus"></i> Agregar al carrito
-                                                </button>
+                                // Default to show only Orquídeas if no category filter is active on this page
+                                $conditions[] = "Categoria = 'Orquídeas'"; // No need to bind if it's a fixed string
+                            }
+
+                            // Append conditions to SQL query
+                            if (!empty($conditions)) {
+                                $sql .= " AND " . implode(" AND ", $conditions);
+                            }
+
+                            try {
+                                // Prepare the statement
+                                $stmt = $conn->prepare($sql);
+
+                                if ($stmt === false) {
+                                    throw new Exception("Error al preparar la consulta: " . $conn->error);
+                                }
+
+                                // Bind parameters if there are any
+                                if (!empty($param_values)) {
+                                    // Use call_user_func_array for dynamic binding
+                                    // We need to create an array of references for bind_param
+                                    $bind_params_array = [];
+                                    $bind_params_array[] = $param_types;
+                                    foreach ($param_values as $key => $value) {
+                                        $bind_params_array[] = &$param_values[$key]; // Pass by reference
+                                    }
+                                    call_user_func_array([$stmt, 'bind_param'], $bind_params_array);
+                                }
+
+                                // Execute the statement
+                                $stmt->execute();
+
+                                // Get the result set
+                                $result = $stmt->get_result();
+
+                                // Fetch all rows into an array
+                                $productos = [];
+                                if ($result) { // Check if get_result returned a valid result object
+                                    while ($row = $result->fetch_assoc()) {
+                                        $productos[] = $row;
+                                    }
+                                }
+                                
+                                // Close the statement
+                                $stmt->close();
+
+                                if (empty($productos)) {
+                                    echo '<div class="col-12 text-center py-5">';
+                                    echo '<h3>No se encontraron productos que coincidan con tu búsqueda.</h3>';
+                                    echo '</div>';
+                                } else {
+                                    foreach ($productos as $producto) {
+                                        ?>
+                                        <div class="col-lg-3 col-md-4 col-12 mb-4">
+                                            <div class="single-product shadow rounded p-3 h-100">
+                                                <div class="product-img">
+                                                    <img src="<?php echo htmlspecialchars($producto['Imagen_URL']); ?>" alt="<?php echo htmlspecialchars($producto['Nombre']); ?>" class="img-fluid">
+                                                </div>
+                                                <div class="product-content">
+                                                    <h4><strong><?php echo htmlspecialchars($producto['Nombre']); ?></strong></h4>
+                                                    <p class="text-muted"><?php echo htmlspecialchars($producto['Descripcion']); ?></p>
+                                                    <div class="product-price"><span><strong>₡<?php echo number_format($producto['Precio'], 2, ',', '.'); ?></strong></span></div>
+                                                    <button type="button" class="btn btn-primary agregar-carrito mt-2"
+                                                        data-id="<?php echo htmlspecialchars($producto['ID_Producto']); ?>"
+                                                        data-nombre="<?php echo htmlspecialchars($producto['Nombre']); ?>"
+                                                        data-precio="<?php echo htmlspecialchars($producto['Precio']); ?>">
+                                                        <i class="fa fa-cart-plus"></i> Agregar al carrito
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <?php
+                                        <?php
+                                    }
                                 }
+                            } catch (Exception $e) {
+                                echo '<div class="col-12 text-center py-5">';
+                                echo '<h3>Error al cargar productos: ' . $e->getMessage() . '</h3>';
+                                echo '</div>';
                             }
-                        } catch (Exception $e) {
+                        } else {
+                            // Display a message if the database connection failed
                             echo '<div class="col-12 text-center py-5">';
-                            echo '<h3>Error al cargar productos: ' . $e->getMessage() . '</h3>';
+                            echo '<h3>No se pudo establecer conexión con la base de datos. Por favor, inténtelo de nuevo más tarde.</h3>';
                             echo '</div>';
                         }
-                    } else {
-                        // Display a message if the database connection failed
-                        echo '<div class="col-12 text-center py-5">';
-                        echo '<h3>No se pudo establecer conexión con la base de datos. Por favor, inténtelo de nuevo más tarde.</h3>';
-                        echo '</div>';
-                    }
-                    ?>
+                        ?>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </body>  
 
         <footer id="footer" class="footer">
             <div class="footer-top">

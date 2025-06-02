@@ -1,281 +1,205 @@
-body {
-    font-family: 'Segoe UI', sans-serif;
-    background-color: #f5f5f5;
+/* ------------------------------------------------------------
+   1. Fondo y contenedores principales para mariposas.php
+--------------------------------------------------------------- */
+body.mariposa {
+    background-image: url('../img/MariposaFondoTienda.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
-.section {
+/* Fondo para la página de orquídeas */
+body.orquidea {
+    background-image: url('../img/orquidea1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Sección con fondo blanco semitransparente */
+.orquidea-facts.section,
+.mariposa-facts.section {
     padding: 40px 0;
+    background-color: rgba(128, 183, 141, 0.9); /* Filtro */
 }
 
-.contact-us {
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+/* Contenedor del formulario */
+.overlay-form-container {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	max-width: 1200px;        
+    width: 100%;
+    margin: 0 auto;
 }
 
-.contact-us .form-control {
-    border-radius: 25px;
-    border: 1px solid #ccc;
+/* ---------------------------------------------------
+   2. Formulario de búsqueda
+--------------------------------------------------- */
+.form-group {
+    margin-bottom: 1rem;
 }
 
-.contact-us .btn {
-    background-color: #42764D;
-    color: #ffffff;
-    border-radius: 25px;
-    padding: 8px 20px;
+input.form-control {
+    height: 45px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid #fffbe8;
+    font-size: 16px;
 }
 
-.contact-us .btn:hover {
-    background-color: #42764D;
+/* Botón de búsqueda */
+button.btn-primary {
+    height: 45px;
+    font-size: 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.products {
-    background-color: #ffffff;
-    border-radius: 10px;
+button.btn-primary i {
+    margin-right: 6px;
+}
+
+/* ---------------------------------------------------
+   3. Sección de productos
+--------------------------------------------------- */
+.products.section {
+    padding: 50px 0;
+    background-color: #ffffffeb;
+	
 }
 
 .single-product {
-    background-color: #fdfdfd;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    overflow: hidden;
-    transition: box-shadow 0.3s ease;
+    background-color: #fffbe8;
+    transition: all 0.3s ease-in-out;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25); /* <- sombra suave */
+    border-radius: 12px; /* opcional: redondear el cuadro */
 }
 
 .single-product:hover {
-    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
+/* Imagen del producto */
 .product-img img {
     width: 100%;
-    height: 200px;
-    object-fit: cover;
+    height: auto;
+    border-radius: 12px;
+	box-shadow: 0 3px 8px rgba(0, 0, 0, 0.17); /* <- sombra suave */
 }
 
+/* Contenido del producto */
 .product-content {
-    padding: 15px;
-    text-align: center;
+    padding-top: 15px;
 }
 
 .product-content h4 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #003366;
+    font-size: 18px;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.product-content p {
+    font-size: 14px;
+    color: #666;
     margin-bottom: 10px;
 }
 
-.product-content .text-muted {
-    font-size: 0.9rem;
-    color: #777;
-}
-
 .product-price span {
-    font-size: 1rem;
-    color: #d49ad5;
-    font-weight: bold;
+    font-size: 18px;
+    color: #397550;
 }
 
-.btn.agregar-carrito {
-    background-color: #d49ad5;
-    color: #fff;
-    border-radius: 20px;
+/* Botón agregar al carrito */
+.agregar-carrito {
+    background-color: #007bff;
+    color: white;
     border: none;
-}
-
-.btn.agregar-carrito:hover {
-    background-color: #d49ad5;
-}
-
-select.form-control {
-    border-radius: 25px;
-}
-
-/*=======================
-	Start Fun Facts Fondo Mariposa
-=========================*/
-.imagen-facts{
-	position:relative;
-}
-.imagen-facts.section{
-	padding:120px 0;
-}
-.imagen-facts {
-    background: url('/img/MariposaFondo.jpg') no-repeat center center;
-    background-size: cover;
-    background-repeat:no-repeat;
-}
-
-.titulo-mariposas {
-  margin-top: 10px; /* Menos espacio arriba */
-  margin-bottom: 0;
-  color: white;
-  font-size: 4rem;
-  font-weight: bold;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6);
-}
-	
-.imagen-facts .single-fun i {
-	position: absolute;
-	left: 0;
-	font-size: 62px;
-	color: #fff;
-	height: 70px;
-	width: 70px;
-	line-height: 67px;
-	font-size: 28px;
-	text-align: center;
-	padding: 0;
-	margin: 0;
-	border: 2px solid #fff;
-	border-radius: 0px;
-	top: 50%;
-	margin-top: -35px;
-	-webkit-transition: all 0.4s ease;
-	-moz-transition: all 0.4s ease;
-	transition: all 0.4s ease;
-	border-radius: 50%;
-}
-.imagen-facts .single-fun:hover i{
-	color:#1A76D1;
-	background:#fff;
-	border-color:transparent;
-}
-.imagen-facts .single-fun .content {
-	padding-left: 80px;
-}
-.imagen-facts .single-fun span {
-	color: #fff;
-	font-weight: 600;
-	font-size: 30px;
-	position: relative;
-	display: block;
-	-webkit-transition: all 0.4s ease;
-	-moz-transition: all 0.4s ease;
-	transition: all 0.4s eas;
-	display: block;
-	margin-bottom: 7px;
-}
-.imagen-facts .single-fun p{
-	color:#fff;
-	font-size:15px;
-}
-/*===================
-	End Fun Facts
-=====================*/
-
-.form-inline .form-control,
-.form-inline .btn {
-    margin: 5px;
-    min-width: 200px;
-}
-
-.overlay-form-container {
-    position: relative;
-    top: -55px; /* Sube el formulario */
-}
-
-.form-busqueda .form-control,
-.form-busqueda .btn {
-    min-width: 200px;
+    border-radius: 8px;
+    padding: 8px 12px;
     width: 100%;
+    transition: background-color 0.3s;
 }
 
-/*=======================
-	Start Fun Facts Fondo Orquidea
-=========================*/
-.orquidea-facts{
-	position:relative;
-}
-.orquidea-facts.section{
-	padding:120px 0;
-}
-.orquidea-facts {
-    background: url('/img/OrquideaFondoTienda.jpg') no-repeat center center;
-    background-size: cover;
-    background-repeat:no-repeat;
+.agregar-carrito:hover {
+    background-color: #0056b3;
 }
 
-.orquidea-facts .single-fun i {
-	position: absolute;
-	left: 0;
-	font-size: 62px;
-	color: #fff;
-	height: 70px;
-	width: 70px;
-	line-height: 67px;
-	font-size: 28px;
-	text-align: center;
-	padding: 0;
-	margin: 0;
-	border: 2px solid #fff;
-	border-radius: 0px;
-	top: 50%;
-	margin-top: -35px;
-	-webkit-transition: all 0.4s ease;
-	-moz-transition: all 0.4s ease;
-	transition: all 0.4s ease;
-	border-radius: 50%;
-}
-.orquidea-facts .single-fun:hover i{
-	color:#1A76D1;
-	background:#fff;
-	border-color:transparent;
-}
-.orquidea-facts .single-fun .content {
-	padding-left: 80px;
-}
-.orquidea-facts .single-fun span {
-	color: #fff;
-	font-weight: 600;
-	font-size: 30px;
-	position: relative;
-	display: block;
-	-webkit-transition: all 0.4s ease;
-	-moz-transition: all 0.4s ease;
-	transition: all 0.4s eas;
-	display: block;
-	margin-bottom: 7px;
-}
-.fun-facts .single-fun p{
-	color:#fff;
-	font-size:15px;
-}
-/*===================
-	End Fun Facts
-=====================*/
 
-/*===================
-	Estilos para imagenes de Carrito
-=====================*/
-/* Estilo 1: Imagen más pequeña */
-.img-small {
-	width: 100px; 
-	height: auto;
-  }
-  
+/* ================= estilos eventos ================= */
 
-  .custom-btn {
-	color: white; 
-  }
-
-
-  /* Imagen fondo de carrito */
-  .bg-custom {
-	background-image: url('img/CatalogoMariposafondo.jpg'); 
-	background-size: cover; 
-	background-position: center; 
-	background-attachment: fixed; 
-	height: 100%; 
-	width: 100%;
-  }
-
-.btn {
-  display: inline-block;
-  text-align: center;
-  padding: 10px 20px;
-  background-color: #4CAF50; 
-  color: white;
-  text-decoration: none;
-  border-radius: 5px;
-  width: 200px; 
+.eventos-section {
+    background-color: hsl(0, 0%, 100%);
 }
+
+.eventos-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.eventos-titulo {
+    color: #397550;          
+    font-weight: bold;        
+    font-size: 2rem;          
+    text-align: center;      
+}
+
+.evento-card {
+    background: #fffbe8;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.evento-card:hover {
+    transform: translateY(-4px);
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25); /* Sombra más fuerte en hover */
+}
+
+.evento-img {
+    flex: 1;
+    min-width: 250px;
+    max-width: 350px;
+    height: 100%;
+    padding: 10px; /* Añade espacio interno alrededor de la imagen */
+    box-sizing: border-box;
+}
+
+.evento-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+	margin: 10px; /* Espacio afuera de la imagen */
+    border-radius: 8px; /* Opcional: bordes redondeados */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Opcional: sombra para que resalte */
+}
+
+.evento-detalles {
+    flex: 2;
+}
+
+@media (max-width: 767px) {
+    .evento-card {
+        flex-direction: column;
+    }
+
+    .evento-img {
+        max-height: 220px;
+    }
+}
+
+
+/* ================= estilos  eventos ================= */
