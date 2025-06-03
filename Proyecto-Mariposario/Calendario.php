@@ -46,57 +46,114 @@ class Calendario {
 
 
         // Si no, mostrar la página completa
-        $html = <<<HTML
+ $html = <<<HTML
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Calendario de Reservas Interactivo</title>
+  <title>Calendario de Reservas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 20px;
+      font-family: 'Inter', sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      margin: 0;
+      padding: 20px;
     }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+
+    .controls {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    select {
+      padding: 10px;
+      font-size: 1rem;
+      margin: 0 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      transition: border 0.3s;
+    }
+
+    select:focus {
+      border-color: #3498db;
+      outline: none;
+    }
+
     .calendar {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 10px;
-      max-width: 600px;
-      margin: 20px auto;
-    }
-    .day {
+      gap: 8px;
+      max-width: 700px;
+      margin: 0 auto;
+      background-color: #fff;
       padding: 15px;
-      border-radius: 8px;
-      background-color: #c8e6c9; /* Verde (disponible) */
-      font-weight: bold;
-      cursor: pointer;
-      user-select: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
+
+    .header {
+      font-weight: 600;
+      background-color: #ecf0f1;
+      padding: 12px 0;
+      border-radius: 6px;
+    }
+
+    .day {
+      padding: 15px 0;
+      border-radius: 6px;
+      background-color: #e8f5e9; /* verde claro */
+      font-weight: 500;
+      transition: transform 0.2s ease;
+      cursor: pointer;
+    }
+
+    .day:hover {
+      transform: scale(1.05);
+    }
+
     .unavailable {
-      background-color: #ffcdd2; /* Rojo (no disponible) */
+      background-color: #f8d7da;
+      color: #721c24;
       cursor: not-allowed;
     }
-    .header {
-      font-weight: bold;
-      background-color: #e0e0e0;
-      padding: 10px;
+
+    @media (max-width: 768px) {
+      .calendar {
+        grid-template-columns: repeat(7, 1fr);
+        font-size: 14px;
+      }
     }
-    select {
-      padding: 5px;
-      font-size: 1rem;
+
+    @media (max-width: 480px) {
+      .calendar {
+        grid-template-columns: repeat(7, 1fr);
+        font-size: 12px;
+        gap: 5px;
+      }
     }
   </style>
 </head>
 <body>
-  <h2>Calendario de Reservas Interactivo</h2>
+  <h2>Calendario de Reservas</h2>
 
-  <label for="mes">Mes:</label>
-  <select id="mes"></select>
+  <div class="controls">
+    <label for="mes">Mes:</label>
+    <select id="mes"></select>
 
-  <label for="anio">Año:</label>
-  <select id="anio"></select>
+    <label for="anio">Año:</label>
+    <select id="anio"></select>
+  </div>
 
   <div class="calendar" id="calendar"></div>
 
@@ -105,9 +162,9 @@ class Calendario {
     const selectMes = document.getElementById('mes');
     const selectAnio = document.getElementById('anio');
 
-    // Llena select de meses
     const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
                    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
     meses.forEach((m, i) => {
       const option = document.createElement('option');
       option.value = i + 1;
@@ -115,7 +172,6 @@ class Calendario {
       selectMes.appendChild(option);
     });
 
-    // Llena select de años (por ejemplo 5 años atrás y adelante)
     const yearActual = new Date().getFullYear();
     for (let y = yearActual - 1; y <= yearActual + 5; y++) {
       const option = document.createElement('option');
@@ -124,7 +180,6 @@ class Calendario {
       selectAnio.appendChild(option);
     }
 
-    // Setear valores iniciales actuales
     selectMes.value = new Date().getMonth() + 1;
     selectAnio.value = yearActual;
 
@@ -132,7 +187,6 @@ class Calendario {
       calendar.innerHTML = '';
       const daysOfWeek = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 
-      // Encabezado de días de la semana
       daysOfWeek.forEach(day => {
         const header = document.createElement("div");
         header.className = "header";
@@ -143,7 +197,6 @@ class Calendario {
       const firstDay = new Date(year, month - 1, 1);
       const lastDay = new Date(year, month, 0);
 
-      // Espacios vacíos antes del primer día del mes
       for (let i = 0; i < firstDay.getDay(); i++) {
         const empty = document.createElement("div");
         calendar.appendChild(empty);
@@ -160,6 +213,7 @@ class Calendario {
           div.className = "day";
           div.title = "Fecha disponible";
         }
+
         div.textContent = day;
         calendar.appendChild(div);
       }
@@ -176,10 +230,8 @@ class Calendario {
       }
     }
 
-    // Cargar calendario inicial
     cargarFechas(yearActual, new Date().getMonth() + 1);
 
-    // Escuchar cambios en selects
     selectMes.addEventListener('change', () => {
       cargarFechas(parseInt(selectAnio.value), parseInt(selectMes.value));
     });

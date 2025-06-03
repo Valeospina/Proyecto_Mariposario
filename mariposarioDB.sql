@@ -82,11 +82,9 @@ CREATE TABLE Evento (
 
 CREATE TABLE Reserva (
     ID_Reserva INT PRIMARY KEY AUTO_INCREMENT,
-    ID_Usuario INT,
     ID_Evento INT,
     cantidad_personas INT NOT NULL,
     Fecha_Reserva DATETIME,
-    FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario),
     FOREIGN KEY (ID_Evento) REFERENCES Evento(ID_Evento)
 );
 
