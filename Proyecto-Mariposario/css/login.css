@@ -16,6 +16,10 @@ body {
     background-size: cover;
     color: #fff;
 }
+::placeholder {
+    color: white; /* o el color que prefieras */
+    opacity: 1;   /* para que no se vea transparente */
+}
 
 .container-form {
     width: 90%;
