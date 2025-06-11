@@ -55,7 +55,7 @@ if ($_POST) {
 
             echo "<script>
                     alert('¡Bienvenido " . htmlspecialchars($user['Nombre']) . "!');
-                    window.location.href = './index.html';
+                    window.location.href = './index.php';
                   </script>";
             exit;
         } else {

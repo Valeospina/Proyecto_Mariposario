@@ -33,134 +33,64 @@
 
     <body class="user">
 
-        <header class="header">
-            <div class="topbar">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-6 col-md-5 col-12">
-                            <ul class="top-link">
-                                <li>
-                                    <a href="usuario.html" style="text-decoration: none;">
-                                        <i class="fas fa-user" style="font-size: 18px; color: #80B78D; padding: 6px;"></i>
-                                        <span style="color: #2C2D3F;">Usuario</span>
-                                    </a>
-                                </li>
-                                <li class="admin"><a href="admin.html">Admin</a></li>
-                            </ul>
-                        </div>
-                        <div class="col-lg-6 col-md-7 col-12">
-                            <ul class="top-contact">
-                                <li><i class="fa fa-phone"></i>+506 8888 8888</li>
-                                <li><i class="fa fa-envelope"></i><a href="mailto:info@mariposario.com">info@mariposario.com</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="header-inner">
-                <div class="container">
-                    <div class="inner">
-                        <div class="row">
-                            <div class="col-lg-3 col-md-3 col-12">
-                                <div class="logo">
-                                    <a href="index.html"><img src="img/logo.png" alt="Logo Mariposario"></a>
-                                </div>
-                                <div class="mobile-nav"></div>
-                            </div>
-                            <div class="col-lg-7 col-md-9 col-12">
-                                <div class="main-menu">
-                                    <nav class="navigation">
-                                        <ul class="nav menu">
-                                            <li><a href="index.html">Inicio</a></li>
-                                            <li><a href="tienda.html">Tienda</a></li>
-                                            <li><a href="mariposas.php">Mariposas</a></li> 
-                                            <li><a href="orquideas.php">Orquideas</a></li>
-                                            <li class="active"><a href="eventos.html">Eventos</a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
+       <?php include 'layout/nav2.php'; ?>
 
         <body class="mariposa">
 
-        <!-- End Preloader -->
-			
-		
-			<!-- End Topbar -->
 
-			
-								<!--/ End Main Menu -->
-							</div>
+		<!-- Sección de Lista de Eventos con Estilo Booking -->
+		<div class="eventos-section py-5">
+		<div class="eventos-wrapper px-4 px-md-5">
 
-						</div>
-					</div>
-				</div>
+			<h2 class="eventos-titulo mb-4">Eventos disponibles</h2>
+
+			<!-- Evento -->
+			<div class="evento-card d-flex flex-column flex-md-row mb-4 shadow-sm">
+			<div class="evento-img">
+				<img src="img/pupa-de-Graphium-agamemnon-lifeder-1.jpg" alt="Taller de Mariposas">
 			</div>
-			<!-- End Header Inner -->
-		</header>
-   </body>
-	<!--/ End Header Inner -->
-	</header>
-	<!-- End Header Area -->
+			<div class="evento-detalles p-4">
+				<h5 class="mb-2" style="color: #2d7452; font-weight: bold;">Taller de Mariposas</h5>
+				<p class="text-muted mb-1">Conoce el ciclo de vida de las mariposas. Cupo limitado.</p>
+				<p class="mb-1"><strong style="color: #2d7452; font-weight: bold;">Incluye:</strong> materiales, guía profesional, refrigerio y certificado.</p>
+				<p class="fw-bold text-success mb-3">₡5,000.00</p>
+				<a href="Reserva.html" class="btn btn-success" style="color: white; font-weight: bold;">Reservar</a>
+				<a href="VerCalendario.php" class="btn btn-success" style="color: white; font-weight: bold;">Ver fechas disponibles</a>
+			</div>
+			</div>
 
-<!-- Sección de Lista de Eventos con Estilo Booking -->
-<div class="eventos-section py-5">
-  <div class="eventos-wrapper px-4 px-md-5">
+			<!-- Evento -->
+			<div class="evento-card d-flex flex-column flex-md-row mb-4 shadow-sm">
+			<div class="evento-img">
+				<img src="img/butterfly_gardens-361291.webp" alt="Visita Guiada">
+			</div>
+			<div class="evento-detalles p-4">
+				<h5 class="mb-2" style="color: #2d7452; font-weight: bold;">Visita Guiada</h5>
+				<p class="text-muted mb-1">Recorrido especial por el jardín con guía experto.</p>
+				<p class="mb-1" ><strong style="color: #2d7452; font-weight: bold;">Incluye:</strong> entrada al jardín, guía naturalista, recorrido de 1 hora.</p>
+				<p class="fw-bold text-success mb-3">₡3,500.00</p>
+				<a href="Reserva.html" class="btn btn-success" style="color: white; font-weight: bold;">Reservar</a>
+				<a href="VerCalendario.php" class="btn btn-success" style="color: white; font-weight: bold;">Ver fechas disponibles</a>
+			</div>
+			</div>
 
-    <h2 class="eventos-titulo mb-4">Eventos disponibles</h2>
+			<!-- Evento -->
+			<div class="evento-card d-flex flex-column flex-md-row mb-4 shadow-sm">
+			<div class="evento-img">
+				<img src="img/orquideas-de-exterior-scaled.jpg" alt="Charla de Orquídeas">
+			</div>
+			<div class="evento-detalles p-4">
+				<h5 class="mb-2" style="color: #2d7452; font-weight: bold;">Charla de Orquídeas</h5>
+				<p class="text-muted mb-1">Aprende sobre variedades nativas y su conservación.</p>
+				<p class="mb-1"><strong style="color: #2d7452; font-weight: bold;">Incluye:</strong> charla guiada, folleto informativo, café y degustación.</p>
+				<p class="fw-bold text-success mb-3">₡4,000.00</p>
+				<a href="Reserva.html" class="btn btn-success" style="color: white; font-weight: bold;">Reservar</a>
+				<a href="VerCalendario.php" class="btn btn-success" style="color: white; font-weight: bold;">Ver fechas disponibles</a>
+			</div>
+			</div>
 
-    <!-- Evento -->
-    <div class="evento-card d-flex flex-column flex-md-row mb-4 shadow-sm">
-      <div class="evento-img">
-        <img src="img/pupa-de-Graphium-agamemnon-lifeder-1.jpg" alt="Taller de Mariposas">
-      </div>
-      <div class="evento-detalles p-4">
-        <h5 class="mb-2" style="color: #2d7452; font-weight: bold;">Taller de Mariposas</h5>
-        <p class="text-muted mb-1">Conoce el ciclo de vida de las mariposas. Cupo limitado.</p>
-        <p class="mb-1"><strong style="color: #2d7452; font-weight: bold;">Incluye:</strong> materiales, guía profesional, refrigerio y certificado.</p>
-        <p class="fw-bold text-success mb-3">₡5,000.00</p>
-        <a href="Reserva.html" class="btn btn-success" style="color: white; font-weight: bold;">Reservar</a>
-		<a href="VerCalendario.php" class="btn btn-success" style="color: white; font-weight: bold;">Ver fechas disponibles</a>
-      </div>
-    </div>
-
-    <!-- Evento -->
-    <div class="evento-card d-flex flex-column flex-md-row mb-4 shadow-sm">
-      <div class="evento-img">
-        <img src="img/butterfly_gardens-361291.webp" alt="Visita Guiada">
-      </div>
-      <div class="evento-detalles p-4">
-        <h5 class="mb-2" style="color: #2d7452; font-weight: bold;">Visita Guiada</h5>
-        <p class="text-muted mb-1">Recorrido especial por el jardín con guía experto.</p>
-        <p class="mb-1" ><strong style="color: #2d7452; font-weight: bold;">Incluye:</strong> entrada al jardín, guía naturalista, recorrido de 1 hora.</p>
-        <p class="fw-bold text-success mb-3">₡3,500.00</p>
-        <a href="Reserva.html" class="btn btn-success" style="color: white; font-weight: bold;">Reservar</a>
-		<a href="VerCalendario.php" class="btn btn-success" style="color: white; font-weight: bold;">Ver fechas disponibles</a>
-      </div>
-    </div>
-
-    <!-- Evento -->
-    <div class="evento-card d-flex flex-column flex-md-row mb-4 shadow-sm">
-      <div class="evento-img">
-        <img src="img/orquideas-de-exterior-scaled.jpg" alt="Charla de Orquídeas">
-      </div>
-      <div class="evento-detalles p-4">
-        <h5 class="mb-2" style="color: #2d7452; font-weight: bold;">Charla de Orquídeas</h5>
-        <p class="text-muted mb-1">Aprende sobre variedades nativas y su conservación.</p>
-        <p class="mb-1"><strong style="color: #2d7452; font-weight: bold;">Incluye:</strong> charla guiada, folleto informativo, café y degustación.</p>
-        <p class="fw-bold text-success mb-3">₡4,000.00</p>
-        <a href="Reserva.html" class="btn btn-success" style="color: white; font-weight: bold;">Reservar</a>
-		<a href="VerCalendario.php" class="btn btn-success" style="color: white; font-weight: bold;">Ver fechas disponibles</a>
-      </div>
-    </div>
-
-  </div>
-</div>
+		</div>
+		</div>
 
 
 <!--------------------------------------------------------------------------------------------------------------->

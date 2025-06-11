@@ -48,130 +48,9 @@
         <link rel="stylesheet" href="css/responsive.css">
 		
     </head>
+	    <?php include 'layout/nav.php'; ?>
 
    <body class="user"> <!-- Cambia 'admin' por 'user' si es un usuario normal -->
-		<!-- Preloader -->
-        <div class="preloader">
-            <div class="loader">
-                <div class="loader-outter"></div>
-                <div class="loader-inner"></div>
-
-                <div class="indicator"> 
-					<svg width="32px" height="32px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-						<g>
-						  <!-- Ala trasera izquierda -->
-						  <path d="M32 32 C22 20, 10 40, 28 40" fill="none" stroke="#ffffff" stroke-width="2"/>
-					  
-						  <!-- Ala trasera derecha -->
-						  <path d="M32 32 C42 20, 54 40, 36 40" fill="none" stroke="#ffffff" stroke-width="2"/>
-					  
-						  <!-- Ala delantera izquierda animada -->
-						  <path d="M32 32 C18 14, 4 34, 24 36" fill="none" stroke="#80B78D" stroke-width="2">
-							<animate attributeName="d" dur="1s" repeatCount="indefinite"
-							  values="
-								M32 32 C18 14, 4 34, 24 36;
-								M32 32 C16 16, 2 32, 22 36;
-								M32 32 C18 14, 4 34, 24 36"/>
-						  </path>
-					  
-						  <!-- Ala delantera derecha animada -->
-						  <path d="M32 32 C46 14, 60 34, 40 36" fill="none" stroke="#80B78D" stroke-width="2">
-							<animate attributeName="d" dur="1s" repeatCount="indefinite"
-							  values="
-								M32 32 C46 14, 60 34, 40 36;
-								M32 32 C48 16, 62 32, 42 36;
-								M32 32 C46 14, 60 34, 40 36"/>
-						  </path>
-					  
-						  <!-- Cuerpo -->
-						  <line x1="32" y1="30" x2="32" y2="40" stroke="#ffffff" stroke-width="2" />
-						</g>
-					  </svg>
-                </div>
-            </div>
-        </div>
-
-        <!-- End Preloader -->
-			
-		<!-- Header Area -->
-		<header class="header">
-			<!-- Topbar -->
-			<div class="topbar">
-				<div class="container">
-					<div class="row">
-						<div class="col-lg-6 col-md-5 col-12">
-							<!-- Contact -->
-							<ul class="top-link">
-								<li>
-									<a href="usuario.html" style="text-decoration: none;">
-									  <i class="fas fa-user" style="font-size: 18px; color: #80B78D; padding: 6px;"></i>
-									  <span style="color: #2C2D3F;">Usuario</span>
-									</a>
-								  </li>										  
-								<!-- Admin section visible only for admins -->
-								<li class="admin"><a href="admin.html">Admin</a></li>
-							</ul>
-							<!-- End Contact -->
-						</div>
-						<div class="col-lg-6 col-md-7 col-12">
-							<!-- Top Contact -->
-							<ul class="top-contact">
-								<li><i class="fa fa-phone"></i>+506 8888 8888</li>
-								<li><i class="fa fa-envelope"></i><a href="mailto:info@mariposario.com">info@mariposario.com</a></li>
-							</ul>
-							<!-- End Top Contact -->
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- End Topbar -->
-
-			<!-- Header Inner -->
-			<div class="header-inner">
-				<div class="container">
-					<div class="inner">
-						<div class="row">
-							<div class="col-lg-3 col-md-3 col-12">
-								<!-- Start Logo -->
-								<div class="logo">
-									<a href="index.html"><img src="img/logo.png" alt="Logo Mariposario"></a>
-								</div>
-								<!-- End Logo -->
-								<!-- Mobile Nav -->
-								<div class="mobile-nav"></div>
-								<!-- End Mobile Nav -->
-							</div>
-							<div class="col-lg-7 col-md-9 col-12">
-								<!-- Main Menu -->
-								<div class="main-menu">
-									<nav class="navigation">
-										<ul class="nav menu">
-                                            <li><a href="index.html">Inicio</a></li>
-                                            <li class="active"><a href="tienda.html">Tienda</a></li>
-											<li><a href="contact.html">Contacto</a></li>
-								
-										</ul>
-									</nav>
-								</div>
-								<!--/ End Main Menu -->
-							</div>
-							<div class="col-lg-2 col-12">
-								<div class="get-quote">
-									<a href="carrito.php" class="btn btn-carrito" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: transparent; box-shadow: none;">
-										<i class="fa fa-shopping-cart icono-carrito" style="color: #42764D; font-size: 20px;"></i>
-									</a>																						  
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- End Header Inner -->
-		</header>
-
-	<!--/ End Header Inner -->
-	</header>
-	<!-- End Header Area -->
 
 		<section class="imagen-principal">
 			<img src="img/Mariposa1.jpg" alt="Mariposa" style="width: 100%; max-height: 250px; object-fit: cover;">
@@ -216,7 +95,7 @@
 											<h4>Eventos</h4>
 											<p>Vive recorridos especiales entre mariposas que vuelan libres y orquídeas que florecen con encanto. 
 												¡Naturaleza en su máximo esplendor!</p>
-											<a href="eventos.html" class="btn">Reservar Eventos <i class="fa fa-long-arrow-right"></i></a>
+											<a href="eventos.php" class="btn">Reservar Eventos <i class="fa fa-long-arrow-right"></i></a>
 										</div>
 									</div>
 								</div>
