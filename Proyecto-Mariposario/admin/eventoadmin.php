@@ -115,7 +115,7 @@ try {
     </main>
 
     <footer>
-        <p style="text-align: center; margin-top: 30px; color: #777;">&copy; <?php echo date("Y"); ?> Panel de Administración</p>
+        <p style="text-align: center; margin-top: 30px; color: #ffffff;">&copy; <?php echo date("Y"); ?> Panel de Administración</p>
     </footer>
 </body>
 </html>
