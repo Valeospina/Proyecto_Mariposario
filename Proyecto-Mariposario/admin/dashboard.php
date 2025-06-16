@@ -47,6 +47,7 @@ if ($_SESSION['user_role'] != 1) {
             <li><a href="dashboard.php">Dashboard</a></li>
             <li><a href="users.php">Gestionar Usuarios</a></li>
             <li><a href="products.php">Gestionar Productos</a></li>
+            <li><a href="eventoAdmin.php">Gestionar Eventos</a></li>
             <li><a href="reports.php">Ver Reportes</a></li>
             <li><a href="../logout.php">Cerrar Sesión</a></li>
         </ul>
@@ -64,6 +65,7 @@ if ($_SESSION['user_role'] != 1) {
         <h3>Acciones Rápidas</h3>
         <button onclick="location.href='users.php'">Gestionar Usuarios</button>
         <button onclick="location.href='products.php'">Gestionar Productos</button>
+        <button onclick="location.href='eventoAdmin.php'">Gestionar Eventos</button>
 
         </main>
 

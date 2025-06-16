@@ -54,6 +54,7 @@ $users_result = $conn->query($users_query);
             <li><a href="dashboard.php">Dashboard</a></li>
             <li><a href="users.php">Gestionar Usuarios</a></li>
             <li><a href="products.php">Gestionar Productos</a></li>
+            <li><a href="eventoAdmin.php">Gestionar Eventos</a></li>
             <li><a href="reports.php">Ver Reportes</a></li>
             <li><a href="../logout.php">Cerrar Sesión</a></li>
         </ul>
