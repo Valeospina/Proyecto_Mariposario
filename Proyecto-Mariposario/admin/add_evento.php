@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <nav class="admin-nav">
   <ul>
     <li><a href="dashboard.php">Dashboard</a></li>
-    <li><a href="eventos.php">Gestionar Eventos</a></li>
+    <li><a href="eventoadmin.php">Gestionar Eventos</a></li>
     <li><a href="users.php">Gestionar Usuarios</a></li>
     <li><a href="../logout.php">Cerrar Sesión</a></li>
   </ul>
@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <div class="button-group">
       <button type="submit" class="btn-submit">Añadir Evento</button>
-      <p><a href="eventos.php" class="btn-return">Volver a la lista de eventos</a></p>
+      <p><a href="eventoadmin.php" class="btn-return">Volver a la lista de eventos</a></p>
     </div>
   </form>
 </main>

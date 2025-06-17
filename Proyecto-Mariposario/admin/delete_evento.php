@@ -44,7 +44,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 }
 
 // Redirige de vuelta a la página de gestión de eventos
-header('Location: eventos.php');
+header('Location: eventoadmin.php');
 exit;
 
 // Cierra la conexión a la base de datos si está abierta y es MySQLi

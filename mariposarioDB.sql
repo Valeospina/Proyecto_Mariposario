@@ -258,8 +258,4 @@ INSERT INTO Usuario (ID_Usuario, ID_Rol, Nombre, Correo, Contrasena, Telefono, D
 (8, 2, 'Diego Ramírez', 'diego.cliente@hotmail.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '2901-2345', 'Cartago, Paraíso'),
 (9, 2, 'Valeria Solano', 'valeria.cliente@yahoo.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '2012-3456', 'Alajuela, Atenas');
 
--- EVENTOS ACTUALES
-INSERT INTO Evento (Nombre_Evento) VALUES
-('Taller de Mariposas'),
-('Visita Guiada'),
-('Charla de Orquídeas');
+
