@@ -42,7 +42,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestionar Eventos - Panel de Administración</title>
-    <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/admin_styles.css">
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
         .admin-header { background-color: #333; color: white; padding: 1em; text-align: center; }
@@ -100,8 +100,8 @@ try {
                             <td><?php echo htmlspecialchars($evento['Descripcion']); ?></td>
                             <td>₡<?php echo number_format($evento['Precio'], 2); ?></td>
                             <td class="action-links">
-                                <a href="edit_event.php?id=<?php echo $evento['ID_Evento']; ?>">Editar</a> |
-                                <a href="delete_event.php?id=<?php echo $evento['ID_Evento']; ?>" onclick="return confirm('¿Estás seguro de que quieres eliminar este evento?');">Eliminar</a>
+                                <a href="edit_evento.php?id=<?php echo $evento['ID_Evento']; ?>">Editar</a> |
+                                <a href="delete_evento.php?id=<?php echo $evento['ID_Evento']; ?>" onclick="return confirm('¿Estás seguro de que quieres eliminar este evento?');">Eliminar</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -111,7 +111,7 @@ try {
             <p>No hay eventos registrados.</p>
         <?php endif; ?>
 
-        <p><a href="add_event.php">Añadir Nuevo Evento</a></p>
+        <p><a href="add_evento.php">Añadir Nuevo Evento</a></p>
     </main>
 
     <footer>

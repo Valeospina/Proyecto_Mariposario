@@ -33,65 +33,35 @@
 
     <body class="user">
 
-       <?php include 'layout/nav2.php'; ?>
+       <?php
+include 'layout/nav2.php';
+require_once 'DB.php';
 
-        <body class="mariposa">
+// Obtener eventos desde la base de datos
+$sql = "SELECT ID_Evento, Nombre, Descripcion, Precio, Imagen_URL FROM Evento";
+$resultado = $conn->query($sql);
+?>
 
+<div class="eventos-section py-5">
+    <div class="eventos-wrapper px-4 px-md-5">
+        <h2 class="eventos-titulo mb-4">Eventos disponibles</h2>
 
-		<!-- Sección de Lista de Eventos con Estilo Booking -->
-		<div class="eventos-section py-5">
-		<div class="eventos-wrapper px-4 px-md-5">
-
-			<h2 class="eventos-titulo mb-4">Eventos disponibles</h2>
-
-			<!-- Evento -->
-			<div class="evento-card d-flex flex-column flex-md-row mb-4 shadow-sm">
-			<div class="evento-img">
-				<img src="img/pupa-de-Graphium-agamemnon-lifeder-1.jpg" alt="Taller de Mariposas">
-			</div>
-			<div class="evento-detalles p-4">
-				<h5 class="mb-2" style="color: #2d7452; font-weight: bold;">Taller de Mariposas</h5>
-				<p class="text-muted mb-1">Conoce el ciclo de vida de las mariposas. Cupo limitado.</p>
-				<p class="mb-1"><strong style="color: #2d7452; font-weight: bold;">Incluye:</strong> materiales, guía profesional, refrigerio y certificado.</p>
-				<p class="fw-bold text-success mb-3">₡5,000.00</p>
-				<a href="Reserva.html" class="btn btn-success" style="color: white; font-weight: bold;">Reservar</a>
-				<a href="VerCalendario.php" class="btn btn-success" style="color: white; font-weight: bold;">Ver fechas disponibles</a>
-			</div>
-			</div>
-
-			<!-- Evento -->
-			<div class="evento-card d-flex flex-column flex-md-row mb-4 shadow-sm">
-			<div class="evento-img">
-				<img src="img/butterfly_gardens-361291.webp" alt="Visita Guiada">
-			</div>
-			<div class="evento-detalles p-4">
-				<h5 class="mb-2" style="color: #2d7452; font-weight: bold;">Visita Guiada</h5>
-				<p class="text-muted mb-1">Recorrido especial por el jardín con guía experto.</p>
-				<p class="mb-1" ><strong style="color: #2d7452; font-weight: bold;">Incluye:</strong> entrada al jardín, guía naturalista, recorrido de 1 hora.</p>
-				<p class="fw-bold text-success mb-3">₡3,500.00</p>
-				<a href="Reserva.html" class="btn btn-success" style="color: white; font-weight: bold;">Reservar</a>
-				<a href="VerCalendario.php" class="btn btn-success" style="color: white; font-weight: bold;">Ver fechas disponibles</a>
-			</div>
-			</div>
-
-			<!-- Evento -->
-			<div class="evento-card d-flex flex-column flex-md-row mb-4 shadow-sm">
-			<div class="evento-img">
-				<img src="img/orquideas-de-exterior-scaled.jpg" alt="Charla de Orquídeas">
-			</div>
-			<div class="evento-detalles p-4">
-				<h5 class="mb-2" style="color: #2d7452; font-weight: bold;">Charla de Orquídeas</h5>
-				<p class="text-muted mb-1">Aprende sobre variedades nativas y su conservación.</p>
-				<p class="mb-1"><strong style="color: #2d7452; font-weight: bold;">Incluye:</strong> charla guiada, folleto informativo, café y degustación.</p>
-				<p class="fw-bold text-success mb-3">₡4,000.00</p>
-				<a href="Reserva.html" class="btn btn-success" style="color: white; font-weight: bold;">Reservar</a>
-				<a href="VerCalendario.php" class="btn btn-success" style="color: white; font-weight: bold;">Ver fechas disponibles</a>
-			</div>
-			</div>
-
-		</div>
-		</div>
-
+        <?php while ($evento = $resultado->fetch_assoc()): ?>
+            <div class="evento-card d-flex flex-column flex-md-row mb-4 shadow-sm">
+                <div class="evento-img">
+                    <img src="<?= htmlspecialchars($evento['Imagen_URL']) ?>" alt="<?= htmlspecialchars($evento['Nombre']) ?>">
+                </div>
+                <div class="evento-detalles p-4">
+                    <h5 class="mb-2" style="color: #2d7452; font-weight: bold;"><?= htmlspecialchars($evento['Nombre']) ?></h5>
+                    <p class="text-muted mb-1"><?= htmlspecialchars($evento['Descripcion']) ?></p>
+                    <p class="fw-bold text-success mb-3">₡<?= number_format($evento['Precio'], 2) ?></p>
+                    <a href="ReservaForm.php?id=<?= $evento['ID_Evento'] ?>" class="btn btn-success" style="color: white; font-weight: bold;">Reservar</a>
+                    <a href="VerCalendario.php?id=<?= $evento['ID_Evento'] ?>" class="btn btn-success" style="color: white; font-weight: bold;">Ver fechas disponibles</a>
+                </div>
+            </div>
+        <?php endwhile; ?>
+    </div>
+</div>
 
 <!--------------------------------------------------------------------------------------------------------------->
 			

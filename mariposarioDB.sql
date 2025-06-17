@@ -77,7 +77,10 @@ CREATE TABLE Asistencia (
 
 CREATE TABLE Evento (
     ID_Evento INT PRIMARY KEY AUTO_INCREMENT,
-    Nombre_Evento VARCHAR(100)
+    Nombre VARCHAR(100) NOT NULL,
+    Descripcion TEXT NOT NULL,
+    Precio DECIMAL(10, 2) NOT NULL,
+    Imagen_URL VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE Reserva (
