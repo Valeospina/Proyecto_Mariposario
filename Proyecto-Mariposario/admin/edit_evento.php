@@ -158,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $evento) {
 
             <div class="button-group">
                 <button type="submit" class="btn-submit">Guardar Cambios</button>
-                <p><a href="eventoadmin.php" class="btn-returnEvento">Volver a la lista de eventos</a></p>
+                <p><a href="eventoadmin.php" class="btn-returnProducto">Volver a la lista de eventos</a></p>
             </div>
         </form>
         <?php endif; ?>

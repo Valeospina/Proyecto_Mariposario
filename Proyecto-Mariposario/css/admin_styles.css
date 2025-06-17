@@ -5,7 +5,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background: linear-gradient(135deg, #FFFBE7 0%, #f8d6ab 100%);
+    background: linear-gradient(135deg, #FFFBE7 0%, #fce5c6 100%);
     color: #333;
 }
 
@@ -220,6 +220,24 @@ footer {
     text-decoration: none;
     transition: background 0.3s, transform 0.2s;
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.admin-content a[href*="add_evento.php"] {
+    display: inline-block;
+    margin-top: 20px;
+    background-color: #80B78D;
+    color: #ffffff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background 0.3s, transform 0.2s;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.admin-content a[href*="add_evento.php"]:hover {
+    background-color: #3e754b;
+    transform: translateY(-2px);
 }
 
 .admin-content a[href*="add_product.php"]:hover {

@@ -43,22 +43,8 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestionar Eventos - Panel de Administración</title>
     <link rel="stylesheet" href="../css/admin_styles.css">
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
-        .admin-header { background-color: #333; color: white; padding: 1em; text-align: center; }
-        .admin-nav { background-color: #555; padding: 0.5em; }
-        .admin-nav ul { list-style: none; padding: 0; margin: 0; display: flex; justify-content: center; }
-        .admin-nav ul li { margin: 0 15px; }
-        .admin-nav ul li a { color: white; text-decoration: none; padding: 5px 10px; border-radius: 3px; }
-        .admin-nav ul li a:hover { background-color: #777; }
-        .admin-content { padding: 20px; max-width: 960px; margin: 20px auto; background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        table, th, td { border: 1px solid #ddd; }
-        th, td { padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .action-links a { margin-right: 10px; text-decoration: none; color: #007bff; }
-        .action-links a:hover { text-decoration: underline; }
-    </style>
+
+
 </head>
 <body>
     <header class="admin-header">
