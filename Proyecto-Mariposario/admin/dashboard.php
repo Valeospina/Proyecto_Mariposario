@@ -1,7 +1,11 @@
 <?php
 session_start();
 
-// include '../DB.php'; 
+// include '../DB.php'; // Asegúrate de que esta línea esté descomentada si la necesitas para la base de datos
+
+// Inicializar variables de mensaje para evitar warnings SIEMPRE al inicio
+$message = '';
+$message_type = '';
 
 // **Protección de la página de administración:**
 // 1. Verifica si el usuario ha iniciado sesión.
@@ -11,56 +15,103 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // 2. Verifica si el rol del usuario es administrador (ID_Rol = 1).
-if ($_SESSION['user_role'] != 1) {
+// Asumiendo que $_SESSION['user_role'] ya contiene el ID del rol
+if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] != 1) { // Añadido isset para user_role
     header('Location: ../index.php'); // Redirige a la página principal si no es admin
     exit;
 }
 
-// Si llega aquí, el usuario es un administrador y puede ver el contenido
+// Si hay un mensaje pasado por la URL (esto ahora sobrescribirá las inicializaciones vacías)
+if (isset($_GET['message']) && isset($_GET['type'])) {
+    $message = htmlspecialchars($_GET['message']);
+    $message_type = htmlspecialchars($_GET['type']); // success, danger, info, warning
+}
+
+// Puedes definir el título de la página actual aquí
+$page_title = 'Panel de Administración';
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administración - Mi Sitio</title>
-    <link rel="stylesheet" href="../css/admin_styles.css">
+    <title><?php echo $page_title; ?> - Panel de Administración</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../css/admin.css">
 </head>
 <body>
-    <header class="admin-header">
-        <h1>Panel de Administración</h1>
-        <p>Bienvenido, <?php echo htmlspecialchars($_SESSION['user_name']); ?> (Rol: <?php echo htmlspecialchars($_SESSION['role_name']); ?>)</p>
-    </header>
 
-    <nav class="admin-nav">
-        <ul>
-            <li><a href="dashboard.php">Dashboard</a></li>
-            <li><a href="users.php">Gestionar Usuarios</a></li>
-            <li><a href="products.php">Gestionar Productos</a></li>
-            <li><a href="eventoAdmin.php">Gestionar Eventos</a></li>
-            <li><a href="reports.php">Ver Reportes</a></li>
-            <li><a href="../logout.php">Cerrar Sesión</a></li>
-        </ul>
-    </nav>
+    <div class="admin-dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3>Admin Panel</h3>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="users.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'users.php') ? 'active' : ''; ?>"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
+                    <li><a href="products.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'products.php') ? 'active' : ''; ?>"><i class="fas fa-box"></i> Gestionar Productos</a></li>
+                    <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+            </div>
+        </aside>
 
-    <main class="admin-content">
-        <h2>Resumen del Sistema</h2>
-        <p>Aquí puedes ver un resumen rápido de las actividades y estadísticas importantes.</p>
-        <ul>
-            <li>Número total de usuarios: [Aquí podrías mostrar un conteo de la DB]</li>
-            <li>Productos en stock: [Aquí podrías mostrar un conteo de la DB]</li>
-            <li>Últimas actividades de registro: [Aquí podrías mostrar datos del Registro_Actividad]</li>
-        </ul>
+        <div class="main-panel">
+            <header class="main-panel-header">
+                <div class="header-left">
+                    <h2><?php echo $page_title; ?></h2>
+                </div>
+                <div class="header-right">
+                    <div class="search-bar">
+                        <input type="text" placeholder="Buscar...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="user-profile">
+                        <span><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Admin'); ?></span>
+                        <img src="../images/user-avatar.png" alt="User Avatar">
+                    </div>
+                </div>
+            </header>
 
-        <h3>Acciones Rápidas</h3>
-        <button onclick="location.href='users.php'">Gestionar Usuarios</button>
-        <button onclick="location.href='products.php'">Gestionar Productos</button>
-        <button onclick="location.href='eventoAdmin.php'">Gestionar Eventos</button>
+            <main class="content-area">
+                <div class="admin-content">
+                    <?php if (!empty($message)): // ¡Aquí es la línea 80! Usamos !empty() ?>
+                        <div class="alert alert-<?php echo htmlspecialchars($message_type); ?>">
+                            <?php echo htmlspecialchars($message); ?>
+                        </div>
+                    <?php endif; ?>
 
-        </main>
+                    <h2>Bienvenido al Panel de Administración</h2>
+                    <p>Aquí puedes ver un resumen de tu actividad y acceder a las diferentes secciones.</p>
 
-    <footer>
-        <p style="text-align: center; margin-top: 30px; color: #ffffff;">&copy; <?php echo date("Y"); ?> Panel de Administración</p>
-    </footer>
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 30px;">
+                        <div class="card" style="flex: 1; min-width: 250px; padding: 20px; text-align: center;">
+                            <h3>Total Productos</h3>
+                            <p style="font-size: 2.5em; font-weight: 700; color: var(--sidebar-active-bg);">120</p>
+                            <p>Cantidad total de productos registrados.</p>
+                        </div>
+                        <div class="card" style="flex: 1; min-width: 250px; padding: 20px; text-align: center;">
+                            <h3>Usuarios Activos</h3>
+                            <p style="font-size: 2.5em; font-weight: 700; color: var(--accent-blue);">35</p>
+                            <p>Usuarios con sesión activa en este momento.</p>
+                        </div>
+                        <div class="card" style="flex: 1; min-width: 250px; padding: 20px; text-align: center;">
+                            <h3>Órdenes Pendientes</h3>
+                            <p style="font-size: 2.5em; font-weight: 700; color: var(--danger-red);">5</p>
+                            <p>Pedidos en espera de procesamiento.</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
 </body>
 </html>

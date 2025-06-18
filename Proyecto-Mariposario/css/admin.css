@@ -1,0 +1,669 @@
+/* admin.css - Estilo de Panel de Administración moderno (Inspirado en la imagen) */
+
+/* --- Variables de Color --- */
+:root {
+    --sidebar-bg: #2C3E50;          /* Azul Oscuro Pizarra (muy oscuro) */
+    --sidebar-link-color: #ECF0F1;  /* Gris claro para enlaces de sidebar */
+    --sidebar-hover-bg: #34495E;    /* Un poco más claro para hover en sidebar */
+    --sidebar-active-bg: #1ABC9C;   /* Verde Turquesa (acento principal) */
+    --sidebar-active-color: #FFFFFF; /* Texto blanco para elemento activo */
+
+    --main-bg: #F0F2F5;             /* Gris muy claro para el fondo principal */
+    --card-bg: #FFFFFF;             /* Blanco para tarjetas y formularios */
+    --header-top-bg: #FFFFFF;       /* Fondo de la barra superior */
+    --border-color: #E0E0E0;        /* Gris claro para bordes */
+
+    --text-dark: #333333;           /* Texto principal oscuro */
+    --text-secondary: #7F8C8D;      /* Texto secundario (gris) */
+    --accent-blue: #3498DB;         /* Azul vibrante (para botones secundarios, iconos) */
+    --danger-red: #E74C3C;          /* Rojo para eliminar */
+
+    /* Sombras */
+    --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-medium: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Base Styles --- */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--main-bg);
+    color: var(--text-dark);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh; /* Para asegurar que el layout ocupe toda la altura */
+    display: flex; /* Para que el admin-dashboard-layout pueda expandirse */
+}
+
+a {
+    text-decoration: none;
+    color: var(--primary-green);
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: var(--secondary-green);
+}
+
+/* --- Main Layout --- */
+.admin-dashboard-layout {
+    display: flex; /* Usa Flexbox para el layout de dos columnas */
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+    width: 250px; /* Ancho fijo de la sidebar */
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-link-color);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    position: fixed; /* Hace que la barra lateral sea fija */
+    height: 100%; /* Ocupa toda la altura */
+    left: 0;
+    top: 0;
+    z-index: 1000; /* Asegura que esté por encima de otros elementos */
+}
+
+.sidebar-header {
+    padding: 25px 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: var(--sidebar-active-color);
+    font-weight: 600;
+}
+
+.sidebar-nav {
+    flex-grow: 1; /* Permite que la navegación ocupe el espacio restante */
+    padding: 20px 0;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-nav ul li a {
+    display: flex; /* Para alinear icono y texto */
+    align-items: center;
+    padding: 15px 20px;
+    color: var(--sidebar-link-color);
+    font-size: 1rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    border-left: 5px solid transparent; /* Para el indicador activo */
+}
+
+.sidebar-nav ul li a i {
+    margin-right: 10px;
+    font-size: 1.1rem;
+}
+
+.sidebar-nav ul li a:hover {
+    background-color: var(--sidebar-hover-bg);
+    color: var(--sidebar-active-color);
+}
+
+.sidebar-nav ul li a.active {
+    background-color: var(--sidebar-active-bg);
+    color: var(--sidebar-active-color);
+    border-left-color: var(--sidebar-active-bg); /* Resalta el activo */
+    font-weight: 500;
+}
+
+.sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: center;
+}
+
+.sidebar-footer a {
+    color: var(--sidebar-link-color);
+    font-size: 1rem;
+    transition: color 0.2s ease;
+}
+
+.sidebar-footer a:hover {
+    color: var(--sidebar-active-bg);
+}
+.sidebar-footer a i {
+    margin-right: 8px;
+}
+
+/* --- Main Content Area --- */
+.main-panel {
+    margin-left: 250px; /* Deja espacio para la sidebar fija */
+    flex-grow: 1; /* Ocupa el resto del espacio */
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Top Bar within Main Panel --- */
+.main-panel-header {
+    background-color: var(--header-top-bg);
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-light);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 999; /* Para que esté por encima del contenido al hacer scroll */
+}
+
+.main-panel-header h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.search-bar {
+    position: relative;
+}
+
+.search-bar input {
+    padding: 10px 15px 10px 40px; /* Espacio para el icono */
+    border: 1px solid var(--border-color);
+    border-radius: 25px; /* Más redondeado */
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background-color: var(--main-bg); /* Ligeramente gris */
+    color: var(--text-dark);
+}
+
+.search-bar input:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.search-bar i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.user-profile span {
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.user-profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-color);
+}
+
+/* --- Content Area --- */
+.content-area {
+    padding: 30px;
+    flex-grow: 1; /* Ocupa el espacio restante en el main-panel */
+}
+
+/* --- Cards (general container for sections) --- */
+.admin-content {
+    background-color: var(--card-bg);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-medium);
+    margin-bottom: 30px; /* Espacio entre el contenido y el final si no hay más elementos */
+}
+
+.admin-content h2, .admin-content h3 { /* Reajuste para los títulos dentro de .admin-content */
+    font-family: 'Poppins', sans-serif;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.admin-content h2 {
+    font-size: 2rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 15px;
+}
+
+.admin-content p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+/* --- Buttons --- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    border-radius: 8px; /* Bordes redondeados */
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+}
+
+.btn i {
+    margin-right: 8px;
+}
+
+/* Primary Button (Add Product) */
+.btn-add-product {
+    background-color: var(--sidebar-active-bg); /* Verde Turquesa */
+    color: var(--sidebar-active-color);
+    box-shadow: 0 4px 10px rgba(26, 188, 156, 0.2);
+}
+
+.btn-add-product:hover {
+    background-color: #16A085; /* Tono más oscuro */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(26, 188, 156, 0.3);
+}
+
+/* Action Buttons (Edit, Delete) in tables */
+.btn-action-edit {
+    background-color: var(--accent-blue); /* Azul */
+    color: var(--sidebar-active-color);
+    padding: 8px 12px; /* Más pequeños para la tabla */
+    font-size: 0.9rem;
+    margin-right: 10px;
+}
+
+.btn-action-edit:hover {
+    background-color: #2980B9; /* Tono más oscuro */
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(52, 152, 219, 0.2);
+}
+
+.btn-action-delete {
+    background-color: var(--danger-red); /* Rojo */
+    color: var(--sidebar-active-color);
+    padding: 8px 12px;
+    font-size: 0.9rem;
+}
+
+.btn-action-delete:hover {
+    background-color: #C0392B; /* Tono más oscuro */
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(231, 76, 60, 0.2);
+}
+
+/* Form Submit Button */
+.btn-submit {
+    display: block;
+    width: 100%;
+    padding: 15px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--sidebar-active-color);
+    background-color: var(--sidebar-active-bg);
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 10px rgba(26, 188, 156, 0.2);
+}
+
+.btn-submit:hover {
+    background-color: #16A085;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(26, 188, 156, 0.3);
+}
+
+/* --- Table Styling --- */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 25px;
+    background-color: var(--card-bg);
+    border-radius: 8px; /* Bordes redondeados para la tabla */
+    overflow: hidden; /* Oculta contenido que se desborde de los bordes redondeados */
+    box-shadow: var(--shadow-light);
+}
+
+table thead {
+    background-color: var(--main-bg); /* Fondo más claro para el header de la tabla */
+    color: var(--text-dark);
+}
+
+table th,
+table td {
+    padding: 15px 20px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+table tbody tr:hover {
+    background-color: var(--main-bg); /* Gris muy claro al pasar el mouse */
+    transition: background-color 0.2s ease;
+}
+
+/* --- Form Styles --- */
+.form-container {
+    background-color: var(--card-bg);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-medium);
+    max-width: 600px; /* Ancho máximo para formularios */
+    margin: 0 auto; /* Centrar el formulario */
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    color: var(--text-dark);
+    background-color: var(--main-bg); /* Fondo de input ligeramente gris */
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="number"]:focus,
+.form-group input[type="date"]:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    outline: none;
+}
+
+.form-group input[type="checkbox"] {
+    margin-right: 8px;
+    transform: scale(1.1);
+    vertical-align: middle;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* --- Alerts --- */
+.alert {
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: var(--shadow-light);
+}
+
+.alert-success { background-color: #D4EDDA; color: #155724; border: 1px solid #C3E6CB; }
+.alert-danger { background-color: #F8D7DA; color: #721C24; border: 1px solid #F5C6CB; }
+.alert-warning { background-color: #FFF3CD; color: #856404; border: 1px solid #FFEBA; }
+.alert-info { background-color: #D1ECF1; color: #0C5460; border: 1px solid #BEE5EB; }
+
+
+/* --- Responsive Design --- */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 200px; /* Reduce un poco el ancho de la sidebar */
+    }
+    .main-panel {
+        margin-left: 200px;
+    }
+    .main-panel-header h2 {
+        font-size: 1.5rem;
+    }
+    .main-panel-header {
+        padding: 15px 20px;
+    }
+    .search-bar input {
+        padding: 8px 12px 8px 35px;
+        font-size: 0.9rem;
+    }
+    .user-profile span {
+        font-size: 0.9rem;
+    }
+    .user-profile img {
+        width: 35px;
+        height: 35px;
+    }
+    .content-area {
+        padding: 20px;
+    }
+    .admin-content {
+        padding: 20px;
+    }
+    .admin-content h2 {
+        font-size: 1.8rem;
+    }
+    table th, table td {
+        padding: 12px 15px;
+    }
+    .form-container {
+        padding: 20px;
+    }
+    .btn {
+        padding: 10px 18px;
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%; /* La sidebar ocupa todo el ancho */
+        height: auto;
+        position: relative; /* Ya no es fija */
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        z-index: 1000;
+        flex-direction: row; /* Elementos en fila para la sidebar en móvil */
+        flex-wrap: wrap;
+        justify-content: space-around;
+        padding: 0;
+    }
+    .sidebar-header {
+        width: 100%;
+        padding: 15px;
+        border-bottom: none;
+    }
+    .sidebar-nav {
+        width: 100%;
+        padding: 0;
+        order: 2; /* Para que la navegación vaya debajo del header y footer */
+    }
+    .sidebar-nav ul {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .sidebar-nav ul li {
+        flex: 1 1 auto; /* Permite que los ítems se distribuyan */
+        text-align: center;
+        margin: 0;
+    }
+    .sidebar-nav ul li a {
+        flex-direction: column; /* Icono arriba del texto */
+        padding: 10px 5px;
+        font-size: 0.8rem;
+        border-left: none; /* Quita el borde de la izquierda */
+        border-bottom: 3px solid transparent; /* Nuevo indicador inferior */
+    }
+    .sidebar-nav ul li a i {
+        margin-right: 0;
+        margin-bottom: 5px;
+        font-size: 1.2rem;
+    }
+    .sidebar-nav ul li a.active {
+        border-left-color: transparent;
+        border-bottom-color: var(--sidebar-active-bg); /* Resalta el activo */
+    }
+    .sidebar-footer {
+        width: 100%;
+        order: 3; /* Asegura que el footer vaya al final */
+        border-top: none;
+        padding: 15px;
+    }
+    .main-panel {
+        margin-left: 0; /* Ya no hay sidebar fija a la izquierda */
+    }
+    .main-panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+        padding: 15px;
+    }
+    .header-left h2 {
+        font-size: 1.5rem;
+    }
+    .header-right {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .search-bar {
+        flex-grow: 1; /* El campo de búsqueda puede crecer */
+    }
+    .user-profile {
+        margin-left: auto; /* Empuja el perfil de usuario a la derecha */
+    }
+    .content-area {
+        padding: 15px;
+    }
+    .admin-content {
+        padding: 15px;
+    }
+    /* Tabla Responsive (colapsada) */
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    table thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    table tr {
+        border: 1px solid var(--border-color);
+        margin-bottom: 10px;
+        border-radius: 8px;
+    }
+    table td {
+        border: none;
+        border-bottom: 1px solid var(--border-color);
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+        word-wrap: break-word;
+    }
+    table td:last-child {
+        border-bottom: none;
+    }
+    table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 45%;
+        padding-left: 15px;
+        font-weight: 600;
+        text-align: left;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+    .action-links {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        padding-top: 10px;
+        padding-bottom: 5px;
+        background-color: var(--main-bg);
+        border-top: 1px solid var(--border-color);
+    }
+    .action-links a {
+        margin-right: 0; /* Quita el margen derecho extra */
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar-nav ul li a {
+        font-size: 0.75rem; /* Aún más pequeño si es necesario */
+        padding: 8px 3px;
+    }
+    .sidebar-header h3 {
+        font-size: 1.5rem;
+    }
+    .user-profile span {
+        display: none; /* Oculta el nombre de usuario para ahorrar espacio */
+    }
+    .main-panel-header {
+        padding: 10px;
+    }
+    .admin-content {
+        padding: 10px;
+    }
+    .admin-content h2 {
+        font-size: 1.6rem;
+    }
+    .form-container {
+        padding: 15px;
+    }
+    .btn {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+    .btn-action-edit, .btn-action-delete {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+}
