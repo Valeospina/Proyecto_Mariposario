@@ -75,6 +75,8 @@ CREATE TABLE Asistencia (
     FOREIGN KEY (ID_Empleado) REFERENCES Empleado(ID_Empleado)
 );
 
+
+
 CREATE TABLE Evento (
     ID_Evento INT PRIMARY KEY AUTO_INCREMENT,
     Nombre VARCHAR(100) NOT NULL,
@@ -257,5 +259,42 @@ INSERT INTO Usuario (ID_Usuario, ID_Rol, Nombre, Correo, Contrasena, Telefono, D
 (7, 2, 'Laura Castillo', 'laura.cliente@gmail.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '2890-1234', 'San José, Escazú'),
 (8, 2, 'Diego Ramírez', 'diego.cliente@hotmail.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '2901-2345', 'Cartago, Paraíso'),
 (9, 2, 'Valeria Solano', 'valeria.cliente@yahoo.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '2012-3456', 'Alajuela, Atenas');
+
+-----Campos nuevos para evento-------------
+ALTER TABLE Evento
+ADD COLUMN Fecha DATE NOT NULL AFTER Precio, 
+ADD COLUMN Hora TIME AFTER Fecha,           
+ADD COLUMN Ubicacion VARCHAR(255) AFTER Hora; 
+
+----------Actualizacion a productos para la tabla inventario (nueva)------------------------
+USE mariposarioDB;
+
+ALTER TABLE Producto
+DROP COLUMN Stock,
+DROP COLUMN Fecha_Reposicion,
+DROP COLUMN Notificar_Disponibilidad,
+ADD COLUMN Activo_Catalogo BOOLEAN DEFAULT TRUE;
+
+DROP TABLE IF EXISTS Inventario;
+
+CREATE TABLE Inventario (
+    ID_Inventario INT AUTO_INCREMENT PRIMARY KEY,
+    ID_Producto INT NOT NULL, -- Llave foránea a la tabla Producto
+    SKU VARCHAR(100) UNIQUE, -- SKU para este ítem/lote específico de inventario
+    Stock_Actual INT NOT NULL DEFAULT 0,
+    Stock_Minimo INT DEFAULT 0, -- Para alertas de bajo stock para esta ubicación/lote
+    Ubicacion VARCHAR(100), -- Ej: 'Mariposario 1', 'Tienda Principal', 'Online'
+    Notas TEXT, -- Para cualquier nota específica del lote o ubicación
+    Fecha_Creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Fecha_Actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    Activo BOOLEAN DEFAULT TRUE, 
+    FOREIGN KEY (ID_Producto) REFERENCES Producto(ID_Producto) ON DELETE CASCADE
+
+);
+
+ALTER TABLE Empleado
+ADD COLUMN Horario VARCHAR(255) DEFAULT 'No especificado',
+ADD COLUMN Fecha_Contratacion DATE;
+
 
 

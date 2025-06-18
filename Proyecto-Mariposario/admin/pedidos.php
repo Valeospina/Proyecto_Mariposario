@@ -6,57 +6,71 @@ include '../DB.php'; // Incluye tu archivo de conexión a la base de datos
 $message = '';
 $message_type = '';
 
-// Protección de la página de administración
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role']) || $_SESSION['user_role'] != 1) {
-    header('Location: ../login.html'); // Redirige si no está logueado o no es admin
+// Protección de la página de administración:
+// 1. Verifica si el usuario ha iniciado sesión.
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ../login.html');
     exit;
 }
 
-// Manejar mensajes de éxito/error de otras páginas (ej. add_user.php, edit_user.php, delete_user.php)
-if (isset($_GET['message']) && isset($_GET['type'])) {
-    $message = htmlspecialchars($_GET['message']);
-    $message_type = htmlspecialchars($_GET['type']);
+// 2. Verifica si el rol del usuario es administrador (ID_Rol = 1).
+if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] != 1) {
+    header('Location: ../index.php'); // Redirige si no es administrador
+    exit;
 }
 
-$users = []; // Array para almacenar los usuarios
-// ATENCIÓN: Nombres de columna adaptados a tu DB: 'Nombre' (para usuario y rol) y 'Correo'
-$query = "SELECT u.ID_Usuario, u.Nombre AS Nombre_Usuario, u.Correo AS Email_Usuario, r.Nombre AS Nombre_Rol 
-          FROM Usuario u
-          JOIN Rol r ON u.ID_Rol = r.ID_Rol
-          ORDER BY u.Nombre"; // Ordenar por el nombre del usuario
+$page_title = 'Gestionar Pedidos';
 
+// --- Lógica para obtener datos de los pedidos ---
+$pedidos = [];
 try {
     if (isset($conn) && $conn instanceof mysqli) {
-        $stmt = $conn->prepare($query);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        // Consulta para obtener todos los pedidos con su último estado y nombre de usuario
+        // Selecciona el último estado para cada pedido basado en la fecha más reciente
+        $sql = "
+            SELECT 
+                p.ID_Pedido,
+                u.Nombre AS Nombre_Usuario,
+                p.Fecha_Pedido,
+                ep.Estado AS Estado_Actual,
+                MAX(ep.Fecha) AS Fecha_Ultimo_Estado
+            FROM 
+                Pedido p
+            JOIN 
+                Usuario u ON p.ID_Usuario = u.ID_Usuario
+            LEFT JOIN 
+                Estado_Pedido ep ON p.ID_Pedido = ep.ID_Pedido
+            GROUP BY 
+                p.ID_Pedido, u.Nombre, p.Fecha_Pedido, ep.Estado 
+            ORDER BY 
+                p.Fecha_Pedido DESC, Fecha_Ultimo_Estado DESC;
+        ";
 
-        if ($result->num_rows > 0) {
+
+        $result = $conn->query($sql);
+
+        if ($result) {
+
             while ($row = $result->fetch_assoc()) {
-                // Aquí usamos los alias para que el resto del código que usa 'Nombre_Usuario', 'Email' y 'Nombre_Rol' no cambie
-                $users[] = [
-                    'ID_Usuario' => $row['ID_Usuario'],
-                    'Nombre_Usuario' => $row['Nombre_Usuario'],
-                    'Email' => $row['Email_Usuario'],
-                    'Nombre_Rol' => $row['Nombre_Rol']
-                ];
+                $pedidos[] = $row;
             }
         } else {
-            $message = "No se encontraron usuarios.";
-            $message_type = "info";
+            throw new Exception("Error al ejecutar la consulta de pedidos: " . $conn->error);
         }
-        $stmt->close();
     } else {
         throw new Exception("Error: La conexión a la base de datos no está disponible o no es MySQLi.");
     }
 } catch (Exception $e) {
-    error_log("Error al cargar usuarios: " . $e->getMessage());
-    $message = "Error al cargar usuarios: " . htmlspecialchars($e->getMessage());
+    error_log("Error al cargar pedidos: " . $e->getMessage());
+    $message = "Error al cargar los pedidos: " . htmlspecialchars($e->getMessage());
     $message_type = "danger";
 }
 
-// Define el título de la página actual
-$page_title = 'Gestionar Usuarios';
+// Lógica para mostrar mensajes si vienen de una redirección
+if (isset($_GET['message']) && isset($_GET['type'])) {
+    $message = htmlspecialchars($_GET['message']);
+    $message_type = htmlspecialchars($_GET['type']);
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -69,6 +83,46 @@ $page_title = 'Gestionar Usuarios';
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../css/admin.css">
+    <style>
+        /* Estilos específicos para pedidos.php */
+        .data-table th, .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .data-table th {
+            background-color: #f2f2f2;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .data-table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .action-buttons .btn {
+            padding: 8px 12px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .action-buttons .btn-edit {
+            background-color: #007bff;
+        }
+
+        .action-buttons .btn-edit:hover {
+            background-color: #0056b3;
+        }
+
+        .table-container {
+            overflow-x: auto; /* Permite desplazamiento horizontal en tablas grandes */
+        }
+    </style>
 </head>
 <body>
 
@@ -113,41 +167,34 @@ $page_title = 'Gestionar Usuarios';
 
             <main class="content-area">
                 <div class="admin-content">
-                    <h2>Gestión de Usuarios</h2>
-                    <p>Administra la información de los usuarios registrados en el sistema.</p>
-
                     <?php if (!empty($message)): ?>
                         <div class="alert alert-<?php echo htmlspecialchars($message_type); ?>">
                             <?php echo htmlspecialchars($message); ?>
                         </div>
                     <?php endif; ?>
 
-                    <div class="actions-bar">
-                        <a href="add_user.php" class="btn btn-add-product"><i class="fas fa-user-plus"></i> Añadir Nuevo Usuario</a>
-                    </div>
-
-                    <?php if (!empty($users)): ?>
+                    <h3>Listado de Pedidos</h3>
+                    <?php if (!empty($pedidos)): ?>
                         <div class="table-container">
                             <table class="data-table">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Nombre de Usuario</th>
-                                        <th>Email</th>
-                                        <th>Rol</th>
+                                        <th>ID Pedido</th>
+                                        <th>Usuario</th>
+                                        <th>Fecha Pedido</th>
+                                        <th>Estado Actual</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($users as $user): ?>
+                                    <?php foreach ($pedidos as $pedido): ?>
                                         <tr>
-                                            <td><?php echo htmlspecialchars($user['ID_Usuario']); ?></td>
-                                            <td><?php echo htmlspecialchars($user['Nombre_Usuario']); ?></td>
-                                            <td><?php echo htmlspecialchars($user['Email']); ?></td>
-                                            <td><?php echo htmlspecialchars($user['Nombre_Rol']); ?></td>
-                                            <td class="actions">
-                                                <a href="edit_user.php?id=<?php echo htmlspecialchars($user['ID_Usuario']); ?>" class="btn btn-action-edit" title="Editar"><i class="fas fa-edit"></i> Editar</a>
-                                                <a href="delete_user.php?id=<?php echo htmlspecialchars($user['ID_Usuario']); ?>" class="btn btn-action-delete" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar a este usuario? Esta acción es irreversible.');"><i class="fas fa-trash-alt"></i> Eliminar</a>
+                                            <td><?php echo htmlspecialchars($pedido['ID_Pedido']); ?></td>
+                                            <td><?php echo htmlspecialchars($pedido['Nombre_Usuario']); ?></td>
+                                            <td><?php echo htmlspecialchars($pedido['Fecha_Pedido']); ?></td>
+                                            <td><?php echo htmlspecialchars($pedido['Estado_Actual'] ?? 'Pendiente'); ?></td>
+                                            <td class="action-buttons">
+                                                <a href="edit_pedido.php?id=<?php echo htmlspecialchars($pedido['ID_Pedido']); ?>" class="btn btn-edit">Editar Estado</a>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -155,9 +202,8 @@ $page_title = 'Gestionar Usuarios';
                             </table>
                         </div>
                     <?php else: ?>
-                        <p>No hay usuarios para mostrar.</p>
+                        <p>No hay pedidos registrados en el sistema.</p>
                     <?php endif; ?>
-
                 </div>
             </main>
         </div>
@@ -166,7 +212,6 @@ $page_title = 'Gestionar Usuarios';
 </body>
 </html>
 <?php
-// Cierra la conexión a la base de datos al final del script
 if (isset($conn) && $conn instanceof mysqli) {
     $conn->close();
 }

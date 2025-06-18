@@ -15,7 +15,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
         <link rel="stylesheet" href="css/bootstrap.min.css">
-        <link rel="stylesheet" href="css/nice-select.css">
+        <link rel="stylesheet" href="css/nice-select.css">s
         <link rel="stylesheet" href="css/font-awesome.min.css">
         <link rel="stylesheet" href="css/icofont.css">
         <link rel="stylesheet" href="css/slicknav.min.css">
@@ -39,7 +39,7 @@
             <?php
                 include 'DB.php'; // Include the database connection file
                 $searchTerm = isset($_GET['buscar']) ? htmlspecialchars($_GET['buscar']) : '';
-                $selectedCategory = 'Mariposas'; 
+                $selectedCategory = 'Mariposa'; // Fijo para esta página
             ?>
                 <div id="mariposa-facts" class="mariposa-facts section">
                     <div class="overlay-form-container">
@@ -57,7 +57,7 @@
                                             <i class="fa fa-search"></i> <strong>Buscar</strong>
                                         </button>
                                     </div>
-                                </div>
+                                 </div>
                             </div>
                         </form>
                     </div>
@@ -71,12 +71,12 @@
                     if ($conn && !$conn->connect_error) { // Ensure $conn is not null and connection is good
                         // Build the SQL query
                         $sql = "SELECT ID_Producto, Nombre, Descripcion, Precio, Imagen_URL FROM producto WHERE 1";
- 
+
                         $param_types = ''; // Stores the types of parameters (e.g., 's' for string)
                         $param_values = []; // Stores the actual parameter values
- 
+
                         $conditions = [];
- 
+
                         // Add search term condition
                         if (!empty($searchTerm)) {
                             $conditions[] = "(Nombre LIKE ? OR Descripcion LIKE ?)";
@@ -84,31 +84,31 @@
                             $param_values[] = '%' . $searchTerm . '%';
                             $param_values[] = '%' . $searchTerm . '%';
                         }
- 
-                        // Add category filter condition for 'Mariposas'
-                        if (!empty($selectedCategory)) {
-                            $conditions[] = "Categoria = ?";
-                            $param_types .= 's'; // 's' for string
-                            $param_values[] = $selectedCategory;
-                        } else {
-                            // Default to show only Mariposas if no category filter is active on this page
-                            $conditions[] = "Categoria = 'Mariposas'"; // No need to bind if it's a fixed string
-                        }
- 
+
+                        // Add category filter condition for 'Mariposa' (fixed for this page)
+                        // It's already fixed in $selectedCategory, so just add the condition
+                        $conditions[] = "Categoria = ?";
+                        $param_types .= 's';
+                        $param_values[] = $selectedCategory;
+                        
+                        // !!! IMPORTANTE: Añadir condición para mostrar solo productos activos en el catálogo !!!
+                        $conditions[] = "Activo_Catalogo = 1";
+
+
                         // Append conditions to SQL query
                         if (!empty($conditions)) {
                             $sql .= " AND " . implode(" AND ", $conditions);
                         }
- 
+
                         try {
                             // Prepare the statement
                             // This is line 170 where the Fatal error was occurring if $conn was null
                             $stmt = $conn->prepare($sql);
- 
+
                             if ($stmt === false) {
                                 throw new Exception("Error al preparar la consulta: " . $conn->error);
                             }
- 
+
                             // Bind parameters if there are any
                             if (!empty($param_values)) {
                                 // Use call_user_func_array for dynamic binding
@@ -120,13 +120,13 @@
                                 }
                                 call_user_func_array([$stmt, 'bind_param'], $bind_params_array);
                             }
- 
+
                             // Execute the statement
                             $stmt->execute();
- 
+
                             // Get the result set
                             $result = $stmt->get_result();
- 
+
                             // Fetch all rows into an array
                             $productos = [];
                             if ($result) { // Check if get_result returned a valid result object
@@ -134,10 +134,10 @@
                                     $productos[] = $row;
                                 }
                             }
-                           
+                            
                             // Close the statement
                             $stmt->close();
- 
+
                             if (empty($productos)) {
                                 echo '<div class="col-12 text-center py-5">';
                                 echo '<h3>No se encontraron productos que coincidan con tu búsqueda.</h3>';
@@ -148,7 +148,15 @@
                                     <div class="col-lg-3 col-md-4 col-12 mb-4">
                                         <div class="single-product shadow rounded p-3 h-100">
                                             <div class="product-img">
-                                                <img src="<?php echo htmlspecialchars($producto['Imagen_URL']); ?>" alt="<?php echo htmlspecialchars($producto['Nombre']); ?>" class="img-fluid">
+                                                <?php
+                                                $display_image_src = htmlspecialchars($producto['Imagen_URL']);
+                                                // Si la imagen es una ruta local guardada como 'uploads/productos/...',
+                                                // y mariposas.php está en la raíz, la ruta ya es correcta.
+                                                // Solo se necesita ajustar si la estructura cambia o la URL no es externa.
+                                                // La lógica de `str_replace('../', '', $destination_path)` en add/edit_product.php
+                                                // asegura que se guarda 'uploads/productos/...' en la DB, lo cual es directamente usable desde la raíz.
+                                                ?>
+                                                <img src="<?php echo $display_image_src; ?>" alt="<?php echo htmlspecialchars($producto['Nombre']); ?>" class="img-fluid">
                                             </div>
                                             <div class="product-content">
                                                 <h4><strong><?php echo htmlspecialchars($producto['Nombre']); ?></strong></h4>
@@ -157,8 +165,8 @@
                                                 <button type="button" class="btn btn-primary agregar-carrito mt-2"
                                                     data-id="<?php echo htmlspecialchars($producto['ID_Producto']); ?>"
                                                     data-nombre="<?php echo htmlspecialchars($producto['Nombre']); ?>"
-                                                    data-precio="<?php echo htmlspecialchars($producto['Precio']); ?>">
-                                                    <i class="fa fa-cart-plus"></i> Agregar al carrito
+                                                    data-precio="<?php echo htmlspecialchars($producto['Precio']); ?>"
+                                                    data-imagen-url="<?php echo htmlspecialchars($producto['Imagen_URL']); ?>"> <i class="fa fa-cart-plus"></i> Agregar al carrito
                                                 </button>
                                             </div>
                                         </div>

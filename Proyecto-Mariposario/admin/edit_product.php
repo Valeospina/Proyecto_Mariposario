@@ -1,116 +1,190 @@
 <?php
 session_start();
-include '../DB.php'; // Incluye tu archivo de conexión a la base de datos
+include '../DB.php'; // Archivo de conexión a la base de datos
 
-// Protección de la página de administración
+// Protección: solo admin puede acceder
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role']) || $_SESSION['user_role'] != 1) {
-    header('Location: ../login.html'); // Redirige si no está logueado o no es admin
+    header('Location: ../login.html');
     exit;
 }
 
+$product_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $product = null;
 $message = '';
 $message_type = '';
 
-// Obtener el ID del producto de la URL
-if (isset($_GET['id']) && !empty($_GET['id'])) {
-    $product_id = intval($_GET['id']); // Asegúrate de sanitizar el ID
+// Directorio donde se guardan las imágenes subidas
+$upload_directory = '../uploads/productos/';
 
-    // Cargar los datos del producto existente
-    $select_query = "SELECT ID_Producto, Nombre, Categoria, Descripcion, Precio, Stock, Imagen_URL, Fecha_Reposicion, Notificar_Disponibilidad FROM Producto WHERE ID_Producto = ?";
+// Crear el directorio si no existe
+if (!is_dir($upload_directory)) {
+    mkdir($upload_directory, 0755, true); // Crea directorios anidados y con permisos 0755
+}
 
-    try {
-        if (isset($conn) && $conn instanceof mysqli) {
-            $stmt = $conn->prepare($select_query);
-            $stmt->bind_param("i", $product_id);
-            $stmt->execute();
-            $result = $stmt->get_result();
 
-            if ($result->num_rows > 0) {
-                $product = $result->fetch_assoc();
-            } else {
-                $message = "Producto no encontrado.";
-                $message_type = "danger";
-            }
-            $stmt->close();
-        } else {
-            throw new Exception("Error: La conexión a la base de datos no está disponible o no es MySQLi.");
+// Si no se proporcionó un ID válido, redirigir
+if ($product_id <= 0) {
+    header('Location: products.php?message=' . urlencode('ID de producto no válido.') . '&type=danger');
+    exit;
+}
+
+// Lógica para obtener los datos del producto a editar
+try {
+    if ($conn instanceof mysqli) {
+        $stmt = $conn->prepare("SELECT ID_Producto, Nombre, Categoria, Descripcion, Precio, Imagen_URL, Activo_Catalogo FROM Producto WHERE ID_Producto = ?");
+        if (!$stmt) {
+            throw new Exception("Error al preparar la consulta para obtener producto: " . $conn->error);
         }
-    } catch (Exception $e) {
-        error_log("Error al cargar datos del producto (ID: $product_id): " . $e->getMessage());
-        $message = "Error al cargar datos del producto: " . htmlspecialchars($e->getMessage());
-        $message_type = "danger";
+        $stmt->bind_param("i", $product_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $product = $result->fetch_assoc();
+        $stmt->close();
+
+        if (!$product) {
+            header('Location: products.php?message=' . urlencode('Producto no encontrado.') . '&type=danger');
+            exit;
+        }
+    } else {
+        throw new Exception("Conexión a la base de datos no válida o no disponible.");
     }
-} else {
-    $message = "ID de producto no proporcionado para editar.";
+} catch (Exception $e) {
+    error_log("Error al cargar producto para edición: " . $e->getMessage());
+    $message = "Error al cargar el producto: " . htmlspecialchars($e->getMessage());
     $message_type = "danger";
 }
 
-// Procesar el formulario cuando se envía (actualizar)
+
+// Si el formulario ha sido enviado (para actualizar el producto)
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $product) {
-    // Recopilar y sanear los datos del formulario
-    $id_producto_edit = intval($_POST['id_producto']); // Asegúrate de que el ID viene del formulario
-    $nombre = htmlspecialchars(trim($_POST['nombre']));
-    $categoria = htmlspecialchars(trim($_POST['categoria']));
-    $descripcion = htmlspecialchars(trim($_POST['descripcion']));
-    $precio = floatval($_POST['precio']);
-    $stock = intval($_POST['stock']);
-    $imagen_url = htmlspecialchars(trim($_POST['imagen_url']));
-    $fecha_reposicion = !empty($_POST['fecha_reposicion']) ? $_POST['fecha_reposicion'] : null;
-    $notificar_disponibilidad = isset($_POST['notificar_disponibilidad']) ? 1 : 0;
+    $nombre = trim($_POST['nombre'] ?? '');
+    $categoria = trim($_POST['categoria'] ?? '');
+    $descripcion = trim($_POST['descripcion'] ?? '');
+    $precio = filter_var($_POST['precio'] ?? '', FILTER_VALIDATE_FLOAT);
+    $imagen_url_db = $product['Imagen_URL']; // Valor actual, se modificará si hay subida o nueva URL
+    $activo_catalogo = isset($_POST['activo_catalogo']) ? 1 : 0; // Checkbox
+    $clear_image = isset($_POST['clear_image']); // Nuevo checkbox para eliminar imagen
 
-    // Validación básica
-    if (empty($nombre) || empty($categoria) || empty($descripcion) || $precio <= 0 || $stock < 0) {
-        $message = "Todos los campos obligatorios deben ser completados correctamente.";
+    // Validaciones básicas de campos de texto
+    if (empty($nombre) || empty($categoria) || empty($descripcion) || $precio === false || $precio < 0) {
+        $message = "Todos los campos obligatorios (Nombre, Categoría, Descripción, Precio) deben ser completados correctamente.";
         $message_type = "danger";
-    } else if ($id_producto_edit != $product['ID_Producto']) {
-        // Esto es una capa de seguridad para asegurar que no se manipula el ID
-        $message = "Error de seguridad: ID de producto no coincide.";
-        $message_type = "danger";
-    }
-    else {
-        // Prepara la consulta para actualizar el producto
-        $update_query = "UPDATE Producto SET Nombre = ?, Categoria = ?, Descripcion = ?, Precio = ?, Stock = ?, Imagen_URL = ?, Fecha_Reposicion = ?, Notificar_Disponibilidad = ? WHERE ID_Producto = ?";
+    } else {
+        // --- Lógica para manejar la imagen (subida o URL) ---
+        $file_uploaded = false;
+        if (isset($_FILES['imagen_file']) && $_FILES['imagen_file']['error'] == UPLOAD_ERR_OK) {
+            $file_name = $_FILES['imagen_file']['name'];
+            $file_tmp_name = $_FILES['imagen_file']['tmp_name'];
+            $file_size = $_FILES['imagen_file']['size'];
+            $file_type = $_FILES['imagen_file']['type'];
+            $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
 
-        try {
-            if (isset($conn) && $conn instanceof mysqli) {
-                $stmt = $conn->prepare($update_query);
-                // "ssdsisii" - string, string, double, integer, string, integer, integer
-                // NOTA: Fecha_Reposicion es un string (date), y Notificar_Disponibilidad e ID_Producto son enteros
-                $stmt->bind_param("sssdissii", $nombre, $categoria, $descripcion, $precio, $stock, $imagen_url, $fecha_reposicion, $notificar_disponibilidad, $id_producto_edit);
-                $stmt->execute();
+            $allowed_ext = ['jpg', 'jpeg', 'png', 'gif'];
+            $max_file_size = 5 * 1024 * 1024; // 5MB
 
-                if ($stmt->affected_rows > 0) {
-                    $message = "Producto actualizado exitosamente.";
-                    $message_type = "success";
-                    // Recargar los datos del producto después de la actualización para mostrar los cambios
-                    // (Esto es redundante si se redirecciona, pero útil si se quedan en la misma página)
-                    $product['Nombre'] = $nombre;
-                    $product['Categoria'] = $categoria;
-                    $product['Descripcion'] = $descripcion;
-                    $product['Precio'] = $precio;
-                    $product['Stock'] = $stock;
-                    $product['Imagen_URL'] = $imagen_url;
-                    $product['Fecha_Reposicion'] = $fecha_reposicion;
-                    $product['Notificar_Disponibilidad'] = $notificar_disponibilidad;
-
-                } else {
-                    $message = "No se realizaron cambios en el producto o no se pudo actualizar.";
-                    $message_type = "info"; // Cambio a info si no hay cambios
-                }
-                $stmt->close();
+            if (!in_array($file_ext, $allowed_ext)) {
+                $message = "Tipo de archivo no permitido para la nueva imagen. Solo JPG, JPEG, PNG, GIF.";
+                $message_type = "danger";
+            } elseif ($file_size > $max_file_size) {
+                $message = "La nueva imagen es demasiado grande. Máximo 5MB.";
+                $message_type = "danger";
             } else {
-                throw new Exception("Error: La conexión a la base de datos no está disponible o no es MySQLi.");
+                // Generar un nombre único para el archivo
+                $new_file_name = uniqid('prod_', true) . '.' . $file_ext;
+                $destination_path = $upload_directory . $new_file_name;
+
+                if (move_uploaded_file($file_tmp_name, $destination_path)) {
+                    // Eliminar la imagen antigua si era un archivo local
+                    if ($product['Imagen_URL'] && !filter_var($product['Imagen_URL'], FILTER_VALIDATE_URL)) {
+                        $old_file_path = '../' . $product['Imagen_URL']; // Convertir de vuelta a ruta local
+                        if (file_exists($old_file_path) && is_file($old_file_path)) {
+                            unlink($old_file_path);
+                        }
+                    }
+                    $imagen_url_db = str_replace('../', '', $destination_path); // Guardar ruta relativa limpia
+                    $file_uploaded = true;
+                } else {
+                    $message = "Error al subir el nuevo archivo de imagen.";
+                    $message_type = "danger";
+                }
             }
-        } catch (Exception $e) {
-            error_log("Error al actualizar producto (ID: $id_producto_edit): " . $e->getMessage());
-            $message = "Error al actualizar el producto: " . htmlspecialchars($e->getMessage());
-            $message_type = "danger";
+        } elseif ($clear_image) {
+            // Si se marcó para limpiar la imagen y no se subió una nueva
+            if ($product['Imagen_URL'] && !filter_var($product['Imagen_URL'], FILTER_VALIDATE_URL)) {
+                $old_file_path = '../' . $product['Imagen_URL'];
+                if (file_exists($old_file_path) && is_file($old_file_path)) {
+                    unlink($old_file_path);
+                }
+            }
+            $imagen_url_db = null; // Establecer la URL de la imagen a NULL
+        } elseif (!empty(trim($_POST['imagen_url'] ?? '')) && trim($_POST['imagen_url']) != $product['Imagen_URL']) {
+            // Si no se subió un archivo, no se marcó para limpiar, y la URL de texto ha cambiado
+            $imagen_url_input = trim($_POST['imagen_url']);
+            if (filter_var($imagen_url_input, FILTER_VALIDATE_URL)) {
+                // Eliminar la imagen antigua si era un archivo local y ahora se usa una URL externa
+                if ($product['Imagen_URL'] && !filter_var($product['Imagen_URL'], FILTER_VALIDATE_URL)) {
+                    $old_file_path = '../' . $product['Imagen_URL'];
+                    if (file_exists($old_file_path) && is_file($old_file_path)) {
+                        unlink($old_file_path);
+                    }
+                }
+                $imagen_url_db = $imagen_url_input;
+            } else {
+                $message = "La URL de la imagen proporcionada no es válida.";
+                $message_type = "danger";
+            }
+        } elseif (empty(trim($_POST['imagen_url'] ?? ''))) {
+            // Si no se subió un archivo, no se marcó para limpiar, y el campo de URL está vacío
+            // Esto significa que el usuario quiere que la imagen sea NULL si no la llenó y no subió
+             if ($product['Imagen_URL'] && !filter_var($product['Imagen_URL'], FILTER_VALIDATE_URL)) {
+                $old_file_path = '../' . $product['Imagen_URL'];
+                if (file_exists($old_file_path) && is_file($old_file_path)) {
+                    unlink($old_file_path);
+                }
+            }
+            $imagen_url_db = null;
+        }
+
+        // Si el mensaje de error ya está seteado por validación de archivo/URL, no intentar insertar
+        if (empty($message)) {
+            try {
+                if ($conn instanceof mysqli) {
+                    // Prepara la consulta SQL para actualizar el producto
+                    $stmt = $conn->prepare("UPDATE Producto SET Nombre = ?, Categoria = ?, Descripcion = ?, Precio = ?, Imagen_URL = ?, Activo_Catalogo = ? WHERE ID_Producto = ?");
+
+                    if (!$stmt) {
+                        throw new Exception("Error al preparar la consulta de actualización: " . $conn->error);
+                    }
+
+                    $stmt->bind_param("sssdsii", $nombre, $categoria, $descripcion, $precio, $imagen_url_db, $activo_catalogo, $product_id);
+
+                    if ($stmt->execute()) {
+                        $message = "Producto '<strong>" . htmlspecialchars($nombre) . "</strong>' actualizado exitosamente.";
+                        $message_type = "success";
+                        // Volver a cargar el producto después de la actualización para reflejar los cambios
+                        $product['Nombre'] = $nombre;
+                        $product['Categoria'] = $categoria;
+                        $product['Descripcion'] = $descripcion;
+                        $product['Precio'] = $precio;
+                        $product['Imagen_URL'] = $imagen_url_db; // Actualizar con la nueva URL/ruta
+                        $product['Activo_Catalogo'] = $activo_catalogo;
+
+                    } else {
+                        throw new Exception("Error al actualizar el producto: " . $stmt->error);
+                    }
+                    $stmt->close();
+                } else {
+                    throw new Exception("Conexión a la base de datos no válida o no disponible.");
+                }
+            } catch (Exception $e) {
+                error_log("Error al actualizar producto: " . $e->getMessage());
+                $message = "Error al actualizar el producto: " . htmlspecialchars($e->getMessage());
+                $message_type = "danger";
+            }
         }
     }
 }
 
-// Define el título de la página actual
 $page_title = 'Editar Producto';
 ?>
 <!DOCTYPE html>
@@ -134,11 +208,12 @@ $page_title = 'Editar Producto';
             </div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-home"></i> Dashboard</a></li>
-                    <li><a href="users.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'users.php') ? 'active' : ''; ?>"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
-                    <li><a href="products.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'products.php') ? 'active' : ''; ?>"><i class="fas fa-box"></i> Gestionar Productos</a></li>
-                    <li><a href="eventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'eventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Eventos</a></li>
-                    <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
+                    <li><a href="dashboard.php"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="users.php"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
+                    <li><a href="products.php" class="active"><i class="fas fa-box"></i> Gestionar Productos</a></li>
+                    <li><a href="inventarioAdmin.php"><i class="fas fa-warehouse"></i> Gestionar Inventario</a></li>
+                    <li><a href="eventoAdmin.php"><i class="fas fa-calendar-alt"></i> Gestionar Eventos</a></li>
+                    <li><a href="reports.php"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
                 </ul>
             </nav>
             <div class="sidebar-footer">
@@ -165,66 +240,87 @@ $page_title = 'Editar Producto';
 
             <main class="content-area">
                 <div class="admin-content">
-                    <h2>Editar Producto</h2>
-                    <p>Modifica los detalles del producto.</p>
-
                     <?php if (!empty($message)): ?>
                         <div class="alert alert-<?php echo htmlspecialchars($message_type); ?>">
                             <?php echo htmlspecialchars($message); ?>
                         </div>
                     <?php endif; ?>
 
-                    <?php if ($product): ?>
-                        <div class="form-container"> <h3>Información del Producto</h3>
-                            <form action="edit_product.php?id=<?php echo htmlspecialchars($product['ID_Producto']); ?>" method="POST">
-                                <input type="hidden" name="id_producto" value="<?php echo htmlspecialchars($product['ID_Producto']); ?>">
+                    <?php if ($product): // Solo mostrar el formulario si el producto fue cargado correctamente ?>
+                        <h3>Editar Producto: <?php echo htmlspecialchars($product['Nombre']); ?></h3>
+                        <form action="edit_product.php?id=<?php echo htmlspecialchars($product_id); ?>" method="POST" class="admin-form" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="nombre">Nombre del Producto:</label>
+                                <input type="text" id="nombre" name="nombre" required value="<?php echo htmlspecialchars($product['Nombre'] ?? ''); ?>">
+                            </div>
 
-                                <div class="form-group">
-                                    <label for="nombre">Nombre del Producto:</label>
-                                    <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($product['Nombre'] ?? ''); ?>" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="categoria">Categoría:</label>
-                                    <select id="categoria" name="categoria" required>
-                                        <option value="">Selecciona una categoría</option>
-                                        <option value="Mariposas" <?php echo (($product['Categoria'] ?? '') == 'Mariposas') ? 'selected' : ''; ?>>Mariposas</option>
-                                        <option value="Orquídeas" <?php echo (($product['Categoria'] ?? '') == 'Orquídeas') ? 'selected' : ''; ?>>Orquídeas</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="descripcion">Descripción:</label>
-                                    <textarea id="descripcion" name="descripcion" required><?php echo htmlspecialchars($product['Descripcion'] ?? ''); ?></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="precio">Precio:</label>
-                                    <input type="number" id="precio" name="precio" step="0.01" min="0" value="<?php echo htmlspecialchars($product['Precio'] ?? ''); ?>" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="stock">Stock:</label>
-                                    <input type="number" id="stock" name="stock" min="0" value="<?php echo htmlspecialchars($product['Stock'] ?? ''); ?>" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="imagen_url">URL de la Imagen (opcional):</label>
-                                    <input type="text" id="imagen_url" name="imagen_url" value="<?php echo htmlspecialchars($product['Imagen_URL'] ?? ''); ?>">
-                                </div>
-                                <div class="form-group">
-                                    <label for="fecha_reposicion">Fecha de Reposición (opcional):</label>
-                                    <input type="date" id="fecha_reposicion" name="fecha_reposicion" value="<?php echo htmlspecialchars($product['Fecha_Reposicion'] ?? ''); ?>">
-                                </div>
-                                <div class="form-group checkbox-group"> <input type="checkbox" id="notificar_disponibilidad" name="notificar_disponibilidad" value="1" <?php echo (($product['Notificar_Disponibilidad'] ?? 0) == 1) ? 'checked' : ''; ?>>
-                                    <label for="notificar_disponibilidad">Notificar Disponibilidad</label>
-                                </div>
-                                <div class="button-group">
-                                    <button type="submit" class="btn btn-submit"><i class="fas fa-save"></i> Guardar Cambios</button>
-                                    <a href="products.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver a la lista</a>
-                                </div>
-                            </form>
-                        </div>
-                    <?php else: ?>
-                        <p>No se pudo cargar el producto para editar. Por favor, asegúrese de que el ID es válido.</p>
-                        <p><a href="products.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver a la lista de productos</a></p>
+                            <div class="form-group">
+                                <label for="categoria">Categoría:</label>
+                                <select id="categoria" name="categoria" required>
+                                    <option value="">Seleccione una categoría</option>
+                                    <option value="Mariposa" <?php echo (isset($product['Categoria']) && $product['Categoria'] == 'Mariposa') ? 'selected' : ''; ?>>Mariposa</option>
+                                    <option value="Orquidea" <?php echo (isset($product['Categoria']) && $product['Categoria'] == 'Orquidea') ? 'selected' : ''; ?>>Orquídea</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="descripcion">Descripción:</label>
+                                <textarea id="descripcion" name="descripcion" rows="5" required><?php echo htmlspecialchars($product['Descripcion'] ?? ''); ?></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="precio">Precio:</label>
+                                <input type="number" id="precio" name="precio" step="0.01" min="0" required value="<?php echo htmlspecialchars($product['Precio'] ?? ''); ?>">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Imagen Actual:</label>
+                                <?php if (!empty($product['Imagen_URL'])): ?>
+                                    <?php
+                                    // Determinar si la URL es local o externa para mostrarla correctamente
+                                    $display_image_src = $product['Imagen_URL'];
+                                    if (!filter_var($product['Imagen_URL'], FILTER_VALIDATE_URL) && strpos($product['Imagen_URL'], 'uploads/productos/') === 0) {
+                                        $display_image_src = '../' . $product['Imagen_URL']; // Añadir ../ para ruta relativa a admin/
+                                    }
+                                    ?>
+                                    <img src="<?php echo htmlspecialchars($display_image_src); ?>" alt="Imagen actual" style="max-width: 150px; height: auto; display: block; margin-top: 10px; border-radius: 5px;">
+                                    <small style="display: block; margin-top: 5px;">URL/Ruta actual: <?php echo htmlspecialchars($product['Imagen_URL']); ?></small>
+                                <?php else: ?>
+                                    <p>No hay imagen cargada para este producto.</p>
+                                <?php endif; ?>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="imagen_file">Subir Nueva Imagen (reemplazará la actual):</label>
+                                <input type="file" id="imagen_file" name="imagen_file" accept="image/*">
+                                <small>Sube un archivo de imagen (JPG, PNG, GIF). Máx. 5MB.</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="imagen_url">O usar Nueva URL de la Imagen:</label>
+                                <input type="url" id="imagen_url" name="imagen_url" value="<?php echo htmlspecialchars($product['Imagen_URL'] ?? ''); ?>">
+                                <small>Ej: https://ejemplo.com/nueva_imagen.jpg (Dejar vacío si subes un archivo o mantienes la actual)</small>
+                            </div>
+
+                            <div class="form-group checkbox-group">
+                                <input type="checkbox" id="clear_image" name="clear_image" value="1">
+                                <label for="clear_image">Eliminar imagen actual (Si subes una nueva o pones URL, esto se ignora)</label>
+                            </div>
+
+
+                            <div class="form-group checkbox-group">
+                                <input type="checkbox" id="activo_catalogo" name="activo_catalogo" value="1" <?php echo ($product['Activo_Catalogo'] == 1) ? 'checked' : ''; ?>>
+                                <label for="activo_catalogo">Activo en Catálogo (Visible para usuarios)</label>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar Cambios</button>
+                                <a href="products.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver a Productos</a>
+                            </div>
+                        </form>
+                    <?php elseif (empty($message)): ?>
+                        <p class="alert alert-info">Producto no encontrado o no disponible para edición.</p>
                     <?php endif; ?>
-
                 </div>
             </main>
         </div>
@@ -233,7 +329,6 @@ $page_title = 'Editar Producto';
 </body>
 </html>
 <?php
-// Cierra la conexión a la base de datos si está abierta y es MySQLi
 if (isset($conn) && $conn instanceof mysqli) {
     $conn->close();
 }

@@ -1,69 +1,119 @@
 <?php
 session_start();
-include '../DB.php'; // Incluye tu archivo de conexión a la base de datos
+include '../DB.php'; // Archivo de conexión a la base de datos
 
-// Protección de la página de administración
+// Protección: solo admin puede acceder
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role']) || $_SESSION['user_role'] != 1) {
-    header('Location: ../login.html'); // Redirige si no está logueado o no es admin
+    header('Location: ../login.html');
     exit;
 }
 
 $message = '';
 $message_type = '';
 
-// Procesar el formulario cuando se envía
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Recopilar y sanear los datos del formulario
-    $nombre = htmlspecialchars(trim($_POST['nombre'] ?? ''));
-    $categoria = htmlspecialchars(trim($_POST['categoria'] ?? ''));
-    $descripcion = htmlspecialchars(trim($_POST['descripcion'] ?? ''));
-    $precio = floatval($_POST['precio'] ?? 0); // Convertir a número flotante
-    $stock = intval($_POST['stock'] ?? 0);     // Convertir a entero
-    $imagen_url = htmlspecialchars(trim($_POST['imagen_url'] ?? ''));
-    $fecha_reposicion = !empty($_POST['fecha_reposicion'] ?? '') ? $_POST['fecha_reposicion'] : null;
-    $notificar_disponibilidad = isset($_POST['notificar_disponibilidad']) ? 1 : 0; // 1 si marcado, 0 si no
+// Directorio donde se guardarán las imágenes subidas (asegúrate de que exista y tenga permisos de escritura)
+$upload_directory = '../uploads/productos/';
 
-    // Validación básica de datos
-    if (empty($nombre) || empty($categoria) || empty($descripcion) || $precio <= 0 || $stock < 0) {
-        $message = "Todos los campos obligatorios deben ser completados correctamente.";
+// Crear el directorio si no existe
+if (!is_dir($upload_directory)) {
+    mkdir($upload_directory, 0755, true); // Crea directorios anidados y con permisos 0755
+}
+
+
+// Si el formulario ha sido enviado
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $nombre = trim($_POST['nombre'] ?? '');
+    $categoria = trim($_POST['categoria'] ?? '');
+    $descripcion = trim($_POST['descripcion'] ?? '');
+    $precio = filter_var($_POST['precio'] ?? '', FILTER_VALIDATE_FLOAT);
+    $imagen_url_db = null; // Lo que finalmente se guardará en la base de datos
+    $activo_catalogo = isset($_POST['activo_catalogo']) ? 1 : 0; // Checkbox
+
+    // Validaciones básicas de campos de texto
+    if (empty($nombre) || empty($categoria) || empty($descripcion) || $precio === false || $precio < 0) {
+        $message = "Todos los campos obligatorios (Nombre, Categoría, Descripción, Precio) deben ser completados correctamente.";
         $message_type = "danger";
     } else {
-        // Prepara la consulta para insertar el producto
-        $insert_query = "INSERT INTO Producto (Nombre, Categoria, Descripcion, Precio, Stock, Imagen_URL, Fecha_Reposicion, Notificar_Disponibilidad) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        // --- Lógica para manejar la imagen (subida o URL) ---
+        $file_uploaded = false;
+        if (isset($_FILES['imagen_file']) && $_FILES['imagen_file']['error'] == UPLOAD_ERR_OK) {
+            $file_name = $_FILES['imagen_file']['name'];
+            $file_tmp_name = $_FILES['imagen_file']['tmp_name'];
+            $file_size = $_FILES['imagen_file']['size'];
+            $file_type = $_FILES['imagen_file']['type'];
+            $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
 
-        try {
-            if (isset($conn) && $conn instanceof mysqli) {
-                $stmt = $conn->prepare($insert_query);
-                // "ssdsissi" - string, string, double, integer, string, date/string, integer
-                // Ajusta los tipos según tus campos: s=string, i=integer, d=double/float, b=blob
-                $stmt->bind_param("ssdsissi", $nombre, $categoria, $descripcion, $precio, $stock, $imagen_url, $fecha_reposicion, $notificar_disponibilidad);
-                $stmt->execute();
+            $allowed_ext = ['jpg', 'jpeg', 'png', 'gif'];
+            $max_file_size = 5 * 1024 * 1024; // 5MB
 
-                if ($stmt->affected_rows > 0) {
-                    $message = "Producto añadido exitosamente.";
-                    $message_type = "success";
-                    // Opcional: Redirigir a products.php con un mensaje de éxito
-                    header('Location: products.php?message=' . urlencode($message) . '&type=' . urlencode($message_type));
-                    exit;
-                    // Si no redireccionas, puedes limpiar el formulario aquí:
-                    // $_POST = array(); // Limpia los valores de los campos después del éxito
-                } else {
-                    $message = "No se pudo añadir el producto.";
-                    $message_type = "warning";
-                }
-                $stmt->close();
+            if (!in_array($file_ext, $allowed_ext)) {
+                $message = "Tipo de archivo no permitido para la imagen. Solo JPG, JPEG, PNG, GIF.";
+                $message_type = "danger";
+            } elseif ($file_size > $max_file_size) {
+                $message = "La imagen es demasiado grande. Máximo 5MB.";
+                $message_type = "danger";
             } else {
-                throw new Exception("Error: La conexión a la base de datos no está disponible o no es MySQLi.");
+                // Generar un nombre único para el archivo
+                $new_file_name = uniqid('prod_', true) . '.' . $file_ext;
+                $destination_path = $upload_directory . $new_file_name;
+
+                if (move_uploaded_file($file_tmp_name, $destination_path)) {
+                    // Guardar la ruta relativa para la base de datos
+                    $imagen_url_db = str_replace('../', '', $destination_path); // Eliminar '../' para guardar una ruta relativa limpia
+                    $file_uploaded = true;
+                } else {
+                    $message = "Error al subir el archivo de imagen.";
+                    $message_type = "danger";
+                }
             }
-        } catch (Exception $e) {
-            error_log("Error al añadir producto: " . $e->getMessage());
-            $message = "Error al añadir el producto: " . htmlspecialchars($e->getMessage());
-            $message_type = "danger";
+        }
+
+        // Si no se subió un archivo exitosamente, revisar si hay una URL
+        if (!$file_uploaded && !empty(trim($_POST['imagen_url'] ?? ''))) {
+            $imagen_url_input = trim($_POST['imagen_url']);
+            // Validar si es una URL válida (ej. que empiece con http/https)
+            if (filter_var($imagen_url_input, FILTER_VALIDATE_URL)) {
+                $imagen_url_db = $imagen_url_input;
+            } else {
+                $message = "La URL de la imagen no es válida.";
+                $message_type = "danger";
+            }
+        }
+        // Si el mensaje de error ya está seteado por validación de archivo/URL, no intentar insertar
+        if (empty($message)) {
+            try {
+                if ($conn instanceof mysqli) {
+                    // Prepara la consulta SQL para insertar un nuevo producto
+                    $stmt = $conn->prepare("INSERT INTO Producto (Nombre, Categoria, Descripcion, Precio, Imagen_URL, Activo_Catalogo) VALUES (?, ?, ?, ?, ?, ?)");
+
+                    if (!$stmt) {
+                        throw new Exception("Error al preparar la consulta: " . $conn->error);
+                    }
+
+                    $stmt->bind_param("sssdsi", $nombre, $categoria, $descripcion, $precio, $imagen_url_db, $activo_catalogo);
+
+                    if ($stmt->execute()) {
+                        $message = "Producto '<strong>" . htmlspecialchars($nombre) . "</strong>' añadido exitosamente.";
+                        $message_type = "success";
+                        // Redirigir para limpiar el POST y mostrar el mensaje
+                        header('Location: products.php?message=' . urlencode($message) . '&type=' . urlencode($message_type));
+                        exit;
+                    } else {
+                        throw new Exception("Error al añadir el producto: " . $stmt->error);
+                    }
+                    $stmt->close();
+                } else {
+                    throw new Exception("Conexión a la base de datos no válida o no disponible.");
+                }
+            } catch (Exception $e) {
+                error_log("Error al añadir producto: " . $e->getMessage());
+                $message = "Error al añadir el producto: " . htmlspecialchars($e->getMessage());
+                $message_type = "danger";
+            }
         }
     }
 }
 
-// Define el título de la página actual
 $page_title = 'Añadir Nuevo Producto';
 ?>
 <!DOCTYPE html>
@@ -76,7 +126,8 @@ $page_title = 'Añadir Nuevo Producto';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="../css/admin.css"> </head>
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
 <body>
 
     <div class="admin-dashboard-layout">
@@ -86,11 +137,12 @@ $page_title = 'Añadir Nuevo Producto';
             </div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-home"></i> Dashboard</a></li>
-                    <li><a href="users.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'users.php') ? 'active' : ''; ?>"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
-                    <li><a href="products.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'products.php') ? 'active' : ''; ?>"><i class="fas fa-box"></i> Gestionar Productos</a></li>
-                    <li><a href="eventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'eventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Eventos</a></li>
-                    <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
+                    <li><a href="dashboard.php"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="users.php"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
+                    <li><a href="products.php" class="active"><i class="fas fa-box"></i> Gestionar Productos</a></li>
+                    <li><a href="inventarioAdmin.php"><i class="fas fa-warehouse"></i> Gestionar Inventario</a></li>
+                    <li><a href="eventoAdmin.php"><i class="fas fa-calendar-alt"></i> Gestionar Eventos</a></li>
+                    <li><a href="reports.php"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
                 </ul>
             </nav>
             <div class="sidebar-footer">
@@ -117,60 +169,60 @@ $page_title = 'Añadir Nuevo Producto';
 
             <main class="content-area">
                 <div class="admin-content">
-                    <h2>Añadir Nuevo Producto</h2>
-                    <p>Completa el formulario para agregar un nuevo producto al inventario.</p>
-
                     <?php if (!empty($message)): ?>
                         <div class="alert alert-<?php echo htmlspecialchars($message_type); ?>">
                             <?php echo htmlspecialchars($message); ?>
                         </div>
                     <?php endif; ?>
 
-                    <div class="form-container"> <h3>Detalles del Nuevo Producto</h3>
-                        <form action="add_product.php" method="POST">
-                            <div class="form-group">
-                                <label for="nombre">Nombre del Producto:</label>
-                                <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($_POST['nombre'] ?? ''); ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="categoria">Categoría:</label>
-                                <select id="categoria" name="categoria" required>
-                                    <option value="">Selecciona una categoría</option>
-                                    <option value="Mariposas" <?php echo (($_POST['categoria'] ?? '') == 'Mariposas') ? 'selected' : ''; ?>>Mariposas</option>
-                                    <option value="Orquídeas" <?php echo (($_POST['categoria'] ?? '') == 'Orquídeas') ? 'selected' : ''; ?>>Orquídeas</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="descripcion">Descripción:</label>
-                                <textarea id="descripcion" name="descripcion" required><?php echo htmlspecialchars($_POST['descripcion'] ?? ''); ?></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="precio">Precio:</label>
-                                <input type="number" id="precio" name="precio" step="0.01" min="0" value="<?php echo htmlspecialchars($_POST['precio'] ?? ''); ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="stock">Stock:</label>
-                                <input type="number" id="stock" name="stock" min="0" value="<?php echo htmlspecialchars($_POST['stock'] ?? ''); ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="imagen_url">URL de la Imagen (opcional):</label>
-                                <input type="text" id="imagen_url" name="imagen_url" value="<?php echo htmlspecialchars($_POST['imagen_url'] ?? ''); ?>">
-                            </div>
-                            <div class="form-group">
-                                <label for="fecha_reposicion">Fecha de Reposición (opcional):</label>
-                                <input type="date" id="fecha_reposicion" name="fecha_reposicion" value="<?php echo htmlspecialchars($_POST['fecha_reposicion'] ?? ''); ?>">
-                            </div>
-                            <div class="form-group checkbox-group">
-                                <input type="checkbox" id="notificar_disponibilidad" name="notificar_disponibilidad" value="1" <?php echo (isset($_POST['notificar_disponibilidad']) && $_POST['notificar_disponibilidad']) ? 'checked' : ''; ?>>
-                                <label for="notificar_disponibilidad">Notificar Disponibilidad</label>
-                            </div>
-                            <div class="button-group">
-                                <button type="submit" class="btn btn-submit"><i class="fas fa-plus-circle"></i> Añadir Producto</button>
-                                <a href="products.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver a la lista</a>
-                            </div>
-                        </form>
-                    </div>
+                    <h3>Formulario para Añadir Producto</h3>
+                    <form action="add_product.php" method="POST" class="admin-form" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="nombre">Nombre del Producto:</label>
+                            <input type="text" id="nombre" name="nombre" required value="<?php echo htmlspecialchars($_POST['nombre'] ?? ''); ?>">
+                        </div>
 
+                        <div class="form-group">
+                            <label for="categoria">Categoría:</label>
+                            <select id="categoria" name="categoria" required>
+                                <option value="">Seleccione una categoría</option>
+                                <option value="Mariposa" <?php echo (isset($_POST['categoria']) && $_POST['categoria'] == 'Mariposa') ? 'selected' : ''; ?>>Mariposa</option>
+                                <option value="Orquidea" <?php echo (isset($_POST['categoria']) && $_POST['categoria'] == 'Orquidea') ? 'selected' : ''; ?>>Orquídea</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="descripcion">Descripción:</label>
+                            <textarea id="descripcion" name="descripcion" rows="5" required><?php echo htmlspecialchars($_POST['descripcion'] ?? ''); ?></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="precio">Precio:</label>
+                            <input type="number" id="precio" name="precio" step="0.01" min="0" required value="<?php echo htmlspecialchars($_POST['precio'] ?? ''); ?>">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="imagen_file">Subir Imagen:</label>
+                            <input type="file" id="imagen_file" name="imagen_file" accept="image/*">
+                            <small>Sube un archivo de imagen (JPG, PNG, GIF). Máx. 5MB.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="imagen_url">O usar URL de la Imagen:</label>
+                            <input type="url" id="imagen_url" name="imagen_url" value="<?php echo htmlspecialchars($_POST['imagen_url'] ?? ''); ?>">
+                            <small>Ej: https://ejemplo.com/imagen.jpg (Dejar vacío si subiste una imagen)</small>
+                        </div>
+
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="activo_catalogo" name="activo_catalogo" value="1" <?php echo (isset($_POST['activo_catalogo']) && $_POST['activo_catalogo'] == '1') ? 'checked' : 'checked'; ?>>
+                            <label for="activo_catalogo">Activo en Catálogo (Visible para usuarios)</label>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Añadir Producto</button>
+                            <a href="products.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver a Productos</a>
+                        </div>
+                    </form>
                 </div>
             </main>
         </div>
@@ -179,7 +231,6 @@ $page_title = 'Añadir Nuevo Producto';
 </body>
 </html>
 <?php
-// Cierra la conexión a la base de datos si está abierta y es MySQLi
 if (isset($conn) && $conn instanceof mysqli) {
     $conn->close();
 }
