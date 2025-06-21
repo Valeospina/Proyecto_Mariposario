@@ -19,7 +19,7 @@ if ($_POST) {
         if ($result->num_rows === 0) {
             echo "<script>
                     alert('El correo ingresado no está registrado. Por favor, verifica tu correo.');
-                    window.location.href = './login.html';
+                    window.location.href = './looginD.php';
                   </script>";
             exit;
         }
@@ -68,7 +68,7 @@ if ($_POST) {
         } else {
             echo "<script>
                     alert('Contraseña incorrecta. Por favor, intenta nuevamente.');
-                    window.location.href = './login.html';
+                    window.location.href = './looginD.php';
                   </script>";
             exit;
         }

@@ -18,7 +18,7 @@
         <button type="submit">Enviar enlace</button>
       </form>
       <div class="back-link">
-        <a href="./login.html">Volver al inicio de sesión</a>
+        <a href="./looginD.php">Volver al inicio de sesión</a>
       </div>
     </div>
   </div>
