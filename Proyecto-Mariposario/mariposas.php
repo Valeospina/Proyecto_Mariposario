@@ -25,25 +25,24 @@
         <link rel="stylesheet" href="css/magnific-popup.css">
         <link rel="stylesheet" href="css/tienda.css">
 
-        <link rel="stylesheet" href="css/normalize.css">
+       
         <link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="css/responsive.css">
 
     </head>
 
-    <body class="user">
+    <body class="mariposa">
 
         <?php include 'layout/nav2.php'; ?>
-        <body class="mariposa">
-
+        
             <?php
                 include 'DB.php'; // Include the database connection file
                 $searchTerm = isset($_GET['buscar']) ? htmlspecialchars($_GET['buscar']) : '';
                 $selectedCategory = 'Mariposa'; // Fijo para esta página
             ?>
-                <div id="mariposa-facts" class="mariposa-facts section">
+                <div id="Mariposa-facts" class="Mariposa-facts section">
                     <div class="overlay-form-container">
-                        <form method="GET" action="mariposas.php">
+                        <form method="GET" action="Mariposas.php">
                             <div class="row justify-content-center align-items-center">
                                 <div class="col-md-8 col-lg-5">
                                     <div class="form-group">
@@ -56,13 +55,12 @@
                                         <button class="btn btn-primary w-100" type="submit">
                                             <i class="fa fa-search"></i> <strong>Buscar</strong>
                                         </button>
-                                    </div>
-                                 </div>
+                                     </div>
+                                </div>
                             </div>
                         </form>
                     </div>
                 </div>
-
             <section class="products section">
             <div class="container">
                 <div class="row">

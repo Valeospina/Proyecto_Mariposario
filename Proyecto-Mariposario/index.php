@@ -201,6 +201,7 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
             </div>
         </div>
     </section>
+    
     <div id="fun-facts" class="fun-facts section overlay">
         <div class="container">
             <div class="row">
@@ -239,7 +240,7 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
                             <p>Años de Experiencia</p>
                         </div>
                     </div>
-                    </div>
+               </div>
             </div>
         </div>
     </div>
@@ -325,7 +326,7 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
                 <div class="col-lg-12 col-12">
                     <div class="owl-carousel portfolio-slider">
                     <div class="single-pf">
-                        <img src="img/orquidea5.jpg" alt="Mariposa">
+                        <img src="img/orquidea_cattleya.jpg" alt="Mariposa">
                         <a href="GaleriaOrquideas.html" class="btn">Ver Detalles</a>
                     </div>
                     <div class="single-pf">
@@ -337,7 +338,7 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
                         <a href="GaleriaMariposas.html" class="btn">Ver Detalles</a>
                     </div>
                     <div class="single-pf">
-                        <img src="img/flowers.jpg" alt="Orquídea">
+                        <img src="img/Mariposa1.jpg" alt="Orquídea">
                         <a href="GaleriaOrquideas.html" class="btn">Ver Detalles</a>
                     </div>
                     </div>

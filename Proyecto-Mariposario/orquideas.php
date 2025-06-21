@@ -52,7 +52,7 @@
                                         <button class="btn btn-primary w-100" type="submit">
                                             <i class="fa fa-search"></i> <strong>Buscar</strong>
                                         </button>
-                                                                                                        </div>
+                                     </div>
                                 </div>
                             </div>
                         </form>

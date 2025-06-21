@@ -53,7 +53,7 @@
    <body class="user"> <!-- Cambia 'admin' por 'user' si es un usuario normal -->
 
 		<section class="imagen-principal">
-			<img src="img/Mariposa1.jpg" alt="Mariposa" style="width: 100%; max-height: 250px; object-fit: cover;">
+			<img src="img/mariposa2.jpg" alt="Mariposa" style="width: 100%; max-height: 250px; object-fit: cover;">
 		</section>
 			
 			<!-- Start Schedule Area -->
