@@ -350,9 +350,9 @@
 							</div>
 							<ul class="sidebar-menu">
 								<li><a href="user-profile.html" class="active"><i class="fas fa-user"></i> Perfil</a></li>
-								<li><a href="MisPedidos.html"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
-								<li><a href="eventosReservados.html"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
-								<li><a href="notificaciones.html"><i class="fas fa-bell"></i> Notificaciones <span class="badge badge-primary">3</span></a></li>
+								<li><a href="MisPedidos.php"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
+								<li><a href="eventosReservados.php"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
+								<li><a href="notificaciones.php"><i class="fas fa-bell"></i> Notificaciones <span class="badge badge-primary">3</span></a></li>
 								<li><a href="user-favorites.html"><i class="fas fa-heart"></i> Favoritos</a></li>
 								<li><a href="user-settings.html"><i class="fas fa-cog"></i> Configuración</a></li>
 								<li><a href="logout.html"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
@@ -397,7 +397,7 @@
                                             </div>
 											<h3>Mis Pedidos</h3>
 											<p>Revisa tu historial de pedidos y el estado de los mismos.</p>
-											<a href="MisPedidos.html" class="btn btn-primary">Ver Pedidos</a>
+											<a href="MisPedidos.php" class="btn btn-primary">Ver Pedidos</a>
 										</div>
 									</div>
 									<div class="col-lg-4 col-md-6 col-12">
@@ -407,7 +407,7 @@
                                             </div>
 											<h3>Mis Eventos</h3>
 											<p>Consulta los eventos a los que estás registrado y su estado.</p>
-											<a href="eventosReservados.html" class="btn btn-primary">Ver Eventos</a>
+											<a href="eventosReservados.php" class="btn btn-primary">Ver Eventos</a>
 										</div>
 									</div>
 									<div class="col-lg-4 col-md-6 col-12">
@@ -417,7 +417,7 @@
                                             </div>
 											<h3>Notificaciones</h3>
 											<p>Consulta las notificaciones recientes sobre tus actividades.</p>
-											<a href="notificaciones.html" class="btn btn-primary">Ver Notificaciones</a>
+											<a href="notificaciones.php" class="btn btn-primary">Ver Notificaciones</a>
 										</div>
 									</div>
 								</div>

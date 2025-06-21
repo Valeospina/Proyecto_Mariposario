@@ -261,132 +261,672 @@
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
-/* Estilo para el badge si el carrito está en el botón principal */
-.header .get-quote .btn .badge {
-    position: relative; /* Cambiado a relative si está dentro del flujo del texto del botón */
-    top: 0;
-    right: 0;
-    margin-left: 8px; /* Espacio a la izquierda del número */
-    background-color: #dc3545;
-    color: white;
-    font-size: 10px;
-    padding: 3px 6px;
-    border-radius: 50%;
-    min-width: 20px;
-    text-align: center;
-}
 
-/* --- Mobile Navigation Placeholder --- */
-.header .mobile-nav {
-    display: none;
-    font-size: 28px;
-    color: #333;
-    cursor: pointer;
-    text-align: right;
+/*Estado de mariposa y carrito*/
+.why-choose .choose-left .list li:last-child{
+	margin-bottom:0px;
 }
+.why-choose .choose-left .list li i{
+	height:15px;
+	width:15px;
+	line-height:15px;
+	text-align:center;
+	background:#155724;
+	color:#fff;
+	font-size:14px;
+	border-radius:100%;
+	padding-left:2px;
+	margin-right:16px;
+}
+/* Start Faq CSS */
+.why-choose{
+	background:#fff;
+}
+.why-choose .choose-right{
+	height:100%;
+	width:100%;
+	background-image:url('img/video-bg.jpeg');
+	background-size:cover;
+	background-position:center;
+	background-repeat:no-repeat;
+	position:relative;
+}
+.why-choose .choose-right .video {
+	color: #fff;
+	height: 70px;
+	width: 70px;
+	line-height: 70px;
+	text-align: center;
+	border-radius: 100%;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin-left: -35px;
+	margin-top: -35px;
+	font-size: 21px;
+	background: #81BAE6;
+	padding-left: 4px;
+}
+.why-choose .choose-right .video:hover{
+	transform:scale(1.1);
+}
+.why-choose .video-image .waves-block .waves {
+	position: absolute;
+	width: 200px;
+	height: 200px;
+	background: #fff;
+	opacity: 0;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	border-radius: 100%;
+	-webkit-animation: waves 3s ease-in-out infinite;
+	animation: waves 3s ease-in-out infinite;
+	left: 50%;
+	margin-left: -100px;
+	top: 50%;
+	margin-top: -100px;
+}
+.why-choose .video-image .waves-block .wave-1 {
+    -webkit-animation-delay: 0s;
+    animation-delay: 0s;
+}
+.why-choose .video-image .waves-block .wave-2 {
+    -webkit-animation-delay: 1s;
+    animation-delay: 1s;
+}
+.why-choose .video-image .waves-block .wave-3 {
+    -webkit-animation-delay: 2s;
+    animation-delay: 2s;
+}
+/*=======================
+	End Why choose CSS
+=========================*/
 
-/* --- Responsive Adjustments --- */
-@media (max-width: 991px) {
-    .header .topbar {
-        text-align: center;
-    }
-    .header .topbar .top-link {
-        justify-content: center; /* Centrar enlaces en pantallas pequeñas */
-        margin-bottom: 0; /* Eliminar margen inferior */
-    }
-    .header .topbar .top-link li {
-        margin-left: 10px; /* Reducir espacio en móviles */
-        margin-right: 10px; /* Añadir margen a la derecha también para centrar mejor */
-    }
-    .header .topbar .top-link li:first-child {
-        margin-left: 0; /* El primer elemento no necesita margen a la izquierda */
-    }
-    .header .header-inner {
-        padding: 15px 0;
-    }
-    .header .header-inner .inner {
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    .header .logo {
-        text-align: center;
-        margin-bottom: 15px;
-        width: 100%;
-    }
-    .header .main-menu {
-        display: none;
-        width: 100%;
-        text-align: center;
-    }
-    .header .mobile-nav {
-        display: block;
-        width: 100%;
-        text-align: right;
-        margin-top: -60px;
-    }
-    /* Ocultar el get-quote del main-header en móviles si ya está en el topbar */
-    .header .get-quote {
-        display: none; /* Oculta este div por completo en móviles si no se usa */
-    }
-    .header .main-menu .navigation .nav.menu li {
-        margin: 0 10px;
-    }
-    .header .main-menu .navigation .nav.menu li a {
-        font-size: 15px;
-    }
+/*===============================
+	Start Call to action CSS
+=================================*/
+.call-action{
+	background-image:url('img/mariposa3-bg.png');
+	background-size:cover;
+	background-position:center;
+	position:relative;
+	background-repeat:no-repeat;
 }
+.call-action .content{
+	text-align:center;
+	padding:100px 265px;
+}
+.call-action .content h2{
+	color:#fff;
+	font-size:32px;
+	font-weight:600;
+	line-height:46px;
+}
+.call-action .content p {
+	color: #fff;
+	margin: 30px 0px;
+	font-size: 15px;
+}
+.call-action .content .btn{
+	background:#d49ad5;
+	margin-right:20px;
+	font-weight:500;
+	border:1px solid #fff;
+	color:#000000;
+}
+.call-action .content .btn:before{
+	background:#d49ad5;
+}
+.call-action .content .btn:hover{
+	background:#d49ad5;
+	color:#fff;
+}
+.call-action .content .btn:last-child{
+	margin-right:0px;
+}
+.call-action .content .second {
+	border: 1px solid #fff;
+	color: #fff;
+	background: transparent;
+	color: #fff !important;
+}
+.call-action .content .second:before{
+	background:#d49ad5;
+}
+.call-action .content .second:hover{
+	color:#1A76D1;
+	border-color:transparent;
+	background:#d49ad5;
+}
+.call-action .content .second i{
+	margin-left:10px;
+}
+/*===============================
+	Start Call to action CSS
+=================================*/
 
-@media (max-width: 767px) {
-    .header .topbar .top-link li {
-        font-size: 12px; /* Más pequeño en móviles muy pequeños */
-        margin-left: 5px;
-        margin-right: 5px;
-    }
-    .header .topbar .top-link li .user-info-link i {
-        font-size: 14px;
-    }
-    .header .topbar .top-link li .btn-topbar-action {
-        padding: 4px 10px;
-        font-size: 12px;
-    }
-    .header .mobile-nav {
-        font-size: 24px;
-    }
-    .header .logo img {
-        max-height: 50px;
-    }
+/*==========================
+	Start Portfolio CSS
+============================*/
+.portfolio{
+	background:#FDFDFD;
 }
-        /* --- */
-/* Slider Section - Refined Styles */
-/* Slider Section - Refined Styles (Tamaños de fuente ajustados) */
-.slider .single-slider {
-    position: relative;
-    height: 700px; /* Mantener la altura o ajustar si es necesario */
-    background-size: cover;
-    background-position: center center;
-    display: flex;
-    align-items: center; /* Centrar contenido verticalmente */
-    text-align: left;
-    color: #fff; /* Texto blanco para contraste */
+.portfolio .single-pf{
+	position:relative;
 }
-
-/* Overlay para mejor legibilidad del texto */
-.slider .single-slider::before {
-    content: '';
+.portfolio .single-pf img{
+	height:100%;
+	width:100%;
+}
+.portfolio .single-pf:before{
+	position:absolute;
+	content:"";
+	left:0;
+	top:0;
+	height:100%;
+	width:100%;
+	background:#1a76d1;
+	opacity:0;
+	visibility:hidden;
+	-webkit-transition:all 0.4s ease;
+	-moz-transition:all 0.4s ease;
+	transition:all 0.4s ease;
+	z-index:1;
+}
+.portfolio .single-pf:hover:before{
+	opacity:0.7;
+	visibility:visible;
+}
+.portfolio .single-pf .btn {
+	color: #1a76d1;
+	z-index: 3;
+	background: #fff;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	border-radius: 0px;
+	opacity: 0;
+	visibility: hidden;
+	-webkit-transition: all 0.4s ease;
+	-moz-transition: all 0.4s ease;
+	transition: all 0.4s ease;
+	height: 48px;
+	width: 150px;
+	text-align: center;
+	line-height: 48px;
+	padding: 0;
+	font-weight: 500;
+	font-size: 14px;
+	margin-left: -75px;
+	margin-top: -24px;
+	border-radius:4px;
+}
+.portfolio .single-pf:hover .btn{
+	opacity:1;
+	visibility:visible;
+}
+.portfolio .single-pf .btn:hover{
+	color:#fff;
+}
+.portfolio .owl-nav{
+	display:none;
+}
+/* Slider Nav */
+.pf-details .image-slider .owl-nav{
+	margin: 0;
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 50%;
     width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.4); /* Capa oscura para que el texto resalte */
-    z-index: 0; /* Colocar detrás del texto pero sobre la imagen de fondo */
+	margin-top:-25px;
+}
+.pf-details .image-slider .owl-carousel .owl-nav div {
+	height: 50px;
+	width: 50px;
+	line-height: 45px;
+	background: #fff;
+	color: #1A76D1;
+	position: absolute;
+	margin: 0;
+	border-radius: 100%;
+	font-size: 20px;
+	text-align: center;
+	-webkit-transition: all 0.4s ease;
+	-moz-transition: all 0.4s ease;
+	transition: all 0.4s ease;
+	box-shadow: 0px 0px 10px #0000001a;
+}
+.pf-details .image-slider .owl-carousel .owl-nav div:hover{
+	color:#fff;
+	background:#1A76D1;
+}
+.pf-details .image-slider .owl-carousel .owl-controls .owl-nav .owl-prev{
+	left:20px;
+}
+.pf-details .image-slider .owl-carousel .owl-controls .owl-nav .owl-next{
+	right:20px;
+}
+.pf-details .image-slider{
+	border-radius:8px 8px 0 0;
+}
+.pf-details .image-slider img{
+	height:100%;
+	width:100%;
+}
+.pf-details .date{
+	background: #1a76d1;
+	display: block;
+	padding: 20px;
+	text-align: center;
+	border-radius: 0;
+	border: none;
+	margin: 0;
+	margin-top: -1px;
+}
+.pf-details .date ul li{
+	font-size:16px;
+	color:#fff;
+	display:inline-block;
+	margin-right:60px;
+}
+.pf-details .date ul li:last-child{
+	margin:0;
+}
+.pf-details .date ul li span{
+	font-weight:500;
+	display:inline-block;
+	margin-right:5px;
+}
+.pf-details .body-text{}
+.pf-details .body-text h3 {
+	font-size: 30px;
+	font-weight: 600;
+	color: #333;
+	margin-top: 40px;
+}
+.pf-details .body-text p{
+	margin-top:20px;
+}
+.pf-details .body-text .share{
+	margin-top:40px;
+}
+.pf-details .body-text .share h4 {
+	font-size: 15px;
+	font-weight: 500;
+	display: inline-block;
+}
+.pf-details .body-text .share ul{
+	display:inline-block;
+	margin-left:12px;
+}
+.pf-details .body-text .share ul li{
+	display:inline-block;
+	margin-right:10px;
+}
+.pf-details .body-text .share ul li:last-child{
+	margin-right:0;
+}
+.pf-details .body-text .share ul li a{
+	height:35px;
+	width:35px;
+	line-height:35px;
+	text-align:center;
+	border:1px solid #C8C8C8;
+	color:#757575;
+	display:block;
+	border-radius:50%;
+}
+.pf-details .body-text .share ul li a:hover{
+	color:#fff;
+	border-color:transparent;
+	background:#1A76D1;
+}
+/*==========================
+	End Portfolio CSS
+============================*/
+
+/*=========================
+	Srart service CSS
+===========================*/
+.services .single-service{
+	margin:30px 0;
+	position:relative;
+	padding-left:70px;
+}
+.services .single-service i{
+	font-size:45px;
+	color:#1a76d1;
+	position:absolute;
+	left:0;
+	-webkit-transition:all 0.4s ease;
+	-moz-transition:all 0.4s ease;
+	transition:all 0.4s ease;
+}
+.services .single-service h4{
+	text-transform:capitalize;
+	margin-bottom:25px;
+	color:#2C2D3F;
+}
+.services .single-service h4 a{
+	color:#2C2D3F;
+	font-size:20px;
+	font-weight:600;
+}
+.services .single-service h4 a:hover{
+	color:#1A76D1;
+}
+.services .single-service p{
+	color:#868686;
+}
+/*-- Service Details --*/
+.services-details-img {
+  margin-bottom: 50px;
 }
 
-.slider .single-slider .text {
-    position: relative;
-    z-index: 1; /* Asegurar que el texto esté sobre el overlay */
-    padding: 30px; /* Padding ligeramente mayor */
-    border-radius: 10px;
+.services-details-img img {
+  width: 100%;
+  margin-bottom: 30px;
+}
+.services-details-img h2 {
+  font-weight: 600;
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+.services-details-img P {
+  margin-bottom: 20px;
+}
+.services-details-img blockquote {
+	font-size: 15px;
+	color: #4a6f8a;
+	background-color: #1a76d1;
+	padding: 30px 75px;
+	line-height: 26px;
+	position: relative;
+	margin-bottom: 20px;
+	color: #fff;
+}
+.services-details-img blockquote i {
+  position: absolute;
+  display: inline-block;
+  top: 20px;
+  left: 38px;
+  font-size: 32px;
+}
+.service-details-inner-left {
+  background-image: url("img/signup-bg.jpg");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100%;
+}
+.service-details-inner-left img {
+  display: none;
+}
+.service-details-inner {
+  max-width: 580px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.service-details-inner h2 {
+	font-weight: 600;
+	font-size: 30px;
+	margin-bottom: 15px;
+	border-left: 3px solid #1a76d1;
+	padding-left: 15px;
+}
+.service-details-inner p {
+  margin-bottom: 15px;
+}
+.service-details-inner p:last-child {
+  margin-bottom: 0;
+}
+/*=========================
+	End service CSS
+===========================*/
+
+/*=============================
+	Start Testimonials CSS
+===============================*/
+.testimonials{
+	background-image:url('img/testi-bg.jpg');
+	background-size:cover;
+	background-position:center;
+	background-repeat:no-repeat;
+	position:relative;
+}
+.testimonials .section-title h2{
+	color:#fff;
+}
+.testimonials .single-testimonial {
+	text-align: left;
+	position: relative;
+	background: #fff;
+	padding: 40px 30px;
+	margin: 5px;
+	margin-bottom: 27px;
+	margin-right: 30px;
+	border-radius: 5px;
+	-webkit-transition: all 0.4s ease;
+	-moz-transition: all 0.4s ease;
+	transition: all 0.4s ease;
+	margin: 0;
+	margin: 30px 20px;
+}
+.testimonials .single-testimonial:hover{
+	box-shadow: 0px 10px 10px #0000001c;
+	transform: translateY(-4px);
+}
+.testimonials .single-testimonial img {
+	position: absolute;
+	left: 30px;
+	bottom:-26px;
+	height: 53px;
+	width: 53px;
+	border-radius: 100%;
+}
+.testimonials .single-testimonial p{
+	color:#868686;
+	font-size:14px;
+}
+.testimonials .single-testimonial .name {
+	margin-top: 22px;
+	color: #2C2D3F;
+	font-weight: 500;
+	font-size: 15px;
+}
+.testimonials .owl-dots {
+	position: absolute;
+	left: 50%;
+	bottom: -55px;
+	margin-top: -47px;
+	padding: 10px 25px;
+	border-radius: 3px;
+	margin: 0 0 0 -52px;
+	margin-top: 49px;
+	box-sizing: ;
+}
+.testimonials .owl-dots .owl-dot {
+	display: inline-block;
+	margin-right: 10px;
+}
+.testimonials .owl-dots .owl-dot:last-child{
+	margin:0px;
+}
+.testimonials .owl-dots .owl-dot span {
+	width: 10px;
+	height:10px;
+	display: block;
+	border-radius: 30px;
+	-webkit-transition: all 0.3s ease;
+	-moz-transition: all 0.3s ease;
+	transition: all 0.3s ease;
+	margin: 0;
+	background: #fff;
+	position: relative;
+}
+.testimonials .owl-dots .owl-dot span:hover{
+	background:#fff;
+}
+.testimonials .owl-dots .owl-dot.active span{
+	background:#fff;
+	width:20px;
+}
+/*=============================
+	End Testimonials CSS
+===============================*/
+
+/*==========================
+	Start Departments CSS
+============================*/
+.departments .department-tab .nav{
+	margin-bottom: 30px;
+    background:transform;
+	position:relative;
+}
+.departments .department-tab .nav li{
+	text-align:center;
+	margin-right:54px;
+}
+.departments .department-tab .nav li a i {
+	font-size: 50px;
+	color: #868686;
+}
+.departments .department-tab .nav li a:hover{
+	background:transparent;
+}
+.departments .department-tab .nav li a.active i{
+	color:#1a76d1;
+}
+.departments .department-tab .nav li a {
+	color: #fff;
+	margin-top: 20px;
+	border: none;
+	padding: 0;
+	padding-bottom: 20px;
+	border-bottom:2px solid transparent;
+	padding:0 10px 20px 10px;
+}
+.departments .department-tab .nav li a.active{
+	border-color:#1a76d1;
+}
+.departments .department-tab .nav li span{
+	display:block;
+}
+.departments .department-tab .nav li .first {
+	padding-top: 20px;
+	font-size: 20px;
+	font-weight: 500;
+	color: #868686;
+}
+.departments .department-tab .nav li a.active .first{
+	color:#2C2D3F;
+}
+.departments .department-tab .nav li .second {
+	font-size: 14px;
+	font-weight: 400;
+	color: #868686;
+	margin-top: 3px;
+}
+.departments .department-tab .tab-pane .department-left{}
+.departments .department-tab .tab-pane .department-left h3{
+	color:#2C2D3F;
+	font-weight:600;
+	font-size:26px;
+	position:relative;
+	padding-bottom:15px;
+	margin-bottom:30px;
+}
+.departments .department-tab .tab-pane .department-left h3:before{
+	position:absolute;
+	content:"";
+	left:0;
+	bottom:0;
+	height:3px;
+	width:50px;
+	background:#2C2D3F;
+}
+.departments .department-tab .tab-pane .department-left .p1 {
+	color: #1a76d1;
+	font-weight: 500;
+	margin-bottom: 18px;
+}
+.departments .department-tab .tab-pane .department-left p {
+	margin-bottom: 20px;
+}
+.departments .department-tab .tab-pane .department-left .list{}
+.departments .department-tab .tab-pane .department-left .list li{
+	position:relative;
+	padding-left: 30px;
+	margin-bottom:6px;
+}
+.departments .department-tab .tab-pane .department-left .list li:last-child{
+	margin-bottom:0px;
+}
+.departments .department-tab .tab-pane .department-left .list li i {
+	position: absolute;
+	left: 0;
+	height: 15px;
+	width: 15px;
+	line-height: 15px;
+	color: #fff;
+	background: #1a76d1;
+	text-align: center;
+	border-radius: 100%;
+	font-size: 8px;
+	margin-right: 20px;
+	top: 4px;
+}
+.departments .department-tab .tab-content .tab-text h2{
+	font-size:18px;
+}
+.departments .department-tab .tab-content .tab-text p{
+	color:#555;
+	margin-top:10px;
+}
+/*==========================
+	End Departments CSS
+============================*/
+
+/*=============================
+	Start Pricing Table CSS
+===============================*/
+.pricing-table{
+	background:#f9f9f9;
+	position:relative;
+}
+.pricing-table .single-table {
+	background: #fff;
+	border:1px solid #ddd;
+	text-align: center;
+	position: relative;
+	overflow: hidden;
+	margin: 15px 0;
+	padding:45px 35px 30px 35px;
+}
+/* Table Head */
+.pricing-table .single-table .table-head {
+	text-align:center;
+}
+.pricing-table .single-table .icon i{
+	font-size:65px;
+	color:#1a76d1;
+}
+.pricing-table .single-table .title {
+	font-size: 21px;
+	color: #2C2D3F;
+	margin-top: 30px;
+	margin-bottom: 15px;
+}
+.pricing-table .single-table .amount {
+	font-size:36px;
+	font-weight:600;
+	color:#1a76d1;
+}
+.pricing-table .single-table .amount span{
+	display:inline-block;
+	font-size:14px;
+	font-weight:400;
+	color:#868686;
+	margin-left:8px;
 }
 
 .slider .single-slider .text h1 {

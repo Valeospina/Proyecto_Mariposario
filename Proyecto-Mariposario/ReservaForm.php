@@ -99,9 +99,9 @@
 					<div class="col-lg-6 col-md-5 col-12">
 						<!-- Contact -->
 						<ul class="top-link">
-							<li><a href="usuario.html">Usuario</a></li>
+							<li><a href="usuario.php">Usuario</a></li>
 							<li><a href="reservas.html">Reservas</a></li>
-							<li><a href="pago.html">Pago</a></li>
+							<li><a href="pago.php">Pago</a></li>
 							<!-- Admin section visible only for admins -->
 							<li class="admin"><a href="admin.html">Admin</a></li>
 						</ul>
