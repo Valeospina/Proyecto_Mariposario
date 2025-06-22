@@ -275,11 +275,11 @@ body {
 
 /* Botón de Proceder al Pago */
 .btn-proceed-to-checkout {
-    background-color: var(--accent-color);
-    color: var(--text-dark);
+    background-color: #d4ac0d;
+    color: #000000 ;
     border: none;
     padding: 12px 25px; /* Botón de pago más pequeño */
-    border-radius: 8px; /* Bordes más sutiles */
+    border-radius: 5px; /* Bordes más sutiles */
     font-size: 1.05rem; /* Texto más pequeño */
     font-weight: 600;
     cursor: pointer;
@@ -418,14 +418,14 @@ body {
 
 .table .carrito-precio {
     font-size: 0.95rem;
-    color: var(--text-light);
+    color: #00BCD4;
     font-weight: 500;
 }
 
 .table .item-subtotal {
     font-size: 1.05rem; /* Subtotal más pequeño en tabla */
     font-weight: bold;
-    color: var(--secondary-color);
+    color: #00BCD4;
 }
 
 /* Controles de cantidad en la tabla */
@@ -435,9 +435,9 @@ body {
 }
 
 .input-group.quantity-control .btn {
-    background-color: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
+    background-color: #d4ac0d;
+    color: #ffffff;
+    border-color: #d4ac0d;
     transition: background-color 0.15s ease;
     padding: 5px 8px; /* Padding reducido */
 }
@@ -448,7 +448,7 @@ body {
 }
 
 .input-group.quantity-control .form-control {
-    border: 1px solid var(--border-color);
+    border: #fefefe;
     font-size: 0.85rem;
     font-weight: 500;
     color: var(--text-dark);
@@ -468,7 +468,7 @@ body {
 
 .table tfoot #cart-total-amount {
     font-size: 1.6rem; /* Total en tabla más pequeño */
-    color: var(--primary-color);
+    color: #d4ac0d;
     font-weight: 700;
     letter-spacing: 0.4px;
 }
@@ -727,8 +727,8 @@ body {
 /* SECCIÓN DE PUNTOS EN EL CARRITO */
 /* ------------------------------------------------------------- */
 .carrito-puntos-wrapper {
-    background: linear-gradient(135deg, #f9f2cc, #ffffff); /* Fondo con color personalizado */
-    border-left: 6px solid #397550; /* Borde del mismo color */
+    background: linear-gradient(135deg, #d0fffd , #ffffff); /* Fondo con color personalizado */
+    border-left: 6px solid #d4ac0d; /* Borde del mismo color */
     border-radius: 12px;
     color: var(--primary-dark);
     transition: all 0.3s ease-in-out;
@@ -746,11 +746,11 @@ body {
 .puntos-numero {
     font-size: 1.4rem;
     font-weight: bold;
-    color: #397550; /* También actualizamos el color del número */
+    color: #d4ac0d; /* También actualizamos el color del número */
 }
 
 .carrito-puntos-wrapper .puntos-acciones .btn {
-    border-radius: 20px;
+    border-radius: 5px;
     transition: 0.2s ease-in-out;
 }
 

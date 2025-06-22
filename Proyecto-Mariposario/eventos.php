@@ -55,8 +55,10 @@ $resultado = $conn->query($sql);
                     <h5 class="mb-2" style="color: #2d7452; font-weight: bold;"><?= htmlspecialchars($evento['Nombre']) ?></h5>
                     <p class="text-muted mb-1"><?= htmlspecialchars($evento['Descripcion']) ?></p>
                     <p class="fw-bold text-success mb-3">₡<?= number_format($evento['Precio'], 2) ?></p>
-                    <a href="ReservaForm.php?id=<?= $evento['ID_Evento'] ?>" class="btn btn-success" style="color: white; font-weight: bold;">Reservar</a>
-                    <a href="VerCalendario.php?id=<?= $evento['ID_Evento'] ?>" class="btn btn-success" style="color: white; font-weight: bold;">Ver fechas disponibles</a>
+                    <div class="evento-botones">
+						<a href="ReservaForm.php?id=<?= $evento['ID_Evento'] ?>" class="btn btn-success">Reservar</a>
+						<a href="VerCalendario.php?id=<?= $evento['ID_Evento'] ?>" class="btn btn-success">Ver fechas disponibles</a>
+					</div>
                 </div>
             </div>
         <?php endwhile; ?>

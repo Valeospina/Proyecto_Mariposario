@@ -312,12 +312,12 @@ a:hover{
 }
 
 .btn {
-	color: #fff;
+	color: #000000;
 	padding: 13px 25px;
 	font-size: 14px;
 	text-transform: capitalize;
 	font-weight: 500;
-	background: #d0fffd; /* Este color es muy claro, quizás quieras ajustarlo para que combine con tus otros colores */
+	background: #d4ac0d; /* Este color es muy claro, quizás quieras ajustarlo para que combine con tus otros colores */
 	position: relative;
 	box-shadow: none;
 	display: inline-block;
@@ -526,11 +526,9 @@ dd {
 }
 
 .logo img {
-	height: auto;
-	/* Make sure images are scaled correctly. */
-	max-width: 70%;
-	/* Adhere to container width. */
-	margin-top: -20px;
+	height: 60px; /* Fija la altura del logo */
+    width: auto; /* Mantiene la proporción */
+    margin-top: 0; /* Elimina el desplazamiento superior */
 }
 
 img {

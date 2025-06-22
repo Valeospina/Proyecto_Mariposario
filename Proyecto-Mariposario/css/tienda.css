@@ -18,27 +18,27 @@ body.mariposa {
 /* Search Bar Styles */
 .Mariposa-facts.section {
     padding: 40px 0;
-    background-color: #e9ecef; /* A subtle background for the search section */
+    background-color: #dee2e6; /* A subtle background for the search section */
     border-bottom: 1px solid #dee2e6;
     margin-bottom: 30px;
 }
 .Orquidea-facts.section {
     padding: 40px 0;
-    background-color: #e9ecef; /* A subtle background for the search section */
+    background-color: #dee2e6; /* A subtle background for the search section */
     border-bottom: 1px solid #dee2e6;
     margin-bottom: 30px;
 }
 
 .overlay-form-container {
-    background-color: #ffffff;
+    background-color: #212529;
     padding: 25px;
-    border-radius: 8px;
+    border-radius: 1px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
 .overlay-form-container .form-control {
     border-radius: 5px;
-    border: 1px solid #ced4da;
+    border: 1px solid #d0fffd;
     padding: 10px 15px;
     font-size: 16px;
 }
@@ -88,13 +88,11 @@ body.mariposa {
 }
 
 .single-product .product-img img {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
+    width: 100%; /* Hace que la imagen ocupe todo el ancho del contenedor */
+    height: 100%; /* Hace que la imagen ocupe toda la altura del contenedor */
     display: block;
-    transition: transform 0.3s ease;
-    object-fit: contain;
+    transition: transform 0.3s ease; /* Transición para el zoom */
+    object-fit: cover;
 }
 
 .single-product:hover .product-img img {
@@ -148,9 +146,9 @@ body.mariposa {
 }
 
 .single-product .agregar-carrito {
-    background-color: #d0fffd ;
-    border-color: #d0fffd ;
-    color: #00BCD4 ;
+    background-color: #d4ac0d ;
+    border-color: #d4ac0d ;
+    color: #000000 ;
     padding: 8px 12px; /* Smaller button padding */
     border-radius: 5px;
     transition: background-color 0.3s ease, transform 0.3s ease;
@@ -159,8 +157,8 @@ body.mariposa {
 }
 
 .single-product .agregar-carrito:hover {
-    background-color: #333;
-    border-color: #333;
+    background-color: #d4ac0d;
+    border-color: #d4ac0d;
     transform: translateY(-1px); /* Less hover lift */
 }
 
@@ -170,9 +168,9 @@ body.mariposa {
 
 /* Keeping your search bar button colors */
 .overlay-form-container .btn-primary {
-    background-color: #d0fffd ; /* Maintained */
-    border-color: #d0fffd ; /* Maintained */
-    color: #00BCD4 ; /* Maintained */
+    background-color: #d4ac0d ; /* Maintained */
+    border-color: #d4ac0d ; /* Maintained */
+    color: #000000 ; /* Maintained */
     padding: 10px 20px;
     font-size: 16px;
     border-radius: 5px;
@@ -180,8 +178,8 @@ body.mariposa {
 }
 
 .overlay-form-container .btn-primary:hover {
-    background-color: #b7ece9; /* Slightly lighter hover for this color */
-    border-color: #b7ece9;
+    background-color: #d4ac0d; /* Slightly lighter hover for this color */
+    border-color: #d4ac0d;
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
@@ -215,7 +213,7 @@ body.mariposa {
     bottom: 0;
     width: 50px;
     height: 2px;
-    background-color: #28a745; /* Green accent */
+    background-color: #00BCD4; /* Green accent */
 }
 
 #footer p {
@@ -319,66 +317,135 @@ body.mariposa {
 }
 
 
-/* ================= estilos eventos ================= */
- 
 .eventos-section {
-    background-color: hsl(0, 0%, 100%);
+    background-color: #f8f9fa; /* mismo fondo que el body */
+    padding: 60px 0;
 }
- 
+
 .eventos-wrapper {
     max-width: 1200px;
     margin: 0 auto;
+    padding: 0 15px;
 }
- 
+
 .eventos-titulo {
-    color: #397550;          
-    font-weight: bold;        
-    font-size: 2rem;          
-    text-align: center;      
+    color: #2c2d3f; /* coherente con .product-price */
+    font-weight: 600;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 40px;
+    font-family: 'Poppins', sans-serif;
 }
- 
+
+/* Tarjeta de evento */
 .evento-card {
-    background: #fffbe8;
-    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
     overflow: hidden;
-    transition: transform 0.2s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    margin-bottom: 30px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
- 
+
 .evento-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25); /* Sombra más fuerte en hover */
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
- 
+
+/* Imagen del evento */
 .evento-img {
     flex: 1;
-    min-width: 250px;
     max-width: 350px;
-    height: 100%;
-    padding: 10px; /* Añade espacio interno alrededor de la imagen */
+    min-width: 250px;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background-color: #f1f1f1;
     box-sizing: border-box;
 }
- 
+
 .evento-img img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    margin: 10px; /* Espacio afuera de la imagen */
-    border-radius: 8px; /* Opcional: bordes redondeados */
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Opcional: sombra para que resalte */
+    border-radius: 5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
- 
+
+/* Contenido del evento */
 .evento-detalles {
     flex: 2;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-family: 'Poppins', sans-serif;
 }
- 
+
+.evento-detalles h3 {
+    font-size: 1.3rem;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.evento-detalles p {
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.evento-detalles .evento-fecha {
+    font-size: 0.9rem;
+    color: #00BCD4;
+    font-weight: 500;
+}
+
+.evento-detalles .evento-botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* espacio entre los botones */
+    margin-top: 15px;
+}
+
+.evento-detalles .evento-botones a {
+    background-color: #d4ac0d !important;
+    color: #000 !important;
+    font-weight: bold;
+    padding: 10px 5px;
+    text-align: center;
+    border-radius: 5px;
+    text-decoration: none;
+    flex: 1 1 auto;
+    max-width: 200px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.evento-detalles .evento-botones a:hover {
+    background-color: #c59c0c !important;
+    transform: translateY(-1px);
+}
+
+/* Responsive */
 @media (max-width: 767px) {
     .evento-card {
         flex-direction: column;
     }
- 
+
     .evento-img {
         max-height: 220px;
+        width: 100%;
+    }
+
+    .evento-detalles {
+        padding: 15px;
     }
 }
