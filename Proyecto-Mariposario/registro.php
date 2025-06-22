@@ -10,7 +10,7 @@ if ($_POST) {
     if (empty($nombre) || empty($email) || empty($password) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         echo "<script>
                 alert('Por favor, completa todos los campos correctamente.');
-                window.location.href = 'looginD.php';
+                window.location.href = 'login.html';
               </script>";
         exit;
     }
@@ -25,7 +25,7 @@ if ($_POST) {
     if ($result->num_rows > 0) {
         echo "<script>
                 alert('Este correo electrónico ya está registrado. Por favor, utiliza otro.');
-                window.location.href = 'looginD.php';
+                window.location.href = 'login.html';
               </script>";
         exit;
     }
@@ -55,13 +55,13 @@ if ($_POST) {
 
         echo "<script>
                 alert('Registro exitoso. Ahora puedes iniciar sesión.');
-                window.location.href = './looginD.php';
+                window.location.href = './login.html';
               </script>";
         exit;
     } else {
         echo "<script>
                 alert('Error al registrar usuario. Por favor, intenta nuevamente.');
-                window.location.href = './looginD.php';
+                window.location.href = './login.html';
               </script>";
         exit;
     }
