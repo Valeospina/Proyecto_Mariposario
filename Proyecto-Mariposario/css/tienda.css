@@ -2,6 +2,7 @@
 body.mariposa {
     background-color: #f8f9fa; /* Light background for the page */
     font-family: 'Poppins', sans-serif;
+    line-height: 0;
     color: #333;
 }
 
@@ -151,7 +152,7 @@ body.mariposa {
     border-color: #d0fffd ;
     color: #00BCD4 ;
     padding: 8px 12px; /* Smaller button padding */
-    border-radius: 50px;
+    border-radius: 5px;
     transition: background-color 0.3s ease, transform 0.3s ease;
     font-size: 0.85em; /* Smaller font */
     width: 100%;
@@ -174,7 +175,7 @@ body.mariposa {
     color: #00BCD4 ; /* Maintained */
     padding: 10px 20px;
     font-size: 16px;
-    border-radius: 50px;
+    border-radius: 5px;
     transition: all 0.3s ease;
 }
 
