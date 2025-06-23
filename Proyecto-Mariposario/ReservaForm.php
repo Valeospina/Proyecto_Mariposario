@@ -100,10 +100,10 @@
 						<!-- Contact -->
 						<ul class="top-link">
 							<li><a href="usuario.php">Usuario</a></li>
-							<li><a href="reservas.html">Reservas</a></li>
+							<li><a href="reservas.php">Reservas</a></li>
 							<li><a href="pago.php">Pago</a></li>
 							<!-- Admin section visible only for admins -->
-							<li class="admin"><a href="admin.html">Admin</a></li>
+							<li class="admin"><a href="admin.php">Admin</a></li>
 						</ul>
 						<!-- End Contact -->
 					</div>
@@ -129,7 +129,7 @@
 						<div class="col-lg-3 col-md-3 col-12">
 							<!-- Start Logo -->
 							<div class="logo">
-								<a href="index.html"><img src="img/logo.png" alt="Logo Mariposario"></a>
+								<a href="index.php"><img src="img/logo.png" alt="Logo Mariposario"></a>
 							</div>
 							<!-- End Logo -->
 							<!-- Mobile Nav -->

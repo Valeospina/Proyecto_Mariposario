@@ -15,7 +15,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 <div class="col-lg-12">
                     <ul class="top-link justify-content-end">
                         <li>
-                            <a href="usuario.html" class="user-info-link">
+                            <a href="usuario.php" class="user-info-link">
                                 <i class="fas fa-user"></i>
                                 <span><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Usuario'); ?></span>
                             </a>
@@ -25,7 +25,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                             <?php if (isset($_SESSION['user_id'])): ?>
                                 <a href="logout.php" class="btn-topbar-action">Cerrar Sesión</a>
                             <?php else: ?>
-                                <a href="login.html" class="btn-topbar-action">Iniciar Sesión</a>
+                                <a href="logind.php" class="btn-topbar-action">Iniciar Sesión</a>
                             <?php endif; ?>
                         </li>
                     </ul>

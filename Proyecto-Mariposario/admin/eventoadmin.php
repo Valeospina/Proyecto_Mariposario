@@ -8,7 +8,7 @@ $message_type = '';
 
 // Protección de la página de administración
 if (!isset($_SESSION['user_id'])) {
-    header('Location: ../login.html');
+    header('Location: ../login.php');
     exit;
 }
 

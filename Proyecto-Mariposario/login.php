@@ -56,12 +56,12 @@ if ($_POST) {
             if ($_SESSION['user_role'] == 1) { 
                 echo "<script>
                           alert('¡Bienvenido Administrador " . htmlspecialchars($user['Nombre']) . "!');
-                          window.location.href = './admin/dashboard.php'; // Redirige al dashboard de admin
+                          window.location.href = './admin/dashboard.php'; 
                       </script>";
             } else { 
                 echo "<script>
                           alert('¡Bienvenido " . htmlspecialchars($user['Nombre']) . "!');
-                          window.location.href = './index.php'; // Redirige a la página normal de usuario
+                          window.location.href = './index.php'; 
                       </script>";
             }
             exit;

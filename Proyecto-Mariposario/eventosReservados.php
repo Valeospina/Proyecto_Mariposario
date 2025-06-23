@@ -477,17 +477,17 @@
                             <img src="img/user-profile.jpg" alt="Foto de perfil">
                             <h3>Hola, Usuario</h3>
                             <p>Miembro desde: Abril 2023</p>
-                            <a href="user-settings.html" class="btn btn-sm btn-primary">Editar Perfil</a>
+                            <a href="user-settings.php" class="btn btn-sm btn-primary">Editar Perfil</a>
                         </div>
                         <ul class="sidebar-menu">
-                            <li><a href="usuario.html"><i class="fas fa-user"></i> Perfil</a></li>
+                            <li><a href="usuario.php"><i class="fas fa-user"></i> Perfil</a></li>
                             <li><a href="MisPedidos.php"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
                             <li><a href="eventosReservados.php"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
                             <li><a href="notificaciones.php" class="active"><i class="fas fa-bell"></i> Notificaciones
                                     <span class="badge badge-primary">3</span></a></li>
-                            <li><a href="user-favorites.html"><i class="fas fa-heart"></i> Favoritos</a></li>
-                            <li><a href="user-settings.html"><i class="fas fa-cog"></i> Configuración</a></li>
-                            <li><a href="logout.html"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
+                            <li><a href="user-favorites.php"><i class="fas fa-heart"></i> Favoritos</a></li>
+                            <li><a href="user-settings.php"><i class="fas fa-cog"></i> Configuración</a></li>
+                            <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
                         </ul>
                     </div>
                     <!-- End Sidebar -->
@@ -572,20 +572,20 @@
 						<div class="row">
 							<div class="col-lg-6 col-md-6 col-12">
 								<ul>
-									<li><a href="index.html">Inicio</a></li>
-									<li><a href="about.html">Sobre Nosotros</a></li>
-									<li><a href="services.html">Servicios</a></li>
-									<li><a href="gallery.html">Galería</a></li>
-									<li><a href="blog.html">Blog</a></li>	
+									<li><a href="index.php">Inicio</a></li>
+									<li><a href="about.php">Sobre Nosotros</a></li>
+									<li><a href="services.php">Servicios</a></li>
+									<li><a href="gallery.php">Galería</a></li>
+									<li><a href="blog.php">Blog</a></li>	
 								</ul>
 							</div>
 							<div class="col-lg-6 col-md-6 col-12">
 								<ul>
-									<li><a href="workshops.html">Talleres</a></li>
-									<li><a href="conservation.html">Conservación</a></li>
-									<li><a href="testimonials.html">Testimonios</a></li>
-									<li><a href="faq.html">Preguntas Frecuentes</a></li>
-									<li><a href="contact.html">Contáctanos</a></li>	
+									<li><a href="workshops.php">Talleres</a></li>
+									<li><a href="conservation.php">Conservación</a></li>
+									<li><a href="testimonials.php">Testimonios</a></li>
+									<li><a href="faq.php">Preguntas Frecuentes</a></li>
+									<li><a href="contact.php">Contáctanos</a></li>	
 								</ul>
 							</div>
 						</div>
@@ -624,9 +624,9 @@
 				</div>
 				<div class="col-12">
 					<ul class="footer-bottom-links">
-						<li><a href="privacy-policy.html">Política de Privacidad</a></li>
-						<li><a href="terms-conditions.html">Términos y Condiciones</a></li>
-						<li><a href="cookie-policy.html">Política de Cookies</a></li>
+						<li><a href="privacy-policy.php">Política de Privacidad</a></li>
+						<li><a href="terms-conditions.php">Términos y Condiciones</a></li>
+						<li><a href="cookie-policy.php">Política de Cookies</a></li>
 					</ul>
 				</div>
 			</div>

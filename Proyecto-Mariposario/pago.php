@@ -251,7 +251,7 @@
 							<div class="col-lg-3 col-md-3 col-12">
 								<!-- Start Logo -->
 								<div class="logo">
-									<a href="index.html"><img src="img/logo.png" alt="Logo Mariposario"></a>
+									<a href="index.php"><img src="img/logo.png" alt="Logo Mariposario"></a>
 								</div>
 								<!-- End Logo -->
 								<!-- Mobile Nav -->
@@ -263,10 +263,10 @@
 								<div class="main-menu">
 									<nav class="navigation">
 										<ul class="nav menu">
-                     <li><a href="index.html">Inicio</a></li>
-                     <li class="active"><a href="tienda.html">Tienda</a></li>
-											<li><a href="eventos.html">Eventos</a></li>
-											<li><a href="contact.html">Contacto</a></li>
+                     <li><a href="index.php">Inicio</a></li>
+                     <li class="active"><a href="tienda.php">Tienda</a></li>
+											<li><a href="eventos.php">Eventos</a></li>
+											<li><a href="contact.php">Contacto</a></li>
 								
 										</ul>
 									</nav>
@@ -275,7 +275,7 @@
 							</div>
 							<div class="col-lg-2 col-12">
 								<div class="get-quote">
-									<a href="carrito.html" class="btn btn-carrito" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: transparent; box-shadow: none;">
+									<a href="carrito.php" class="btn btn-carrito" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: transparent; box-shadow: none;">
 										<i class="fa fa-shopping-cart icono-carrito" style="color: #42764D; font-size: 20px;"></i>
 									</a>																						  
 								</div>
@@ -390,20 +390,20 @@
 								<div class="row">
 									<div class="col-lg-6 col-md-6 col-12">
 										<ul>
-											<li><a href="index.html">Inicio</a></li>
-											<li><a href="about.html">Sobre Nosotros</a></li>
-											<li><a href="services.html">Servicios</a></li>
-											<li><a href="gallery.html">Galería</a></li>
-											<li><a href="blog.html">Blog</a></li>	
+											<li><a href="index.php">Inicio</a></li>
+											<li><a href="about.php">Sobre Nosotros</a></li>
+											<li><a href="services.php">Servicios</a></li>
+											<li><a href="gallery.php">Galería</a></li>
+											<li><a href="blog.php">Blog</a></li>	
 										</ul>
 									</div>
 									<div class="col-lg-6 col-md-6 col-12">
 										<ul>
-											<li><a href="workshops.html">Talleres</a></li>
-											<li><a href="conservation.html">Conservación</a></li>
-											<li><a href="testimonials.html">Testimonios</a></li>
-											<li><a href="faq.html">Preguntas Frecuentes</a></li>
-											<li><a href="contact.html">Contáctanos</a></li>	
+											<li><a href="workshops.php">Talleres</a></li>
+											<li><a href="conservation.php">Conservación</a></li>
+											<li><a href="testimonials.php">Testimonios</a></li>
+											<li><a href="faq.php">Preguntas Frecuentes</a></li>
+											<li><a href="contact.php">Contáctanos</a></li>	
 										</ul>
 									</div>
 								</div>
@@ -442,9 +442,9 @@
 						</div>
 						<div class="col-12">
 							<ul class="footer-bottom-links">
-								<li><a href="privacy-policy.html">Política de Privacidad</a></li>
-								<li><a href="terms-conditions.html">Términos y Condiciones</a></li>
-								<li><a href="return-policy.html">Política de Reembolso</a></li>
+								<li><a href="privacy-policy.php">Política de Privacidad</a></li>
+								<li><a href="terms-conditions.php">Términos y Condiciones</a></li>
+								<li><a href="return-policy.php">Política de Reembolso</a></li>
 							</ul>
 						</div>
 					</div>

@@ -55,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <li><strong>Personas:</strong> $personas</li>
                     <li><strong>Comentarios:</strong> " . (!empty($mensaje) ? nl2br($mensaje) : 'Ninguno') . "</li>
                 </ul>
-                <a href='index.html' style='display: inline-block; margin-top: 20px; background-color: #198754; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Volver al inicio</a>
+                <a href='index.php' style='display: inline-block; margin-top: 20px; background-color: #198754; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Volver al inicio</a>
             </div>";
         } else {
             echo "<div style='color: red;'>Error al guardar la reserva: " . $stmt->error . "</div>";

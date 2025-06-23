@@ -1,12 +1,6 @@
 <?php
 session_start();
 
-// Redirige a login si no hay sesión
-if (!isset($_SESSION['user_id'])) {
-    header('Location: logind.php');
-    exit;
-}
-
 // Redirige a dashboard de admin si el usuario es administrador
 if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
     header('Location: admin/dashboard.php');
@@ -60,7 +54,7 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
                                 <h1>Descubrí la <span>Magia</span> de las mariposas y la belleza de las <span>Orquídeas</span></h1>
                                 <p>Viví una experiencia única en nuestro mariposario y llevate a casa la elegancia natural de nuestras orquídeas cultivadas con amor.</p>
                                 <div class="button">
-                                    <a href="Reserva.html" class="btn">Reservar visita</a>
+                                    <a href="Reserva.php" class="btn">Reservar visita</a>
                                     <a href="tienda.php" class="btn primary">Ver tienda</a>
                                 </div>
                             </div>
@@ -92,7 +86,7 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
                                 <h1>Un <span>Refugio</span> natural donde las mariposas vuelan libres</h1>
                                 <p>Conocé nuestro mariposario, un espacio de conservación y aprendizaje para todas las edades. ¡Una visita que no vas a olvidar!</p>
                                 <div class="button">
-                                    <a href="Reserva.html" class="btn">Reservar recorrido</a>
+                                    <a href="Reserva.php" class="btn">Reservar recorrido</a>
                                     <a href="Info.php" class="btn primary">Más información</a>
                                 </div>
                             </div>
@@ -115,7 +109,7 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
                                     <span>Explorá la naturaleza</span>
                                     <h4>Visitas guiadas</h4>
                                     <p>Disfrutá de un recorrido educativo por el mariposario y conocé el ciclo de vida de nuestras mariposas.</p>
-                                    <a href="Reserva.html">Reservar ahora <i class="fa fa-long-arrow-right"></i></a>
+                                    <a href="Reserva.php">Reservar ahora <i class="fa fa-long-arrow-right"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -302,7 +296,7 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
                 <h2>¿Te apasiona la naturaleza? Ven a ver nuestras mariposas y orquídeas únicas</h2>
                 <p>Explora un mundo lleno de mariposas coloridas y orquídeas únicas. En nuestro mariposario podrás disfrutar de un ambiente natural y aprender sobre estas maravillosas criaturas. ¡No esperes más y ven a vivir esta experiencia!</p>
                 <div class="button">
-                <a href="Reserva.html" class="btn">Visítanos Ahora</a>
+                <a href="Reserva.php" class="btn">Visítanos Ahora</a>
                 <a href="tienda.php" class="btn second">Descubre Nuestras Orquídeas<i class="fa fa-long-arrow-right"></i></a>
                 </div>
             </div>
@@ -327,19 +321,19 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
                     <div class="owl-carousel portfolio-slider">
                     <div class="single-pf">
                         <img src="img/orquidea_cattleya.jpg" alt="Mariposa">
-                        <a href="GaleriaOrquideas.html" class="btn">Ver Detalles</a>
+                        <a href="GaleriaOrquideas.php" class="btn">Ver Detalles</a>
                     </div>
                     <div class="single-pf">
                         <img src="img/orquidea1.jpg" alt="Orquídea">
-                        <a href="GaleriaOrquideas.html" class="btn">Ver Detalles</a>
+                        <a href="GaleriaOrquideas.php" class="btn">Ver Detalles</a>
                     </div>
                     <div class="single-pf">
                         <img src="img/mariposa2.jpg" alt="Mariposa">
-                        <a href="GaleriaMariposas.html" class="btn">Ver Detalles</a>
+                        <a href="GaleriaMariposas.php" class="btn">Ver Detalles</a>
                     </div>
                     <div class="single-pf">
                         <img src="img/Mariposa1.jpg" alt="Orquídea">
-                        <a href="GaleriaOrquideas.html" class="btn">Ver Detalles</a>
+                        <a href="GaleriaOrquideas.php" class="btn">Ver Detalles</a>
                     </div>
                     </div>
                 </div>
@@ -389,8 +383,8 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
                                 <div class="col-12">
                                     <ul>
                                         <li><a href="index.php"><i class="fa fa-caret-right" aria-hidden="true"></i>Inicio</a></li>
-                                        <li><a href="Reserva.html"><i class="fa fa-caret-right" aria-hidden="true"></i>Reservaciones</a></li>
-                                        <li><a href="GaleriaMariposas.html"><i class="fa fa-caret-right" aria-hidden="true"></i>Galería</a></li>
+                                        <li><a href="Reserva.php"><i class="fa fa-caret-right" aria-hidden="true"></i>Reservaciones</a></li>
+                                        <li><a href="GaleriaMariposas.php"><i class="fa fa-caret-right" aria-hidden="true"></i>Galería</a></li>
                                         <li><a href="Info.php"><i class="fa fa-caret-right" aria-hidden="true"></i>Actividades</a></li>
                                         <li><a href="contact.php"><i class="fa fa-caret-right" aria-hidden="true"></i>Contáctanos</a></li>
                                     </ul>

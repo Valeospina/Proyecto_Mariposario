@@ -5,7 +5,7 @@ include '../DB.php'; // Incluye tu archivo de conexión a la base de datos
 // Protección de la página de administración:
 // 1. Verifica si el usuario ha iniciado sesión.
 if (!isset($_SESSION['user_id'])) {
-    header('Location: ../login.html');
+    header('Location: ../login.php');
     exit;
 }
 
