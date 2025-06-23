@@ -86,7 +86,7 @@
         <input type="password" name="password" placeholder="Contraseña" required autocomplete="current-password">
         <input type="submit" value="Iniciar Sesion">
         <p class="forgot-password">
-            <a href="./recuperacion.html"><i class='bx bx-lock-open'></i> Recuperar contraseña</a>
+            <a href="./recuperacion.php"><i class='bx bx-lock-open'></i> Recuperar contraseña</a>
         </p>
     </form>
     <div class="welcome-back">

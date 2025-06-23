@@ -2,6 +2,6 @@
 session_start();
 session_unset();   
 session_destroy(); 
-header('Location: login.html'); // Redirige al login.html después de cerrar sesión
+header('Location: logind.php'); // Redirige al logind.php después de cerrar sesión
 exit;
 ?>

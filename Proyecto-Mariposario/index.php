@@ -3,7 +3,7 @@ session_start();
 
 // Redirige a login si no hay sesión
 if (!isset($_SESSION['user_id'])) {
-    header('Location: login.html');
+    header('Location: logind.php');
     exit;
 }
 
@@ -93,7 +93,7 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
                                 <p>Conocé nuestro mariposario, un espacio de conservación y aprendizaje para todas las edades. ¡Una visita que no vas a olvidar!</p>
                                 <div class="button">
                                     <a href="Reserva.html" class="btn">Reservar recorrido</a>
-                                    <a href="Info.html" class="btn primary">Más información</a>
+                                    <a href="Info.php" class="btn primary">Más información</a>
                                 </div>
                             </div>
                         </div>
@@ -127,7 +127,7 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
                                     <span>Aprendé y divertite</span>
                                     <h4>Talleres y actividades</h4>
                                     <p>Ofrecemos talleres sobre cuidado de orquídeas, crianza de mariposas y actividades para todas las edades.</p>
-                                    <a href="Info.html">Ver actividades <i class="fa fa-long-arrow-right"></i></a>
+                                    <a href="Info.php">Ver actividades <i class="fa fa-long-arrow-right"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -166,7 +166,7 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
             </div>
             <div class="row">
                 <div class="col-lg-4 col-12">
-                    <a href="Info.html">
+                    <a href="Info.php">
                         <div class="single-features">
                             <div class="signle-icon">
                                 <i class="icofont icofont-butterfly-alt"></i>
@@ -391,7 +391,7 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
                                         <li><a href="index.php"><i class="fa fa-caret-right" aria-hidden="true"></i>Inicio</a></li>
                                         <li><a href="Reserva.html"><i class="fa fa-caret-right" aria-hidden="true"></i>Reservaciones</a></li>
                                         <li><a href="GaleriaMariposas.html"><i class="fa fa-caret-right" aria-hidden="true"></i>Galería</a></li>
-                                        <li><a href="Info.html"><i class="fa fa-caret-right" aria-hidden="true"></i>Actividades</a></li>
+                                        <li><a href="Info.php"><i class="fa fa-caret-right" aria-hidden="true"></i>Actividades</a></li>
                                         <li><a href="contact.php"><i class="fa fa-caret-right" aria-hidden="true"></i>Contáctanos</a></li>
                                     </ul>
                                 </div>
