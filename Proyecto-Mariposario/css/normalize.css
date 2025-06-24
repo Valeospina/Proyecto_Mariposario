@@ -317,7 +317,7 @@ a:hover{
 	font-size: 14px;
 	text-transform: capitalize;
 	font-weight: 500;
-	background: #d4ac0d; /* Este color es muy claro, quizás quieras ajustarlo para que combine con tus otros colores */
+	background: #d0fffd; /* Este color es muy claro, quizás quieras ajustarlo para que combine con tus otros colores */
 	position: relative;
 	box-shadow: none;
 	display: inline-block;
@@ -621,15 +621,15 @@ textarea {
 ## Links
 --------------------------------------------------------------*/
 a {
-	color: inherit;
+	color: #d4ac0d;
 }
 
 a:visited {
-	color: inherit;
+	color: #d4ac0d;
 }
 
 a:hover, a:focus, a:active {
-	color: inherit;
+	color: #d4ac0d;
 }
 
 a:hover, a:active {

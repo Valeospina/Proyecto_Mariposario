@@ -133,7 +133,7 @@ body {
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
-    color: #212529;
+    color: #d4ac0d;
     text-align: left;
     background-color: #fff
 }
@@ -8575,7 +8575,7 @@ a.text-secondary:hover {
 }
 
 .text-success {
-    color: #28a745!important
+    color: #d4ac0d!important
 }
 
 a.text-success:focus,

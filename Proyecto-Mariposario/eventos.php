@@ -57,7 +57,7 @@ $resultado = $conn->query($sql);
 
                 <!-- Detalles del evento -->
                 <div class="evento-detalles p-4" style="flex: 2;">
-                    <h5 class="mb-2" style="color: #2d7452; font-weight: bold;">
+                    <h5 class="mb-2" style="color:rgb(0, 0, 0); font-weight: bold;">
                         <?= htmlspecialchars($evento['Nombre']) ?>
                     </h5>
                     <p class="text-muted mb-1">
