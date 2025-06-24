@@ -165,7 +165,7 @@
 					<div class="col-lg-12">
 						<div class="section-title">
 							<h2>Reserva tu Evento con Nosotros</h2>
-							<p>Selecciona tu evento, fecha y salón disponible para realizar tu reserva.</p>
+							<p>Selecciona tu evento para realizar tu reserva.</p>
 						</div>
 					</div>
 				</div>
@@ -201,11 +201,6 @@
 											$conn->close();
 											?>
 										</select>
-									</div>
-								</div>
-								<div class="col-lg-6 col-md-6 col-12">
-									<div class="form-group">
-										<input type="date" name="fecha" class="form-control" required>
 									</div>
 								</div>
 								<div class="col-lg-6 col-md-6 col-12">

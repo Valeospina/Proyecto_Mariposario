@@ -297,4 +297,7 @@ ADD COLUMN Horario VARCHAR(255) DEFAULT 'No especificado',
 ADD COLUMN Fecha_Contratacion DATE;
 
 
-
+ALTER TABLE reserva 
+ADD telefono VARCHAR(20),
+ADD correo VARCHAR(100),
+ADD descripcion TEXT;

@@ -38,7 +38,7 @@ include 'layout/nav2.php';
 require_once 'DB.php';
 
 // Obtener eventos desde la base de datos
-$sql = "SELECT ID_Evento, Nombre, Descripcion, Precio, Imagen_URL FROM Evento";
+$sql = "SELECT ID_Evento, Nombre, Descripcion, Precio, Imagen_URL, Fecha, Hora, Ubicacion FROM Evento";
 $resultado = $conn->query($sql);
 ?>
 
@@ -47,18 +47,37 @@ $resultado = $conn->query($sql);
         <h2 class="eventos-titulo mb-4">Eventos disponibles</h2>
 
         <?php while ($evento = $resultado->fetch_assoc()): ?>
-            <div class="evento-card d-flex flex-column flex-md-row mb-4 shadow-sm">
-                <div class="evento-img">
-                    <img src="<?= htmlspecialchars($evento['Imagen_URL']) ?>" alt="<?= htmlspecialchars($evento['Nombre']) ?>">
+            <div class="evento-card d-flex flex-column flex-md-row mb-4 shadow-sm border rounded overflow-hidden bg-white">
+                <!-- Imagen del evento -->
+                <div class="evento-img" style="flex: 1; max-width: 300px;">
+                    <img src="<?= htmlspecialchars($evento['Imagen_URL']) ?>" 
+                         alt="<?= htmlspecialchars($evento['Nombre']) ?>" 
+                         class="img-fluid h-100 w-100 object-fit-cover">
                 </div>
-                <div class="evento-detalles p-4">
-                    <h5 class="mb-2" style="color: #2d7452; font-weight: bold;"><?= htmlspecialchars($evento['Nombre']) ?></h5>
-                    <p class="text-muted mb-1"><?= htmlspecialchars($evento['Descripcion']) ?></p>
-                    <p class="fw-bold text-success mb-3">₡<?= number_format($evento['Precio'], 2) ?></p>
-                    <div class="evento-botones">
-						<a href="ReservaForm.php?id=<?= $evento['ID_Evento'] ?>" class="btn btn-success">Reservar</a>
-						<a href="VerCalendario.php?id=<?= $evento['ID_Evento'] ?>" class="btn btn-success">Ver fechas disponibles</a>
-					</div>
+
+                <!-- Detalles del evento -->
+                <div class="evento-detalles p-4" style="flex: 2;">
+                    <h5 class="mb-2" style="color: #2d7452; font-weight: bold;">
+                        <?= htmlspecialchars($evento['Nombre']) ?>
+                    </h5>
+                    <p class="text-muted mb-1">
+                        <?= nl2br(htmlspecialchars($evento['Descripcion'])) ?>
+                    </p>
+
+                    <ul class="list-unstyled mb-2" style="font-size: 0.95rem;">
+                        <li><strong>Fecha:</strong> <?= date("d/m/Y", strtotime($evento['Fecha'])) ?></li>
+                        <li><strong>Hora:</strong> <?= date("H:i", strtotime($evento['Hora'])) ?></li>
+                        <li><strong>Ubicación:</strong> <?= htmlspecialchars($evento['Ubicacion']) ?></li>
+                    </ul>
+
+                    <p class="fw-bold text-success mb-3">
+                        ₡<?= number_format($evento['Precio'], 2) ?>
+                    </p>
+
+                    <div class="evento-botones d-flex gap-2">
+                        <a href="ReservaForm.php?id=<?= $evento['ID_Evento'] ?>" class="btn btn-success">Reservar</a>
+                        <a href="VerCalendario.php?id=<?= $evento['ID_Evento'] ?>" class="btn btn-outline-success">Ver fechas disponibles</a>
+                    </div>
                 </div>
             </div>
         <?php endwhile; ?>

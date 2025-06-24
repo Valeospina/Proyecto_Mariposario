@@ -6,15 +6,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
     $telefono = htmlspecialchars(trim($_POST['telefono']));
     $evento_id = intval($_POST['evento']);
-    $fecha = $_POST['fecha'];
     $personas = intval($_POST['personas']);
-    $mensaje = htmlspecialchars(trim($_POST['mensaje']));
+    $mensaje = htmlspecialchars(trim($_POST['mensaje'])); // descripción
 
-    // Validar evento desde la base de datos
-    $stmt = $conn->prepare("SELECT Nombre FROM Evento WHERE ID_Evento = ?");
+    // Obtener nombre y fecha del evento desde la base de datos
+    $stmt = $conn->prepare("SELECT Nombre, Fecha FROM Evento WHERE ID_Evento = ?");
     $stmt->bind_param("i", $evento_id);
     $stmt->execute();
-    $stmt->bind_result($nombre_evento);
+    $stmt->bind_result($nombre_evento, $fecha_evento);
     $evento_valido = $stmt->fetch();
     $stmt->close();
 
@@ -24,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Verificar si ya existe una reserva en esa fecha para ese evento
     $stmt = $conn->prepare("SELECT COUNT(*) FROM Reserva WHERE Fecha_Reserva = ? AND ID_Evento = ?");
-    $stmt->bind_param("si", $fecha, $evento_id);
+    $stmt->bind_param("si", $fecha_evento, $evento_id);
     $stmt->execute();
     $stmt->bind_result($existe);
     $stmt->fetch();
@@ -36,8 +35,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <a href='menu.php' style='display: inline-block; margin-top: 15px; background-color: #dc3545; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>Volver al Menú</a>
               </div>";
     } else {
-        $stmt = $conn->prepare("INSERT INTO Reserva (ID_Evento, cantidad_personas, Fecha_Reserva) VALUES (?, ?, ?)");
-        $stmt->bind_param("iis", $evento_id, $personas, $fecha);
+        // Insertar la reserva con la fecha obtenida del evento
+        $stmt = $conn->prepare("INSERT INTO Reserva (ID_Evento, cantidad_personas, Fecha_Reserva, telefono, correo, descripcion) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("iissss", $evento_id, $personas, $fecha_evento, $telefono, $email, $mensaje);
 
         if ($stmt->execute()) {
             echo "
@@ -50,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <li><strong>Nombre:</strong> $nombre</li>
                     <li><strong>Email:</strong> $email</li>
                     <li><strong>Teléfono:</strong> $telefono</li>
-                    <li><strong>Fecha del Evento:</strong> " . date("d/m/Y", strtotime($fecha)) . "</li>
+                    <li><strong>Fecha del Evento:</strong> " . date("d/m/Y", strtotime($fecha_evento)) . "</li>
                     <li><strong>Tipo de Evento:</strong> $nombre_evento</li>
                     <li><strong>Personas:</strong> $personas</li>
                     <li><strong>Comentarios:</strong> " . (!empty($mensaje) ? nl2br($mensaje) : 'Ninguno') . "</li>
@@ -66,3 +66,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conn->close();
 }
 ?>
+
