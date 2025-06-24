@@ -1,152 +1,101 @@
 <!doctype html>
 <html class="no-js" lang="zxx">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="keywords" content="Site keywords here">
+        <meta name="description" content="">
+        <meta name='copyright' content=''>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<head>
-	<!-- Meta Tags -->
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="keywords" content="Site keywords here">
-	<meta name="description" content="">
-	<meta name='copyright' content=''>
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Jardin De Mariposas - Mariposas</title> <link rel="icon" href="img/favicon.png">
+        <link rel="stylesheet" href="./css/tienda.css">
 
-	<!-- Title -->
-	<title>Jardin De Mariposas</title>
+        <link href="https://fonts.googleapis.com/css?family=Poppins:200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-	<!-- Favicon -->
-	<link rel="icon" href="img/favicon.png">
-	<link rel="stylesheet" href="./css/tienda.css">
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/nice-select.css">
+        <link rel="stylesheet" href="css/font-awesome.min.css">
+        <link rel="stylesheet" href="css/icofont.css">
+        <link rel="stylesheet" href="css/slicknav.min.css">
+        <link rel="stylesheet" href="css/owl-carousel.css">
+        <link rel="stylesheet" href="css/datepicker.css">
+        <link rel="stylesheet" href="css/animate.min.css">
+        <link rel="stylesheet" href="css/magnific-popup.css">
+        <link rel="stylesheet" href="css/tienda.css">
 
-	<!-- Google Fonts -->
-	<link
-		href="https://fonts.googleapis.com/css?family=Poppins:200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap"
-		rel="stylesheet">
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="css/responsive.css">
 
-	<!-- Bootstrap CSS -->
-	<link rel="stylesheet" href="css/bootstrap.min.css">
-	<!-- Nice Select CSS -->
-	<link rel="stylesheet" href="css/nice-select.css">
-	<!-- Font Awesome CSS -->
-	<link rel="stylesheet" href="css/font-awesome.min.css">
-	<!-- icofont CSS -->
-	<link rel="stylesheet" href="css/icofont.css">
-	<!-- Slicknav -->
-	<link rel="stylesheet" href="css/slicknav.min.css">
-	<!-- Owl Carousel CSS -->
-	<link rel="stylesheet" href="css/owl-carousel.css">
-	<!-- Datepicker CSS -->
-	<link rel="stylesheet" href="css/datepicker.css">
-	<!-- Animate CSS -->
-	<link rel="stylesheet" href="css/animate.min.css">
-	<!-- Magnific Popup CSS -->
-	<link rel="stylesheet" href="css/magnific-popup.css">
-
-	<!-- Medipro CSS -->
-	<link rel="stylesheet" href="css/normalize.css">
-	<link rel="stylesheet" href="style.css">
-	<link rel="stylesheet" href="css/responsive.css">
-
-</head>
-
-<body class="user"> <!-- Cambia 'admin' por 'user' si es un usuario normal -->
-	<!-- Preloader -->
-	<div class="preloader">
-		<div class="loader">
-			<div class="loader-outter"></div>
-			<div class="loader-inner"></div>
-
-			<div class="indicator">
-				<svg width="32px" height="32px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-					<g>
-						<!-- Ala trasera izquierda -->
-						<path d="M32 32 C22 20, 10 40, 28 40" fill="none" stroke="#ffffff" stroke-width="2" />
-
-						<!-- Ala trasera derecha -->
-						<path d="M32 32 C42 20, 54 40, 36 40" fill="none" stroke="#ffffff" stroke-width="2" />
-
-						<!-- Ala delantera izquierda animada -->
-						<path d="M32 32 C18 14, 4 34, 24 36" fill="none" stroke="#80B78D" stroke-width="2">
-							<animate attributeName="d" dur="1s" repeatCount="indefinite" values="
-								M32 32 C18 14, 4 34, 24 36;
-								M32 32 C16 16, 2 32, 22 36;
-								M32 32 C18 14, 4 34, 24 36" />
-						</path>
-
-						<!-- Ala delantera derecha animada -->
-						<path d="M32 32 C46 14, 60 34, 40 36" fill="none" stroke="#80B78D" stroke-width="2">
-							<animate attributeName="d" dur="1s" repeatCount="indefinite" values="
-								M32 32 C46 14, 60 34, 40 36;
-								M32 32 C48 16, 62 32, 42 36;
-								M32 32 C46 14, 60 34, 40 36" />
-						</path>
-
-						<!-- Cuerpo -->
-						<line x1="32" y1="30" x2="32" y2="40" stroke="#ffffff" stroke-width="2" />
-					</g>
-				</svg>
-			</div>
-		</div>
-	</div>
-
-	<!-- End Preloader -->
-
-	<!-- Header Area -->
+    </head>
 	<header class="header">
-		<!-- Topbar -->
-		<div class="topbar">
-			<div class="container">
-				<div class="row">
-					<div class="col-lg-6 col-md-5 col-12">
-						<!-- Contact -->
-						<ul class="top-link">
-							<li><a href="usuario.php">Usuario</a></li>
-							<li><a href="reservas.php">Reservas</a></li>
-							<li><a href="pago.php">Pago</a></li>
-							<!-- Admin section visible only for admins -->
-							<li class="admin"><a href="admin.php">Admin</a></li>
-						</ul>
-						<!-- End Contact -->
-					</div>
-					<div class="col-lg-6 col-md-7 col-12">
-						<!-- Top Contact -->
-						<ul class="top-contact">
-							<li><i class="fa fa-phone"></i>+506 6252 2969</li>
-							<li><i class="fa fa-envelope"></i><a
-									href="mailto:info@mariposario.com">info@mariposario.com</a></li>
-						</ul>
-						<!-- End Top Contact -->
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- End Topbar -->
+    <div class="topbar">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ul class="top-link justify-content-end">
+                        <li>
+                            <a href="usuario.php" class="user-info-link">
+                                <i class="fas fa-user"></i>
+                                <span><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Usuario'); ?></span>
+                            </a>
+                        </li>
+                        <li class="separator">|</li>
+                        <li>
+                            <?php if (isset($_SESSION['user_id'])): ?>
+                                <a href="logout.php" class="btn-topbar-action">Cerrar Sesión</a>
+                            <?php else: ?>
+                                <a href="logind.php" class="btn-topbar-action">Iniciar Sesión</a>
+                            <?php endif; ?>
+                        </li>
+                        <li class="separator">|</li>
+                        <li>
+                            <a href="carrito.php" class="btn-carrito-topbar">
+                                <i class="fa fa-shopping-cart"></i>
+                                <span id="cart-item-count" class="badge badge-pill badge-danger">0</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
-		<!-- Header Inner -->
-		<div class="header-inner">
-			<div class="container">
-				<div class="inner">
-					<div class="row">
-						<div class="col-lg-3 col-md-3 col-12">
-							<!-- Start Logo -->
-							<div class="logo">
-								<a href="index.php"><img src="img/logo.png" alt="Logo Mariposario"></a>
-							</div>
-							<!-- End Logo -->
-							<!-- Mobile Nav -->
-							<div class="mobile-nav"></div>
-							<!-- End Mobile Nav -->
-						</div>
-						<div class="col-lg-7 col-md-9 col-12">
-							<!-- Main Menu -->
-
-							<!--/ End Main Menu -->
-
-							<!-- End Header Inner -->
-	</header>
-
-	<!--/ End Header Inner -->
-	</header>
+    <div class="header-inner">
+        <div class="container">
+            <div class="inner">
+                <div class="row">
+                    <div class="col-lg-3 col-md-3 col-12">
+                        <div class="logo">
+                            <a href="index.php"><img src="img/logo.png" alt="Logo Mariposario"></a>
+                        </div>
+                        <div class="mobile-nav"></div>
+                    </div>
+                    <div class="col-lg-9 col-md-9 col-12"> <div class="main-menu">
+                            <nav class="navigation">
+                                <ul class="nav menu">
+                                    <li class="<?= ($currentPage == 'index.php') ? 'active' : '' ?>">
+                                        <a href="index.php">Inicio</a>
+                                    </li>
+                                    <li class="<?= ($currentPage == 'tienda.php') ? 'active' : '' ?>">
+                                        <a href="tienda.php">Tienda</a>
+                                    </li>
+                                    <li class="<?= ($currentPage == 'eventos.php') ? 'active' : '' ?>">
+                                        <a href="eventos.php">Eventos</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
 	<!-- End Header Area -->
+
 
 	<!DOCTYPE html>
 	<html lang="es">
@@ -164,6 +113,8 @@
 				<div class="row">
 					<div class="col-lg-12">
 						<div class="section-title">
+							<br>
+							<br>
 							<h2>Reserva tu Evento con Nosotros</h2>
 							<p>Selecciona tu evento para realizar tu reserva.</p>
 						</div>
