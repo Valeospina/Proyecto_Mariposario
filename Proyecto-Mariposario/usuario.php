@@ -1,5 +1,14 @@
 <!doctype html>
 <html class="no-js" lang="es">
+    <?php
+// Asegúrate de que la sesión esté iniciada
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Obtén el nombre de la página actual para el estado "active" del menú
+$currentPage = basename($_SERVER['PHP_SELF']);
+?>
     <head>
         <!-- Meta Tags -->
 		<meta charset="utf-8">
@@ -344,7 +353,7 @@
 						<div class="user-sidebar">
 							<div class="profile-info">
 								<img src="img/user-profile.jpg" alt="Foto de perfil">
-								<h3>Hola, Usuario</h3>
+								<h3>Hola, <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Usuario'); ?></h3>
 								<p>Miembro desde: Abril 2023</p>
                                 <a href="user-settings.php" class="btn btn-sm btn-primary">Editar Perfil</a>
 							</div>

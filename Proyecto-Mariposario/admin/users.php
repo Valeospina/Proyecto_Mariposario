@@ -8,7 +8,7 @@ $message_type = '';
 
 // Protección de la página de administración
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role']) || $_SESSION['user_role'] != 1) {
-    header('Location: ../login.php'); // Redirige si no está logueado o no es admin
+    header('Location: ../logind.php'); // Redirige si no está logueado o no es admin
     exit;
 }
 

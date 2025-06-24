@@ -4,7 +4,7 @@ include '../DB.php'; // Incluye tu archivo de conexión a la base de datos
 
 // Protección de la página de administración
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 1) {
-    header('Location: ../login.php'); // Redirige si no está logueado o no es admin
+    header('Location: ../logind.php'); // Redirige si no está logueado o no es admin
     exit;
 }
 
