@@ -1,188 +1,258 @@
-/* General Body and Container Styles */
+/* -- General Body and Container Styles -- */
 body.mariposa {
-    background-color: #f8f9fa; /* Light background for the page */
+    background-color: #f0f2f5; /* Un gris muy claro para el fondo general de la página */
     font-family: 'Poppins', sans-serif;
-    line-height: 0;
     color: #333;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
 }
 
-.products.section {
-    padding: 60px 0;
-    background: #fff;
+/* Estilos para el contenedor principal del catálogo */
+.products-catalog-section {
+    padding: 60px 0; /* Espaciado superior e inferior para el catálogo */
+    background-color: #f0f2f5; /* Mismo color de fondo que el body */
 }
 
-.container {
-    max-width: 1200px;
+.catalog-wrapper {
+    max-width: 1100px; /* Ancho similar al de la imagen de referencia */
+    margin: 0 auto; /* Centrar el contenedor del catálogo */
+    padding: 40px; /* Espaciado interno para que las tarjetas no toquen los bordes */
+    background-color: #ffffff; /* Fondo blanco para el área principal del catálogo */
+    border-radius: 20px; /* Más redondeo para el bloque principal del catálogo */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08); /* Sombra suave para el bloque principal */
 }
 
-/* Search Bar Styles */
-.Mariposa-facts.section {
-    padding: 40px 0;
-    background-color: #dee2e6; /* A subtle background for the search section */
-    border-bottom: 1px solid #dee2e6;
-    margin-bottom: 30px;
-}
-.Orquidea-facts.section {
-    padding: 40px 0;
-    background-color: #dee2e6; /* A subtle background for the search section */
-    border-bottom: 1px solid #dee2e6;
-    margin-bottom: 30px;
+/* Ajuste de columnas de Bootstrap para el espaciado de las tarjetas */
+.products-catalog-section .row {
+    margin-left: -15px; /* Compensa el padding de las columnas */
+    margin-right: -15px; /* Compensa el padding de las columnas */
 }
 
-.overlay-form-container {
-    background-color: #212529;
-    padding: 25px;
-    border-radius: 1px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+/* AQUÍ ES DONDE CAMBIAMOS EL ANCHO DE LAS TARJETAS */
+.products-catalog-section .col-lg-4, /* Ahora 3 tarjetas por fila en pantallas grandes */
+.products-catalog-section .col-md-6, /* Ahora 2 tarjetas por fila en tabletas */
+.products-catalog-section .col-sm-6,
+.products-catalog-section .col-12 {
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-bottom: 30px; /* Añadido un margen inferior para mejor separación */
 }
 
-.overlay-form-container .form-control {
-    border-radius: 5px;
-    border: 1px solid #d0fffd;
-    padding: 10px 15px;
-    font-size: 16px;
-}
 
-.overlay-form-container .btn-primary {
-    background-color: #d0fffd ; /* A warm, earthy brown */
-    border-color: #d0fffd ;
-    color: #00BCD4 ;
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-}
-
-.overlay-form-container .btn-primary:hover {
-    background-color: #d0fffd; /* Darker shade on hover */
-    border-color: #d0fffd;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Product Card Styles (Updated for smaller and more modern look) */
-.single-product {
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px; /* Slightly less rounded */
-    overflow: hidden;
-    transition: all 0.3s ease;
+/* --- SECCIÓN DEL BUSCADOR: Más prominente y moderna --- */
+.search-hero-section {
+    padding: 50px 0; /* Padding superior e inferior para el buscador */
+    background-color: #f0f2f5; /* Mismo fondo que el body */
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: center;
 }
 
-.single-product:hover {
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08); /* Softer shadow */
-    transform: translateY(-3px);
+.search-container-custom {
+    background: #ffffff; /* Fondo blanco sólido para el contenedor del buscador */
+    padding: 25px 35px; /* Más padding para que sea grande y espacioso */
+    border-radius: 20px; /* Mucho redondeo para un look suave */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12); /* Sombra más prominente para que "flote" */
+    max-width: 850px; /* Ancho un poco mayor para el buscador */
+    width: 100%; /* Ocupa el ancho disponible hasta el max-width */
+    box-sizing: border-box; /* Incluye padding y border en el ancho total */
+    display: flex;
+    align-items: center;
 }
 
-.single-product .product-img {
-    position: relative;
-    overflow: hidden;
-    height: 160px; /* Reduced image height */
+.search-form-custom {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 15px; /* Espacio entre el input y el botón */
+}
+
+.search-input-custom {
+    flex-grow: 1;
+    border-radius: 12px; /* Redondeo consistente con el contenedor */
+    border: 1px solid #e5e5e5; /* Borde muy sutil */
+    padding: 18px 25px; /* Más padding para un campo de entrada grande */
+    font-size: 1.15em; /* Tamaño de fuente notable */
+    color: #333;
+    background-color: #fcfcfc; /* Fondo casi blanco para el input */
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.02); /* Sombra interna apenas visible */
+    transition: all 0.3s ease;
+}
+
+.search-input-custom:focus {
+    outline: none;
+    border-color: #bbb; /* Borde sutil al hacer foco */
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05), inset 0 1px 4px rgba(0, 0, 0, 0.03); /* Sombra de foco muy ligera */
+}
+
+.search-input-custom::placeholder {
+    color: #b0b0b0; /* Gris claro para el placeholder */
+    font-weight: 400;
+}
+
+.search-button-custom {
+    background-color: #333; /* Color oscuro para el botón, como en la imagen */
+    border: none; /* Sin borde */
+    color: #FFFFFF;
+    padding: 18px 25px; /* Padding ajustado para que sea proporcional al input */
+    font-size: 1.15em;
+    border-radius: 12px; /* Redondeo consistente */
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-bottom: 1px solid #eee;
+    font-weight: 500;
+    cursor: pointer;
 }
 
-.single-product .product-img img {
-    width: 100%; /* Hace que la imagen ocupe todo el ancho del contenedor */
-    height: 100%; /* Hace que la imagen ocupe toda la altura del contenedor */
-    display: block;
-    transition: transform 0.3s ease; /* Transición para el zoom */
+.search-button-custom:hover {
+    background-color: #555;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.search-button-custom i {
+    margin-right: 0; /* Sin margen para el icono si no hay texto */
+}
+
+/* --- MEJORAS EN LAS TARJETAS DE PRODUCTO (CATÁLOGO) --- */
+.product-card-custom {
+    background: #ffffff;
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    height: auto; /* Permite que la altura se ajuste al contenido, ya no es fija */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+}
+
+.product-card-custom:hover {
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.18);
+    transform: translateY(-10px);
+}
+
+.product-image-container-custom {
+    position: relative;
+    overflow: hidden;
+    height: 180px; /* Altura de la imagen disminuida para hacer la tarjeta menos larga */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.product-image-custom {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
 }
 
-.single-product:hover .product-img img {
-    transform: scale(1.03); /* Slightly less zoom */
+.product-card-custom:hover .product-image-custom {
+    transform: scale(1.12);
 }
 
-.single-product .product-content {
-    padding: 12px; /* Reduced padding */
-    text-align: center;
+.product-content-custom {
+    padding: 15px; /* Reducido el padding para compensar la menor altura */
+    text-align: left;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
-.single-product .product-content h4 {
-    font-size: 1.1em; /* Smaller title */
-    font-weight: 500; /* Lighter font weight */
-    margin-bottom: 8px; /* Reduced margin */
-    color: #333;
-    min-height: 40px; /* Adjusted min-height */
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.single-product .product-content p {
-    font-size: 0.85em; /* Smaller description */
-    color: #666; /* Slightly lighter text */
-    line-height: 1.4;
-    margin-bottom: 10px; /* Reduced margin */
-    min-height: 55px; /* Adjusted min-height */
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.single-product .product-price {
-    font-size: 1.3em; /* Slightly smaller price */
+.product-name-custom {
+    font-size: 1.2em; /* Reducido un poco el tamaño del nombre */
     font-weight: 600;
-    color: #2c2d3f ;
-    margin-bottom: 10px; /* Reduced margin */
+    margin-bottom: 5px; /* Reducido el margen inferior */
+    color: #2c2d3f;
+    min-height: auto; /* Permitir que la altura del nombre se ajuste */
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limita a 2 líneas */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2; /* Ajustada la altura de línea */
 }
 
-.single-product .product-price span {
-    display: block;
+.product-description-custom {
+    font-size: 0.9em; /* Reducido un poco el tamaño de la descripción */
+    color: #666;
+    line-height: 1.4; /* Ajustada la altura de línea */
+    margin-bottom: 10px; /* Reducido el margen inferior */
+    min-height: auto; /* Permitir que la altura de la descripción se ajuste */
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limita a 2 líneas para que sea más compacta */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.single-product .agregar-carrito {
-    background-color: #d4ac0d ;
-    border-color: #d4ac0d ;
-    color: #000000 ;
-    padding: 8px 12px; /* Smaller button padding */
-    border-radius: 5px;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    font-size: 0.85em; /* Smaller font */
+.product-details-custom {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px; /* Reducido el margen inferior */
+    gap: 3px; /* Reducido el espacio entre los detalles */
+}
+
+/* Estilo para el "NOWW" o "Wingspan" (si se añade) */
+.product-details-custom .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85em; /* Reducido el tamaño de la fuente de los detalles */
+    color: #777;
+}
+.product-details-custom .detail-label {
+    font-weight: 500;
+}
+.product-details-custom .detail-value {
+    background-color: #e8e8e8;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.75em;
+    font-weight: 600;
+    color: #555;
+}
+
+
+.product-price-custom {
+    font-size: 1.4em; /* Reducido un poco el tamaño del precio */
+    font-weight: 700;
+    color: #333;
+    text-align: right;
     width: 100%;
 }
 
-.single-product .agregar-carrito:hover {
-    background-color: #d4ac0d;
-    border-color: #d4ac0d;
-    transform: translateY(-1px); /* Less hover lift */
+.add-to-cart-button-custom {
+    background-color: #333;
+    border: none;
+    color: #FFFFFF;
+    padding: 10px 15px; /* Reducido el padding del botón */
+    border-radius: 10px;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    font-size: 0.9em; /* Reducido el tamaño de la fuente del botón */
+    width: 100%;
+    text-transform: uppercase;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
 }
 
-.single-product .agregar-carrito i {
-    margin-right: 5px; /* Smaller icon margin */
-}
-
-/* Keeping your search bar button colors */
-.overlay-form-container .btn-primary {
-    background-color: #d4ac0d ; /* Maintained */
-    border-color: #d4ac0d ; /* Maintained */
-    color: #000000 ; /* Maintained */
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-}
-
-.overlay-form-container .btn-primary:hover {
-    background-color: #d4ac0d; /* Slightly lighter hover for this color */
-    border-color: #d4ac0d;
+.add-to-cart-button-custom:hover {
+    background-color: #555;
     transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
+
+/* --- FIN MEJORAS EN LAS TARJETAS DE PRODUCTO --- */
+
 /* No products found message */
 .text-center.py-5 h3 {
     color: #6c757d;
@@ -190,9 +260,9 @@ body.mariposa {
     font-weight: 500;
 }
 
-/* Footer Styles (assuming you want to enhance it too) */
+/* Footer Styles (Manteniendo lo que ya teníamos, ya es moderno) */
 #footer {
-    background-color: #343a40; /* Darker background for the footer */
+    background-color: #343a40;
     color: #f8f9fa;
     padding: 50px 0 20px;
     font-size: 0.9em;
@@ -213,7 +283,7 @@ body.mariposa {
     bottom: 0;
     width: 50px;
     height: 2px;
-    background-color: #00BCD4; /* Green accent */
+    background-color: #D4AC0D;
 }
 
 #footer p {
@@ -235,8 +305,8 @@ body.mariposa {
 }
 
 #footer ul.social li a:hover {
-    background-color: #28a745;
-    border-color: #28a745;
+    background-color: #D4AC0D;
+    border-color: #D4AC0D;
     color: #fff;
 }
 
@@ -248,13 +318,13 @@ body.mariposa {
 }
 
 #footer .f-link ul li a:hover {
-    color: #28a745;
+    color: #D4AC0D;
     padding-left: 5px;
 }
 
 #footer .f-link ul li i {
     margin-right: 5px;
-    color: #28a745;
+    color: #8BC34A;
 }
 
 #footer .time-sidual li {
@@ -280,8 +350,8 @@ body.mariposa {
 }
 
 #footer .newsletter-inner .button {
-    background-color: #28a745;
-    border: 1px solid #28a745;
+    background-color: #8BC34A;
+    border: 1px solid #8BC34A;
     color: #fff;
     padding: 10px 15px;
     border-radius: 5px;
@@ -289,8 +359,8 @@ body.mariposa {
 }
 
 #footer .newsletter-inner .button:hover {
-    background-color: #218838;
-    border-color: #1e7e34;
+    background-color: #7BB23F;
+    border-color: #7BB23F;
 }
 
 .copyright {
@@ -307,147 +377,69 @@ body.mariposa {
 }
 
 /* Responsive adjustments */
-@media (max-width: 767px) {
-    .single-footer {
-        margin-bottom: 30px;
+@media (max-width: 991px) { /* Ajustes para tabletas y móviles */
+    .catalog-wrapper {
+        margin: 30px 15px;
+        padding: 20px 15px; /* Reducimos el padding en pantallas más pequeñas */
     }
-    .overlay-form-container .btn-primary {
-        margin-top: 15px;
+    .search-container-custom {
+        padding: 15px 20px;
+        border-radius: 12px;
+    }
+    .search-input-custom {
+        padding: 12px 18px;
+        font-size: 0.9em;
+    }
+    .search-button-custom {
+        padding: 12px 18px;
+        font-size: 0.9em;
+    }
+    /* Asegúrate de que las columnas se ajusten bien en tabletas y móviles */
+    .products-catalog-section .col-lg-4, /* Mantener para LG */
+    .products-catalog-section .col-md-6, /* Para MD (tablet) ahora 2 por fila */
+    .products-catalog-section .col-sm-6 { /* Para SM (móvil grande) sigue siendo 2 por fila */
+        margin-bottom: 20px;
+    }
+    .product-image-container-custom {
+        height: 150px; /* Reducimos aún más la altura de la imagen en responsive */
+    }
+    .product-content-custom {
+        padding: 10px; /* Reducimos el padding en pantallas más pequeñas */
+    }
+    .product-name-custom {
+        font-size: 1.1em;
+    }
+    .product-description-custom {
+        font-size: 0.8em;
+        -webkit-line-clamp: 2; /* Ajustamos las líneas de descripción en responsive */
+    }
+    .product-price-custom {
+        font-size: 1.2em;
+    }
+    .add-to-cart-button-custom {
+        font-size: 0.8em;
+        padding: 8px 12px;
     }
 }
 
-
-.eventos-section {
-    background-color: #f8f9fa; /* mismo fondo que el body */
-    padding: 60px 0;
-}
-
-.eventos-wrapper {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px;
-}
-
-.eventos-titulo {
-    color: #2c2d3f; /* coherente con .product-price */
-    font-weight: 600;
-    font-size: 2rem;
-    text-align: center;
-    margin-bottom: 40px;
-    font-family: 'Poppins', sans-serif;
-}
-
-/* Tarjeta de evento */
-.evento-card {
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    margin-bottom: 30px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.evento-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-}
-
-/* Imagen del evento */
-.evento-img {
-    flex: 1;
-    max-width: 350px;
-    min-width: 250px;
-    height: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    background-color: #f1f1f1;
-    box-sizing: border-box;
-}
-
-.evento-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    border-radius: 5px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Contenido del evento */
-.evento-detalles {
-    flex: 2;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    font-family: 'Poppins', sans-serif;
-}
-
-.evento-detalles h3 {
-    font-size: 1.3rem;
-    color: #333;
-    font-weight: 600;
-    margin-bottom: 10px;
-}
-
-.evento-detalles p {
-    font-size: 0.95rem;
-    color: #666;
-    line-height: 1.5;
-    margin-bottom: 15px;
-}
-
-.evento-detalles .evento-fecha {
-    font-size: 0.9rem;
-    color: #00BCD4;
-    font-weight: 500;
-}
-
-.evento-detalles .evento-botones {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px; /* espacio entre los botones */
-    margin-top: 15px;
-}
-
-.evento-detalles .evento-botones a {
-    background-color: #d4ac0d ;
-    color: #000 ;
-    font-weight: bold;
-    padding: 10px 5px;
-    text-align: center;
-    border-radius: 5px;
-    text-decoration: none;
-    flex: 1 1 auto;
-    max-width: 200px;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-.evento-detalles .evento-botones a:hover {
-    background-color: #c59c0c ;
-    transform: translateY(-1px);
-}
-
-/* Responsive */
-@media (max-width: 767px) {
-    .evento-card {
-        flex-direction: column;
+@media (max-width: 767px) { /* Ajustes específicos para móviles */
+    .search-form-custom {
+        flex-direction: column; /* Apilar input y botón en móviles */
+        gap: 10px;
     }
-
-    .evento-img {
-        max-height: 220px;
-        width: 100%;
+    .search-input-custom,
+    .search-button-custom {
+        width: 100%; /* Ocupar todo el ancho disponible */
+        text-align: center;
     }
-
-    .evento-detalles {
-        padding: 15px;
+    .add-to-cart-button-custom {
+        width: 100%; /* Botón de carrito de ancho completo en móvil */
+        justify-content: center; /* Centrar contenido del botón */
     }
-
-    
+    /* En dispositivos muy pequeños, una columna por fila podría ser mejor */
+    .products-catalog-section .col-sm-6, /* Override para sm, si deseas 1 por fila */
+    .products-catalog-section .col-12 { /* Asegura 1 por fila en xs */
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
 }

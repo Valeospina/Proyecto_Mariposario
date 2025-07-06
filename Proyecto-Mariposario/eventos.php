@@ -34,8 +34,10 @@
     <body class="user">
 
        <?php
-include 'layout/nav2.php';
-require_once 'DB.php';
+
+		include 'layout/nav2.php';
+		
+		require_once 'DB.php';
 
 // Obtener eventos desde la base de datos
 $sql = "SELECT ID_Evento, Nombre, Descripcion, Precio, Imagen_URL, Fecha, Hora, Ubicacion FROM Evento";

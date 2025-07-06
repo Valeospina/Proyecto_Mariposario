@@ -349,7 +349,7 @@ a:hover{
 	-webkit-transition:all 0.4s ease;
 	-moz-transition:all 0.4s ease;
 	transition:all 0.4s ease;
-	border-radius: 50px; 
+	border-radius: 5px; 
 }
 .btn:hover:before{
 	-webkit-transform: scaleX(1);
@@ -621,15 +621,15 @@ textarea {
 ## Links
 --------------------------------------------------------------*/
 a {
-	color: #d4ac0d;
+	color: #ffffff;
 }
 
 a:visited {
-	color: #d4ac0d;
+	color: #ffffff;
 }
 
 a:hover, a:focus, a:active {
-	color: #d4ac0d;
+	color: #8BC34A;
 }
 
 a:hover, a:active {

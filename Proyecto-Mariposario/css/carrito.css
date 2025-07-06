@@ -1,765 +1,575 @@
-:root {
-    /* Nuevos Tonos delicados y naturales */
-    --primary-color: #80B78D; /* Verde suave, menta/salvia */
-    --secondary-color: #42764D; /* Verde oscuro, bosque/esmeralda */
-    --accent-color: #c9c9c9; /* Púrpura lavanda, muy delicado */
-    --text-dark: #0a3511; /* Verde casi negro, para texto principal y fuerte */
-    --text-light: #42764D; /* Verde oscuro para texto secundario */
-    --bg-light: #ffffff; /* Fondo crema suave, casi blanco */
-    --border-color: rgba(66, 118, 77, 0.1); /* Borde muy sutil, más transparente */
-    --shadow-light: rgba(0, 0, 0, 0.015); /* Sombra aún más ligera */
-    --shadow-medium: rgba(0, 0, 0, 0.04); /* Sombra suave y difusa */
-    --button-remove-color: #d43939; /* Lavanda para eliminar */
-    --button-remove-hover: #d43939; /* Tono de lavanda ligeramente más oscuro */
-
-    /* Colores para el estado de carga y elementos interactivos */
-    --loading-bg: rgba(255, 251, 231, 0.85); /* Fondo de carga translúcido con color base */
-    --loading-spinner-color: var(--primary-color);
-    --loading-text-color: var(--text-dark);
-
-    /* Nuevos colores adicionales para acentos o estados */
-    --info-blue: #81BAE6; /* Azul cielo suave */
-    --highlight-cyan: #4cc1d7; /* Cian brillante/turquesa */
-}
-
+/* General Body and Layout */
 body {
-    font-family: 'Inter', sans-serif;
-    background-color: var(--bg-light);
-    color: var(--text-light);
-    line-height: 1.4; /* Línea más apretada para delicadeza */
-    padding-bottom: 40px; /* Menos padding abajo */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    background-color: #f8f8f8; /* Fondo general muy claro */
+    font-family: 'Inter', sans-serif; /* Fuente moderna */
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    display: flex; /* Para empujar el footer al final de la página */
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-/* Estilos Generales del Contenedor del Carrito */
-.carrito-wrapper {
+/* Header (Example Header, adjust as per your actual site header) */
+header {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1000; /* Asegura que esté sobre otros elementos */
+}
+header a {
+    font-weight: 500;
+}
+
+
+.container.my-5 { /* General container for the main page content */
+    padding-top: 30px;
+    padding-bottom: 30px;
+    max-width: 1200px; /* Aumenta un poco el ancho máximo para el layout de dos columnas */
+}
+
+/* Page Title within Main Content Area */
+h2.text-center {
+    color: #333;
+    margin-bottom: 2rem;
+    font-weight: 700;
+    font-size: 2.2rem;
+    letter-spacing: -0.01em;
+    text-align: left; /* Alineado a la izquierda dentro del content-area */
+}
+
+/* --- User Panel Layout (Sidebar + Main Content) --- */
+.user-panel.section {
+    padding: 40px 0; /* Padding para la sección completa */
+    flex-grow: 1; /* Permite que el contenido del panel crezca */
+}
+
+.user-sidebar {
     background-color: #ffffff;
-    padding: 25px; /* Reducido a 25px */
-    border-radius: 12px; /* Bordes más sutiles */
-    box-shadow: 0 6px 20px var(--shadow-medium); /* Sombra más suave */
-    max-width: 900px; /* Ancho máximo más pequeño */
-    margin: 50px auto; /* Márgenes ajustados */
-    animation: fadeIn 0.7s ease-out; /* Animación ligeramente más rápida */
-    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    padding: 25px 20px;
+    margin-bottom: 30px; /* Espacio debajo del sidebar en móviles */
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(15px); /* Empieza desde menos abajo */
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Título del Carrito */
-.carrito-titulo {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.5rem; /* Tamaño de título más delicado */
-    font-weight: 600;
-    color: var(--primary-color);
+.profile-info {
     text-align: center;
-    margin-bottom: 35px; /* Espacio ajustado */
-    position: relative;
-    padding-bottom: 12px; /* Padding más pequeño para la línea */
-    letter-spacing: 0.2px; /* Espaciado más sutil */
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
 }
 
-.carrito-titulo::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    transform: translateX(-50%);
-    width: 80px; /* Línea más corta */
-    height: 2px; /* Línea más delgada */
-    background: linear-gradient(to right, var(--primary-color), var(--accent-color));
-    border-radius: 1px;
+.profile-info img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border: 3px solid #8BC34A; /* Borde verde para la foto de perfil */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Lista de Ítems del Carrito - Ahora son "tarjetas" (usado en mobile) */
-.carrito-items-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Tarjetas más pequeñas */
-    gap: 20px; /* Espacio ajustado */
+.profile-info h3 {
+    font-size: 1.3rem;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.profile-info p {
+    font-size: 0.9rem;
+    color: #777;
+    margin-bottom: 15px;
+}
+
+.profile-info .btn-primary {
+    background-color: #8BC34A; /* Verde para el botón de editar perfil */
+    border-color: #8BC34A;
+    color: #fff;
+    font-size: 0.9rem;
+    padding: 8px 18px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.profile-info .btn-primary:hover {
+    background-color: #689f38; /* Verde más oscuro al hover */
+    border-color: #689f38;
+}
+
+.sidebar-menu {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-/* Tarjeta de cada Ítem del Carrito */
-.carrito-item-card {
-    background-color: #ffffff;
-    border-radius: 10px; /* Bordes más sutiles */
-    padding: 18px; /* Padding reducido */
-    box-shadow: 0 4px 10px var(--shadow-light); /* Sombra muy ligera */
-    transition: all 0.2s ease-in-out; /* Transición más rápida */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    border: 1px solid var(--border-color);
-    overflow: hidden;
+.sidebar-menu li {
+    margin-bottom: 8px;
 }
 
-.carrito-item-card:hover {
-    transform: translateY(-3px) scale(1.005); /* Efecto de elevación más sutil */
-    box-shadow: 0 8px 18px var(--shadow-medium); /* Sombra de hover más suave */
-}
-
-/* Imagen del Producto */
-.carrito-producto-imagen {
-    margin-bottom: 12px; /* Espacio reducido */
-}
-
-.carrito-producto-imagen img {
-    width: 100px; /* Imágenes más pequeñas */
-    height: 100px;
-    object-fit: cover;
-    border-radius: 6px; /* Bordes de imagen más sutiles */
-    border: 2px solid var(--primary-color); /* Borde más delgado */
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05); /* Sombra de imagen más suave */
-    transition: all 0.15s ease;
-}
-
-.carrito-item-card:hover .carrito-producto-imagen img {
-    border-color: var(--secondary-color); /* Cambia el color del borde al hacer hover */
-    transform: scale(1.01); /* Ligerísimo zoom a la imagen en hover */
-}
-
-/* Detalles del Producto (Nombre, Precio, Cantidad) */
-.carrito-item-details {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px; /* Espacio reducido */
-    width: 100%;
-}
-
-.carrito-producto-nombre {
-    font-size: 1.15rem; /* Nombre más pequeño */
-    font-weight: 500;
-    color: var(--text-dark);
-    margin-bottom: 3px;
-    line-height: 1.2;
-}
-
-.carrito-precio {
-    font-size: 1.05rem; /* Precio más pequeño */
-    color: var(--text-light);
-    font-weight: bold;
-    letter-spacing: 0.2px;
-}
-
-/* Control de Cantidad */
-.carrito-cantidad {
+.sidebar-menu li a {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 6px; /* Espacio reducido */
-    font-size: 0.9rem; /* Texto más pequeño */
-    color: var(--text-light);
-    margin-top: 12px; /* Margen superior ajustado */
-}
-
-.carrito-cantidad button {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 5px 10px; /* Botones más pequeños */
-    border-radius: 6px; /* Bordes más sutiles */
-    cursor: pointer;
-    font-size: 0.95rem; /* Icono/texto más pequeño */
-    transition: background-color 0.15s ease, transform 0.05s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03); /* Sombra muy sutil */
-}
-
-.carrito-cantidad button:hover {
-    background-color: var(--secondary-color);
-    transform: translateY(-0.5px);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-}
-
-.carrito-cantidad input {
-    width: 60px; /* Input más estrecho */
-    padding: 6px 8px; /* Padding reducido */
-    border: 1px solid var(--border-color); /* Borde más delgado */
-    border-radius: 6px; /* Bordes más sutiles */
-    text-align: center;
-    font-size: 0.9rem; /* Texto más pequeño */
-    font-weight: 500;
-    color: var(--text-dark);
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.carrito-cantidad input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(128, 183, 141, 0.15); /* Usa primary color con transparencia */
-}
-
-/* Subtotal del Ítem */
-.carrito-subtotal {
-    font-size: 1.1rem; /* Subtotal más pequeño */
-    font-weight: bold;
-    color: var(--secondary-color);
-    margin-top: 12px;
-    letter-spacing: 0.2px;
-}
-
-/* Acciones del Ítem (Eliminar) */
-.carrito-item-actions {
-    margin-top: 15px; /* Margen ajustado */
-}
-
-.btn-remove-item {
-    background-color: var(--button-remove-color);
-    color: white;
-    border: none;
-    padding: 8px 15px; /* Botón de eliminar más pequeño */
-    border-radius: 6px; /* Bordes más sutiles */
-    cursor: pointer;
-    font-size: 0.85rem; /* Texto más pequeño */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px; /* Espacio reducido */
-    transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-}
-
-.btn-remove-item:hover {
-    background-color: var(--button-remove-hover);
-    transform: translateY(-1.5px);
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
-}
-
-/* Contenedor del Total del Carrito */
-.carrito-total-container {
-    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-    color: white;
-    padding: 25px; /* Padding reducido */
-    border-radius: 12px; /* Bordes más sutiles */
-    box-shadow: 0 6px 15px var(--shadow-medium);
-    margin-top: 35px; /* Margen ajustado */
-    text-align: right;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.carrito-total-container h4 {
-    font-size: 1.6rem; /* Título total más pequeño */
-    font-weight: 600;
-    color: #FFFBE7;
-    margin: 0;
-    flex-basis: 50%;
-    text-align: left;
-    text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.03);
-}
-
-#cart-total-amount {
-    font-size: 2.2rem; /* Cantidad total más pequeña */
-    font-weight: 700;
-    color: var(--accent-color);
-    margin: 0;
-    flex-basis: 50%;
-    text-align: right;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-/* Botón de Proceder al Pago */
-.btn-proceed-to-checkout {
-    background-color: #d4ac0d;
-    color: #000000 ;
-    border: none;
-    padding: 12px 25px; /* Botón de pago más pequeño */
-    border-radius: 5px; /* Bordes más sutiles */
-    font-size: 1.05rem; /* Texto más pequeño */
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
-    margin-top: 25px; /* Margen ajustado */
-    width: fit-content;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-}
-
-.btn-proceed-to-checkout:hover {
-    background-color: #c9c9c9;
-    transform: translateY(-2px); /* Efecto de elevación más sutil */
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
-}
-
-/* Alerta de Carrito Vacío */
-.carrito-alerta {
-    background-color: rgba(128, 183, 141, 0.08); /* Fondo muy claro con primary color */
-    color: var(--primary-color);
-    padding: 18px; /* Padding reducido */
-    border-radius: 8px; /* Bordes más sutiles */
-    border: 1px solid rgba(128, 183, 141, 0.15);
-    font-size: 1rem; /* Texto más pequeño */
-    font-weight: 500;
-    text-align: center;
-    margin-top: 20px;
-    animation: slideInUp 0.5s ease-out;
-}
-
-/* ------------------------------------------------------------- */
-/* COMPATIBILIDAD CON ESTRUCTURA ANTERIOR (TABLA) */
-/* ------------------------------------------------------------- */
-
-.table-responsive {
-    margin-top: 25px;
-}
-
-.table {
-    width: 100%;
-    margin-bottom: 0.8rem;
-    color: var(--text-dark);
-    border-collapse: separate;
-    border-spacing: 0 8px; /* Espacio entre filas ajustado */
-}
-
-.table th,
-.table td {
-    padding: 0.8rem; /* Padding reducido en celdas */
-    vertical-align: middle;
-    border: none;
-}
-
-/* Estilo para los TH: continuo y elegante */
-.table thead th {
-    vertical-align: middle;
-    /* QUITAMOS el border-bottom y border-radius de la cabecera */
-    /* background: linear-gradient(to right, var(--primary-color), var(--secondary-color)); */
-    background-color: var(--primary-color); /* Color sólido para un look más continuo */
-    color: #FFFBE7; /* Texto blanco suave */
-    font-weight: 500; /* Ligeramente menos bold */
-    text-align: left;
-    padding: 10px 15px; /* Padding ajustado */
-    font-size: 0.95rem; /* Tamaño de fuente más pequeño */
-    letter-spacing: 0.2px;
-    /* Aquí la clave para el estilo continuo y elegante */
-    position: sticky; /* Opcional: si quieres que se mantenga visible al scroll */
-    top: 0; /* Necesario con sticky */
-    z-index: 10; /* Para que quede por encima de las filas al scroll */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Sombra muy sutil para separarlo */
-    border-top: 1px solid var(--secondary-color); /* Borde superior sutil */
-    border-bottom: 1px solid var(--secondary-color); /* Borde inferior sutil */
-    /* Para que los th se vean como una línea continua en el encabezado */
-    border-left: none;
-    border-right: none;
-}
-
-/* Asegurar que el primer y último TH tengan bordes redondeados si la tabla es redondeada */
-.table thead th:first-child {
-    border-top-left-radius: 8px; /* Redondeado al principio */
-}
-.table thead th:last-child {
-    border-top-right-radius: 8px; /* Redondeado al final */
-}
-
-
-.table tbody tr {
-    background-color: #ffffff;
-    border-radius: 8px; /* Bordes de fila más sutiles */
-    box-shadow: 0 2px 8px var(--shadow-light); /* Sombra más sutil */
-    transition: all 0.2s ease-in-out;
-    margin-bottom: 12px; /* Margen ajustado */
-    display: table-row;
-    border: 1px solid var(--border-color);
-}
-
-.table tbody tr:hover {
-    transform: translateY(-2px); /* Elevación más sutil */
-    box-shadow: 0 4px 10px var(--shadow-medium);
-}
-
-.table-striped tbody tr:nth-of-type(odd) {
-    background-color: #fdfdfc; /* Fondo muy sutil para filas impares */
-}
-.table-striped tbody tr:nth-of-type(even) {
-    background-color: #ffffff;
-}
-
-/* Estilos específicos para elementos dentro de la tabla */
-.table .carrito-producto-imagen {
-    width: 60px; /* Imagen más pequeña en tabla */
-    height: 60px;
-    margin-right: 12px;
-    border-radius: 5px;
-    overflow: hidden;
-    flex-shrink: 0;
-    border: 1px solid var(--primary-color);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-}
-
-.table .carrito-producto-imagen img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.table .carrito-producto-nombre {
-    font-size: 1rem; /* Nombre más pequeño en tabla */
-    font-weight: 500;
-    color: var(--text-dark);
-}
-
-.table .carrito-precio {
-    font-size: 0.95rem;
-    color: #00BCD4;
-    font-weight: 500;
-}
-
-.table .item-subtotal {
-    font-size: 1.05rem; /* Subtotal más pequeño en tabla */
-    font-weight: bold;
-    color: #00BCD4;
-}
-
-/* Controles de cantidad en la tabla */
-.input-group.quantity-control {
-    width: 90px; /* Controles de cantidad más estrechos */
-    margin: 0 auto;
-}
-
-.input-group.quantity-control .btn {
-    background-color: #d4ac0d;
-    color: #ffffff;
-    border-color: #d4ac0d;
-    transition: background-color 0.15s ease;
-    padding: 5px 8px; /* Padding reducido */
-}
-.input-group.quantity-control .btn:hover {
-    background-color: var(--secondary-color);
-    border-color: var(--secondary-color);
-    transform: translateY(-0.5px);
-}
-
-.input-group.quantity-control .form-control {
-    border: #fefefe;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--text-dark);
-    padding: 6px 7px;
-    border-radius: 5px;
-}
-
-.table tfoot td {
-    padding: 1rem; /* Padding reducido en el pie de tabla */
+    padding: 12px 15px;
+    color: #555;
     font-size: 1rem;
-    font-weight: 600;
-    border-top: 1px solid var(--primary-color);
-    background-color: var(--bg-light);
-    color: var(--text-dark);
-    border-radius: 0 0 8px 8px;
-}
-
-.table tfoot #cart-total-amount {
-    font-size: 1.6rem; /* Total en tabla más pequeño */
-    color: #d4ac0d;
-    font-weight: 700;
-    letter-spacing: 0.4px;
-}
-
-/* ------------------------------------------------------------- */
-/* RESPONSIVIDAD */
-/* ------------------------------------------------------------- */
-@media (max-width: 992px) {
-    .carrito-wrapper {
-        padding: 20px;
-        margin: 30px auto;
-        border-radius: 10px;
-    }
-
-    .carrito-titulo {
-        font-size: 2rem;
-        margin-bottom: 25px;
-        padding-bottom: 10px;
-    }
-
-    .carrito-titulo::after {
-        width: 60px;
-        height: 2px;
-    }
-
-    .table thead, .table tfoot {
-        display: none;
-    }
-
-    .table tbody {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .table tbody tr {
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0 3px 10px var(--shadow-light);
-    }
-
-    .table tbody td {
-        padding: 6px 0;
-        font-size: 0.95rem;
-    }
-
-    .table .carrito-producto-imagen {
-        width: 90px;
-        height: 90px;
-        margin-bottom: 12px;
-    }
-
-    .table .carrito-producto-nombre {
-        font-size: 1.1rem;
-    }
-
-    .table .carrito-precio,
-    .table .item-subtotal {
-        font-size: 1rem;
-    }
-
-    .table .input-group.quantity-control {
-        width: 100px;
-    }
-
-    .carrito-total-container {
-        padding: 20px;
-        gap: 15px;
-    }
-
-    .carrito-total-container h4 {
-        font-size: 1.4rem;
-    }
-
-    #cart-total-amount {
-        font-size: 2rem;
-    }
-
-    .btn-proceed-to-checkout {
-        width: 100%;
-        font-size: 1rem;
-        padding: 10px 20px;
-    }
-}
-
-@media (max-width: 576px) {
-    .carrito-wrapper {
-        padding: 12px;
-        margin: 15px auto;
-        border-radius: 6px;
-    }
-
-    .carrito-titulo {
-        font-size: 1.6rem;
-        margin-bottom: 20px;
-        padding-bottom: 8px;
-    }
-
-    .carrito-titulo::after {
-        width: 50px;
-        height: 1px;
-    }
-
-    .carrito-items-list {
-        gap: 10px;
-    }
-
-    .carrito-item-card {
-        padding: 12px;
-        border-radius: 8px;
-    }
-
-    .carrito-producto-imagen img {
-        width: 70px;
-        height: 70px;
-        border-radius: 5px;
-    }
-
-    .carrito-producto-nombre {
-        font-size: 0.95rem;
-    }
-
-    .carrito-precio {
-        font-size: 0.9rem;
-    }
-
-    .carrito-cantidad button {
-        padding: 4px 7px;
-        font-size: 0.85rem;
-    }
-
-    .carrito-cantidad input {
-        width: 50px;
-        padding: 5px 6px;
-        font-size: 0.8rem;
-    }
-
-    .carrito-subtotal {
-        font-size: 0.95rem;
-    }
-
-    .btn-remove-item {
-        padding: 7px 12px;
-        font-size: 0.8rem;
-    }
-
-    .table tbody td {
-        font-size: 0.85rem;
-        padding: 5px 0;
-    }
-
-    .table .carrito-producto-imagen {
-        width: 60px;
-        height: 60px;
-    }
-
-    .table .carrito-producto-nombre {
-        font-size: 0.9rem;
-    }
-
-    .carrito-total-container h4 {
-        font-size: 1.2rem;
-    }
-
-    #cart-total-amount {
-        font-size: 1.6rem;
-    }
-
-    .btn-proceed-to-checkout {
-        font-size: 0.9rem;
-        padding: 8px 15px;
-    }
-}
-
-/* Animación para el badge del carrito en el header */
-@keyframes popIn {
-    0% { transform: scale(0); opacity: 0; }
-    80% { transform: scale(1.05); opacity: 1; } /* Pop aún más sutil */
-    100% { transform: scale(1); }
-}
-
-#cart-item-count {
-    animation: popIn 0.25s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Animación más rápida */
-}
-
-/* Nuevos estilos para la superposición de carga con imagen */
-.loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: var(--loading-bg);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.25s ease-in-out, visibility 0.25s ease-in-out;
-}
-
-.loading-overlay.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-.loading-overlay .loading-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px; /* Espacio reducido */
-}
-
-.loading-overlay .loading-spinner {
-    border: 4px solid rgba(66, 118, 77, 0.15); /* Borde más delgado */
-    border-top: 4px solid var(--loading-spinner-color);
-    border-radius: 50%;
-    width: 40px; /* Spinner más pequeño */
-    height: 40px;
-    animation: spin 0.9s linear infinite; /* Animación más rápida */
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.loading-overlay .loading-message {
-    color: var(--loading-text-color);
-    font-size: 1.1rem; /* Mensaje de carga más pequeño */
     font-weight: 500;
-    text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.02);
+    text-decoration: none;
+    border-radius: 5px;
+    transition: all 0.3s ease;
 }
 
-.loading-overlay .loading-product-image {
-    width: 80px; /* Imagen del producto en el loading más pequeña */
-    height: 80px;
-    object-fit: cover;
-    border-radius: 8px;
-    border: 2px solid var(--primary-color);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-    opacity: 0;
-    transform: scale(0.9);
-    transition: opacity 0.25s ease-in-out, transform 0.25s ease-in-out;
+.sidebar-menu li a i {
+    margin-right: 12px;
+    color: #8BC34A; /* Iconos verdes */
+    font-size: 1.1rem;
 }
 
-.loading-overlay.active .loading-product-image {
-    opacity: 1;
-    transform: scale(1);
+.sidebar-menu li a:hover,
+.sidebar-menu li a.active {
+    background-color: rgba(139, 195, 74, 0.1); /* Fondo verde muy claro al hover/activo */
+    color: #333;
 }
 
-/* ------------------------------------------------------------- */
-/* SECCIÓN DE PUNTOS EN EL CARRITO */
-/* ------------------------------------------------------------- */
-.carrito-puntos-wrapper {
-    background: linear-gradient(135deg, #d0fffd , #ffffff); /* Fondo con color personalizado */
-    border-left: 6px solid #d4ac0d; /* Borde del mismo color */
+.sidebar-menu li a.active i {
+    color: #8BC34A;
+}
+
+.badge-primary {
+    background-color: #8BC34A;
+    color: #fff;
+    margin-left: auto; /* Empuja el badge a la derecha */
+    padding: 4px 8px;
     border-radius: 12px;
-    color: var(--primary-dark);
-    transition: all 0.3s ease-in-out;
+    font-size: 0.75rem;
 }
 
-.carrito-puntos-wrapper:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+/* --- Main Content Area (Cart Content) --- */
+.user-main-content {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    padding: 30px; /* Padding interno para el contenido principal */
+}
+
+/* Customer Points Section (Now within user-main-content, like a prominent banner) */
+.carrito-puntos-wrapper {
+    background-color: #333; /* Fondo negro como en la imagen para esta sección */
+    color: #fff;
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .carrito-puntos-wrapper .puntos-texto h5 {
+    color: #fff;
     font-weight: 600;
-    color: var(--primary-dark);
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.puntos-numero {
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: #d4ac0d; /* También actualizamos el color del número */
+.carrito-puntos-wrapper .puntos-numero {
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: #8BC34A; /* Verde vibrante para el número de puntos */
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
-.carrito-puntos-wrapper .puntos-acciones .btn {
+.carrito-puntos-wrapper .puntos-texto p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 0;
+}
+
+.carrito-puntos-wrapper .puntos-acciones .btn-primary {
+    background-color: #8BC34A; /* Verde para el botón Canjear Puntos */
+    border: none;
+    color: #fff;
     border-radius: 5px;
-    transition: 0.2s ease-in-out;
+    padding: 0.7rem 1.4rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(139, 195, 74, 0.3);
 }
 
-.carrito-puntos-wrapper .puntos-acciones .btn:hover {
+.carrito-puntos-wrapper .btn-primary:hover {
+    background-color: #689f38;
+    box-shadow: 0 4px 15px rgba(139, 195, 74, 0.4);
+}
+
+/* Empty Cart Alert */
+.alert-info {
+    background-color: #e6ffe6; /* Verde muy claro */
+    color: #333;
+    border-color: #c3e6cb;
+    border-radius: 10px;
+    padding: 1.5rem;
+    font-size: 1.05rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Shopping Cart Items (Cards) */
+.table-responsive {
+    display: block;
+    overflow-x: auto; /* In case content overflows, allow scrolling */
+    margin-bottom: 2rem;
+}
+
+.table {
+    display: block;
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0;
+}
+
+.table thead {
+    display: none; /* Hide the table header completely */
+}
+
+.table tbody {
+    display: flex; /* Flex container for the cards */
+    flex-direction: column; /* Stack cards vertically */
+    gap: 15px; /* Space between cards */
+}
+
+.table tbody tr.carrito-item-row {
+    display: flex; /* Each row becomes a flex item (the card) */
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Softer shadow for items */
+    padding: 1rem 1.2rem;
+    align-items: center;
+    flex-wrap: wrap; /* Allows internal elements to wrap on smaller screens */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.table tbody tr.carrito-item-row:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.table tbody td {
+    display: flex; /* Make table cells flex items within the card */
+    align-items: center;
+    padding: 0; /* Remove default cell padding */
+    margin-bottom: 0; /* Remove default margin */
+    flex-shrink: 0; /* Prevent shrinking of content */
+}
+
+/* Specific column styling within the card */
+.table tbody td[data-label="Producto:"] {
+    flex-basis: 35%; /* Adjusted width */
+    justify-content: flex-start;
+    padding-right: 15px;
+}
+.table tbody td[data-label="Precio Unitario:"] {
+    flex-basis: 15%;
+    justify-content: center;
+}
+.table tbody td[data-label="Cantidad:"] {
+    flex-basis: 25%; /* Adjusted width */
+    justify-content: center;
+}
+.table tbody td[data-label="Subtotal:"] {
+    flex-basis: 15%;
+    justify-content: center;
+}
+.table tbody td[data-label="Acciones:"] {
+    flex-basis: 10%;
+    justify-content: flex-end;
+}
+
+/* Hide data labels on larger screens as layout is visual */
+.table tbody td::before {
+    display: none;
+}
+
+/* Product Image in Cart */
+.carrito-producto-imagen {
+    width: 60px; /* Slightly smaller */
+    height: 60px;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+    margin-right: 12px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+}
+
+.carrito-producto-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.carrito-producto-nombre {
+    font-weight: 600;
+    color: #333;
+    font-size: 1rem;
+    flex-grow: 1; /* Allows the name to take remaining space */
+}
+
+/* Quantity Controls */
+.quantity-control {
+    max-width: 100px; /* More compact */
+    display: flex;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.quantity-control .btn {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+    background-color: #f5f5f5;
+    color: #555;
+    border: none; /* Remove default button border */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quantity-control .btn:hover {
+    background-color: #e0e0e0;
+}
+
+.quantity-control .form-control.product-quantity {
+    height: 32px;
+    border: none;
+    font-size: 0.95rem;
+    text-align: center;
+    -moz-appearance: textfield; /* Hide Firefox number input arrows */
+}
+/* Hide Chrome, Safari, Edge, Opera number input arrows */
+.quantity-control .form-control.product-quantity::-webkit-outer-spin-button,
+.quantity-control .form-control.product-quantity::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+.carrito-precio,
+.item-subtotal {
+    font-weight: 700;
+    color: #8BC34A; /* Vibrant green for prices and subtotals */
+    font-size: 1rem;
+}
+
+/* Remove Item Button */
+.btn-remove-item {
+    background-color: #e74c3c; /* Red for remove */
+    border-color: #e74c3c;
+    color: #fff;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    padding: 0.5rem 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+}
+
+.btn-remove-item:hover {
+    background-color: #c0392b;
+    border-color: #c0392b;
     transform: translateY(-1px);
 }
 
-/* Variables recomendadas si aún no existen */
-:root {
-    --accent-color: #78b68f;
-    --primary-dark: #1f2d3d;
+/* Cart Total Footer (Separate Card) */
+.table tfoot {
+    display: block;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    padding: 1.2rem 1.5rem; /* Adjusted padding */
+    margin-top: 15px;
+}
+
+.table tfoot tr {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.table tfoot td {
+    padding: 0;
+    border: none;
+    font-size: 1.1rem; /* Slightly smaller */
+    font-weight: 600;
+    color: #333;
+}
+
+#cart-total-amount {
+    text-align: right;
+}
+
+#cart-total-amount strong {
+    color: #8BC34A;
+    font-size: 1.5rem; /* Adjusted size */
+    font-weight: 800;
+}
+
+/* Checkout Button */
+.btn-proceed-to-checkout {
+    background-color: #333; /* Black */
+    border-color: #333;
+    color: #fff;
+    border-radius: 8px; /* Slightly smaller */
+    padding: 0.9rem 2rem; /* Adjusted padding */
+    font-size: 1.1rem; /* Adjusted size */
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 1.5rem;
+}
+
+.btn-proceed-to-checkout:hover {
+    background-color: #555;
+    border-color: #555;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 991px) { /* For tablets and smaller laptops */
+    .user-sidebar {
+        margin-bottom: 25px; /* Space below sidebar when stacked */
+    }
+    .col-lg-3, .col-lg-9 {
+        flex: 0 0 100%; /* Take full width */
+        max-width: 100%;
+    }
+    h2.text-center {
+        text-align: center; /* Center title on smaller screens */
+    }
+}
+
+@media (max-width: 767px) { /* For mobile phones */
+    .user-panel.section {
+        padding: 25px 0;
+    }
+    .user-sidebar,
+    .user-main-content {
+        padding: 20px;
+    }
+    h2.text-center {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Cart Items (Cards) on Mobile */
+    .table tbody tr.carrito-item-row {
+        flex-direction: column; /* Stack items vertically within the card */
+        align-items: flex-start;
+        padding: 0.8rem;
+    }
+    .table tbody td {
+        width: 100%;
+        justify-content: space-between !important; /* Space between label and value */
+        margin-bottom: 0.4rem;
+        padding-bottom: 0.4rem;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .table tbody td:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+    .table tbody td::before {
+        display: inline-block; /* Show data labels on small screens */
+        font-weight: 500;
+        color: #666;
+        margin-right: 10px;
+        flex-shrink: 0;
+        font-size: 0.9rem;
+    }
+    .carrito-producto-imagen {
+        width: 50px;
+        height: 50px;
+        margin-right: 10px;
+    }
+    .carrito-producto-nombre {
+        font-size: 0.95rem;
+    }
+    .quantity-control {
+        margin-top: 5px; /* Space above quantity control */
+        width: auto;
+    }
+    .btn-remove-item {
+        width: 100%;
+        justify-content: center;
+        margin-top: 10px;
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+    }
+    .table tfoot tr {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .table tfoot td {
+        width: 100%;
+        text-align: left !important;
+        font-size: 1rem;
+    }
+    #cart-total-amount {
+        text-align: left !important;
+        margin-top: 5px;
+    }
+    #cart-total-amount strong {
+        font-size: 1.3rem;
+    }
+    .btn-proceed-to-checkout {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 575px) { /* Even smaller mobile adjustments */
+    .profile-info {
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+    }
+    .profile-info img {
+        width: 70px;
+        height: 70px;
+    }
+    .profile-info h3 {
+        font-size: 1.2rem;
+    }
+    .profile-info p {
+        font-size: 0.85rem;
+    }
+    .sidebar-menu li a {
+        padding: 10px 12px;
+        font-size: 0.95rem;
+    }
+    .sidebar-menu li a i {
+        font-size: 1rem;
+    }
+    .carrito-puntos-wrapper {
+        padding: 1rem;
+    }
+    .carrito-puntos-wrapper .puntos-texto h5 {
+        font-size: 1.1rem;
+    }
+    .carrito-puntos-wrapper .puntos-numero {
+        font-size: 1.7rem;
+    }
+    .carrito-puntos-wrapper .puntos-texto p {
+        font-size: 0.8rem;
+    }
+    .carrito-puntos-wrapper .btn-primary {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
 }
