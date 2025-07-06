@@ -20,11 +20,12 @@ header a {
     font-weight: 500;
 }
 
-
-.container.my-5 { /* General container for the main page content */
+/* Consider if .container.my-5 is still needed or if .container within sections is enough */
+/* If this targets the main content wrapper, it should be fine. */
+.container.my-5 {
     padding-top: 30px;
     padding-bottom: 30px;
-    max-width: 1200px; /* Aumenta un poco el ancho máximo para el layout de dos columnas */
+    max-width: 1200px;
 }
 
 /* Page Title within Main Content Area */
@@ -34,7 +35,6 @@ h2.text-center {
     font-weight: 700;
     font-size: 2.2rem;
     letter-spacing: -0.01em;
-    text-align: left; /* Alineado a la izquierda dentro del content-area */
 }
 
 /* --- User Panel Layout (Sidebar + Main Content) --- */
@@ -225,7 +225,6 @@ h2.text-center {
 }
 
 .table {
-    display: block;
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 0;
@@ -248,7 +247,7 @@ h2.text-center {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Softer shadow for items */
     padding: 1rem 1.2rem;
     align-items: center;
-    flex-wrap: wrap; /* Allows internal elements to wrap on smaller screens */
+    flex-wrap: nowrap; /* CRUCIAL para mantener todo en una línea en pantallas grandes */
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -258,25 +257,29 @@ h2.text-center {
 }
 
 .table tbody td {
-    display: flex; /* Make table cells flex items within the card */
+    padding: 0;
+    margin-bottom: 0;
+    display: flex;
     align-items: center;
-    padding: 0; /* Remove default cell padding */
-    margin-bottom: 0; /* Remove default margin */
-    flex-shrink: 0; /* Prevent shrinking of content */
+    flex-shrink: 0; /* Por defecto, no permite que las celdas se encojan */
+    white-space: nowrap; /* Por defecto, evita que el texto de las celdas se envuelva */
+    min-height: 40px; /* Asegura un alto mínimo para las celdas */
 }
 
-/* Specific column styling within the card */
+/* Specific column styling within the card (Desktop/Larger screens) */
 .table tbody td[data-label="Producto:"] {
-    flex-basis: 35%; /* Adjusted width */
+    flex-basis: 35%; /* Base para el producto */
+    flex-grow: 1; /* Permite que crezca para ocupar espacio */
     justify-content: flex-start;
     padding-right: 15px;
+    white-space: normal; /* Permite que el nombre del producto se envuelva */
 }
 .table tbody td[data-label="Precio Unitario:"] {
     flex-basis: 15%;
     justify-content: center;
 }
 .table tbody td[data-label="Cantidad:"] {
-    flex-basis: 25%; /* Adjusted width */
+    flex-basis: 20%;
     justify-content: center;
 }
 .table tbody td[data-label="Subtotal:"] {
@@ -284,8 +287,10 @@ h2.text-center {
     justify-content: center;
 }
 .table tbody td[data-label="Acciones:"] {
-    flex-basis: 10%;
-    justify-content: flex-end;
+    flex-basis: 15%; /* Espacio para el botón Eliminar */
+    justify-content: flex-end; /* Alinea el botón a la derecha */
+    flex-grow: 0; /* No permite que crezca */
+    flex-shrink: 0; /* No permite que se encoja */
 }
 
 /* Hide data labels on larger screens as layout is visual */
@@ -295,7 +300,7 @@ h2.text-center {
 
 /* Product Image in Cart */
 .carrito-producto-imagen {
-    width: 60px; /* Slightly smaller */
+    width: 60px;
     height: 60px;
     border-radius: 6px;
     overflow: hidden;
@@ -320,7 +325,7 @@ h2.text-center {
 
 /* Quantity Controls */
 .quantity-control {
-    max-width: 100px; /* More compact */
+    max-width: 120px;
     display: flex;
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -328,15 +333,20 @@ h2.text-center {
 }
 
 .quantity-control .btn {
-    width: 32px;
-    height: 32px;
+    width: 32px; /* Ancho fijo */
+    height: 32px; /* Alto fijo (¡Esto los hace cuadrados!) */
     font-size: 1rem;
     background-color: #f5f5f5;
     color: #555;
-    border: none; /* Remove default button border */
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border: none; /* ¡CRUCIAL! Quitar los bordes individuales del botón */
+    border-radius: 0; /* ¡CRUCIAL! Asegurar que no tengan bordes redondeados individuales */
+    display: flex; /* Usar Flexbox para centrar el contenido */
+    align-items: center; /* Centrar verticalmente el signo */
+    justify-content: center; /* Centrar horizontalmente el signo */
+    padding: 0; /* ¡CRUCIAL! Quitar cualquier padding interno que pueda empujar el contenido */
+    line-height: 1; /* Ayuda a la alineación vertical del texto/icono */
+    flex-shrink: 0; /* Evita que los botones se encojan */
+    transition: background-color 0.2s ease;
 }
 
 .quantity-control .btn:hover {
@@ -344,19 +354,30 @@ h2.text-center {
 }
 
 .quantity-control .form-control.product-quantity {
-    height: 32px;
-    border: none;
+    height: 32px; /* Mismo alto que los botones */
+    border: none; /* ¡CRUCIAL! Quitar el borde individual del input */
     font-size: 0.95rem;
     text-align: center;
-    -moz-appearance: textfield; /* Hide Firefox number input arrows */
+    -moz-appearance: textfield; /* Oculta flechas en Firefox */
+    flex-grow: 1; /* Permite que el input crezca para llenar el espacio */
+    min-width: 40px; /* Ancho mínimo para el número (ajusta si es necesario) */
+    padding: 0 5px; /* Padding horizontal para el número */
+    background-color: #fff; /* Fondo blanco para el input */
+    color: #333; /* Color oscuro para el número */
 }
-/* Hide Chrome, Safari, Edge, Opera number input arrows */
+
+/* Ocultar flechas en navegadores WebKit (Chrome, Safari, Edge, Opera) */
 .quantity-control .form-control.product-quantity::-webkit-outer-spin-button,
 .quantity-control .form-control.product-quantity::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
+/* Asegurar que los iconos de Font Awesome se vean bien si se usan */
+.quantity-control .btn i {
+    font-size: 1rem;
+    line-height: 1;
+}
 
 .carrito-precio,
 .item-subtotal {
@@ -377,6 +398,7 @@ h2.text-center {
     align-items: center;
     gap: 5px;
     transition: all 0.3s ease;
+    white-space: nowrap; /* Asegura que el texto "Eliminar" no se rompa */
 }
 
 .btn-remove-item:hover {
@@ -387,7 +409,7 @@ h2.text-center {
 
 /* Cart Total Footer (Separate Card) */
 .table tfoot {
-    display: block;
+    display: block; /* Important for flex container behavior */
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
@@ -399,6 +421,7 @@ h2.text-center {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%; /* Ensure it takes full width of parent block */
 }
 
 .table tfoot td {
@@ -430,8 +453,9 @@ h2.text-center {
     font-weight: 600;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
-    width: 100%;
+    width: 100%; /* Make it full width for consistent layout */
     margin-top: 1.5rem;
+    display: block; /* Ensure it's a block element for width: 100% */
 }
 
 .btn-proceed-to-checkout:hover {
@@ -444,15 +468,13 @@ h2.text-center {
 /* --- Responsive Adjustments --- */
 @media (max-width: 991px) { /* For tablets and smaller laptops */
     .user-sidebar {
-        margin-bottom: 25px; /* Space below sidebar when stacked */
+        margin-bottom: 25px;
     }
     .col-lg-3, .col-lg-9 {
-        flex: 0 0 100%; /* Take full width */
+        flex: 0 0 100%;
         max-width: 100%;
     }
-    h2.text-center {
-        text-align: center; /* Center title on smaller screens */
-    }
+    /* Las columnas de la tabla mantendrán su flex-basis y nowrap si el espacio lo permite */
 }
 
 @media (max-width: 767px) { /* For mobile phones */
@@ -466,32 +488,47 @@ h2.text-center {
     h2.text-center {
         font-size: 1.8rem;
         margin-bottom: 1.5rem;
+        text-align: center;
     }
 
-    /* Cart Items (Cards) on Mobile */
+    /* Cart Items (Cards) on Mobile - Full stacking */
     .table tbody tr.carrito-item-row {
-        flex-direction: column; /* Stack items vertically within the card */
-        align-items: flex-start;
+        flex-direction: column; /* Apila los elementos verticalmente dentro de la tarjeta */
+        align-items: flex-start; /* Alinea los elementos al inicio (izquierda) de la columna */
         padding: 0.8rem;
+        flex-wrap: wrap; /* Permitimos que se envuelva en móvil para la disposición vertical */
     }
     .table tbody td {
-        width: 100%;
-        justify-content: space-between !important; /* Space between label and value */
+        width: 100%; /* Cada celda ocupa todo el ancho */
+        justify-content: space-between !important; /* Espacio entre etiqueta y valor */
         margin-bottom: 0.4rem;
         padding-bottom: 0.4rem;
         border-bottom: 1px solid #f0f0f0;
+        flex-shrink: 1; /* Permite que se encojan en móvil si es necesario */
+        min-height: auto; /* Restablecer el min-height */
+        white-space: normal; /* Permitir que el texto se envuelva en móvil */
     }
     .table tbody td:last-child {
         border-bottom: none;
         margin-bottom: 0;
     }
     .table tbody td::before {
-        display: inline-block; /* Show data labels on small screens */
+        display: inline-block; /* Muestra las etiquetas de datos en pantallas pequeñas */
         font-weight: 500;
         color: #666;
         margin-right: 10px;
         flex-shrink: 0;
         font-size: 0.9rem;
+    }
+    /* Special handling for Product column on mobile to align image and name */
+    .table tbody td[data-label="Producto:"] {
+        flex-basis: auto;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        padding-right: 0;
+        border-bottom: none;
+        margin-bottom: 0.8rem;
     }
     .carrito-producto-imagen {
         width: 50px;
@@ -500,37 +537,28 @@ h2.text-center {
     }
     .carrito-producto-nombre {
         font-size: 0.95rem;
+        flex-grow: 1;
     }
     .quantity-control {
-        margin-top: 5px; /* Space above quantity control */
-        width: auto;
+        margin-top: 5px;
+        width: 100%; /* Asegura que el control de cantidad tome todo el ancho disponible en su celda */
+        max-width: 120px;
+        margin: 0; /* Elimina auto para alinear a la izquierda dentro de la celda */
+    }
+
+    /* CLAVE para el botón Eliminar en móvil */
+    .table tbody td[data-label="Acciones:"] {
+        width: 100%; /* Ocupa todo el ancho de la tarjeta */
+        justify-content: flex-end !important; /* ¡Empuja el botón a la derecha dentro de su celda en móvil! */
+        margin-top: 10px;
+        border-bottom: none;
+        padding-bottom: 0;
     }
     .btn-remove-item {
-        width: 100%;
-        justify-content: center;
-        margin-top: 10px;
-        padding: 0.6rem 0.8rem;
-        font-size: 0.85rem;
-    }
-    .table tfoot tr {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .table tfoot td {
-        width: 100%;
-        text-align: left !important;
-        font-size: 1rem;
-    }
-    #cart-total-amount {
-        text-align: left !important;
-        margin-top: 5px;
-    }
-    #cart-total-amount strong {
-        font-size: 1.3rem;
-    }
-    .btn-proceed-to-checkout {
-        padding: 0.8rem 1.5rem;
-        font-size: 1rem;
+        width: auto; /* Permite que el botón se ajuste a su contenido */
+        margin-left: auto; /* Empuja el botón a la derecha dentro de su contenedor td */
+        margin-right: 0;
+        /* Puedes agregar un max-width si no quieres que el botón sea demasiado grande: max-width: 150px; */
     }
 }
 

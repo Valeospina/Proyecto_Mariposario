@@ -301,3 +301,27 @@ ALTER TABLE reserva
 ADD telefono VARCHAR(20),
 ADD correo VARCHAR(100),
 ADD descripcion TEXT;
+
+
+-----------------nuevas modificaciones en la bd------------------------------------
+
+USE mariposarioDB;
+
+-- 1. Modificar tabla Pedido
+ALTER TABLE Pedido
+ADD COLUMN Total_Pedido DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+ADD COLUMN Estado_Pedido ENUM('Pendiente de Pago', 'Pago Confirmado', 'Completado', 'Cancelado', 'Facturado') DEFAULT 'Pendiente de Pago',
+ADD COLUMN Numero_Proforma VARCHAR(50) UNIQUE,
+ADD COLUMN Puntos_Canjeados INT DEFAULT 0,
+ADD COLUMN Monto_Canjeado DECIMAL(10,2) DEFAULT 0.00;
+
+-- 2. Modificar tabla Factura
+ALTER TABLE Factura
+ADD COLUMN Numero_Factura VARCHAR(100) UNIQUE,
+ADD COLUMN XML_Factura TEXT,
+ADD COLUMN Estado_Hacienda ENUM('Pendiente', 'Enviado', 'Aceptado', 'Rechazado', 'Anulado') DEFAULT 'Pendiente',
+ADD COLUMN Clave_Numerica_Hacienda VARCHAR(50) UNIQUE,
+ADD COLUMN Ruta_PDF_Factura VARCHAR(255);
+
+-- 3. Asegurarse de que ID en Historial_Puntos sea AUTO_INCREMENT 
+ALTER TABLE Historial_Puntos MODIFY COLUMN ID INT AUTO_INCREMENT;

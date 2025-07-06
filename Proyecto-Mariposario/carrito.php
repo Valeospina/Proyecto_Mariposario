@@ -2,6 +2,7 @@
 session_start(); // Inicia la sesión al principio de todo
 
 // --- Simulación de datos de usuario (para testing si no hay login real)
+// Mantén esto para que el dashboard funcione, pero los puntos ya no aumentan al añadir al carrito.
 if (!isset($_SESSION['user_logged_in'])) {
     $_SESSION['user_logged_in'] = true; // Set to true for testing dashboard features
 }
@@ -12,38 +13,12 @@ if (!isset($_SESSION['user_avatar'])) {
     $_SESSION['user_avatar'] = 'https://via.placeholder.com/100/CCCCCC/888888?text=Usuario'; // Default avatar or your local path
 }
 if (!isset($_SESSION['user_points'])) {
-    $_SESSION['user_points'] = 150; // Default points for testing
+    $_SESSION['user_points'] = 0; // Default points for testing. Estos puntos se gestionarán en la compra real.
 }
 
 // Ensure $_SESSION['carrito'] is always an array
 if (!isset($_SESSION['carrito']) || !is_array($_SESSION['carrito'])) {
     $_SESSION['carrito'] = [];
-    // Add some sample products for testing the layout if the cart is empty
-    /*
-    $_SESSION['carrito'] = [
-        'prod_001' => [
-            'id' => 'prod_001',
-            'nombre' => 'Semillas de Girasol Gigante',
-            'precio' => 8.50,
-            'cantidad' => 2,
-            'imagen_url' => 'https://via.placeholder.com/150/A4C639/FFFFFF?text=Girasol'
-        ],
-        'prod_002' => [
-            'id' => 'prod_002',
-            'nombre' => 'Kit de Cultivo de Orquídeas',
-            'precio' => 35.00,
-            'cantidad' => 1,
-            'imagen_url' => 'https://via.placeholder.com/150/8BC34A/FFFFFF?text=Orquidea'
-        ],
-        'prod_003' => [
-            'id' => 'prod_003',
-            'nombre' => 'Guía de Mariposas Nativas',
-            'precio' => 12.99,
-            'cantidad' => 3,
-            'imagen_url' => 'https://via.placeholder.com/150/66BB6A/FFFFFF?text=Guia'
-        ]
-    ];
-    */
 }
 
 // Define la variable $response al inicio para evitar errores de referencia
@@ -82,13 +57,14 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
         if ($action === 'add') {
             // Lógica para AGREGAR un producto
             if (isset($_POST['id'], $_POST['nombre'], $_POST['precio'])) {
-                $id = filter_var($_POST['id'], FILTER_SANITIZE_NUMBER_INT);
+                // Sanitizar ID como STRING
+                $id = filter_var($_POST['id'], FILTER_SANITIZE_STRING);
                 $nombre = filter_var($_POST['nombre'], FILTER_SANITIZE_STRING);
                 $precio = filter_var($_POST['precio'], FILTER_VALIDATE_FLOAT);
-                // Assuming imagen_url might be passed, if not, it will be an empty string
-                $imagen_url = filter_var($_POST['imagen_url'] ?? '', FILTER_SANITIZE_URL); 
+                $imagen_url = filter_var($_POST['imagen_url'] ?? '', FILTER_SANITIZE_URL);
 
-                if ($id !== false && $id > 0 && $nombre !== false && $precio !== false && $precio >= 0) {
+                // Validar que los datos no sean vacíos o inválidos
+                if ($id !== false && $id !== '' && $nombre !== false && $precio !== false && $precio >= 0) {
                     $found = false;
                     foreach ($_SESSION['carrito'] as &$item) {
                         if ($item['id'] == $id) {
@@ -97,7 +73,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
                             break;
                         }
                     }
-                    unset($item); // Break the reference
+                    unset($item); // Romper la referencia
 
                     if (!$found) {
                         $_SESSION['carrito'][] = [
@@ -105,19 +81,19 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
                             'nombre' => $nombre,
                             'precio' => $precio,
                             'cantidad' => 1,
-                            'imagen_url' => $imagen_url // Add image URL to cart item
+                            'imagen_url' => $imagen_url
                         ];
                     }
 
-                    // Acumular puntos solo cuando se agrega un producto al carrito
-                    if ($_SESSION['user_logged_in']) {
-                        $_SESSION['user_points'] += 10; // Example: 10 points per product added
-                    }
+                    // *** MODIFICACIÓN: No agregar puntos aquí. Los puntos se gestionarán al momento de la compra. ***
+                    // if ($_SESSION['user_logged_in']) {
+                    //     $_SESSION['user_points'] += 10;
+                    // }
 
                     $response['success'] = true;
                     $response['message'] = 'Producto agregado al carrito.';
                     $response['total_items'] = getTotalCartItems();
-                    $response['user_points'] = $_SESSION['user_points']; // Enviar los puntos actualizados
+                    $response['user_points'] = $_SESSION['user_points']; // Aunque no se sumaron, enviamos los puntos actuales
                 } else {
                     $response['message'] = 'Datos de producto inválidos.';
                 }
@@ -125,12 +101,12 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
                 $response['message'] = 'Faltan datos para agregar el producto.';
             }
         } elseif ($action === 'update_quantity') {
-            // Lógica para ACTUALIZAR la cantidad de un producto
+            // Lógica para ACTUALIZAR la cantidad de un producto o eliminarlo (cantidad 0)
             if (isset($_POST['id'], $_POST['cantidad'])) {
-                $id = filter_var($_POST['id'], FILTER_SANITIZE_NUMBER_INT);
+                $id = filter_var($_POST['id'], FILTER_SANITIZE_STRING);
                 $cantidad = filter_var($_POST['cantidad'], FILTER_SANITIZE_NUMBER_INT);
 
-                if ($id !== false && $id > 0 && $cantidad !== false) { // Allow quantity to be 0 for removal
+                if ($id !== false && $id !== '' && $cantidad !== false) {
                     if (isset($_SESSION['carrito'])) {
                         $found = false;
                         foreach ($_SESSION['carrito'] as $key => &$item) {
@@ -164,36 +140,8 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
             } else {
                 $response['message'] = 'Faltan datos para actualizar la cantidad.';
             }
-        } elseif ($action === 'remove') {
-            // Lógica para ELIMINAR un producto
-            if (isset($_POST['id'])) {
-                $id = filter_var($_POST['id'], FILTER_SANITIZE_NUMBER_INT);
-
-                if ($id !== false && $id > 0) {
-                    if (isset($_SESSION['carrito'])) {
-                        $initial_count = count($_SESSION['carrito']);
-                        $_SESSION['carrito'] = array_filter($_SESSION['carrito'], function($item) use ($id) {
-                            return $item['id'] != $id;
-                        });
-                        // Reindexar el array para evitar problemas con foreach y empty()
-                        $_SESSION['carrito'] = array_values($_SESSION['carrito']);
-
-                        if (count($_SESSION['carrito']) < $initial_count) {
-                            $response['success'] = true;
-                            $response['message'] = 'Producto eliminado del carrito.';
-                        } else {
-                            $response['message'] = 'Producto no encontrado en el carrito.';
-                        }
-                    } else {
-                        $response['message'] = 'El carrito está vacío.';
-                    }
-                } else {
-                    $response['message'] = 'ID de producto inválido para eliminar.';
-                }
-            } else {
-                $response['message'] = 'Falta ID del producto para eliminar.';
-            }
-        } else {
+        }
+        else {
             $response['message'] = 'Acción POST no reconocida.';
         }
     }
@@ -207,7 +155,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
             $response['message'] = 'Cantidad de items obtenida.';
             $response['user_name'] = $_SESSION['user_name'];
             $response['user_avatar'] = $_SESSION['user_avatar'];
-            $response['user_points'] = $_SESSION['user_points'];
+            $response['user_points'] = $_SESSION['user_points']; // Enviar los puntos actuales
         } elseif ($action === 'get_cart_data') {
             // Return the entire cart data for dynamic update on the cart page
             $response['success'] = true;
@@ -232,7 +180,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
     exit(); // ¡Muy importante para detener la ejecución y no enviar HTML!
 }
 
-// Ejemplo básico de cómo mostrar el carrito cuando no es una petición AJAX
+// Ejemplo básico de cómo mostrar el carrito cuando no es una petición AJAX (HTML de la página)
 $carrito_actual = $_SESSION['carrito'] ?? []; // Obtener el carrito de la sesión
 $total_carrito_final = getCartTotalAmount();
 $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de la sesión
@@ -265,8 +213,10 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
     <link rel="stylesheet" href="css/animate.min.css">
     <link rel="stylesheet" href="css/magnific-popup.css">
     <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="style.css"> <link rel="stylesheet" href="css/responsive.css">
-    <link rel="stylesheet" href="css/tienda.css"> <link rel="stylesheet" href="css/carrito.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/tienda.css">
+    <link rel="stylesheet" href="css/carrito.css">
 </head>
 
 <body>
@@ -277,7 +227,7 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
                 <div class="col-lg-3 col-md-4 col-12">
                     <div class="user-sidebar">
                         <div class="profile-info">
-                            <img src="<?php echo htmlspecialchars($_SESSION['user_avatar']); ?>" alt="Foto de perfil">
+                            <img src="img/user-profile.jpg" alt="Foto de perfil">
                             <h3>Hola, <?php echo htmlspecialchars($_SESSION['user_name']); ?></h3>
                             <p>Miembro desde: Abril 2023</p>
                             <a href="user-settings.php" class="btn btn-sm btn-primary">Editar Perfil</a>
@@ -308,18 +258,18 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
                             </div>
                         </div>
                         <?php if (empty($carrito_actual)): ?>
-                            <div class="alert alert-info text-center" role="alert">
+                            <div class="alert alert-info text-center empty-cart-message" role="alert">
                                 Tu carrito está vacío. ¡Empieza a llenarlo con nuestros productos!
                             </div>
                         <?php else: ?>
                             <div class="table-responsive">
                                 <table class="table">
-                                    <tbody id="carrito-items-body">
+                                    <tbody id="cart-items-body">
                                         <?php foreach ($carrito_actual as $item): ?>
                                             <tr class="carrito-item-row" data-id="<?php echo htmlspecialchars($item['id']); ?>">
-                                                <td data-label="Producto:">
+                                                <td data-label="Producto:" class="d-flex align-items-center">
                                                     <?php if (!empty($item['imagen_url'])): ?>
-                                                        <div class="carrito-producto-imagen">
+                                                        <div class="carrito-producto-imagen me-3">
                                                             <img src="<?php echo htmlspecialchars($item['imagen_url']); ?>" alt="<?php echo htmlspecialchars($item['nombre']); ?>">
                                                         </div>
                                                     <?php endif; ?>
@@ -327,44 +277,45 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
                                                 </td>
                                                 <td data-label="Precio Unitario:"><span class="carrito-precio">₡<?php echo number_format($item['precio'], 2, ',', '.'); ?></span></td>
                                                 <td data-label="Cantidad:">
-                                                    <div class="quantity-control">
-                                                        <button class="btn btn-sm btn-outline-secondary btn-decrease-quantity" type="button" data-id="<?php echo htmlspecialchars($item['id']); ?>">-</button>
-                                                        <input type="text" class="form-control product-quantity" value="<?php echo htmlspecialchars($item['cantidad']); ?>" min="1" data-id="<?php echo htmlspecialchars($item['id']); ?>" data-price="<?php echo htmlspecialchars($item['precio']); ?>" readonly>
-                                                        <button class="btn btn-sm btn-outline-secondary btn-increase-quantity" type="button" data-id="<?php echo htmlspecialchars($item['id']); ?>">+</button>
+                                                    <div class="input-group input-group-sm quantity-control">
+                                                        <button class="btn btn-outline-secondary btn-decrease-quantity" type="button" data-id="<?php echo htmlspecialchars($item['id']); ?>">-</button>
+                                                        <input type="text" class="form-control text-center product-quantity" value="<?php echo htmlspecialchars($item['cantidad']); ?>" min="1" data-id="<?php echo htmlspecialchars($item['id']); ?>" data-price="<?php echo htmlspecialchars($item['precio']); ?>" readonly>
+                                                        <button class="btn btn-outline-secondary btn-increase-quantity" type="button" data-id="<?php echo htmlspecialchars($item['id']); ?>">+</button>
                                                     </div>
                                                 </td>
                                                 <td data-label="Subtotal:"><span class="item-subtotal">₡<?php echo number_format($item['precio'] * $item['cantidad'], 2, ',', '.'); ?></span></td>
-                                                <td data-label="Acciones:">
+                                                <td data-label="Acciones:" class="carrito-item-actions">
                                                     <button class="btn btn-danger btn-sm btn-remove-item" data-id="<?php echo htmlspecialchars($item['id']); ?>">
-                                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                                        <i class="fa fa-trash"></i> Eliminar
                                                     </button>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
-                                </table>
-                            </div>
-
-                            <div class="table-responsive">
-                                <table class="table">
                                     <tfoot>
                                         <tr>
+                                            <td colspan="3"></td>
                                             <td>Total:</td>
                                             <td id="cart-total-amount" class="text-right"><strong>₡<?php echo number_format($total_carrito_final, 2, ',', '.'); ?></strong></td>
                                         </tr>
                                     </tfoot>
                                 </table>
                             </div>
-
+                            <div class="mt-3">
+                                <label for="observacionesPedido" class="form-label">Observaciones para el pedido (opcional):</label>
+                                <textarea class="form-control" id="observacionesPedido" rows="3" placeholder="Ej: Recoger el viernes por la tarde, empaquetar para regalo, etc."></textarea>
+                            </div>
                             <div class="text-right mt-4">
                                 <button class="btn btn-success btn-proceed-to-checkout">Proceder al Pago</button>
                             </div>
+
                         <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
 
     <footer id="footer" class="footer">
         <div class="footer-top">
@@ -450,162 +401,202 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
     <script src="js/jquery.scrollUp.min.js"></script>
     <script src="js/niceselect.js"></script>
     <script src="js/tilt.jquery.min.js"></script>
-    <script src="js/owl-carousel.js"></script> <script src="js/magnific-popup.js"></script> <script src="js/waypoints.min.js"></script> <script src="js/jquery.counterup.min.js"></script> <script src="js/active.js"></script> <script src="js/carrito.js"></script>
-    <script>
-        // Ensure this function is called after the DOM is ready to update the total and points
+    <script src="js/owl-carousel.js"></script> <script src="js/magnific-popup.js"></script> <script src="js/waypoints.min.js"></script>
+    <script src="js/jquery.counterup.min.js"></script> 
+    <script src="js/active.js"></script> 
+    <script src="js/carrito.js"></script>
+<script>
         $(document).ready(function() {
-            // Function to update the cart display, including total and points
+            // Function to update cart display by fetching fresh data from the server
             function updateCartDisplay() {
+                console.log("updateCartDisplay: Obteniendo datos del carrito para refrescar UI...");
                 $.ajax({
-                    url: 'carrito.php?action=get_cart_data', // Request cart data
+                    url: 'carrito.php?action=get_cart_data', // Request for ALL current cart data
                     method: 'GET',
                     dataType: 'json',
                     success: function(response) {
+                        console.log("Datos del carrito recibidos para UI:", response);
                         if (response.success) {
-                            let cartItemsBody = $('#carrito-items-body');
-                            cartItemsBody.empty(); // Clear existing items
+                            let cartItemsBody = $('#cart-items-body');
+                            
+                            // Check if the cart table and tbody exist before manipulating
+                            if (cartItemsBody.length === 0) {
+                                console.error("Elemento #cart-items-body no encontrado en el DOM. La UI del carrito no puede ser actualizada.");
+                                return;
+                            }
 
-                            if (response.carrito && response.carrito.length > 0) {
-                                // Re-render cart items
+                            cartItemsBody.empty(); // Clear existing items to redraw the cart
+
+                            if (response.carrito.length === 0) {
+                                // If cart is empty, show the empty cart message and hide the table elements
+                                $('.table-responsive').hide(); // Hide the table container
+                                $('.btn-proceed-to-checkout').hide(); // Hide checkout button
+                                // If the empty message is not there, add it
+                                if ($('.empty-cart-message').length === 0) {
+                                    $('.user-main-content').append('<div class="alert alert-info text-center empty-cart-message" role="alert">Tu carrito está vacío. ¡Empieza a llenarlo con nuestros productos!</div>');
+                                } else {
+                                    $('.empty-cart-message').show();
+                                }
+                                $('#cart-total-amount strong').text('₡0,00'); // Ensure total is 0
+                            } else {
+                                // If cart has items, ensure table and button are visible and iterate and append each row
+                                $('.table-responsive').show();
+                                $('.btn-proceed-to-checkout').show();
+                                $('.empty-cart-message').hide(); // Hide empty cart message if it exists
+
                                 response.carrito.forEach(function(item) {
-                                    let itemRow = `
-                                        <tr class="carrito-item-row" data-id="${item.id}">
+                                    let subtotal = (item.precio * item.cantidad).toFixed(2);
+                                    let newRow = `
+                                        <tr data-id="${item.id}" class="carrito-item-row">
                                             <td data-label="Producto:" class="d-flex align-items-center">
-                                                ${item.imagen_url ? `<div class="carrito-producto-imagen"><img src="${item.imagen_url}" alt="${item.nombre}"></div>` : ''}
+                                                ${item.imagen_url ? `
+                                                    <div class="carrito-producto-imagen me-3">
+                                                        <img src="${item.imagen_url}" alt="${item.nombre}">
+                                                    </div>
+                                                ` : ''}
                                                 <span class="carrito-producto-nombre">${item.nombre}</span>
                                             </td>
-                                            <td data-label="Precio Unitario:"><span class="carrito-precio">₡${(item.precio).toFixed(2).replace('.', ',')}</span></td>
+                                            <td data-label="Precio Unitario:" class="carrito-precio">₡${parseFloat(item.precio).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                                             <td data-label="Cantidad:">
-                                                <div class="quantity-control">
-                                                    <button class="btn btn-sm btn-outline-secondary btn-decrease-quantity" type="button" data-id="${item.id}">-</button>
-                                                    <input type="text" class="form-control text-center product-quantity" value="${item.cantidad}" min="1" data-id="${item.id}" data-price="${item.precio}" readonly>
-                                                    <button class="btn btn-sm btn-outline-secondary btn-increase-quantity" type="button" data-id="${item.id}">+</button>
+                                                <div class="input-group input-group-sm quantity-control">
+                                                    <button class="btn btn-outline-secondary btn-decrease-quantity" type="button" data-id="${item.id}">-</button>
+                                                    <input type="text" class="form-control text-center product-quantity" value="${item.cantidad}" data-id="${item.id}" data-price="${item.precio}" readonly>
+                                                    <button class="btn btn-outline-secondary btn-increase-quantity" type="button" data-id="${item.id}">+</button>
                                                 </div>
                                             </td>
-                                            <td data-label="Subtotal:"><span class="item-subtotal">₡${(item.precio * item.cantidad).toFixed(2).replace('.', ',')}</span></td>
-                                            <td data-label="Acciones:">
+                                            <td data-label="Subtotal:" class="item-subtotal">₡${parseFloat(subtotal).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                                            <td data-label="Acciones:" class="carrito-item-actions">
                                                 <button class="btn btn-danger btn-sm btn-remove-item" data-id="${item.id}">
-                                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                                    <i class="fa fa-trash"></i> Eliminar
                                                 </button>
                                             </td>
                                         </tr>
                                     `;
-                                    cartItemsBody.append(itemRow);
+                                    cartItemsBody.append(newRow);
                                 });
-                                $('#cart-total-amount strong').text(`₡${(response.cart_total_amount).toFixed(2).replace('.', ',')}`);
-                                $('.alert-info').hide(); // Hide empty cart message
-                                $('.table-responsive').show();
-                                $('.text-right.mt-4').show(); // Show checkout button
-                            } else {
-                                $('.alert-info').show(); // Show empty cart message
-                                $('.table-responsive').hide();
-                                $('.text-right.mt-4').hide(); // Hide checkout button
+                                // Update cart totals in the table footer
+                                $('#cart-total-amount strong').text('₡' + parseFloat(response.cart_total_amount).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
                             }
-
-                            // Update user points display
-                            $('#user-points-display').text(response.user_points || 0);
-
+                            // Always update the cart item count in the header
+                            updateHeaderCartCount(response.total_items);
+                            // Always update user points if provided in the response
+                            if (response.user_points !== undefined) {
+                                $('#user-points-display').text(response.user_points + ' Puntos'); // Modificado para siempre mostrar "Puntos"
+                            }
                         } else {
-                            console.error('Error fetching cart data:', response.message);
+                            console.error('Error al obtener datos del carrito:', response.message);
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error('AJAX Error:', status, error);
+                        console.error('AJAX Error al obtener datos del carrito para UI:', status, error);
                     }
                 });
             }
 
-            // Initial call to update cart display on page load
-            updateCartDisplay();
+            // --- Event Listener para el botón "Proceder al Pago" ---
+            $(document).on('click', '.btn-proceed-to-checkout', function() {
+                let observaciones = $('#observacionesPedido').val();
+                let canjearPuntos = $('#checkboxCanjearPuntos').is(':checked'); // Obtener si el checkbox está marcado
 
-            // Event listener for quantity decrease button (delegated)
+                $.ajax({
+                    url: 'procesar_pedido.php', // El nuevo endpoint para el checkout
+                    method: 'POST',
+                    dataType: 'json',
+                    data: {
+                        action: 'checkout', // Asegúrate de que el PHP maneje esta acción
+                        observaciones: observaciones,
+                        canjear_puntos: canjearPuntos
+                    },
+                    success: function(response) {
+                        console.log("Respuesta de checkout:", response);
+                        if (response.success) {
+                            alert('Pedido realizado con éxito!\nNúmero de Proforma: ' + response.numero_proforma + '\nTotal a pagar: ₡' + response.total_a_pagar + '\n\nPor favor, acérquese a la tienda para completar el pago.');
+                            // Redirigir a una página de confirmación
+                            window.location.href = 'confirmacion_pedido.php?proforma=' + response.numero_proforma;
+                        } else {
+                            alert('Error al procesar el pedido: ' + response.message);
+                            console.error('Error del servidor al procesar el pedido:', response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error al procesar checkout:', status, error, xhr.responseText);
+                        alert('Error de comunicación con el servidor al procesar el pedido. Por favor, inténtelo de nuevo.');
+                    }
+                });
+            });
+
+            // --- Event Listeners for cart actions (update quantity, remove item) ---
+
+            // Listener for increasing quantity button
+            $(document).on('click', '.btn-increase-quantity', function() {
+                let productId = $(this).data('id');
+                let quantityInput = $(this).closest('.quantity-control').find('.product-quantity');
+                let currentQuantity = parseInt(quantityInput.val());
+                let newQuantity = currentQuantity + 1;
+                updateCartItemQuantity(productId, newQuantity, quantityInput);
+            });
+
+            // Listener for decreasing quantity button
             $(document).on('click', '.btn-decrease-quantity', function() {
                 let productId = $(this).data('id');
-                let quantityInput = $(this).siblings('.product-quantity');
+                let quantityInput = $(this).closest('.quantity-control').find('.product-quantity');
                 let currentQuantity = parseInt(quantityInput.val());
-                if (currentQuantity > 0) { // Allow decreasing to 0 to trigger removal
-                    updateCartItem(productId, currentQuantity - 1);
+                let newQuantity = currentQuantity - 1;
+                if (newQuantity >= 0) {
+                    updateCartItemQuantity(productId, newQuantity, quantityInput);
                 }
             });
 
-            // Event listener for quantity increase button (delegated)
-            $(document).on('click', '.btn-increase-quantity', function() {
-                let productId = $(this).data('id');
-                let quantityInput = $(this).siblings('.product-quantity');
-                let currentQuantity = parseInt(quantityInput.val());
-                updateCartItem(productId, currentQuantity + 1);
-            });
-
-            // Event listener for remove item button (delegated)
+            // Listener for removing item button
             $(document).on('click', '.btn-remove-item', function() {
                 let productId = $(this).data('id');
-                removeCartItem(productId);
+                updateCartItemQuantity(productId, 0);
             });
 
-            function updateCartItem(id, newQuantity) {
+            // Function to send quantity update (or removal) to the server
+            function updateCartItemQuantity(id, quantity, elementToUpdate = null) {
+                console.log(`Enviando actualización para ID: ${id}, Cantidad: ${quantity}`);
                 $.ajax({
                     url: 'carrito.php',
                     method: 'POST',
+                    dataType: 'json',
                     data: {
                         action: 'update_quantity',
                         id: id,
-                        cantidad: newQuantity
+                        cantidad: quantity
                     },
-                    dataType: 'json',
                     success: function(response) {
+                        console.log("Respuesta del servidor para actualización/eliminación:", response);
                         if (response.success) {
-                            updateCartDisplay(); // Refresh the entire cart
-                            // Optionally, show a small success message
+                            if (quantity > 0 && elementToUpdate) {
+                                elementToUpdate.val(quantity);
+                                let row = elementToUpdate.closest('.carrito-item-row');
+                                let price = parseFloat(elementToUpdate.data('price'));
+                                let newSubtotal = (price * quantity).toFixed(2);
+                                row.find('.item-subtotal').text('₡' + parseFloat(newSubtotal).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                            } else if (quantity === 0) {
+                                $(`tr[data-id="${id}"]`).remove();
+                            }
+                            updateCartDisplay(); 
                         } else {
-                            alert('Error: ' + response.message);
+                            alert('Error al actualizar el carrito: ' + (response.message || 'Error desconocido.'));
+                            console.error('Error del servidor al actualizar el carrito:', response.message);
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error('AJAX Error:', status, error);
-                        alert('Error al actualizar el carrito. Inténtalo de nuevo.');
+                        console.error('AJAX Error en updateCartItemQuantity:', status, error, xhr.responseText);
+                        alert('Error de comunicación con el servidor. Por favor, inténtelo de nuevo.');
                     }
                 });
             }
 
-            function removeCartItem(id) {
-                $.ajax({
-                    url: 'carrito.php',
-                    method: 'POST',
-                    data: {
-                        action: 'remove',
-                        id: id
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success) {
-                            updateCartDisplay(); // Refresh the entire cart
-                            // Optionally, show a small success message
-                        } else {
-                            alert('Error: ' + response.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('AJAX Error:', status, error);
-                        alert('Error al eliminar el producto. Inténtalo de nuevo.');
-                    }
-                });
+            // Function to update the cart item count in the header (navbar)
+            function updateHeaderCartCount(count) {
+                $('#cart-item-count').text(count);
             }
 
-            // Example for "Canjear Puntos" button (you'll implement its specific logic)
-            $('#canjear-puntos-btn').on('click', function() {
-                alert('Funcionalidad para canjear puntos se implementará aquí.');
-                // Here you would likely make another AJAX call to process points redemption
-            });
-
-            // Example for "Proceder al Pago" button (you'll implement its specific logic)
-            $('.btn-proceed-to-checkout').on('click', function() {
-                if (parseFloat($('#cart-total-amount strong').text().replace('₡', '').replace(',', '.')) > 0) {
-                     alert('Redirigiendo a la página de pago...');
-                     // window.location.href = 'checkout.php'; // Uncomment and change to your checkout page
-                } else {
-                     alert('Tu carrito está vacío. No se puede proceder al pago.');
-                }
-            });
+            // Initial load: Ensure cart display is correct when the page loads
+            updateCartDisplay();
         });
     </script>
 </body>
