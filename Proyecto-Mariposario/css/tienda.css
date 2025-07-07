@@ -283,7 +283,7 @@ body.mariposa {
     bottom: 0;
     width: 50px;
     height: 2px;
-    background-color: #D4AC0D;
+    background-color: #8BC34A;
 }
 
 #footer p {
@@ -305,8 +305,8 @@ body.mariposa {
 }
 
 #footer ul.social li a:hover {
-    background-color: #D4AC0D;
-    border-color: #D4AC0D;
+    background-color: #8BC34A;
+    border-color: #8BC34A;
     color: #fff;
 }
 
@@ -318,7 +318,7 @@ body.mariposa {
 }
 
 #footer .f-link ul li a:hover {
-    color: #D4AC0D;
+    color: #8BC34A;
     padding-left: 5px;
 }
 
