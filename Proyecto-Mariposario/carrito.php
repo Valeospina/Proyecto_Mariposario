@@ -9,8 +9,9 @@ if (!isset($_SESSION['user_logged_in'])) {
 if (!isset($_SESSION['user_name'])) {
     $_SESSION['user_name'] = 'EcoMariposa User'; // Default name
 }
+// Using the uploaded image for the user avatar by default
 if (!isset($_SESSION['user_avatar'])) {
-    $_SESSION['user_avatar'] = 'https://via.placeholder.com/100/CCCCCC/888888?text=Usuario'; // Default avatar or your local path
+    $_SESSION['user_avatar'] = 'img/image_151dea.png'; // Assuming 'img/' is the correct path
 }
 if (!isset($_SESSION['user_points'])) {
     $_SESSION['user_points'] = 0; // Default points for testing. Estos puntos se gestionarán en la compra real.
@@ -61,7 +62,8 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
                 $id = filter_var($_POST['id'], FILTER_SANITIZE_STRING);
                 $nombre = filter_var($_POST['nombre'], FILTER_SANITIZE_STRING);
                 $precio = filter_var($_POST['precio'], FILTER_VALIDATE_FLOAT);
-                $imagen_url = filter_var($_POST['imagen_url'] ?? '', FILTER_SANITIZE_URL);
+                // Use a default image if none provided, or the uploaded one
+                $imagen_url = filter_var($_POST['imagen_url'] ?? 'img/image_150aa3.png', FILTER_SANITIZE_URL);
 
                 // Validar que los datos no sean vacíos o inválidos
                 if ($id !== false && $id !== '' && $nombre !== false && $precio !== false && $precio >= 0) {
@@ -84,11 +86,6 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
                             'imagen_url' => $imagen_url
                         ];
                     }
-
-                    // *** MODIFICACIÓN: No agregar puntos aquí. Los puntos se gestionarán al momento de la compra. ***
-                    // if ($_SESSION['user_logged_in']) {
-                    //     $_SESSION['user_points'] += 10;
-                    // }
 
                     $response['success'] = true;
                     $response['message'] = 'Producto agregado al carrito.';
@@ -216,7 +213,8 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="css/tienda.css">
-    <link rel="stylesheet" href="css/carrito.css">
+    <link rel="stylesheet" href="css/carrito.css"> <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
@@ -227,7 +225,7 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
                 <div class="col-lg-3 col-md-4 col-12">
                     <div class="user-sidebar">
                         <div class="profile-info">
-                            <img src="img/user-profile.jpg" alt="Foto de perfil">
+                            <img src="<?php echo htmlspecialchars($_SESSION['user_avatar']); ?>" alt="Foto de perfil del usuario">
                             <h3>Hola, <?php echo htmlspecialchars($_SESSION['user_name']); ?></h3>
                             <p>Miembro desde: Abril 2023</p>
                             <a href="user-settings.php" class="btn btn-sm btn-primary">Editar Perfil</a>
@@ -246,28 +244,42 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
 
                 <div class="col-lg-9 col-md-8 col-12">
                     <div class="user-main-content">
-                        <h2 class="text-center">Tu Carrito de Compras</h2>
-
-                        <div class="carrito-puntos-wrapper">
+                        <h2 class="text-center mb-4">Tu Carrito de Compras</h2>
+                        <div class="carrito-puntos-wrapper mb-4 p-3">
                             <div class="puntos-texto">
-                                <h5>¡Hola <?php echo htmlspecialchars($_SESSION['user_name']); ?>! Tienes <span class="puntos-numero" id="user-points-display"><?php echo htmlspecialchars($puntosUsuario); ?></span> puntos.</h5>
+                                <h5>¡Hola <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Invitado'); ?>! Tienes <span class="puntos-numero" id="user-points-display"><?php echo htmlspecialchars($puntosUsuario ?? 0); ?></span> Puntos.</h5>
                                 <p>¡Canjea tus puntos por descuentos en tu próxima compra!</p>
                             </div>
                             <div class="puntos-acciones d-flex align-items-center">
-                                <button class="btn btn-primary btn-sm" id="canjear-puntos-btn">Canjear Puntos</button>
+                                <div class="form-check ms-3">
+                                    <input class="form-check-input" type="checkbox" id="checkboxCanjearPuntos">
+                                    <label class="form-check-label" for="checkboxCanjearPuntos">
+                                        Canjear mis puntos en este pedido
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         <?php if (empty($carrito_actual)): ?>
                             <div class="alert alert-info text-center empty-cart-message" role="alert">
                                 Tu carrito está vacío. ¡Empieza a llenarlo con nuestros productos!
+                                <br><a href="tienda.php" class="btn btn-primary mt-3">Ir a la Tienda</a>
                             </div>
                         <?php else: ?>
                             <div class="table-responsive">
-                                <table class="table">
+                                <table class="table cart-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Precio Unitario</th>
+                                            <th>Cantidad</th>
+                                            <th>Subtotal</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
                                     <tbody id="cart-items-body">
                                         <?php foreach ($carrito_actual as $item): ?>
                                             <tr class="carrito-item-row" data-id="<?php echo htmlspecialchars($item['id']); ?>">
-                                                <td data-label="Producto:" class="d-flex align-items-center">
+                                                <td data-label="Producto:" class="d-flex align-items-center product-cell">
                                                     <?php if (!empty($item['imagen_url'])): ?>
                                                         <div class="carrito-producto-imagen me-3">
                                                             <img src="<?php echo htmlspecialchars($item['imagen_url']); ?>" alt="<?php echo htmlspecialchars($item['nombre']); ?>">
@@ -294,19 +306,71 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <td colspan="3"></td>
-                                            <td>Total:</td>
+                                            <td colspan="3" class="d-none d-md-table-cell"></td>
+                                            <td colspan="2" class="d-md-none text-right"></td>
+                                            <td class="text-right"><strong>Total:</strong></td>
                                             <td id="cart-total-amount" class="text-right"><strong>₡<?php echo number_format($total_carrito_final, 2, ',', '.'); ?></strong></td>
                                         </tr>
                                     </tfoot>
                                 </table>
                             </div>
-                            <div class="mt-3">
+
+                            <div class="form-group mt-4">
+                                <label class="mb-3"><h5>Selecciona tu Método de Pago:</h5></label>
+                                <div class="payment-methods-grid">
+                                    <label class="payment-card">
+                                        <input class="form-check-input" type="radio" name="metodo_pago" id="pagoEfectivo" value="Efectivo Tienda" checked>
+                                        <div class="payment-card-content">
+                                            <i class="fas fa-money-bill-wave"></i>
+                                            <span>Pagar en Efectivo (en tienda física)</span>
+                                        </div>
+                                    </label>
+                                    <label class="payment-card">
+                                        <input class="form-check-input" type="radio" name="metodo_pago" id="pagoTarjeta" value="Tarjeta Tienda">
+                                        <div class="payment-card-content">
+                                            <i class="fas fa-credit-card"></i>
+                                            <span>Pagar con Tarjeta (en datáfono físico en tienda)</span>
+                                        </div>
+                                    </label>
+                                    <label class="payment-card">
+                                        <input class="form-check-input" type="radio" name="metodo_pago" id="pagoSinpe" value="SINPE Movil">
+                                        <div class="payment-card-content">
+                                            <i class="fas fa-mobile-alt"></i>
+                                            <span>SINPE Móvil</span>
+                                        </div>
+                                    </label>
+                                    <label class="payment-card">
+                                        <input class="form-check-input" type="radio" name="metodo_pago" id="pagoTransferencia" value="Transferencia Bancaria">
+                                        <div class="payment-card-content">
+                                            <i class="fas fa-university"></i>
+                                            <span>Transferencia Bancaria</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="instruccionesPago" class="alert alert-info mt-3" style="display: none;">
+                                <h6 class="alert-heading">Instrucciones para el Pago:</h6>
+                                <p id="sinpe-instructions" style="display:none;">
+                                    <strong>Número SINPE Móvil:</strong> **8888-8888**<br>
+                                    (A nombre de: EcoMariposa S.A. - Cédula Jurídica: 3-101-123456)
+                                </p>
+                                <p id="transferencia-instructions" style="display:none;">
+                                    <strong>Detalles de Transferencia Bancaria:</strong><br>
+                                    Banco: **Banco de Costa Rica (BCR)**<br>
+                                    Cuenta IBAN: **CR0000000000000000000000**<br>
+                                    Cédula Jurídica/Identificación: **3-101-123456**<br>
+                                    Nombre Beneficiario: **EcoMariposa S.A.**
+                                </p>
+                                <p class="mb-0">Por favor, realiza el pago y guarda tu comprobante. En caso de SINPE/Transferencia, contactaremos contigo para la confirmación o se te indicará cómo subir el comprobante en tu perfil de usuario.</p>
+                            </div>
+                            
+                            <div class="mt-4">
                                 <label for="observacionesPedido" class="form-label">Observaciones para el pedido (opcional):</label>
                                 <textarea class="form-control" id="observacionesPedido" rows="3" placeholder="Ej: Recoger el viernes por la tarde, empaquetar para regalo, etc."></textarea>
                             </div>
                             <div class="text-right mt-4">
-                                <button class="btn btn-success btn-proceed-to-checkout">Proceder al Pago</button>
+                                <button class="btn btn-success btn-lg btn-proceed-to-checkout">Proceder al Pago</button>
                             </div>
 
                         <?php endif; ?>
@@ -316,155 +380,54 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
         </div>
     </section>
 
-
-    <footer id="footer" class="footer">
-        <div class="footer-top">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-3 col-md-6 col-12">
-                        <div class="single-footer">
-                            <h2>Sobre Nosotros</h2>
-                            <p>Somos un proyecto dedicado a la conservación y apreciación de mariposas y orquídeas en Costa Rica. Promovemos el turismo sostenible y la educación ambiental.</p>
-                            <ul class="social">
-                                <li><a href="#"><i class="icofont-facebook"></i></a></li>
-                                <li><a href="#"><i class="icofont-instagram"></i></a></li>
-                                <li><a href="#"><i class="icofont-twitter"></i></a></li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-6 col-12">
-                        <div class="single-footer f-link">
-                            <h2>Enlaces Rápidos</h2>
-                            <div class="row">
-                                <div class="col-12">
-                                    <ul>
-                                        <li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Inicio</a></li>
-                                        <li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Reservaciones</a></li>
-                                        <li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Galería</a></li>
-                                        <li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Eventos</a></li>
-                                        <li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Contáctanos</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-6 col-12">
-                        <div class="single-footer">
-                            <h2>Horario de Atención</h2>
-                            <p>Visítanos para vivir una experiencia rodeado de naturaleza y belleza.</p>
-                            <ul class="time-sidual">
-                                <li class="day">Lunes - Viernes <span>8:00 - 17:00</span></li>
-                                <li class="day">Sábado <span>9:00 - 16:00</span></li>
-                                <li class="day">Domingo <span>Cerrado</span></li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-6 col-12">
-                        <div class="single-footer">
-                            <h2>Boletín</h2>
-                            <p>Suscríbete para recibir noticias sobre nuestras mariposas, orquídeas y próximos eventos especiales.</p>
-                            <form action="#" method="get" target="_blank" class="newsletter-inner">
-                                <input name="email" placeholder="Tu correo electrónico" class="common-input" required type="email">
-                                <button class="button"><i class="icofont icofont-paper-plane"></i></button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="copyright">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="copyright-content">
-                            <p>© 2025 Mariposas y Orquídeas | Todos los derechos reservados</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
     <script src="js/jquery.min.js"></script>
-    <script src="js/jquery-migrate-3.0.0.js"></script>
+    <script src="js/jquery-migrate.min.js"></script>
     <script src="js/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-    <script src="js/jquery-ui.min.js"></script>
-    <script src="js/easing.js"></script>
-    <script src="js/colors.js"></script>
-    <script src="js/bootstrap-datepicker.js"></script>
-    <script src="js/jquery.nav.js"></script>
+    <script src="js/bootstrap.min.js"></script>
     <script src="js/slicknav.min.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
-    <script src="js/niceselect.js"></script>
-    <script src="js/tilt.jquery.min.js"></script>
-    <script src="js/owl-carousel.js"></script> <script src="js/magnific-popup.js"></script> <script src="js/waypoints.min.js"></script>
-    <script src="js/jquery.counterup.min.js"></script> 
-    <script src="js/active.js"></script> 
-    <script src="js/carrito.js"></script>
-<script>
+    <script src="js/owl-carousel.js"></script>
+    <script src="js/magnific-popup.js"></script>
+    <script src="js/waypoints.min.js"></script>
+    <script src="js/jquery.counterup.min.js"></script>
+    <script src="js/easing.js"></script>
+    <script src="js/active.js"></script>
+    <script src="js/tienda.js"></script> <script>
         $(document).ready(function() {
-            // Function to update cart display by fetching fresh data from the server
+            // Function to update cart display
             function updateCartDisplay() {
-                console.log("updateCartDisplay: Obteniendo datos del carrito para refrescar UI...");
                 $.ajax({
-                    url: 'carrito.php?action=get_cart_data', // Request for ALL current cart data
+                    url: 'carrito.php', // Current file
                     method: 'GET',
+                    data: { action: 'get_cart_data' },
                     dataType: 'json',
                     success: function(response) {
-                        console.log("Datos del carrito recibidos para UI:", response);
                         if (response.success) {
-                            let cartItemsBody = $('#cart-items-body');
-                            
-                            // Check if the cart table and tbody exist before manipulating
-                            if (cartItemsBody.length === 0) {
-                                console.error("Elemento #cart-items-body no encontrado en el DOM. La UI del carrito no puede ser actualizada.");
-                                return;
-                            }
-
-                            cartItemsBody.empty(); // Clear existing items to redraw the cart
+                            $('#cart-items-body').empty(); // Clear existing items
 
                             if (response.carrito.length === 0) {
-                                // If cart is empty, show the empty cart message and hide the table elements
-                                $('.table-responsive').hide(); // Hide the table container
-                                $('.btn-proceed-to-checkout').hide(); // Hide checkout button
-                                // If the empty message is not there, add it
-                                if ($('.empty-cart-message').length === 0) {
-                                    $('.user-main-content').append('<div class="alert alert-info text-center empty-cart-message" role="alert">Tu carrito está vacío. ¡Empieza a llenarlo con nuestros productos!</div>');
-                                } else {
-                                    $('.empty-cart-message').show();
-                                }
-                                $('#cart-total-amount strong').text('₡0,00'); // Ensure total is 0
+                                // Show empty cart message
+                                $('.empty-cart-message').show();
+                                $('.table-responsive, .form-group, #instruccionesPago, .mt-3, .mt-4 button').hide();
                             } else {
-                                // If cart has items, ensure table and button are visible and iterate and append each row
-                                $('.table-responsive').show();
-                                $('.btn-proceed-to-checkout').show();
-                                $('.empty-cart-message').hide(); // Hide empty cart message if it exists
+                                $('.empty-cart-message').hide();
+                                $('.table-responsive, .form-group, .mt-3, .mt-4 button').show(); // Show cart elements
 
-                                response.carrito.forEach(function(item) {
-                                    let subtotal = (item.precio * item.cantidad).toFixed(2);
-                                    let newRow = `
-                                        <tr data-id="${item.id}" class="carrito-item-row">
-                                            <td data-label="Producto:" class="d-flex align-items-center">
-                                                ${item.imagen_url ? `
-                                                    <div class="carrito-producto-imagen me-3">
-                                                        <img src="${item.imagen_url}" alt="${item.nombre}">
-                                                    </div>
-                                                ` : ''}
+                                $.each(response.carrito, function(index, item) {
+                                    var row = `
+                                        <tr class="carrito-item-row" data-id="${item.id}">
+                                            <td data-label="Producto:" class="d-flex align-items-center product-cell">
+                                                ${item.imagen_url ? `<div class="carrito-producto-imagen me-3"><img src="${item.imagen_url}" alt="${item.nombre}"></div>` : ''}
                                                 <span class="carrito-producto-nombre">${item.nombre}</span>
                                             </td>
-                                            <td data-label="Precio Unitario:" class="carrito-precio">₡${parseFloat(item.precio).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                                            <td data-label="Precio Unitario:"><span class="carrito-precio">₡${parseFloat(item.precio).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></td>
                                             <td data-label="Cantidad:">
                                                 <div class="input-group input-group-sm quantity-control">
                                                     <button class="btn btn-outline-secondary btn-decrease-quantity" type="button" data-id="${item.id}">-</button>
-                                                    <input type="text" class="form-control text-center product-quantity" value="${item.cantidad}" data-id="${item.id}" data-price="${item.precio}" readonly>
+                                                    <input type="text" class="form-control text-center product-quantity" value="${item.cantidad}" min="1" data-id="${item.id}" data-price="${item.precio}" readonly>
                                                     <button class="btn btn-outline-secondary btn-increase-quantity" type="button" data-id="${item.id}">+</button>
                                                 </div>
                                             </td>
-                                            <td data-label="Subtotal:" class="item-subtotal">₡${parseFloat(subtotal).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                                            <td data-label="Subtotal:"><span class="item-subtotal">₡${(parseFloat(item.precio) * parseInt(item.cantidad)).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></td>
                                             <td data-label="Acciones:" class="carrito-item-actions">
                                                 <button class="btn btn-danger btn-sm btn-remove-item" data-id="${item.id}">
                                                     <i class="fa fa-trash"></i> Eliminar
@@ -472,131 +435,124 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
                                             </td>
                                         </tr>
                                     `;
-                                    cartItemsBody.append(newRow);
+                                    $('#cart-items-body').append(row);
                                 });
-                                // Update cart totals in the table footer
-                                $('#cart-total-amount strong').text('₡' + parseFloat(response.cart_total_amount).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
                             }
-                            // Always update the cart item count in the header
-                            updateHeaderCartCount(response.total_items);
-                            // Always update user points if provided in the response
-                            if (response.user_points !== undefined) {
-                                $('#user-points-display').text(response.user_points + ' Puntos'); // Modificado para siempre mostrar "Puntos"
-                            }
+
+                            $('#cart-total-amount').html(`<strong>₡${parseFloat(response.cart_total_amount).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>`);
+                            $('#user-points-display').text(response.user_points);
+                            // Update total items in the main navigation (if you have an element for it)
+                            $('.total-count').text(response.total_items);
                         } else {
                             console.error('Error al obtener datos del carrito:', response.message);
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error('AJAX Error al obtener datos del carrito para UI:', status, error);
+                        console.error('Error AJAX al obtener datos del carrito:', status, error);
                     }
                 });
             }
 
-            // --- Event Listener para el botón "Proceder al Pago" ---
-            $(document).on('click', '.btn-proceed-to-checkout', function() {
-                let observaciones = $('#observacionesPedido').val();
-                let canjearPuntos = $('#checkboxCanjearPuntos').is(':checked'); // Obtener si el checkbox está marcado
+            // Initial cart display on page load
+            updateCartDisplay();
+
+            // Handle quantity increase/decrease and remove
+            $(document).on('click', '.btn-increase-quantity, .btn-decrease-quantity, .btn-remove-item', function() {
+                var productId = $(this).data('id');
+                var currentQuantityInput = $('.product-quantity[data-id="' + productId + '"]');
+                var currentQuantity = parseInt(currentQuantityInput.val());
+                var newQuantity;
+                var actionType = 'update_quantity';
+
+                if ($(this).hasClass('btn-increase-quantity')) {
+                    newQuantity = currentQuantity + 1;
+                } else if ($(this).hasClass('btn-decrease-quantity')) {
+                    newQuantity = currentQuantity - 1;
+                    if (newQuantity < 0) newQuantity = 0; // Prevent negative quantity
+                } else if ($(this).hasClass('btn-remove-item')) {
+                    newQuantity = 0; // Set quantity to 0 to trigger removal
+                }
 
                 $.ajax({
-                    url: 'procesar_pedido.php', // El nuevo endpoint para el checkout
+                    url: 'carrito.php', // Your PHP script
                     method: 'POST',
-                    dataType: 'json',
                     data: {
-                        action: 'checkout', // Asegúrate de que el PHP maneje esta acción
-                        observaciones: observaciones,
-                        canjear_puntos: canjearPuntos
+                        action: actionType,
+                        id: productId,
+                        cantidad: newQuantity
                     },
+                    dataType: 'json',
                     success: function(response) {
-                        console.log("Respuesta de checkout:", response);
                         if (response.success) {
-                            alert('Pedido realizado con éxito!\nNúmero de Proforma: ' + response.numero_proforma + '\nTotal a pagar: ₡' + response.total_a_pagar + '\n\nPor favor, acérquese a la tienda para completar el pago.');
-                            // Redirigir a una página de confirmación
-                            window.location.href = 'confirmacion_pedido.php?proforma=' + response.numero_proforma;
+                            updateCartDisplay(); // Re-render the cart table
+                            alert(response.message); // For demonstration, use a toast/modal in production
                         } else {
-                            alert('Error al procesar el pedido: ' + response.message);
-                            console.error('Error del servidor al procesar el pedido:', response.message);
+                            alert('Error: ' + response.message);
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error('AJAX Error al procesar checkout:', status, error, xhr.responseText);
-                        alert('Error de comunicación con el servidor al procesar el pedido. Por favor, inténtelo de nuevo.');
+                        console.error('Error AJAX:', status, error);
+                        alert('Hubo un error al actualizar el carrito.');
                     }
                 });
             });
 
-            // --- Event Listeners for cart actions (update quantity, remove item) ---
+            // Payment method selection logic
+            $('input[name="metodo_pago"]').on('change', function() {
+                var selectedMethod = $(this).val();
+                var instruccionesPago = $('#instruccionesPago');
+                var sinpeInstructions = $('#sinpe-instructions');
+                var transferenciaInstructions = $('#transferencia-instructions');
 
-            // Listener for increasing quantity button
-            $(document).on('click', '.btn-increase-quantity', function() {
-                let productId = $(this).data('id');
-                let quantityInput = $(this).closest('.quantity-control').find('.product-quantity');
-                let currentQuantity = parseInt(quantityInput.val());
-                let newQuantity = currentQuantity + 1;
-                updateCartItemQuantity(productId, newQuantity, quantityInput);
-            });
+                // Hide all instructions first
+                instruccionesPago.hide();
+                sinpeInstructions.hide();
+                transferenciaInstructions.hide();
 
-            // Listener for decreasing quantity button
-            $(document).on('click', '.btn-decrease-quantity', function() {
-                let productId = $(this).data('id');
-                let quantityInput = $(this).closest('.quantity-control').find('.product-quantity');
-                let currentQuantity = parseInt(quantityInput.val());
-                let newQuantity = currentQuantity - 1;
-                if (newQuantity >= 0) {
-                    updateCartItemQuantity(productId, newQuantity, quantityInput);
+                // Show instructions based on selection
+                if (selectedMethod === 'SINPE Movil') {
+                    instruccionesPago.slideDown();
+                    sinpeInstructions.show();
+                } else if (selectedMethod === 'Transferencia Bancaria') {
+                    instruccionesPago.slideDown();
+                    transferenciaInstructions.show();
                 }
             });
 
-            // Listener for removing item button
-            $(document).on('click', '.btn-remove-item', function() {
-                let productId = $(this).data('id');
-                updateCartItemQuantity(productId, 0);
+            // Trigger initial check for payment method display in case a reload occurs
+            $('input[name="metodo_pago"]:checked').trigger('change');
+
+            // Example of "Proceder al Pago" button (you'd send cart data to a checkout page/API)
+            $('.btn-proceed-to-checkout').on('click', function() {
+                var selectedPaymentMethod = $('input[name="metodo_pago"]:checked').val();
+                var observaciones = $('#observacionesPedido').val();
+                var canjearPuntos = $('#checkboxCanjearPuntos').is(':checked');
+
+                if (confirm('¿Confirmar tu pedido y proceder al pago con ' + selectedPaymentMethod + '?')) {
+                    // Here you would typically send an AJAX request to a 'process_order.php'
+                    // containing the final cart data, payment method, observations, and points redemption status.
+                    console.log("Procediendo al pago...");
+                    console.log("Método de Pago Seleccionado:", selectedPaymentMethod);
+                    console.log("Observaciones:", observaciones);
+                    console.log("Canjear Puntos:", canjearPuntos);
+                    console.log("Carrito Actual:", <?php echo json_encode($carrito_actual); ?>);
+                    console.log("Total Final:", <?php echo json_encode($total_carrito_final); ?>);
+                    console.log("Puntos del Usuario:", <?php echo json_encode($puntosUsuario); ?>);
+
+                    // Example: Simulate a successful order
+                    alert('Pedido realizado con éxito (simulado). Gracias por tu compra con EcoMariposa!');
+                    // Optionally, clear the cart after successful order
+                    // $.ajax({
+                    //     url: 'carrito.php',
+                    //     method: 'POST',
+                    //     data: { action: 'clear_cart' }, // You'd need to add this action to your PHP
+                    //     success: function() {
+                    //         updateCartDisplay();
+                    //     }
+                    // });
+                    window.location.href = 'confirmation.php'; // Redirect to a confirmation page
+                }
             });
-
-            // Function to send quantity update (or removal) to the server
-            function updateCartItemQuantity(id, quantity, elementToUpdate = null) {
-                console.log(`Enviando actualización para ID: ${id}, Cantidad: ${quantity}`);
-                $.ajax({
-                    url: 'carrito.php',
-                    method: 'POST',
-                    dataType: 'json',
-                    data: {
-                        action: 'update_quantity',
-                        id: id,
-                        cantidad: quantity
-                    },
-                    success: function(response) {
-                        console.log("Respuesta del servidor para actualización/eliminación:", response);
-                        if (response.success) {
-                            if (quantity > 0 && elementToUpdate) {
-                                elementToUpdate.val(quantity);
-                                let row = elementToUpdate.closest('.carrito-item-row');
-                                let price = parseFloat(elementToUpdate.data('price'));
-                                let newSubtotal = (price * quantity).toFixed(2);
-                                row.find('.item-subtotal').text('₡' + parseFloat(newSubtotal).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-                            } else if (quantity === 0) {
-                                $(`tr[data-id="${id}"]`).remove();
-                            }
-                            updateCartDisplay(); 
-                        } else {
-                            alert('Error al actualizar el carrito: ' + (response.message || 'Error desconocido.'));
-                            console.error('Error del servidor al actualizar el carrito:', response.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('AJAX Error en updateCartItemQuantity:', status, error, xhr.responseText);
-                        alert('Error de comunicación con el servidor. Por favor, inténtelo de nuevo.');
-                    }
-                });
-            }
-
-            // Function to update the cart item count in the header (navbar)
-            function updateHeaderCartCount(count) {
-                $('#cart-item-count').text(count);
-            }
-
-            // Initial load: Ensure cart display is correct when the page loads
-            updateCartDisplay();
         });
     </script>
 </body>

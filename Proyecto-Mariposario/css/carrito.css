@@ -20,14 +20,6 @@ header a {
     font-weight: 500;
 }
 
-/* Consider if .container.my-5 is still needed or if .container within sections is enough */
-/* If this targets the main content wrapper, it should be fine. */
-.container.my-5 {
-    padding-top: 30px;
-    padding-bottom: 30px;
-    max-width: 1200px;
-}
-
 /* Page Title within Main Content Area */
 h2.text-center {
     color: #333;
@@ -145,13 +137,14 @@ h2.text-center {
 
 /* --- Main Content Area (Cart Content) --- */
 .user-main-content {
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    padding: 30px; /* Padding interno para el contenido principal */
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
 }
 
-/* Customer Points Section (Now within user-main-content, like a prominent banner) */
+/* Customer Points Section */
 .carrito-puntos-wrapper {
     background-color: #333; /* Fondo negro como en la imagen para esta sección */
     color: #fff;
@@ -162,7 +155,7 @@ h2.text-center {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* Allows wrapping on smaller screens */
     gap: 1rem;
 }
 
@@ -190,24 +183,24 @@ h2.text-center {
     margin-bottom: 0;
 }
 
-.carrito-puntos-wrapper .puntos-acciones .btn-primary {
-    background-color: #8BC34A; /* Verde para el botón Canjear Puntos */
-    border: none;
+/* Checkbox for points redemption */
+.carrito-puntos-wrapper .form-check {
+    margin-left: auto; /* Push checkbox to the right on larger screens */
+}
+.carrito-puntos-wrapper .form-check-input {
+    transform: scale(1.2); /* Make checkbox slightly larger */
+    margin-right: 8px;
+}
+.carrito-puntos-wrapper .form-check-label {
     color: #fff;
-    border-radius: 5px;
-    padding: 0.7rem 1.4rem;
+    font-size: 0.95rem;
     font-weight: 500;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 10px rgba(139, 195, 74, 0.3);
+    cursor: pointer;
 }
 
-.carrito-puntos-wrapper .btn-primary:hover {
-    background-color: #689f38;
-    box-shadow: 0 4px 15px rgba(139, 195, 74, 0.4);
-}
 
 /* Empty Cart Alert */
-.alert-info {
+.alert-info.empty-cart-message {
     background-color: #e6ffe6; /* Verde muy claro */
     color: #333;
     border-color: #c3e6cb;
@@ -215,6 +208,19 @@ h2.text-center {
     padding: 1.5rem;
     font-size: 1.05rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+.empty-cart-message .btn {
+    font-size: 1rem;
+    padding: 10px 20px;
+    margin-top: 15px;
+    background-color: #8BC34A; /* Green for "Go to Shop" */
+    border-color: #8BC34A;
+    color: #fff;
+    transition: all 0.3s ease;
+}
+.empty-cart-message .btn:hover {
+    background-color: #689f38;
+    border-color: #689f38;
 }
 
 /* Shopping Cart Items (Cards) */
@@ -224,23 +230,23 @@ h2.text-center {
     margin-bottom: 2rem;
 }
 
-.table {
+.table.cart-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 0;
+    margin-bottom: 0; /* Remove default table margin */
 }
 
-.table thead {
-    display: none; /* Hide the table header completely */
+.table.cart-table thead {
+    display: none; /* Hide the table header completely for card layout */
 }
 
-.table tbody {
+.table.cart-table tbody {
     display: flex; /* Flex container for the cards */
     flex-direction: column; /* Stack cards vertically */
     gap: 15px; /* Space between cards */
 }
 
-.table tbody tr.carrito-item-row {
+.table.cart-table tbody tr.carrito-item-row {
     display: flex; /* Each row becomes a flex item (the card) */
     background-color: #fff;
     border-radius: 10px;
@@ -251,12 +257,12 @@ h2.text-center {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.table tbody tr.carrito-item-row:hover {
+.table.cart-table tbody tr.carrito-item-row:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
-.table tbody td {
+.table.cart-table tbody td {
     padding: 0;
     margin-bottom: 0;
     display: flex;
@@ -267,26 +273,30 @@ h2.text-center {
 }
 
 /* Specific column styling within the card (Desktop/Larger screens) */
-.table tbody td[data-label="Producto:"] {
+.table.cart-table tbody td[data-label="Producto:"] {
     flex-basis: 35%; /* Base para el producto */
     flex-grow: 1; /* Permite que crezca para ocupar espacio */
     justify-content: flex-start;
     padding-right: 15px;
     white-space: normal; /* Permite que el nombre del producto se envuelva */
 }
-.table tbody td[data-label="Precio Unitario:"] {
+.table.cart-table tbody td[data-label="Precio Unitario:"] {
     flex-basis: 15%;
     justify-content: center;
+    font-weight: 600;
+    color: #555;
 }
-.table tbody td[data-label="Cantidad:"] {
+.table.cart-table tbody td[data-label="Cantidad:"] {
     flex-basis: 20%;
     justify-content: center;
 }
-.table tbody td[data-label="Subtotal:"] {
+.table.cart-table tbody td[data-label="Subtotal:"] {
     flex-basis: 15%;
     justify-content: center;
+    font-weight: 600;
+    color: #555;
 }
-.table tbody td[data-label="Acciones:"] {
+.table.cart-table tbody td[data-label="Acciones:"] {
     flex-basis: 15%; /* Espacio para el botón Eliminar */
     justify-content: flex-end; /* Alinea el botón a la derecha */
     flex-grow: 0; /* No permite que crezca */
@@ -294,7 +304,7 @@ h2.text-center {
 }
 
 /* Hide data labels on larger screens as layout is visual */
-.table tbody td::before {
+.table.cart-table tbody td::before {
     display: none;
 }
 
@@ -334,16 +344,16 @@ h2.text-center {
 
 .quantity-control .btn {
     width: 32px; /* Ancho fijo */
-    height: 32px; /* Alto fijo (¡Esto los hace cuadrados!) */
+    height: 32px; /* Alto fijo */
     font-size: 1rem;
     background-color: #f5f5f5;
     color: #555;
-    border: none; /* ¡CRUCIAL! Quitar los bordes individuales del botón */
-    border-radius: 0; /* ¡CRUCIAL! Asegurar que no tengan bordes redondeados individuales */
+    border: none; /* Quitar los bordes individuales del botón */
+    border-radius: 0; /* Asegurar que no tengan bordes redondeados individuales */
     display: flex; /* Usar Flexbox para centrar el contenido */
     align-items: center; /* Centrar verticalmente el signo */
     justify-content: center; /* Centrar horizontalmente el signo */
-    padding: 0; /* ¡CRUCIAL! Quitar cualquier padding interno que pueda empujar el contenido */
+    padding: 0; /* Quitar cualquier padding interno */
     line-height: 1; /* Ayuda a la alineación vertical del texto/icono */
     flex-shrink: 0; /* Evita que los botones se encojan */
     transition: background-color 0.2s ease;
@@ -355,12 +365,12 @@ h2.text-center {
 
 .quantity-control .form-control.product-quantity {
     height: 32px; /* Mismo alto que los botones */
-    border: none; /* ¡CRUCIAL! Quitar el borde individual del input */
+    border: none; /* Quitar el borde individual del input */
     font-size: 0.95rem;
     text-align: center;
     -moz-appearance: textfield; /* Oculta flechas en Firefox */
     flex-grow: 1; /* Permite que el input crezca para llenar el espacio */
-    min-width: 40px; /* Ancho mínimo para el número (ajusta si es necesario) */
+    min-width: 40px; /* Ancho mínimo para el número */
     padding: 0 5px; /* Padding horizontal para el número */
     background-color: #fff; /* Fondo blanco para el input */
     color: #333; /* Color oscuro para el número */
@@ -371,19 +381,6 @@ h2.text-center {
 .quantity-control .form-control.product-quantity::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
-}
-
-/* Asegurar que los iconos de Font Awesome se vean bien si se usan */
-.quantity-control .btn i {
-    font-size: 1rem;
-    line-height: 1;
-}
-
-.carrito-precio,
-.item-subtotal {
-    font-weight: 700;
-    color: #8BC34A; /* Vibrant green for prices and subtotals */
-    font-size: 1rem;
 }
 
 /* Remove Item Button */
@@ -408,7 +405,7 @@ h2.text-center {
 }
 
 /* Cart Total Footer (Separate Card) */
-.table tfoot {
+.table.cart-table tfoot {
     display: block; /* Important for flex container behavior */
     background-color: #fff;
     border-radius: 10px;
@@ -417,14 +414,14 @@ h2.text-center {
     margin-top: 15px;
 }
 
-.table tfoot tr {
+.table.cart-table tfoot tr {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%; /* Ensure it takes full width of parent block */
 }
 
-.table tfoot td {
+.table.cart-table tfoot td {
     padding: 0;
     border: none;
     font-size: 1.1rem; /* Slightly smaller */
@@ -442,7 +439,114 @@ h2.text-center {
     font-weight: 800;
 }
 
-/* Checkout Button */
+/* Payment Methods Grid */
+.payment-methods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Responsive grid */
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.payment-card {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px; /* Ensure cards have a minimum height */
+    position: relative; /* For the radio button overlay */
+}
+
+.payment-card:hover {
+    border-color: #007bff;
+    box-shadow: 0 0 15px rgba(0, 123, 255, 0.1);
+}
+
+.payment-card input[type="radio"] {
+    position: absolute; /* Position the radio button */
+    top: 10px;
+    right: 10px;
+    z-index: 1; /* Ensure it's clickable */
+    transform: scale(1.2); /* Make checkbox slightly larger */
+    opacity: 0; /* Hide default radio button */
+    cursor: pointer; /* Keep cursor pointer for the hidden radio */
+}
+
+/* Visual feedback for selected payment card */
+.payment-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    transition: all 0.3s ease;
+    border: 2px solid transparent; /* To handle selection border */
+    border-radius: 6px; /* Match parent inner radius */
+    box-sizing: border-box; /* Include padding/border in element's total width/height */
+}
+
+.payment-card input[type="radio"]:checked + .payment-card-content {
+    background-color: #e0f0ff; /* Light blue background when selected */
+    border-color: #007bff;
+    box-shadow: inset 0 0 0 2px #007bff; /* Inner border for selected */
+}
+
+.payment-card input[type="radio"]:checked + .payment-card-content::after {
+    content: '\f00c'; /* FontAwesome checkmark icon */
+    font-family: 'Font Awesome 5 Free'; /* Using Free version for broader compatibility */
+    font-weight: 900; /* For solid icon */
+    color: #28a745;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.2rem;
+    pointer-events: none; /* Ensure the checkmark doesn't block clicks */
+}
+
+.payment-card .payment-card-content i {
+    font-size: 2.5rem;
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.payment-card .payment-card-content span {
+    font-weight: 600;
+    color: #333;
+    font-size: 1rem;
+}
+
+/* Payment Instructions */
+#instruccionesPago {
+    background-color: #e9f7fe; /* Lighter blue for info */
+    border-color: #a7d9f7;
+    color: #0c5460;
+    border-radius: 8px;
+    padding: 1.25rem;
+}
+
+#instruccionesPago h6 {
+    color: #0056b3;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+/* Observations Textarea */
+#observacionesPedido {
+    min-height: 100px;
+    resize: vertical;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-size: 0.95rem;
+}
+
+/* Proceed to Checkout Button */
 .btn-proceed-to-checkout {
     background-color: #333; /* Black */
     border-color: #333;
@@ -474,7 +578,7 @@ h2.text-center {
         flex: 0 0 100%;
         max-width: 100%;
     }
-    /* Las columnas de la tabla mantendrán su flex-basis y nowrap si el espacio lo permite */
+    /* Cart item rows can remain flex-wrap: nowrap if they fit, otherwise the 767px breakpoint will handle it */
 }
 
 @media (max-width: 767px) { /* For mobile phones */
@@ -486,19 +590,36 @@ h2.text-center {
         padding: 20px;
     }
     h2.text-center {
-        font-size: 1.8rem;
+        font-size: 2rem;
         margin-bottom: 1.5rem;
-        text-align: center;
+    }
+
+    /* Customer Points Section on Mobile */
+    .carrito-puntos-wrapper {
+        flex-direction: column; /* Stack elements vertically */
+        align-items: flex-start; /* Align text to the left */
+        padding: 1.2rem 1.5rem;
+    }
+    .carrito-puntos-wrapper .puntos-texto {
+        width: 100%; /* Ensure text takes full width */
+    }
+    .carrito-puntos-wrapper .form-check {
+        margin-left: 0; /* Reset auto margin */
+        margin-top: 10px; /* Space between text and checkbox */
+        width: 100%;
+    }
+    .carrito-puntos-wrapper .form-check-label {
+        font-size: 0.9rem;
     }
 
     /* Cart Items (Cards) on Mobile - Full stacking */
-    .table tbody tr.carrito-item-row {
+    .table.cart-table tbody tr.carrito-item-row {
         flex-direction: column; /* Apila los elementos verticalmente dentro de la tarjeta */
         align-items: flex-start; /* Alinea los elementos al inicio (izquierda) de la columna */
         padding: 0.8rem;
-        flex-wrap: wrap; /* Permitimos que se envuelva en móvil para la disposición vertical */
+        flex-wrap: wrap; /* Allow wrapping on mobile */
     }
-    .table tbody td {
+    .table.cart-table tbody td {
         width: 100%; /* Cada celda ocupa todo el ancho */
         justify-content: space-between !important; /* Espacio entre etiqueta y valor */
         margin-bottom: 0.4rem;
@@ -508,11 +629,11 @@ h2.text-center {
         min-height: auto; /* Restablecer el min-height */
         white-space: normal; /* Permitir que el texto se envuelva en móvil */
     }
-    .table tbody td:last-child {
+    .table.cart-table tbody td:last-child {
         border-bottom: none;
         margin-bottom: 0;
     }
-    .table tbody td::before {
+    .table.cart-table tbody td::before {
         display: inline-block; /* Muestra las etiquetas de datos en pantallas pequeñas */
         font-weight: 500;
         color: #666;
@@ -521,7 +642,7 @@ h2.text-center {
         font-size: 0.9rem;
     }
     /* Special handling for Product column on mobile to align image and name */
-    .table tbody td[data-label="Producto:"] {
+    .table.cart-table tbody td[data-label="Producto:"] {
         flex-basis: auto;
         flex-direction: row;
         justify-content: flex-start;
@@ -531,23 +652,23 @@ h2.text-center {
         margin-bottom: 0.8rem;
     }
     .carrito-producto-imagen {
-        width: 50px;
-        height: 50px;
-        margin-right: 10px;
+        width: 70px;
+        height: 70px;
+        margin-right: 12px;
     }
     .carrito-producto-nombre {
-        font-size: 0.95rem;
-        flex-grow: 1;
+        font-size: 1rem;
     }
     .quantity-control {
         margin-top: 5px;
         width: 100%; /* Asegura que el control de cantidad tome todo el ancho disponible en su celda */
         max-width: 120px;
-        margin: 0; /* Elimina auto para alinear a la izquierda dentro de la celda */
+        margin-left: 0; /* Align left */
+        margin-right: auto; /* Push it left */
     }
 
     /* CLAVE para el botón Eliminar en móvil */
-    .table tbody td[data-label="Acciones:"] {
+    .table.cart-table tbody td[data-label="Acciones:"] {
         width: 100%; /* Ocupa todo el ancho de la tarjeta */
         justify-content: flex-end !important; /* ¡Empuja el botón a la derecha dentro de su celda en móvil! */
         margin-top: 10px;
@@ -558,31 +679,60 @@ h2.text-center {
         width: auto; /* Permite que el botón se ajuste a su contenido */
         margin-left: auto; /* Empuja el botón a la derecha dentro de su contenedor td */
         margin-right: 0;
-        /* Puedes agregar un max-width si no quieres que el botón sea demasiado grande: max-width: 150px; */
+    }
+
+    /* Total Footer on Mobile */
+    .table.cart-table tfoot {
+        padding: 1rem 1.2rem;
+    }
+    .table.cart-table tfoot td {
+        font-size: 1rem;
+    }
+    #cart-total-amount strong {
+        font-size: 1.3rem;
+    }
+
+    /* Payment Methods Grid on Mobile */
+    .payment-methods-grid {
+        grid-template-columns: 1fr; /* Single column on mobile */
+        gap: 15px;
+    }
+    .payment-card {
+        padding: 15px;
+        min-height: 100px;
+    }
+    .payment-card .payment-card-content i {
+        font-size: 2rem;
+        margin-bottom: 8px;
+    }
+    .payment-card .payment-card-content span {
+        font-size: 0.9rem;
+    }
+
+    /* Checkout Button on Mobile */
+    .btn-proceed-to-checkout {
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
     }
 }
 
 @media (max-width: 575px) { /* Even smaller mobile adjustments */
-    .profile-info {
-        padding-bottom: 15px;
-        margin-bottom: 20px;
-    }
     .profile-info img {
-        width: 70px;
-        height: 70px;
+        width: 60px;
+        height: 60px;
     }
     .profile-info h3 {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
     .profile-info p {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
     }
     .sidebar-menu li a {
-        padding: 10px 12px;
-        font-size: 0.95rem;
+        padding: 8px 10px;
+        font-size: 0.9rem;
     }
     .sidebar-menu li a i {
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
     .carrito-puntos-wrapper {
         padding: 1rem;
@@ -591,13 +741,18 @@ h2.text-center {
         font-size: 1.1rem;
     }
     .carrito-puntos-wrapper .puntos-numero {
-        font-size: 1.7rem;
+        font-size: 1.6rem;
     }
     .carrito-puntos-wrapper .puntos-texto p {
-        font-size: 0.8rem;
+        font-size: 0.85rem;
     }
-    .carrito-puntos-wrapper .btn-primary {
-        padding: 0.5rem 1rem;
-        font-size: 0.9rem;
+
+    /* Smaller product image in cart */
+    .carrito-producto-imagen {
+        width: 60px;
+        height: 60px;
+    }
+    .carrito-producto-nombre {
+        font-size: 0.95rem;
     }
 }
