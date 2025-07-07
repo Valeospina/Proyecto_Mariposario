@@ -133,7 +133,7 @@ body {
     display: block;
     font-size: 24px;
     font-weight: 600;
-    color: var(--primary-color);
+    color: #8BC34A;
     margin-bottom: 5px;
 }
 
@@ -168,7 +168,7 @@ body {
 /* Estilos para notificaciones no leídas */
 .notification-item.unread {
     background-color: rgba(128, 183, 141, 0.05);
-    border-left-color: var(--primary-color);
+    border-left-color: #8BC34A;
 }
 
 .notification-item.unread::before {
@@ -178,7 +178,7 @@ body {
     right: 20px;
     width: 8px;
     height: 8px;
-    background-color: var(--primary-color);
+    background-color: #8BC34A;
     border-radius: 50%;
 }
 
@@ -344,8 +344,8 @@ body {
 }
 
 .custom-control-input:checked ~ .custom-control-label::before {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
+    background-color: #8BC34A;
+    border-color: #8BC34A;
 }
 
 .notification-settings-actions {
@@ -409,29 +409,29 @@ body {
 
 /* Estilos de botones */
 .btn-primary {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
+    background-color: #8BC34A;
+    border-color: #8BC34A;
     color: white;
     transition: all 0.3s ease;
 }
 
 .btn-primary:hover, 
 .btn-primary:focus {
-    background-color: var(--secondary-color);
-    border-color: var(--secondary-color);
+    background-color: #8BC34A;
+    border-color: #8BC34A;
 }
 
 .btn-outline-primary {
-    color: var(--primary-color);
-    border-color: var(--primary-color);
+    color: #8BC34A;
+    border-color: #8BC34A;
     background-color: transparent;
     transition: all 0.3s ease;
 }
 
 .btn-outline-primary:hover {
     color: white;
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
+    background-color: #8BC34A;
+    border-color: #8BC34A;
 }
 
 /* Estilos responsivos */
@@ -517,7 +517,7 @@ body {
     height: 120px;
     border-radius: 50%;
     object-fit: cover;
-    border: 4px solid var(--primary-color);
+    border: 4px #8BC34A;
     margin-bottom: 15px;
 }
 
@@ -535,7 +535,7 @@ body {
 
 .sidebar-menu li a:hover, 
 .sidebar-menu li a.active {
-    background-color: var(--primary-color);
+    background-color: #8BC34A;
     color: white;
 }
 

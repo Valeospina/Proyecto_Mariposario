@@ -890,7 +890,7 @@
 }
 
 .call-action .button a.btn {
-    background-color: #80B78D; /* Verde */
+    background-color: #8BC34A; /* Verde */
     color: #fff;
     padding: 12px 25px;
     border-radius: 30px;
@@ -901,7 +901,7 @@
 }
 
 .call-action .button a.btn:hover {
-    background-color: #6a9c78; /* Verde más oscuro en hover */
+    background-color: #8BC34A; /* Verde más oscuro en hover */
 }
 
 .call-action .button a.btn.second {
@@ -1086,7 +1086,7 @@
 
         #footer .f-link ul li a i {
             margin-right: 8px;
-            color: #00BCD4;
+            color: #8BC34A;
         }
 
         #footer .f-link ul li a:hover {
@@ -1124,7 +1124,7 @@
         }
 
         #footer .newsletter-inner .button {
-            background: #00BCD4;
+            background: #8BC34A;
             border: none;
             padding: 12px 20px;
             border-radius: 0 50px 50px 0;
@@ -1138,7 +1138,7 @@
         }
 
         #footer .newsletter-inner .button:hover {
-            background: #00BCD4;
+            background: #8BC34A;
         }
 
         .copyright {
