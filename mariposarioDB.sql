@@ -12,11 +12,6 @@ DROP DATABASE IF EXISTS mariposarioDB;
 CREATE DATABASE mariposarioDB;
 USE mariposarioDB;
 
--- ====================================================================
--- 1. TABLAS PRINCIPALES DEL SISTEMA
--- ====================================================================
-
--- Tabla: Rol (Roles de usuario en el sistema)
 CREATE TABLE Rol (
     ID_Rol INT PRIMARY KEY,
     Nombre VARCHAR(100) NOT NULL,
@@ -91,7 +86,9 @@ CREATE TABLE Producto (
     Categoria VARCHAR(100),
     Descripcion TEXT,
     Precio DECIMAL(10, 2) NOT NULL,
+    Stock INT,
     Imagen_URL TEXT,
+    Fecha_Reposicion DATE,
     Activo_Catalogo BOOLEAN DEFAULT TRUE, -- Indica si el producto está visible en el catálogo
     Fecha_Creacion DATETIME DEFAULT CURRENT_TIMESTAMP
 );
@@ -341,6 +338,30 @@ INSERT INTO Usuario (ID_Usuario, ID_Rol, Nombre, Apellido, Correo, Contrasena, T
 INSERT INTO Empleado (ID_Usuario, Nombre, Correo, Salario, Rol, Horario, Fecha_Contratacion) VALUES
 (3, 'Ana Jiménez', 'ana.empleado@mariposario.com', 850000.00, 'Guía', 'L-V 8am-4pm', '2023-01-15'),
 (4, 'Pedro Vargas', 'pedro.empleado@mariposario.com', 900000.00, 'Mantenimiento', 'M-S 7am-3pm', '2022-07-01');
+
+-- Insertar mariposas a la tabla productos
+INSERT INTO Producto (Nombre, Categoria, Descripcion, Precio, Stock, Imagen_URL, Fecha_Reposicion, Activo_Catalogo) 
+VALUES 
+('Hamadrias laodamia', 'Mariposa', 'Mariposa de colores vibrantes, común en áreas tropicales.', 15.50, 10, 'https://static.inaturalist.org/photos/337837645/medium.jpg', '2025-07-15', TRUE),
+('Mircelia cisniris', 'Mariposa', 'Mariposa con patrones únicos en las alas, encontrada en zonas de bosques.', 18.75, 5, 'https://southcoastbotanicgarden.org/wp-content/uploads/2023/07/Shady-Spots-4.jpg', '2025-07-18', TRUE),
+('Morpho', 'Mariposa', 'Mariposa azul brillante, conocida por su impresionante coloración metálica.', 20.00, 12, 'https://contexto.udlap.mx/wp-content/uploads/2021/11/mariposa.jpg', '2025-07-20', TRUE),
+('Igna', 'Mariposa', 'Igna es una mariposa exótica con alas de colores variados, habitante de zonas tropicales.', 14.00, 8, 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Agraulis_vanillae_at_Isla_Margarita.jpg/250px-Agraulis_vanillae_at_Isla_Margarita.jpg', '2025-08-20', TRUE),
+('Catonephele mexicana', 'Mariposa', 'Mariposa tropical mexicana con un diseño particular en sus alas.', 17.40, 8, 'https://pictureinsect.com/wiki-image/1080/153820706105196555.jpeg', '2025-07-25', TRUE),
+('Siproeta stelenis', 'Mariposa', 'Mariposa tropical de colores vibrantes, conocida por su tamaño y belleza.', 22.50, 6, 'https://static.inaturalist.org/photos/33050984/medium.jpeg', '2025-07-27', TRUE),
+('Archaeprepona', 'Mariposa', 'Mariposa tropical, especialmente conocida por su coloración verde.', 19.00, 9, 'https://i.redd.it/a-one-spot-prepona-archaeoprepona-demophon-aka-banded-king-v0-23ufry6af6je1.jpg?width=8688&format=pjpg&auto=webp&s=1d012cc0bc98e278574d7a40aaf8e9ad76a1a75b', '2025-07-30', TRUE),
+('Cónsul fabius', 'Mariposa', 'Mariposa color marrón, con patrones llamativos en sus alas.', 16.25, 7, 'https://inaturalist-open-data.s3.amazonaws.com/photos/60274029/original.jpeg', '2025-08-05', TRUE);
+
+-- Insertar Orquideas a la tabla productos
+INSERT INTO Producto (Nombre, Categoria, Descripcion, Precio, Stock, Imagen_URL, Fecha_Reposicion, Activo_Catalogo)
+VALUES
+('Guaria Morada', 'Orquídea', 'La Guaria Morada es una orquídea nativa de América Central, famosa por sus flores de color morado brillante.', 25.00, 15, 'https://static.wixstatic.com/media/cdfea7_41bf369fee304c6687a2a41513851c6c~mv2.jpg/v1/fill/w_568,h_378,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/cdfea7_41bf369fee304c6687a2a41513851c6c~mv2.jpg', '2025-08-01', TRUE),
+('Cattleya trianae', 'Orquídea', 'La Cattleya trianae es conocida como la orquídea nacional de Colombia, con flores grandes y coloridas.', 30.00, 10, 'https://media.istockphoto.com/id/1479201464/es/foto/cattleya-trianae-u-orqu%C3%ADdea-flor-de-mayo-con-punta-dentada-p%C3%A9talos-blancos-en-medio-de-los.jpg?s=170667a&w=0&k=20&c=hzpxAbT31sGZ1GUgsmoPnsuC9PLinD2WNX2igRGfqmU=', '2025-08-10', TRUE),
+('Oncidium sphacelatum', 'Orquídea', 'Oncidium sphacelatum es una orquídea conocida por sus pequeñas flores que se asemejan a una mariposa.', 22.50, 12, 'https://www.picturethisai.com/wiki-image/1080/154113820443279364.jpeg', '2025-08-15', TRUE),
+('Psychopsis papilio', 'Orquídea', 'La Psychopsis papilio, o Orquídea mariposa, es famosa por sus flores que parecen alas de mariposa.', 28.00, 8, 'https://www.picturethisai.com/wiki-image/1080/218296531776962560.jpeg', '2025-08-20', TRUE),
+('Dendrobium', 'Orquídea', 'Dendrobium es un género que agrupa varias especies de orquídeas, conocidas por sus flores en racimo.', 20.00, 18, 'https://www.interflora.es/blog/wp-content/uploads/orquidea-dendrobium.jpg', '2025-08-25', TRUE),
+('Brassavola nodosa', 'Orquídea', 'La Brassavola nodosa es una orquídea nocturna, apreciada por su fragancia durante la noche.', 27.50, 10, 'https://www.shutterstock.com/image-photo/brassavola-small-white-tough-species-600nw-2548499641.jpg', '2025-09-01', TRUE),
+('Miltonia spectabilis', 'Orquídea', 'Miltonia spectabilis, conocida como la orquídea del pensamiento, es famosa por sus flores grandes y coloridas.', 35.00, 7, 'https://png.pngtree.com/thumb_back/fh260/background/20220913/pngtree-miltonia-maui-orchid-plant-white-photo-image_19805376.jpg', '2025-09-05', TRUE),
+('Epidendrum radicans', 'Orquídea', 'Epidendrum radicans es una orquídea que se caracteriza por sus raíces rojas y flores vibrantes.', 24.00, 20, 'https://www.picturethisai.com/wiki-image/1080/154019752069562384.jpeg', '2025-09-10', TRUE);
 
 
 
