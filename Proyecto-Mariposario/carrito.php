@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_name'])) {
 }
 // Using the uploaded image for the user avatar by default
 if (!isset($_SESSION['user_avatar'])) {
-    $_SESSION['user_avatar'] = 'img/image_151dea.png'; // Assuming 'img/' is the correct path
+    $_SESSION['user_avatar'] = 'img/user-profile.jpg'; // Assuming 'img/' is the correct path
 }
 if (!isset($_SESSION['user_points'])) {
     $_SESSION['user_points'] = 0; // Default points for testing. Estos puntos se gestionarán en la compra real.
@@ -55,49 +55,8 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $action = $_POST['action'] ?? ''; // Obtener la acción solicitada
 
-        if ($action === 'add') {
-            // Lógica para AGREGAR un producto
-            if (isset($_POST['id'], $_POST['nombre'], $_POST['precio'])) {
-                // Sanitizar ID como STRING
-                $id = filter_var($_POST['id'], FILTER_SANITIZE_STRING);
-                $nombre = filter_var($_POST['nombre'], FILTER_SANITIZE_STRING);
-                $precio = filter_var($_POST['precio'], FILTER_VALIDATE_FLOAT);
-                // Use a default image if none provided, or the uploaded one
-                $imagen_url = filter_var($_POST['imagen_url'] ?? 'img/image_150aa3.png', FILTER_SANITIZE_URL);
 
-                // Validar que los datos no sean vacíos o inválidos
-                if ($id !== false && $id !== '' && $nombre !== false && $precio !== false && $precio >= 0) {
-                    $found = false;
-                    foreach ($_SESSION['carrito'] as &$item) {
-                        if ($item['id'] == $id) {
-                            $item['cantidad']++;
-                            $found = true;
-                            break;
-                        }
-                    }
-                    unset($item); // Romper la referencia
-
-                    if (!$found) {
-                        $_SESSION['carrito'][] = [
-                            'id' => $id,
-                            'nombre' => $nombre,
-                            'precio' => $precio,
-                            'cantidad' => 1,
-                            'imagen_url' => $imagen_url
-                        ];
-                    }
-
-                    $response['success'] = true;
-                    $response['message'] = 'Producto agregado al carrito.';
-                    $response['total_items'] = getTotalCartItems();
-                    $response['user_points'] = $_SESSION['user_points']; // Aunque no se sumaron, enviamos los puntos actuales
-                } else {
-                    $response['message'] = 'Datos de producto inválidos.';
-                }
-            } else {
-                $response['message'] = 'Faltan datos para agregar el producto.';
-            }
-        } elseif ($action === 'update_quantity') {
+        if ($action === 'update_quantity') {
             // Lógica para ACTUALIZAR la cantidad de un producto o eliminarlo (cantidad 0)
             if (isset($_POST['id'], $_POST['cantidad'])) {
                 $id = filter_var($_POST['id'], FILTER_SANITIZE_STRING);
@@ -137,6 +96,36 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
             } else {
                 $response['message'] = 'Faltan datos para actualizar la cantidad.';
             }
+        } elseif ($action === 'remove') {
+            // Lógica para ELIMINAR un producto del carrito
+            if (isset($_POST['id'])) {
+                $id = filter_var($_POST['id'], FILTER_SANITIZE_STRING);
+
+                if ($id !== false && $id !== '') {
+                    if (isset($_SESSION['carrito'])) {
+                        $found = false;
+                        foreach ($_SESSION['carrito'] as $key => $item) {
+                            if ($item['id'] == $id) {
+                                unset($_SESSION['carrito'][$key]);
+                                $_SESSION['carrito'] = array_values($_SESSION['carrito']); // Reindex array
+                                $response['success'] = true;
+                                $response['message'] = 'Producto eliminado del carrito.';
+                                $found = true;
+                                break;
+                            }
+                        }
+                        if (!$found) {
+                            $response['message'] = 'Producto no encontrado en el carrito.';
+                        }
+                    } else {
+                        $response['message'] = 'El carrito ya está vacío.';
+                    }
+                } else {
+                    $response['message'] = 'ID de producto inválido para eliminar.';
+                }
+            } else {
+                $response['message'] = 'Falta el ID del producto para eliminar.';
+            }
         }
         else {
             $response['message'] = 'Acción POST no reconocida.';
@@ -175,7 +164,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
     header('Content-Type: application/json');
     echo json_encode($response);
     exit(); // ¡Muy importante para detener la ejecución y no enviar HTML!
-}
+} // This is the missing closing brace for the initial AJAX check
 
 // Ejemplo básico de cómo mostrar el carrito cuando no es una petición AJAX (HTML de la página)
 $carrito_actual = $_SESSION['carrito'] ?? []; // Obtener el carrito de la sesión
@@ -224,12 +213,12 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
             <div class="row">
                 <div class="col-lg-3 col-md-4 col-12">
                     <div class="user-sidebar">
-                        <div class="profile-info">
-                            <img src="<?php echo htmlspecialchars($_SESSION['user_avatar']); ?>" alt="Foto de perfil del usuario">
-                            <h3>Hola, <?php echo htmlspecialchars($_SESSION['user_name']); ?></h3>
-                            <p>Miembro desde: Abril 2023</p>
-                            <a href="user-settings.php" class="btn btn-sm btn-primary">Editar Perfil</a>
-                        </div>
+                            <div class="profile-info">
+                                <img src="img/user-profile.jpg" alt="Foto de perfil">
+                                <h3>Hola, <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Usuario'); ?></h3>
+                                <p>Miembro desde: Abril 2023</p>
+                                <a href="user-settings.php" class="btn btn-sm btn-primary">Editar Perfil</a>
+                            </div>
                         <ul class="sidebar-menu">
                             <li><a href="user-profile.php"><i class="fas fa-user"></i> Perfil</a></li>
                             <li><a href="MisPedidos.php"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
@@ -366,7 +355,7 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
                                 <textarea class="form-control" id="observacionesPedido" rows="3" placeholder="Ej: Recoger el viernes por la tarde, empaquetar para regalo, etc."></textarea>
                             </div>
                             <div class="text-right mt-4">
-                                <button class="btn btn-success btn-lg btn-proceed-to-checkout">Ver metodos de pago</button>
+                                <button class="btn btn-success btn-lg btn-proceed-to-checkout">Continuar al Pago</button>
                             </div>
 
                         <?php endif; ?>

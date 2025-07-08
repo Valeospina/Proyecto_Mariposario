@@ -8,13 +8,14 @@
     <meta name='copyright' content=''>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Jardin De Orquideas - Orquideas</title>
+    <title>Jardin De Mariposas - Mariposas</title>
     <link rel="icon" href="img/favicon.png">
+
     <link href="https://fonts.googleapis.com/css?family=Poppins:200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/nice-select.css">
+    <link rel="stylesheet" href="css/nice-select.css"> 
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/icofont.css">
     <link rel="stylesheet" href="css/slicknav.min.css">
@@ -22,7 +23,9 @@
     <link rel="stylesheet" href="css/datepicker.css">
     <link rel="stylesheet" href="css/animate.min.css">
     <link rel="stylesheet" href="css/magnific-popup.css">
+    
     <link rel="stylesheet" href="css/tienda.css"> 
+    <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="css/responsive.css">
 
