@@ -10,6 +10,11 @@
             color: #212529; /* Darker text for better contrast */
         }
 
+        .text-belleza{
+            font-weight: 600; /* Slightly bolder headings */
+            color: #ffffff; /* Darker text for better contrast */
+        }
+
         p {
             margin-bottom: 1rem;
         }

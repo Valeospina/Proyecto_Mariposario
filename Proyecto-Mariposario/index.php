@@ -108,7 +108,7 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
                                 <div class="single-content">
                                     <span>Explorá la naturaleza</span>
                                     <h4>Visitas guiadas</h4>
-                                    <p>Disfrutá de un recorrido educativo por el mariposario y conocé el ciclo de vida de nuestras mariposas.</p>
+                                    <p>Disfrutá de un recorrido educativo por el mariposario y conocé el ciclo de vida de nuestras mariposas.</p><br><br>
                                     <a href="Reserva.php">Reservar ahora <i class="fa fa-long-arrow-right"></i></a>
                                 </div>
                             </div>
@@ -177,7 +177,7 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
                                 <i class="icofont icofont-shopping-cart"></i>
                             </div>
                             <h3>Comprar orquídeas</h3>
-                            <p>Visitá nuestra tienda en línea, explorá las especies disponibles y agregá tus favoritas al carrito.</p>
+                            <p>Visitá nuestra tienda en línea, explorá las especies disponibles y agregá tus favoritas al carrito.</p><br><br>
                         </div>
                     </a>
                 </div>
@@ -188,7 +188,7 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
                                 <i class="icofont icofont-delivery-time"></i>
                             </div>
                             <h3>Entrega o recolección</h3>
-                            <p>Recibí tus orquídeas en casa o retíralas directamente en el mariposario. ¡Simple y rápido!</p>
+                            <p>Recibí tus orquídeas en casa o retíralas directamente en el mariposario. ¡Simple y rápido!</p><br><br>
                         </div>
                     </a>
                 </div>
@@ -293,7 +293,7 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
         <div class="row">
             <div class="col-lg-12 col-md-12 col-12">
             <div class="content">
-                <h2>¿Te apasiona la naturaleza? Ven a ver nuestras mariposas y orquídeas únicas</h2>
+                <h2 class="text-belleza">¿Te apasiona la naturaleza? Ven a ver nuestras mariposas y orquídeas únicas</h2>
                 <p>Explora un mundo lleno de mariposas coloridas y orquídeas únicas. En nuestro mariposario podrás disfrutar de un ambiente natural y aprender sobre estas maravillosas criaturas. ¡No esperes más y ven a vivir esta experiencia!</p>
                 <div class="button">
                 <a href="Reserva.php" class="btn">Visítanos Ahora</a>

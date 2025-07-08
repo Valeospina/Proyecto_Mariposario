@@ -168,7 +168,7 @@ body.mariposa {
 }
 
 .product-name-custom {
-    font-size: 1.2em; /* Reducido un poco el tamaño del nombre */
+    font-size: 1.1em; /* Reducido un poco el tamaño del nombre */
     font-weight: 600;
     margin-bottom: 5px; /* Reducido el margen inferior */
     color: #2c2d3f;
@@ -443,3 +443,4 @@ body.mariposa {
         max-width: 100%;
     }
 }
+

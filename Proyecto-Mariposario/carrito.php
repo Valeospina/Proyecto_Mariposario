@@ -233,11 +233,7 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
                         <ul class="sidebar-menu">
                             <li><a href="user-profile.php"><i class="fas fa-user"></i> Perfil</a></li>
                             <li><a href="MisPedidos.php"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
-                            <li><a href="eventosReservados.php"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
                             <li><a href="notificaciones.php"><i class="fas fa-bell"></i> Notificaciones <span class="badge badge-primary">3</span></a></li>
-                            <li><a href="user-favorites.php"><i class="fas fa-heart"></i> Favoritos</a></li>
-                            <li><a href="user-settings.php"><i class="fas fa-cog"></i> Configuración</a></li>
-                            <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
                         </ul>
                     </div>
                 </div>
