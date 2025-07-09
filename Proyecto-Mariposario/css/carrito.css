@@ -252,7 +252,7 @@ h2.text-center {
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Softer shadow for items */
     padding: 1rem 1.2rem;
-    align-items: center;
+    align-items: flex-start;
     flex-wrap: nowrap; /* CRUCIAL para mantener todo en una línea en pantallas grandes */
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
