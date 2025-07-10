@@ -1,7 +1,6 @@
 <!doctype html>
 <html class="no-js" lang="es">
-    <?php
-// Asegúrate de que la sesión esté iniciada
+<?php
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
@@ -230,7 +229,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     <body>
     
 
-            <?php include 'layout/nav.php'; ?>
+        <?php include 'layout/nav.php'; ?>
 
         <section class="user-panel section">
             <div class="container">

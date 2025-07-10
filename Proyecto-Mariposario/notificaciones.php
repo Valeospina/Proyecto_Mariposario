@@ -1,55 +1,41 @@
 <!doctype html>
 <html class="no-js" lang="es">
+<?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
-<head>
-    <!-- Meta Tags -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="keywords" content="Eco Mariposas, notificaciones, usuario, jardín, naturaleza, mariposas">
-    <meta name="description"
-        content="Centro de notificaciones de Eco Mariposas, donde puedes gestionar y ver todas tus alertas y mensajes importantes.">
-    <meta name='copyright' content='Eco Mariposas'>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+// Obtén el nombre de la página actual para el estado "active" del menú
+$currentPage = basename($_SERVER['PHP_SELF']);
+?>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="keywords" content="Eco Mariposas, perfil de usuario, jardín, naturaleza, mariposas">
+        <meta name="description" content="Panel de usuario de Eco Mariposas, un espacio donde puedes gestionar tus pedidos, eventos y notificaciones.">
+        <meta name='copyright' content='Eco Mariposas'>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        
+        <title>Mi Perfil | Eco Mariposas</title>
+        
+        <link rel="icon" href="img/favicon.png">
+        
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Title -->
-    <title>Mis Notificaciones | Eco Mariposas</title>
-
-    <!-- Favicon -->
-    <link rel="icon" href="img/favicon.png">
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <!-- Nice Select CSS -->
-    <link rel="stylesheet" href="css/nice-select.css">
-    <!-- Font Awesome CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- Slicknav -->
-    <link rel="stylesheet" href="css/slicknav.min.css">
-    <!-- Owl Carousel CSS -->
-    <link rel="stylesheet" href="css/owl-carousel.css">
-    <!-- Datepicker CSS -->
-    <link rel="stylesheet" href="css/datepicker.css">
-    <!-- Animate CSS -->
-    <link rel="stylesheet" href="css/animate.min.css">
-    <!-- Magnific Popup CSS -->
-    <link rel="stylesheet" href="css/magnific-popup.css">
-
-    <!-- Medipro CSS -->
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="css/responsive.css">
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/notificaciones.css">
-    <style>
-
-/* Notificaciones CSS - Eco Mariposas
-   Este archivo contiene los estilos específicos para la página de notificaciones
-*/
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/nice-select.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link rel="stylesheet" href="css/slicknav.min.css">
+        <link rel="stylesheet" href="css/owl-carousel.css">
+        <link rel="stylesheet" href="css/datepicker.css">
+        <link rel="stylesheet" href="css/animate.min.css">
+        <link rel="stylesheet" href="css/magnific-popup.css">
+        
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="css/responsive.css">
+        
+        <style>
 
 :root {
     --primary-color: #80B78D;
@@ -713,77 +699,7 @@ body {
 
 <body>
 
-    <!-- Preloader -->
-    <div class="preloader">
-        <div class="loader">
-            <div class="loader-outter"></div>
-            <div class="loader-inner"></div>
-
-            <div class="indicator">
-                <svg width="32px" height="32px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                    <g>
-                        <!-- Ala trasera izquierda -->
-                        <path d="M32 32 C22 20, 10 40, 28 40" fill="none" stroke="#ffffff" stroke-width="2" />
-
-                        <!-- Ala trasera derecha -->
-                        <path d="M32 32 C42 20, 54 40, 36 40" fill="none" stroke="#ffffff" stroke-width="2" />
-
-                        <!-- Ala delantera izquierda animada -->
-                        <path d="M32 32 C18 14, 4 34, 24 36" fill="none" stroke="#80B78D" stroke-width="2">
-                            <animate attributeName="d" dur="1s" repeatCount="indefinite" values="
-                                M32 32 C18 14, 4 34, 24 36;
-                                M32 32 C16 16, 2 32, 22 36;
-                                M32 32 C18 14, 4 34, 24 36" />
-                        </path>
-
-                        <!-- Ala delantera derecha animada -->
-                        <path d="M32 32 C46 14, 60 34, 40 36" fill="none" stroke="#80B78D" stroke-width="2">
-                            <animate attributeName="d" dur="1s" repeatCount="indefinite" values="
-                                M32 32 C46 14, 60 34, 40 36;
-                                M32 32 C48 16, 62 32, 42 36;
-                                M32 32 C46 14, 60 34, 40 36" />
-                        </path>
-
-                        <!-- Cuerpo -->
-                        <line x1="32" y1="30" x2="32" y2="40" stroke="#ffffff" stroke-width="2" />
-                    </g>
-                </svg>
-            </div>
-        </div>
-    </div>
-    <!-- End Preloader -->
-
-    <!-- Header Area -->
-    <header class="header">
-        <!-- Topbar -->
-        <div class="topbar">
-            <div class="containerUsuario">
-                <div class="row">
-                    <div class="col-lg-6 col-md-5 col-12">
-                        <!-- Contact -->
-                        <ul class="top-link">
-                            <li><a href="index.php">Inicio</a></li>
-                            <li><a href="tienda.php">Tienda</a></li>
-                            <li><a href="eventos.php">Eventos</a></li>
-                            <li><a href="contact.php">Contacto</a></li>
-                        </ul>
-                        <!-- End Contact -->
-                    </div>
-                    <div class="col-lg-6 col-md-7 col-12">
-                        <!-- Top Contact -->
-                        <ul class="top-contact">
-                            <li><i class="fa fa-phone"></i>+506 6252 5969</li>
-                            <li><i class="fa fa-envelope"></i><a
-                                    href="mailto:soportejardinlapaz@gmail.com">soportejardinlapaz@gmail.com</a></li>
-                        </ul>
-                        <!-- End Top Contact -->
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- End Topbar -->
-    </header>
-    <!-- End Header Area -->
+ <?php include 'layout/nav.php'; ?>
 
     <!-- Panel de Usuario -->
     <section class="user-panel section">

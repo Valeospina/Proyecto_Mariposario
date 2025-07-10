@@ -1,47 +1,41 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html class="no-js" lang="es">
+<?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="keywords" content="Site keywords here">
-    <meta name="description" content="">
-    <meta name='copyright' content=''>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-		<!-- Title -->
+// Obtén el nombre de la página actual para el estado "active" del menú
+$currentPage = basename($_SERVER['PHP_SELF']);
+?>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="keywords" content="Eco Mariposas, perfil de usuario, jardín, naturaleza, mariposas">
+        <meta name="description" content="Panel de usuario de Eco Mariposas, un espacio donde puedes gestionar tus pedidos, eventos y notificaciones.">
+        <meta name='copyright' content='Eco Mariposas'>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        
         <title>Mi Perfil | Eco Mariposas</title>
-		
-		<!-- Favicon -->
+        
         <link rel="icon" href="img/favicon.png">
-		
-		<!-- Google Fonts -->
-		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-		<!-- Bootstrap CSS -->
-		<link rel="stylesheet" href="css/bootstrap.min.css">
-		<!-- Nice Select CSS -->
-		<link rel="stylesheet" href="css/nice-select.css">
-		<!-- Font Awesome CSS -->
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/nice-select.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-		<!-- Slicknav -->
-		<link rel="stylesheet" href="css/slicknav.min.css">
-		<!-- Owl Carousel CSS -->
+        <link rel="stylesheet" href="css/slicknav.min.css">
         <link rel="stylesheet" href="css/owl-carousel.css">
-		<!-- Datepicker CSS -->
-		<link rel="stylesheet" href="css/datepicker.css">
-		<!-- Animate CSS -->
+        <link rel="stylesheet" href="css/datepicker.css">
         <link rel="stylesheet" href="css/animate.min.css">
-		<!-- Magnific Popup CSS -->
         <link rel="stylesheet" href="css/magnific-popup.css">
-		
-		<!-- Medipro CSS -->
+        
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="css/responsive.css">
-
-    <!-- Estilo personalizado para Mis Pedidos -->
-    <style>
+        
+        <style>
         /* Estilo general de la página */
         body {
             font-family: 'Poppins', sans-serif;
@@ -399,99 +393,30 @@
 
 <body>
 
-    <!-- Preloader -->
-    <div class="preloader">
-        <div class="loader">
-            <div class="loader-outter"></div>
-            <div class="loader-inner"></div>
+        <?php include 'layout/nav.php'; ?>
 
-            <div class="indicator">
-                <svg width="32px" height="32px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                    <g>
-                        <!-- Ala trasera izquierda -->
-                        <path d="M32 32 C22 20, 10 40, 28 40" fill="none" stroke="#ffffff" stroke-width="2" />
-
-                        <!-- Ala trasera derecha -->
-                        <path d="M32 32 C42 20, 54 40, 36 40" fill="none" stroke="#ffffff" stroke-width="2" />
-
-                        <!-- Ala delantera izquierda animada -->
-                        <path d="M32 32 C18 14, 4 34, 24 36" fill="none" stroke="#80B78D" stroke-width="2">
-                            <animate attributeName="d" dur="1s" repeatCount="indefinite" values="
-								M32 32 C18 14, 4 34, 24 36;
-								M32 32 C16 16, 2 32, 22 36;
-								M32 32 C18 14, 4 34, 24 36" />
-                        </path>
-
-                        <!-- Ala delantera derecha animada -->
-                        <path d="M32 32 C46 14, 60 34, 40 36" fill="none" stroke="#80B78D" stroke-width="2">
-                            <animate attributeName="d" dur="1s" repeatCount="indefinite" values="
-								M32 32 C46 14, 60 34, 40 36;
-								M32 32 C48 16, 62 32, 42 36;
-								M32 32 C46 14, 60 34, 40 36" />
-                        </path>
-
-                        <!-- Cuerpo -->
-                        <line x1="32" y1="30" x2="32" y2="40" stroke="#ffffff" stroke-width="2" />
-                    </g>
-                </svg>
-            </div>
-        </div>
-    </div>
-
-    <!-- End Preloader -->
-
-    <!-- Header -->
-    <header class="header">
-        <div class="topbar">
-            <div class="containerPedidos">
+        <section class="user-panel section">
+            <div class="container">
                 <div class="row">
-                    <div class="col-lg-6 col-md-5 col-12">
-                        <ul class="top-link">
-                            <li><a href="index.php">Inicio</a></li>
-                            <li><a href="tienda.php">Tienda</a></li>
-                            <li><a href="eventos.php">Eventos</a></li>
-                            <li><a href="contact.php">Contacto</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-lg-6 col-md-7 col-12">
-                        <ul class="top-contact">
-                            <li><i class="fa fa-phone"></i>+880 1234 56789</li>
-                            <li><i class="fa fa-envelope"></i><a
-                                    href="mailto:support@yourmail.com">support@yourmail.com</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-
-    <!-- Panel de Usuario -->
-    <section class="user-panel section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3 col-md-4 col-12">
-                    <!-- Sidebar -->
-                    <div class="user-sidebar">
-                        <div class="profile-info">
-                            <img src="img/user-profile.jpg" alt="Foto de perfil">
-                            <h3>Hola, Usuario</h3>
-                            <p>Miembro desde: Abril 2023</p>
-                            <a href="user-settings.php" class="btn btn-sm btn-primary">Editar Perfil</a>
+                    <div class="col-lg-3 col-md-4 col-12">
+                        <div class="user-sidebar">
+                            <div class="profile-info">
+                                <img src="img/user-profile.jpg" alt="Foto de perfil">
+                                <h3>Hola, <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Usuario'); ?></h3>
+                                <p>Miembro desde: Abril 2023</p>
+                                <a href="user-settings.php" class="btn btn-sm btn-primary">Editar Perfil</a>
+                            </div>
+                            <ul class="sidebar-menu">
+                                <li><a href="user-profile.php" class="active"><i class="fas fa-user"></i> Perfil</a></li>
+                                <li><a href="MisPedidos.php"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
+                                <li><a href="eventosReservados.php"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
+                                <li><a href="notificaciones.php"><i class="fas fa-bell"></i> Notificaciones <span class="badge badge-primary">3</span></a></li>
+                                <li><a href="user-favorites.php"><i class="fas fa-heart"></i> Favoritos</a></li>
+                                <li><a href="user-settings.php"><i class="fas fa-cog"></i> Configuración</a></li>
+                                <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
+                            </ul>
                         </div>
-                        <ul class="sidebar-menu">
-                            <li><a href="usuario.php"><i class="fas fa-user"></i> Perfil</a></li>
-                            <li><a href="MisPedidos.php"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
-                            <li><a href="eventosReservados.php"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
-                            <li><a href="notificaciones.php" class="active"><i class="fas fa-bell"></i> Notificaciones
-                                    <span class="badge badge-primary">3</span></a></li>
-                            <li><a href="user-favorites.php"><i class="fas fa-heart"></i> Favoritos</a></li>
-                            <li><a href="user-settings.php"><i class="fas fa-cog"></i> Configuración</a></li>
-                            <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
-                        </ul>
-                    </div>
-                    <!-- End Sidebar -->
-                </div>
+                        </div>
                 <div class="col-lg-9 col-md-8 col-12">
                     <!-- Main Content -->
                     <div class="user-main-content">
