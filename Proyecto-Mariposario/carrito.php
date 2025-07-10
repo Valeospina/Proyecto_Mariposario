@@ -355,7 +355,7 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
                                 <textarea class="form-control" id="observacionesPedido" rows="3" placeholder="Ej: Recoger el viernes por la tarde, empaquetar para regalo, etc."></textarea>
                             </div>
                             <div class="text-right mt-4">
-                                <button class="btn btn-success btn-lg btn-proceed-to-checkout">Continuar al Pago</button>
+                                <a href="checkout.php" class="btn btn-success">Pagar con Tarjeta</a>
                             </div>
 
                         <?php endif; ?>
