@@ -407,7 +407,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                                 <a href="user-settings.php" class="btn btn-sm btn-primary">Editar Perfil</a>
                             </div>
                             <ul class="sidebar-menu">
-                                <li><a href="user-profile.php" class="active"><i class="fas fa-user"></i> Perfil</a></li>
+                                <li><a href="usuario.php" class="active"><i class="fas fa-user"></i> Perfil</a></li>
                                 <li><a href="MisPedidos.php"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
                                 <li><a href="eventosReservados.php"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
                                 <li><a href="notificaciones.php"><i class="fas fa-bell"></i> Notificaciones <span class="badge badge-primary">3</span></a></li>

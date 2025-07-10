@@ -1,5 +1,3 @@
-<!doctype html>
-<html class="no-js" lang="es">
 <?php
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -8,6 +6,34 @@ if (session_status() == PHP_SESSION_NONE) {
 // Obtén el nombre de la página actual para el estado "active" del menú
 $currentPage = basename($_SERVER['PHP_SELF']);
 ?>
+<?php
+// 1) Asegúrate de tener la conexión abierta (si no la incluyes ya en nav.php)
+include 'DB.php';
+
+// 2) Obtén el ID y el nombre del usuario de la sesión
+$userId   = $_SESSION['user_id']   ?? null;
+$userName = $_SESSION['user_name'] ?? 'Usuario';
+
+// 3) Prepara y ejecuta la consulta
+if ($userId) {
+    $stmt  = $conn->prepare(
+        "SELECT ID_Pedido, Numero_Proforma, Fecha_Pedido, Total_Pedido, Metodo_Pago, Estado_Envio
+         FROM Pedido
+         WHERE ID_Usuario = ?
+         ORDER BY Fecha_Pedido DESC"
+    );
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $pedidos = $stmt->get_result();
+} else {
+    $pedidos = false;
+}
+?>
+
+<!doctype html>
+<html class="no-js" lang="es">
+
+
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -552,7 +578,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                                 <a href="user-settings.php" class="btn btn-sm btn-primary">Editar Perfil</a>
                             </div>
                             <ul class="sidebar-menu">
-                                <li><a href="user-profile.php" class="active"><i class="fas fa-user"></i> Perfil</a></li>
+                                <li><a href="usuario.php" class="active"><i class="fas fa-user"></i> Perfil</a></li>
                                 <li><a href="MisPedidos.php"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
                                 <li><a href="eventosReservados.php"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
                                 <li><a href="notificaciones.php"><i class="fas fa-bell"></i> Notificaciones <span class="badge badge-primary">3</span></a></li>
@@ -568,44 +594,69 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                         <!-- Contenido Principal -->
                         <div class="container">
                             <h1>Mis Pedidos</h1>
-                            <ul class="order-list">
-                                <li class="order-item">
-                                    <h2>Pedido #12345</h2>
-                                    <div class="progress-bar">
-                                        <div class="progress-step active">Pedido Recibido</div>
-                                        <div class="progress-step completed">En Preparación</div>
-                                        <div class="progress-step">En Tránsito</div>
-                                        <div class="progress-step">Entregado</div>
-                                    </div>
-                                    <div class="order-details">
-                                        <p><span>Producto(s):</span> Producto A, Producto B</p>
-                                        <p><span>Total:</span> $130.00</p>
-                                        <p class="status-date">Fecha Estimada de Entrega: 12 de abril, 2025</p>
-                                    </div>
-                                    <a href="#" class="btn">Ver Detalles</a>
-                                    <button class="btn btn-review" onclick="openReviewModal('12345')">
-                                        <i class="fas fa-star"></i> Dar mi Opinión
-                                    </button>
-                                </li>
-                                <li class="order-item">
-                                    <h2>Pedido #12346</h2>
-                                    <div class="progress-bar">
-                                        <div class="progress-step active">Pedido Recibido</div>
-                                        <div class="progress-step">En Preparación</div>
-                                        <div class="progress-step">En Tránsito</div>
-                                        <div class="progress-step">Entregado</div>
-                                    </div>
-                                    <div class="order-details">
-                                        <p><span>Producto(s):</span> Producto C</p>
-                                        <p><span>Total:</span> $50.00</p>
-                                        <p class="status-date">Fecha Estimada de Entrega: 15 de abril, 2025</p>
-                                    </div>
-                                    <a href="#" class="btn">Ver Detalles</a>
-                                    <button class="btn btn-review" onclick="openReviewModal('12346')">
-                                        <i class="fas fa-star"></i> Dar mi Opinión
-                                    </button>
-                                </li>
-                            </ul>
+<?php if ($pedidos && $pedidos->num_rows > 0): ?>
+    <ul class="order-list">
+        <?php
+        // Definimos el orden de los pasos de envío:
+        $steps = ['Pedido Recibido', 'En Preparación', 'En Tránsito', 'Entregado'];
+        ?>
+        <?php while($row = $pedidos->fetch_assoc()): ?>
+            <li class="order-item">
+                <h2>Pedido #<?php echo htmlspecialchars($row['Numero_Proforma']); ?></h2>
+
+                <div class="progress-bar">
+                    <?php
+                    // Recorremos cada paso y decidimos la clase
+                    foreach ($steps as $idx => $label) {
+                        $class = '';
+                        // Si ya pasó ese estado:
+                        if (array_search($row['Estado_Envio'], $steps) > $idx) {
+                            $class = 'completed';
+                        }
+                        // Estado actual:
+                        if ($row['Estado_Envio'] === $label) {
+                            $class = 'active';
+                        }
+                        echo "<div class=\"progress-step {$class}\">{$label}</div>";
+                    }
+                    ?>
+                </div>
+
+                <div class="order-details">
+                    <p><span>Fecha Pedido:</span>
+                       <?php
+                          echo date("j \\d\\e F, Y",
+                                    strtotime($row['Fecha_Pedido']));
+                       ?>
+                    </p>
+                    <p><span>Total:</span>
+                       ₡<?php echo number_format($row['Total_Pedido'], 2, ',', '.'); ?>
+                    </p>
+                    <p><span>Método de pago:</span>
+                       <?php echo htmlspecialchars($row['Metodo_Pago']); ?>
+                    </p>
+                    <p><span>Estado de envío:</span>
+                       <?php echo htmlspecialchars($row['Estado_Envio']); ?>
+                    </p>
+                </div>
+
+                <a href="detallePedido.php?id=<?php echo $row['ID_Pedido']; ?>"
+                   class="btn">Ver Detalles</a>
+
+                <button class="btn btn-review"
+                        onclick="openReviewModal('<?php echo $row['ID_Pedido']; ?>')">
+                    <i class="fas fa-star"></i> Dar mi Opinión
+                </button>
+            </li>
+        <?php endwhile; ?>
+    </ul>
+<?php else: ?>
+    <div class="order-item no-orders" style="text-align:center; padding:40px;">
+        <h2>Hola, <?php echo htmlspecialchars($userName); ?></h2>
+        <p>Usted aún no tiene pedidos con nosotros.</p>
+    </div>
+<?php endif; ?>
+
                         </div>
                     </div>
                 </div>
