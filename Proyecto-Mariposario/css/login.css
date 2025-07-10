@@ -1,172 +1,176 @@
+:root {
+  --primary: #00BCD4;
+  --light: #fff;
+  --dark-bg: #111;
+  --font: 'Roboto', sans-serif;
+}
+
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Roboto', sans-serif;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body,
+html {
+  width: 100%;
+  height: 100%;
+  font-family: var(--font);
+  background: var(--dark-bg);
 }
 
-body {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-image: url(../img/butterfly-wild.jpg);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    color: #fff;
-}
-::placeholder {
-    color: white; /* o el color que prefieras */
-    opacity: 1;   /* para que no se vea transparente */
+.container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.container-form {
-    width: 90%;
-    height: 90vh;
-    display: flex;
-    justify-content: space-around;
-    transition:  all .5s ease-out;
+/* PANEL IMAGEN */
+.panel-image {
+  position: relative;
+  flex: 1.2;
+  overflow: hidden;
 }
 
-.welcome-back {
-    display: flex;
-    align-items: center;
-    text-align: center;
+.panel-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.6s ease-in-out;
+  opacity: 1;
+  /* borde redondeado y sombra sutil */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-.message {
-    padding: 1rem;
+.panel-image::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+  pointer-events: none;
 }
 
-.message h2 {
-    font-size: 1.7rem;
-    padding: 1rem 0;
+.overlay {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: var(--light);
+  padding: 2rem;
+}
+.overlay h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+.overlay p {
+  margin-bottom: 1.5rem;
+}
+.overlay button {
+  padding: 0.6rem 1.5rem;
+  border: none;
+  background: var(--primary);
+  color: var(--light);
+  font-size: 1rem;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+.overlay button:hover {
+  opacity: 0.8;
 }
 
-.message button {
-    padding: 1rem;
-    font-weight: 400;
-    background-color: #4a4aee;
-    border-radius: 2rem;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    font-size: .9rem;
-    margin-top: 2rem;
-    transition: all .3s ease-in;
-    color: #fff;
+/* PANEL FORMULARIOS */
+.panel-form {
+  flex: 1;
+  background: var(--light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
-.message button:hover {
-    background-color: #6464f8;
+.form {
+  width: 80%;
+  max-width: 320px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+.form.active {
+  opacity: 1;
+  pointer-events: all;
+}
+.form h2 {
+  margin-bottom: 1rem;
+  color: var(--dark-bg);
+  text-align: center;
+}
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.social-icons i {
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: var(--dark-bg);
+}
+.form input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
-.formulario {
-    width: 400px;
-    padding: 1rem;
-    margin: 2rem;
-    background-color: rgba(54, 75, 51, 0.602);
-    text-align: center;
-    border-radius: 10px;
-
+.btn {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  background: var(--primary);
+  color: var(--light);
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+.btn:hover {
+  opacity: 0.8;
 }
 
-.create-account {
-    padding: 2.7rem 0;
-    font-size: 1.7rem;
+/* “Olvidé contraseña” centrado */
+.forgot {
+  display: block;
+  text-align: center;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  color: #555;
+}
+.forgot:hover {
+  text-decoration: underline;
 }
 
-.iconos {
-    width: 200px;
-    display: flex;
-    justify-content: space-around;
-    margin: auto;
+.switch {
+  text-align: center;
+  font-size: 0.9rem;
 }
-
-.border-icon {
-    height: 20px;
-    width: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem;
-    border: solid thin white;
-    border-radius: 50%;
-    font-size: 1.5rem;
-    transition: all .3s ease-in;
+.switch a {
+  color: var(--primary);
+  text-decoration: none;
 }
-
-.border-icon:hover {
-    background-color: #038913;
-    cursor: pointer;
-}
-
-.cuenta-gratis {
-    padding: 2rem 0;
-}
-
-.formulario input {
-    width: 70%;
-    display: block;
-    margin: auto;
-    margin-bottom: 2rem;
-    background-color: transparent;
-    border: none;
-    border-bottom: white thin solid;
-    text-align: center;
-    outline: none;
-    padding: .2rem 0;
-    font-size: .9rem;
-    color: white;
-    border-radius: 10px;
-
-}
-
-.formulario input[type="button"] {
-    width: 60%;
-    margin: auto;
-    border: solid thin white;
-    padding: .7rem;
-    border-radius: 2rem;
-    background-color: white;
-    font-weight: 600;
-    margin-top: 3rem;
-    font-size: .8rem;
-    cursor: pointer;
-    color: #222;
-}
-
-.sign-in {
-    position: absolute;
-    opacity: 0;
-    visibility: hidden;
-}
-
-.sign-in.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-.sign-up.active {
-    opacity: 0;
-    visibility: hidden;
-}
-
-.forgot-password{
-    margin: auto;
-    padding: .7rem;
-    margin-top: 3rem;
-    cursor: pointer;
-    
-}
-
-.forgot-password a {
-    color: #ffffff; /* blanco */
-    font-size: 0.9em;
-    text-decoration: none;
-}
-
-.forgot-password a:hover {
-    text-decoration: underline;
+.switch a:hover {
+  text-decoration: underline;
 }
