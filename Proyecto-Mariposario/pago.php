@@ -1,101 +1,102 @@
 <?php
 session_start();
 
+// Validar carrito
 $carrito = $_SESSION['carrito'] ?? [];
-$total = 0;
-
-foreach ($carrito as $item) {
-    $total += $item['precio'] * $item['cantidad'];
+if (empty($carrito)) {
+    header("Location: carrito.php");
+    exit();
 }
+
+// Calcular total en colones y convertir a USD (tasa aproximada)
+function convertirColonesADolares($colones) {
+    $tipoCambio = 500; // puedes usar tipo de cambio dinámico si lo deseas
+    return round($colones / $tipoCambio, 2);
+}
+
+$total_colones = 0;
+foreach ($carrito as $item) {
+    $total_colones += $item['precio'] * $item['cantidad'];
+}
+$total_usd = convertirColonesADolares($total_colones);
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Pago - Eco Mariposas</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Estilos -->
+    <title>Pago con PayPal</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-    <!-- SDK de PayPal -->
-    <script src="https://www.paypal.com/sdk/js?client-id=AciSwp0yUOh_48qfOrNbHEakgsaUbDhmPc6xE1YePsFJtGKbFlTuCxsan0_KOw14bqNxAU2Bgkr7nnBz&currency=CRC"></script>
+    <link rel="stylesheet" href="css/tienda.css">
+    <link rel="stylesheet" href="css/carrito.css">
+    <script src="https://www.paypal.com/sdk/js?client-id=ATaviM4-qfB_deZSXciXwtIalyjoNEseNB0FsCJ2riwp6fLYZzaVKTe4jjoY53IjHJx6UWQy48APsJ_H&currency=USD"></script>
 </head>
 <body>
     <?php include 'layout/nav2.php'; ?>
+    <section class="user-panel section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="user-main-content">
+                        <h2 class="text-center mb-4">Resumen del Pedido</h2>
+                        <ul class="list-group mb-4">
+                            <?php foreach ($carrito as $item): ?>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span><?php echo htmlspecialchars($item['nombre']); ?></span>
+                                    <span>₡<?php echo number_format($item['precio'], 2); ?> x <?php echo $item['cantidad']; ?></span>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                        <div class="alert alert-info">
+                            <h5>Total a pagar:</h5>
+                            <p><strong>₡<?php echo number_format($total_colones, 2); ?></strong></p>
+                            <p>Se convertirá aproximadamente a <strong>$<?php echo number_format($total_usd, 2); ?></strong> para el pago con PayPal.</p>
+                        </div>
 
-    <div class="container mt-5">
-        <h2 class="text-center mb-4">Confirmación de Pago</h2>
-
-        <?php if (empty($carrito)): ?>
-            <div class="alert alert-warning text-center">
-                Tu carrito está vacío. <a href="tienda.php">Volver a la tienda</a>
-            </div>
-        <?php else: ?>
-            <div class="card shadow-sm mb-4">
-                <div class="card-body">
-                    <h5>Productos:</h5>
-                    <ul class="list-group mb-3">
-                        <?php foreach ($carrito as $item): ?>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <?php echo htmlspecialchars($item['nombre']); ?> x <?php echo $item['cantidad']; ?>
-                                <span>₡<?php echo number_format($item['precio'] * $item['cantidad'], 2, ',', '.'); ?></span>
-                            </li>
-                        <?php endforeach; ?>
-                        <li class="list-group-item d-flex justify-content-between font-weight-bold">
-                            Total a pagar:
-                            <span>₡<?php echo number_format($total, 2, ',', '.'); ?></span>
-                        </li>
-                    </ul>
-
-                    <div class="text-center mt-4">
-                        <p>Completa tu pago con PayPal:</p>
-                        <div id="paypal-button-container"></div>
+                        <div id="paypal-button-container" class="text-center"></div>
                     </div>
                 </div>
             </div>
-        <?php endif; ?>
-    </div>
-
-    <footer class="text-center text-muted mt-5 mb-3">
-        &copy; <?php echo date("Y"); ?> Eco Mariposas
-    </footer>
-
-    <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        </div>
+    </section>
 
     <script>
-    paypal.Buttons({
-        createOrder: function(data, actions) {
-            return fetch('crearOrden.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(function(res) {
-                if (!res.ok) throw new Error('No se pudo crear la orden');
-                return res.json();
-            })
-            .then(function(orderData) {
-                return orderData.id;
-            })
-            .catch(function(err) {
-                console.error('create_order_error', err);
-                alert('Hubo un error al crear la orden de PayPal.');
-            });
-        },
-        onApprove: function(data, actions) {
-            return actions.order.capture().then(function(details) {
-                alert('Pago completado por ' + details.payer.name.given_name + '. ¡Gracias!');
-                window.location.href = 'confirmation.php';
-            });
-        },
-        onError: function(err) {
-            console.error('Error en el pago:', err);
-            alert('Error al procesar el pago.');
-        }
-    }).render('#paypal-button-container');
+        paypal.Buttons({
+            createOrder: function(data, actions) {
+                return fetch('create-order.php', {
+                    method: 'post'
+                }).then(res => res.json())
+                  .then(orderData => orderData.id);
+            },
+            onApprove: function(data, actions) {
+                return fetch('crearOrden.php', {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        orderID: data.orderID
+                    })
+                })
+                .then(res => res.json())
+                .then(details => {
+                    if (details.status === 'COMPLETED') {
+                        alert('Pago realizado por ' + details.payer.name.given_name);
+                        window.location.href = 'confirmacion.php';
+                    } else {
+                        alert('Error en el pago. Estado: ' + details.status);
+                    }
+                })
+                .catch(err => {
+                    console.error('Error al capturar la orden:', err);
+                    alert('Hubo un problema al procesar el pago.');
+                });
+            },
+            onError: function(err) {
+                console.error('Error en el botón de PayPal:', err);
+                alert('Ocurrió un error con el botón de PayPal.');
+            }
+        }).render('#paypal-button-container');
     </script>
 </body>
 </html>

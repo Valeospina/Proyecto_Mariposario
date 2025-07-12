@@ -1,84 +1,73 @@
 <?php
 session_start();
-header('Content-Type: application/json');
 
-// ✅ Credenciales de PayPal SANDBOX (asegúrate de usar las correctas)
-$clientId = "ATaviM4-qfB_deZSXciXwtIalyjoNEseNB0FsCJ2riwp6fLYZzaVKTe4jjoY53IjHJx6UWQy48APsJ_H";
-$clientSecret = "AciSwp0yUOh_48qfOrNbHEakgsaUbDhmPc6xE1YePsFJtGKbFlTuCxsan0_KOw14bqNxAU2Bgkr7nnBz";
+$data = json_decode(file_get_contents("php://input"), true);
+$orderID = $data['orderID'] ?? '';
 
-// 🛒 Obtener productos del carrito
-$carrito = $_SESSION['carrito'] ?? [];
-
-if (empty($carrito)) {
+if (!$orderID) {
     http_response_code(400);
-    echo json_encode(['error' => 'El carrito está vacío']);
+    echo json_encode(['error' => 'ID de orden no recibido.']);
     exit;
 }
 
-// 💰 Calcular el total del pedido
-$total = 0;
-foreach ($carrito as $item) {
-    $subtotal = $item['precio'] * $item['cantidad'];
-    $total += $subtotal;
-}
-$total = number_format($total, 2, '.', ''); // e.g. "1234.56"
+// Tus credenciales de PayPal (usa modo sandbox para pruebas)
+$clientId = "ATaviM4-qfB_deZSXciXwtIalyjoNEseNB0FsCJ2riwp6fLYZzaVKTe4jjoY53IjHJx6UWQy48APsJ_H";
+$secret = "EEwY88QBM9WlzB1LK6g_03u3kHlwPvnUpL_mp4khsizEgE8NuYYU_cFxs4B57h9jjDO8EsQBD_Z2BeXT";
 
-// 1️⃣ Obtener access token de PayPal
-$ch = curl_init("https://api-m.sandbox.paypal.com/v1/oauth2/token");
-curl_setopt_array($ch, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_USERPWD => "$clientId:$clientSecret",
-    CURLOPT_POSTFIELDS => "grant_type=client_credentials",
-    CURLOPT_POST => true,
-    CURLOPT_HTTPHEADER => [
-        "Accept: application/json",
-        "Accept-Language: en_US"
-    ]
+// Paso 1: Obtener access token
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, "https://api-m.sandbox.paypal.com/v1/oauth2/token");
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($ch, CURLOPT_USERPWD, "$clientId:$secret");
+curl_setopt($ch, CURLOPT_POSTFIELDS, "grant_type=client_credentials");
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    "Accept: application/json",
+    "Accept-Language: en_US"
 ]);
 
-$tokenResponse = curl_exec($ch);
+$response = curl_exec($ch);
+if (curl_errno($ch)) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Error al obtener token: ' . curl_error($ch)]);
+    curl_close($ch);
+    exit;
+}
 curl_close($ch);
 
-$tokenData = json_decode($tokenResponse, true);
+$accessToken = json_decode($response)->access_token ?? null;
 
-if (!isset($tokenData['access_token'])) {
+if (!$accessToken) {
     http_response_code(500);
-    echo json_encode(['error' => 'No se pudo obtener el token de acceso', 'paypal_response' => $tokenData]);
+    echo json_encode(['error' => 'No se pudo obtener el token de acceso.']);
     exit;
 }
 
-$accessToken = $tokenData['access_token'];
-
-// 2️⃣ Crear orden en PayPal
-$orderData = [
-    "intent" => "CAPTURE",
-    "purchase_units" => [[
-        "amount" => [
-            "currency_code" => "CRC",
-            "value" => $total
-        ]
-    ]]
-];
-
-$ch = curl_init("https://api-m.sandbox.paypal.com/v2/checkout/orders");
-curl_setopt_array($ch, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_POST => true,
-    CURLOPT_POSTFIELDS => json_encode($orderData),
-    CURLOPT_HTTPHEADER => [
-        "Content-Type: application/json",
-        "Authorization: Bearer $accessToken"
-    ]
+// Paso 2: Capturar la orden
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, "https://api-m.sandbox.paypal.com/v2/checkout/orders/$orderID/capture");
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    "Content-Type: application/json",
+    "Authorization: Bearer $accessToken"
 ]);
 
-$orderResponse = curl_exec($ch);
+$response = curl_exec($ch);
+if (curl_errno($ch)) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Error al capturar orden: ' . curl_error($ch)]);
+    curl_close($ch);
+    exit;
+}
 curl_close($ch);
 
-$orderData = json_decode($orderResponse, true);
+$result = json_decode($response, true);
 
-if (isset($orderData['id'])) {
-    echo json_encode(['id' => $orderData['id']]);
-} else {
-    http_response_code(500);
-    echo json_encode(['error' => 'No se pudo crear la orden en PayPal', 'paypal_response' => $orderData]);
+// Paso 3: Limpiar carrito si el pago fue exitoso
+if (!empty($result['status']) && $result['status'] === 'COMPLETED') {
+    $_SESSION['carrito'] = [];
 }
+
+header('Content-Type: application/json');
+echo json_encode($result);
