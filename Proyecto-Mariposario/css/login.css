@@ -75,7 +75,7 @@ html {
 .overlay button {
   padding: 0.6rem 1.5rem;
   border: none;
-  background: var(--primary);
+  background: #8BC34A;
   color: var(--light);
   font-size: 1rem;
   border-radius: 25px;
@@ -139,7 +139,7 @@ html {
   width: 100%;
   padding: 0.75rem;
   margin-bottom: 1rem;
-  background: var(--primary);
+  background: #8BC34A;
   color: var(--light);
   border: none;
   border-radius: 4px;
@@ -168,7 +168,7 @@ html {
   font-size: 0.9rem;
 }
 .switch a {
-  color: var(--primary);
+  color: #8BC34A;
   text-decoration: none;
 }
 .switch a:hover {

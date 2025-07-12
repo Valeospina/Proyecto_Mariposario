@@ -57,7 +57,7 @@ a:hover {
 /* --- Sidebar --- */
 .sidebar {
     width: 250px; /* Ancho fijo de la sidebar */
-    background-color: var(--sidebar-bg);
+    background-color: #212529;
     color: var(--sidebar-link-color);
     display: flex;
     flex-direction: column;
@@ -114,9 +114,9 @@ a:hover {
 }
 
 .sidebar-nav ul li a.active {
-    background-color: var(--sidebar-active-bg);
+    background-color: #8BC34A;
     color: var(--sidebar-active-color);
-    border-left-color: var(--sidebar-active-bg); /* Resalta el activo */
+    border-left-color: #8BC34A; /* Resalta el activo */
     font-weight: 500;
 }
 
@@ -275,20 +275,20 @@ a:hover {
 
 /* Primary Button (Add Product) */
 .btn-add-product {
-    background-color: var(--sidebar-active-bg); /* Verde Turquesa */
+    background-color: #8BC34A; /* Verde Turquesa */
     color: var(--sidebar-active-color);
     box-shadow: 0 4px 10px rgba(26, 188, 156, 0.2);
 }
 
 .btn-add-product:hover {
-    background-color: #16A085; /* Tono más oscuro */
+    background-color: #8BC34A; /* Tono más oscuro */
     transform: translateY(-2px);
     box-shadow: 0 6px 15px rgba(26, 188, 156, 0.3);
 }
 
 /* Action Buttons (Edit, Delete) in tables */
 .btn-action-edit {
-    background-color: var(--accent-blue); /* Azul */
+    background-color: #00BCD4; /* Azul */
     color: var(--sidebar-active-color);
     padding: 8px 12px; /* Más pequeños para la tabla */
     font-size: 0.9rem;
@@ -296,7 +296,7 @@ a:hover {
 }
 
 .btn-action-edit:hover {
-    background-color: #2980B9; /* Tono más oscuro */
+    background-color: #00BCD4; /* Tono más oscuro */
     transform: translateY(-1px);
     box-shadow: 0 2px 5px rgba(52, 152, 219, 0.2);
 }
@@ -449,7 +449,7 @@ table tbody tr:hover {
 
 .alert-success { background-color: #D4EDDA; color: #155724; border: 1px solid #C3E6CB; }
 .alert-danger { background-color: #F8D7DA; color: #721C24; border: 1px solid #F5C6CB; }
-.alert-warning { background-color: #FFF3CD; color: #856404; border: 1px solid #FFEBA; }
+.alert-warning { background-color: #FFF3CD; color: #856404; border: 1px solid #FFEBAe; }
 .alert-info { background-color: #D1ECF1; color: #0C5460; border: 1px solid #BEE5EB; }
 
 

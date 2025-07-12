@@ -1,11 +1,7 @@
 <?php
 $servername = "localhost";
 $username = "root";
-<<<<<<< HEAD
-$password = "1234"; 
-=======
-$password = "12345"; 
->>>>>>> parent of 2874284 (Sistema de pagos)
+$password = "Motarola181103."; 
 $dbname = "mariposarioDB";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
