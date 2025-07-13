@@ -2,7 +2,7 @@
 session_start();
 header('Content-Type: application/json');
 
-// Asegúrate de que el carrito esté cargado
+
 $carrito = $_SESSION['carrito'] ?? [];
 if (empty($carrito)) {
     http_response_code(400);
@@ -10,13 +10,13 @@ if (empty($carrito)) {
     exit;
 }
 
-// Tus credenciales PayPal (SANDBOX)
+
 $clientId = 'ATaviM4-qfB_deZSXciXwtIalyjoNEseNB0FsCJ2riwp6fLYZzaVKTe4jjoY53IjHJx6UWQy48APsJ_H';
 $secret = 'EEwY88QBM9WlzB1LK6g_03u3kHlwPvnUpL_mp4khsizEgE8NuYYU_cFxs4B57h9jjDO8EsQBD_Z2BeXT';
 
 // Calcula el total en USD
 function convertirColonesADolares($colones) {
-    $tipoCambio = 500; // tasa fija o puedes usar API para tasa real
+    $tipoCambio = 500; 
     return round($colones / $tipoCambio, 2);
 }
 

@@ -363,6 +363,35 @@ VALUES
 ('Miltonia spectabilis', 'Orquídea', 'Miltonia spectabilis, conocida como la orquídea del pensamiento, es famosa por sus flores grandes y coloridas.', 35.00, 7, 'https://png.pngtree.com/thumb_back/fh260/background/20220913/pngtree-miltonia-maui-orchid-plant-white-photo-image_19805376.jpg', '2025-09-05', TRUE),
 ('Epidendrum radicans', 'Orquídea', 'Epidendrum radicans es una orquídea que se caracteriza por sus raíces rojas y flores vibrantes.', 24.00, 20, 'https://www.picturethisai.com/wiki-image/1080/154019752069562384.jpeg', '2025-09-10', TRUE);
 
+-- Nuevas tablas para la parte de pagos
+
+USE mariposarioDB;
+
+CREATE TABLE pagos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_transaccion VARCHAR(50) NOT NULL UNIQUE,
+    fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(20) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    id_cliente VARCHAR(50),
+    total DECIMAL(10,2) NOT NULL
+);
+
+
+CREATE TABLE detalle_pago (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_pago INT NOT NULL,
+    id_producto INT NOT NULL,
+    nombre_producto VARCHAR(100),
+    cantidad INT NOT NULL,
+    precio_unitario DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (id_pago) REFERENCES pagos(id) ON DELETE CASCADE
+);
+
+
+ALTER TABLE Factura
+ADD COLUMN id_pago INT,
+ADD FOREIGN KEY (id_pago) REFERENCES pagos(id);
 
 
 
