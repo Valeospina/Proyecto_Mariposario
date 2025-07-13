@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $user_data) {
                         $message_type = "success";
                         // Recargar los datos del usuario después de la actualización para mostrar los cambios
                         $user_data['Nombre'] = $nombre_usuario_input; // Actualiza el array user_data
-                        $user_data['Correo'] = $email_input;       // Actualiza el array user_data
+                        $user_data['Correo'] = $email_input;     // Actualiza el array user_data
                         $user_data['ID_Rol'] = $id_rol;
 
                         // Redirigir a users.php con un mensaje de éxito
@@ -175,6 +175,172 @@ $page_title = 'Editar Usuario';
     <link rel="stylesheet" href="../css/admin.css">
 </head>
 <body>
+    <style>
+        /* Variables de color de admin.css para consistencia */
+        :root {
+            --sidebar-bg: #2C3E50; 
+            --sidebar-link-color: #ECF0F1;
+            --sidebar-hover-bg: #34495E;
+            --sidebar-active-bg: #1ABC9C; 
+            --sidebar-active-color: #FFFFFF;
+
+            --main-bg: #F0F2F5; 
+            --card-bg: #FFFFFF;
+            --header-top-bg: #FFFFFF;
+            --border-color: #E0E0E0;
+
+            --text-dark: #333333;
+            --text-secondary: #7F8C8D;
+            --accent-blue: #3498DB; 
+            --danger-red: #E74C3C; 
+
+            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-medium: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Estilos para el contenedor del formulario */
+        .form-container {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-medium);
+            max-width: 600px; /* Ancho máximo para formularios */
+            margin: 0 auto; /* Centrar el formulario */
+        }
+
+        /* Estilos para grupos de formulario */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+        }
+
+        /* Estilos específicos para input de texto, email y password */
+        .form-group input[type="text"],
+        .form-group input[type="email"], /* Nuevo estilo para email */
+        .form-group input[type="password"], /* Nuevo estilo para password */
+        .form-group input[type="number"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-sizing: border-box; /* Incluye padding y border en el ancho */
+            font-size: 1rem;
+            color: var(--text-dark);
+            background-color: var(--main-bg); /* Fondo de input ligeramente gris */
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* Estilos de foco para todos los inputs y selects */
+        .form-group input[type="text"]:focus,
+        .form-group input[type="email"]:focus, /* Estilo de foco para email */
+        .form-group input[type="password"]:focus, /* Estilo de foco para password */
+        .form-group input[type="number"]:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        /* Estilos para el grupo de botones al final del formulario */
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px; /* Espacio entre los botones */
+            margin-top: 30px;
+        }
+
+        /* Estilo general para los botones */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            border: none;
+            text-decoration: none;
+        }
+
+        /* Estilo para el botón de Guardar Cambios */
+        .btn-submit {
+            background-color: var(--sidebar-active-bg); /* Verde Turquesa */
+            color: var(--sidebar-active-color);
+            flex-grow: 1; /* Permite que el botón ocupe el espacio disponible */
+            box-shadow: 0 4px 10px rgba(26, 188, 156, 0.2);
+        }
+
+        .btn-submit:hover {
+            background-color: #16A085; /* Tono más oscuro */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(26, 188, 156, 0.3);
+        }
+
+        /* Estilo para el botón Volver a la lista */
+        .btn-secondary {
+            background-color: var(--text-secondary); /* Gris */
+            color: white;
+            flex-grow: 1; /* Permite que el botón ocupe el espacio disponible */
+            box-shadow: 0 4px 10px rgba(127, 140, 141, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background-color: #6C7A89; /* Gris más oscuro */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(127, 140, 141, 0.3);
+        }
+
+        /* Iconos dentro de los botones */
+        .btn .fas {
+            margin-right: 8px;
+        }
+
+        /* Estilos de alerta (copiados de admin.css para consistencia) */
+        .alert {
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-light);
+        }
+
+        .alert-success { background-color: #D4EDDA; color: #155724; border: 1px solid #C3E6CB; }
+        .alert-danger { background-color: #F8D7DA; color: #721C24; border: 1px solid #F5C6CB; }
+        .alert-warning { background-color: #FFF3CD; color: #856404; border: 1px solid #FFEBAe; }
+        .alert-info { background-color: #D1ECF1; color: #0C5460; border: 1px solid #BEE5EB; }
+
+        /* Responsive adjustments for form */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 20px;
+            }
+            .button-group {
+                flex-direction: column; /* Apila los botones en pantallas pequeñas */
+            }
+            .btn-submit, .btn-secondary {
+                width: 100%; /* Ocupa todo el ancho cuando están apilados */
+                margin-bottom: 10px; /* Espacio entre botones apilados */
+            }
+            .btn-secondary {
+                margin-bottom: 0; /* Elimina el margen inferior del último botón apilado */
+            }
+        }
+    </style>
 
     <div class="admin-dashboard-layout">
         <aside class="sidebar">

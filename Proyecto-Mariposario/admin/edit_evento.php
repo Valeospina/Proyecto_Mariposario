@@ -67,8 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $descripcion = htmlspecialchars(trim($_POST['descripcion'] ?? ''));
     $precio = floatval($_POST['precio'] ?? 0);
     $imagen_url = htmlspecialchars(trim($_POST['imagen_url'] ?? ''));
-    $fecha = htmlspecialchars(trim($_POST['fecha'] ?? ''));        // Nuevo campo
-    $hora = htmlspecialchars(trim($_POST['hora'] ?? ''));         // Nuevo campo
+    $fecha = htmlspecialchars(trim($_POST['fecha'] ?? ''));         // Nuevo campo
+    $hora = htmlspecialchars(trim($_POST['hora'] ?? ''));          // Nuevo campo
     $ubicacion = htmlspecialchars(trim($_POST['ubicacion'] ?? '')); // Nuevo campo
 
     // Validar el ID y los campos obligatorios
@@ -139,6 +139,180 @@ $page_title = 'Editar Evento';
     <link rel="stylesheet" href="../css/admin.css">
     </head>
 <body>
+    <style>
+        /* Variables de color de admin.css para consistencia */
+        :root {
+            --sidebar-bg: #2C3E50; 
+            --sidebar-link-color: #ECF0F1;
+            --sidebar-hover-bg: #34495E;
+            --sidebar-active-bg: #1ABC9C; 
+            --sidebar-active-color: #FFFFFF;
+
+            --main-bg: #F0F2F5; 
+            --card-bg: #FFFFFF;
+            --header-top-bg: #FFFFFF;
+            --border-color: #E0E0E0;
+
+            --text-dark: #333333;
+            --text-secondary: #7F8C8D;
+            --accent-blue: #3498DB; 
+            --danger-red: #E74C3C; 
+
+            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-medium: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Estilos generales para el formulario y sus elementos */
+        .admin-form {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-medium);
+            max-width: 700px; /* Ajustado para un poco más de espacio */
+            margin: 20px auto; /* Centrar el formulario con margen superior */
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+        }
+
+        /* Estilos para todos los inputs de texto, número, email, password, textarea y select */
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group textarea,
+        .form-group select,
+        .form-group input[type="email"],
+        .form-group input[type="password"],
+        .form-group input[type="url"], /* Estilo para input de URL */
+        .form-group input[type="date"], /* Estilo para input de fecha */
+        .form-group input[type="time"] /* Estilo para input de hora */
+        {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            color: var(--text-dark);
+            background-color: var(--main-bg);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* Estilos de foco para todos los inputs y selects */
+        .form-group input[type="text"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group textarea:focus,
+        .form-group select:focus,
+        .form-group input[type="email"]:focus,
+        .form-group input[type="password"]:focus,
+        .form-group input[type="url"]:focus, /* Estilo de foco para input de URL */
+        .form-group input[type="date"]:focus, /* Estilo de foco para input de fecha */
+        .form-group input[type="time"]:focus /* Estilo de foco para input de hora */
+        {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        /* Estilos para el grupo de botones de acción del formulario */
+        .button-group {
+            display: flex;
+            justify-content: flex-end; /* Alinea los botones a la derecha */
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            border: none;
+            text-decoration: none;
+        }
+
+        /* Estilo para el botón de Guardar Cambios */
+        .btn-submit {
+            background-color: var(--sidebar-active-bg); /* Verde Turquesa */
+            color: var(--sidebar-active-color);
+            flex-grow: 1; /* Permite que el botón ocupe el espacio disponible */
+            box-shadow: 0 4px 10px rgba(26, 188, 156, 0.2);
+        }
+
+        .btn-submit:hover {
+            background-color: #16A085; /* Tono más oscuro */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(26, 188, 156, 0.3);
+        }
+
+        /* Estilo para el botón Cancelar */
+        .btn-secondary {
+            background-color: var(--text-secondary); /* Gris */
+            color: white;
+            flex-grow: 1; /* Permite que el botón ocupe el espacio disponible */
+            box-shadow: 0 4px 10px rgba(127, 140, 141, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background-color: #6C7A89; /* Gris más oscuro */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(127, 140, 141, 0.3);
+        }
+
+        /* Iconos dentro de los botones */
+        .btn .fas {
+            margin-right: 8px;
+        }
+
+        /* Estilos de alerta (copiados de admin.css para consistencia) */
+        .alert {
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-light);
+        }
+
+        .alert-success { background-color: #D4EDDA; color: #155724; border: 1px solid #C3E6CB; }
+        .alert-danger { background-color: #F8D7DA; color: #721C24; border: 1px solid #F5C6CB; }
+        .alert-warning { background-color: #FFF3CD; color: #856404; border: 1px solid #FFEBAe; }
+        .alert-info { background-color: #D1ECF1; color: #0C5460; border: 1px solid #BEE5EB; }
+
+        /* Responsive adjustments for form */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 20px;
+            }
+            .button-group {
+                flex-direction: column; /* Apila los botones en pantallas pequeñas */
+            }
+            .btn-submit, .btn-secondary {
+                width: 100%; /* Ocupa todo el ancho cuando están apilados */
+                margin-bottom: 10px; /* Espacio entre botones apilados */
+            }
+            .btn-secondary {
+                margin-bottom: 0; /* Elimina el margen inferior del último botón apilado */
+            }
+        }
+    </style>
 
     <div class="admin-dashboard-layout">
         <aside class="sidebar">

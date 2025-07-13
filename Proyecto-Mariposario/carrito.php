@@ -2,7 +2,6 @@
 session_start(); // Inicia la sesión al principio de todo
 
 // --- Simulación de datos de usuario (para testing si no hay login real)
-// Mantén esto para que el dashboard funcione, pero los puntos ya no aumentan al añadir al carrito.
 if (!isset($_SESSION['user_logged_in'])) {
     $_SESSION['user_logged_in'] = true; // Set to true for testing dashboard features
 }
@@ -47,48 +46,46 @@ function getCartTotalAmount() {
     return $total_amount;
 }
 
+// Function to convert Colones to Dollars
+function convertirColonesADolares($colones) {
+    $tipoCambio = 500; // Example exchange rate
+    return round($colones / $tipoCambio, 2);
+}
+
 // --- Lógica para Peticiones AJAX (POST y GET para el carrito) ---
-// Identificamos si la petición es AJAX y qué tipo de petición es
 if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+    header('Content-Type: application/json'); // Ensure JSON response for AJAX calls
 
-    // Si es una solicitud POST, se asume que es para AGREGAR, ACTUALIZAR o ELIMINAR del carrito
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $action = $_POST['action'] ?? ''; // Obtener la acción solicitada
-
+        $action = $_POST['action'] ?? '';
 
         if ($action === 'update_quantity') {
-            // Lógica para ACTUALIZAR la cantidad de un producto o eliminarlo (cantidad 0)
             if (isset($_POST['id'], $_POST['cantidad'])) {
                 $id = filter_var($_POST['id'], FILTER_SANITIZE_STRING);
                 $cantidad = filter_var($_POST['cantidad'], FILTER_SANITIZE_NUMBER_INT);
 
                 if ($id !== false && $id !== '' && $cantidad !== false) {
-                    if (isset($_SESSION['carrito'])) {
-                        $found = false;
-                        foreach ($_SESSION['carrito'] as $key => &$item) {
-                            if ($item['id'] == $id) {
-                                if ($cantidad > 0) {
-                                    $item['cantidad'] = $cantidad;
-                                    $response['success'] = true;
-                                    $response['message'] = 'Cantidad actualizada.';
-                                } else {
-                                    // If quantity is 0, remove the item
-                                    unset($_SESSION['carrito'][$key]);
-                                    $_SESSION['carrito'] = array_values($_SESSION['carrito']); // Reindex array
-                                    $response['success'] = true;
-                                    $response['message'] = 'Producto eliminado del carrito.';
-                                }
-                                $found = true;
-                                break;
+                    $found = false;
+                    foreach ($_SESSION['carrito'] as $key => &$item) {
+                        if ($item['id'] == $id) {
+                            if ($cantidad > 0) {
+                                $item['cantidad'] = $cantidad;
+                                $response['success'] = true;
+                                $response['message'] = 'Cantidad actualizada.';
+                            } else {
+                                unset($_SESSION['carrito'][$key]);
+                                $_SESSION['carrito'] = array_values($_SESSION['carrito']);
+                                $response['success'] = true;
+                                $response['message'] = 'Producto eliminado del carrito.';
                             }
+                            $found = true;
+                            break;
                         }
-                        unset($item); // Romper la referencia
+                    }
+                    unset($item);
 
-                        if (!$found) {
-                            $response['message'] = 'Producto no encontrado en el carrito.';
-                        }
-                    } else {
-                        $response['message'] = 'El carrito está vacío.';
+                    if (!$found) {
+                        $response['message'] = 'Producto no encontrado en el carrito.';
                     }
                 } else {
                     $response['message'] = 'Datos de actualización de cantidad inválidos.';
@@ -97,28 +94,23 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
                 $response['message'] = 'Faltan datos para actualizar la cantidad.';
             }
         } elseif ($action === 'remove') {
-            // Lógica para ELIMINAR un producto del carrito
             if (isset($_POST['id'])) {
                 $id = filter_var($_POST['id'], FILTER_SANITIZE_STRING);
 
                 if ($id !== false && $id !== '') {
-                    if (isset($_SESSION['carrito'])) {
-                        $found = false;
-                        foreach ($_SESSION['carrito'] as $key => $item) {
-                            if ($item['id'] == $id) {
-                                unset($_SESSION['carrito'][$key]);
-                                $_SESSION['carrito'] = array_values($_SESSION['carrito']); // Reindex array
-                                $response['success'] = true;
-                                $response['message'] = 'Producto eliminado del carrito.';
-                                $found = true;
-                                break;
-                            }
+                    $found = false;
+                    foreach ($_SESSION['carrito'] as $key => $item) {
+                        if ($item['id'] == $id) {
+                            unset($_SESSION['carrito'][$key]);
+                            $_SESSION['carrito'] = array_values($_SESSION['carrito']);
+                            $response['success'] = true;
+                            $response['message'] = 'Producto eliminado del carrito.';
+                            $found = true;
+                            break;
                         }
-                        if (!$found) {
-                            $response['message'] = 'Producto no encontrado en el carrito.';
-                        }
-                    } else {
-                        $response['message'] = 'El carrito ya está vacío.';
+                    }
+                    if (!$found) {
+                        $response['message'] = 'Producto no encontrado en el carrito.';
                     }
                 } else {
                     $response['message'] = 'ID de producto inválido para eliminar.';
@@ -126,12 +118,10 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
             } else {
                 $response['message'] = 'Falta el ID del producto para eliminar.';
             }
-        }
-        else {
+        } else {
             $response['message'] = 'Acción POST no reconocida.';
         }
     }
-    // Si es una solicitud GET y se pide la cantidad de ítems o el carrito completo (para actualizar)
     else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $action = $_GET['action'] ?? '';
 
@@ -139,15 +129,12 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
             $response['success'] = true;
             $response['total_items'] = getTotalCartItems();
             $response['message'] = 'Cantidad de items obtenida.';
-            $response['user_name'] = $_SESSION['user_name'];
-            $response['user_avatar'] = $_SESSION['user_avatar'];
-            $response['user_points'] = $_SESSION['user_points']; // Enviar los puntos actuales
         } elseif ($action === 'get_cart_data') {
-            // Return the entire cart data for dynamic update on the cart page
             $response['success'] = true;
-            $response['carrito'] = $_SESSION['carrito'] ?? [];
+            $response['carrito'] = array_values($_SESSION['carrito'] ?? []);
             $response['total_items'] = getTotalCartItems();
             $response['cart_total_amount'] = getCartTotalAmount();
+            $response['user_points'] = $_SESSION['user_points'] ?? 0;
         } else {
             $response['message'] = 'Acción GET no reconocida.';
         }
@@ -156,30 +143,30 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
         $response['message'] = 'Método de solicitud no permitido para AJAX.';
     }
 
-    // Calcular el total de ítems en el carrito después de la acción para enviarlo siempre
     $response['total_items'] = getTotalCartItems();
-    $response['cart_total_amount'] = getCartTotalAmount(); // Also send total amount
+    $response['cart_total_amount'] = getCartTotalAmount();
+    $response['total_usd'] = convertirColonesADolares($response['cart_total_amount']);
 
-    // Siempre que sea una petición AJAX, devolvemos JSON y salimos
-    header('Content-Type: application/json');
     echo json_encode($response);
-    exit(); // ¡Muy importante para detener la ejecución y no enviar HTML!
-} // This is the missing closing brace for the initial AJAX check
+    exit();
+}
 
-// Ejemplo básico de cómo mostrar el carrito cuando no es una petición AJAX (HTML de la página)
-$carrito_actual = $_SESSION['carrito'] ?? []; // Obtener el carrito de la sesión
+// --- Lógica para la carga inicial de la página (NO es una petición AJAX) ---
+$carrito_actual = $_SESSION['carrito'] ?? [];
 $total_carrito_final = getCartTotalAmount();
-$puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de la sesión
+$puntosUsuario = $_SESSION['user_points'] ?? 0;
 
+$total_usd = convertirColonesADolares($total_carrito_final);
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="keywords" content="Site keywords here">
-    <meta name="description" content="">
-    <meta name='copyright' content=''>
+    <meta name="keywords" content="Eco Mariposas, tienda, productos naturales, ecología, sostenibilidad">
+    <meta name="description" content="Tu Carrito de Compras en Eco Mariposas. Finaliza tu pedido y paga de forma segura.">
+    <meta name='copyright' content='Eco Mariposas'>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <title>Tu Carrito de Compras - Eco Mariposas</title>
@@ -198,27 +185,31 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
     <link rel="stylesheet" href="css/datepicker.css">
     <link rel="stylesheet" href="css/animate.min.css">
     <link rel="stylesheet" href="css/magnific-popup.css">
-    <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="css/tienda.css">
-    <link rel="stylesheet" href="css/carrito.css"> <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <link rel="stylesheet" href="css/carrito.css">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=ATaviM4-qfB_deZSXciXwtIalyjoNEseNB0FsCJ2riwp6fLYZzaVKTe4jjoY53IjHJx6UWQy48APsJ_H&currency=USD"></script>
 </head>
 
 <body>
     <?php include 'layout/nav2.php'; ?>
+
     <section class="user-panel section">
         <div class="container">
             <div class="row">
+                <!-- User Sidebar -->
                 <div class="col-lg-3 col-md-4 col-12">
                     <div class="user-sidebar">
-                            <div class="profile-info">
-                                <img src="img/user-profile.jpg" alt="Foto de perfil">
-                                <h3>Hola, <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Usuario'); ?></h3>
-                                <p>Miembro desde: Abril 2023</p>
-                                <a href="user-settings.php" class="btn btn-sm btn-primary">Editar Perfil</a>
-                            </div>
+                        <div class="profile-info">
+                            <img src="<?php echo htmlspecialchars($_SESSION['user_avatar'] ?? 'img/user-profile.jpg'); ?>" alt="Foto de perfil">
+                            <h3>Hola, <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Usuario'); ?></h3>
+                            <p>Miembro desde: Abril 2023</p>
+                            <a href="user-settings.php" class="btn btn-sm btn-primary">Editar Perfil</a>
+                        </div>
                         <ul class="sidebar-menu">
                             <li><a href="user-profile.php"><i class="fas fa-user"></i> Perfil</a></li>
                             <li><a href="MisPedidos.php"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
@@ -227,9 +218,12 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
                     </div>
                 </div>
 
+                <!-- Main Cart Content -->
                 <div class="col-lg-9 col-md-8 col-12">
                     <div class="user-main-content">
                         <h2 class="text-center mb-4">Tu Carrito de Compras</h2>
+
+                        <!-- Points Section -->
                         <div class="carrito-puntos-wrapper mb-4 p-3">
                             <div class="puntos-texto">
                                 <h5>¡Hola <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Invitado'); ?>! Tienes <span class="puntos-numero" id="user-points-display"><?php echo htmlspecialchars($puntosUsuario ?? 0); ?></span> Puntos.</h5>
@@ -244,12 +238,15 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
                                 </div>
                             </div>
                         </div>
+
                         <?php if (empty($carrito_actual)): ?>
+                            <!-- Empty Cart Message -->
                             <div class="alert alert-info text-center empty-cart-message" role="alert">
                                 Tu carrito está vacío. ¡Empieza a llenarlo con nuestros productos!
                                 <br><a href="tienda.php" class="btn btn-primary mt-3">Ir a la Tienda</a>
                             </div>
                         <?php else: ?>
+                            <!-- Cart Items Table -->
                             <div class="table-responsive">
                                 <table class="table cart-table">
                                     <thead>
@@ -300,6 +297,8 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
                                 </table>
                             </div>
 
+
+                            <!-- Payment Method Selection -->
                             <div class="form-group mt-4">
                                 <label class="mb-3"><h5>Selecciona tu Método de Pago:</h5></label>
                                 <div class="payment-methods-grid">
@@ -311,10 +310,10 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
                                         </div>
                                     </label>
                                     <label class="payment-card">
-                                        <input class="form-check-input" type="radio" name="metodo_pago" id="pagoTarjeta" value="Tarjeta Tienda">
+                                        <input class="form-check-input" type="radio" name="metodo_pago" id="pagoTarjeta" value="Tarjeta PayPal">
                                         <div class="payment-card-content">
-                                            <i class="fas fa-credit-card"></i>
-                                            <span>Pagar con Tarjeta (en datáfono físico en tienda)</span>
+                                            <i class="fab fa-paypal"></i>
+                                            <span>Pagar con PayPal</span>
                                         </div>
                                     </label>
                                     <label class="payment-card">
@@ -324,42 +323,39 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
                                             <span>SINPE Móvil</span>
                                         </div>
                                     </label>
-                                    <label class="payment-card">
-                                        <input class="form-check-input" type="radio" name="metodo_pago" id="pagoTransferencia" value="Transferencia Bancaria">
-                                        <div class="payment-card-content">
-                                            <i class="fas fa-university"></i>
-                                            <span>Transferencia Bancaria</span>
-                                        </div>
-                                    </label>
                                 </div>
                             </div>
 
+                            <!-- Payment Instructions and PayPal Button Container -->
                             <div id="instruccionesPago" class="alert alert-info mt-3" style="display: none;">
                                 <h6 class="alert-heading">Instrucciones para el Pago:</h6>
+                                <p id="efectivo-instructions" style="display:none;">
+                                    Tu pedido estará listo para ser retirado y pagado en efectivo en nuestra tienda física. Te enviaremos un correo de confirmación con los detalles de la dirección y horario de retiro.
+                                </p>
                                 <p id="sinpe-instructions" style="display:none;">
                                     <strong>Número SINPE Móvil:</strong> **8888-8888**<br>
-                                    (A nombre de: EcoMariposa S.A. - Cédula Jurídica: 3-101-123456)
+                                    (A nombre de: EcoMariposa S.A. - Cédula Jurídica: 3-101-123456)<br>
+                                    Por favor, realiza el pago a este número y guarda tu comprobante. Nos pondremos en contacto para la confirmación de tu pedido una vez que recibamos el pago.
                                 </p>
-                                <p id="transferencia-instructions" style="display:none;">
-                                    <strong>Detalles de Transferencia Bancaria:</strong><br>
-                                    Banco: **Banco de Costa Rica (BCR)**<br>
-                                    Cuenta IBAN: **CR0000000000000000000000**<br>
-                                    Cédula Jurídica/Identificación: **3-101-123456**<br>
-                                    Nombre Beneficiario: **EcoMariposa S.A.**
-                                </p>
-                                <p class="mb-0">Por favor, realiza el pago y guarda tu comprobante. En caso de SINPE/Transferencia, contactaremos contigo para la confirmación o se te indicará cómo subir el comprobante en tu perfil de usuario.</p>
-                            </div>
-                            
-                            <div class="mt-4">
-                                <label for="observacionesPedido" class="form-label">Observaciones para el pedido (opcional):</label>
-                                <textarea class="form-control" id="observacionesPedido" rows="3" placeholder="Ej: Recoger el viernes por la tarde, empaquetar para regalo, etc."></textarea>
-                            </div>
-                           <div class="text-right mt-4">
-                                <form action="pago.php" method="post">
-                                    <button type="submit" class="btn btn-success btn-lg">Continuar al Pago</button>
-                                </form>
+                                <!-- General instructions are now specific to each method, this can be removed or used as a fallback -->
+                                <!-- <p id="general-instructions" class="mb-0">
+                                    Por favor, realiza el pago y guarda tu comprobante. En caso de SINPE, contactaremos contigo para la confirmación o se te indicará cómo subir el comprobante en tu perfil de usuario.
+                                </p> -->
                             </div>
 
+                            <div class="payment-options mt-4" id="paypal-payment-section" style="display: none;">
+                                <div class="alert alert-info">
+                                    <h5>Total a pagar:</h5>
+                                    <p><strong>₡<span id="display-total-colones-paypal"><?php echo number_format($total_carrito_final, 2); ?></span></strong></p>
+                                    <p>Se convertirá aproximadamente a <strong>$<span id="display-total-usd-paypal"><?php echo number_format($total_usd, 2); ?></span></strong> para el pago con PayPal.</p>
+                                </div>
+                                <h3>Pagar con PayPal</h3>
+                                <div id="paypal-button-container" class="mt-3"></div>
+                            </div>
+
+                            <div class="mt-4 text-center">
+                                <button type="button" id="confirmOrderBtn" class="btn btn-success btn-lg btn-proceed-to-checkout" style="display:none;">Confirmar Pedido</button>
+                            </div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -367,6 +363,7 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
         </div>
     </section>
 
+    <!-- JavaScript includes -->
     <script src="js/jquery.min.js"></script>
     <script src="js/jquery-migrate.min.js"></script>
     <script src="js/popper.min.js"></script>
@@ -378,27 +375,34 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
     <script src="js/jquery.counterup.min.js"></script>
     <script src="js/easing.js"></script>
     <script src="js/active.js"></script>
-    <script src="js/tienda.js"></script> <script>
+    <script src="js/tienda.js"></script>
+
+    <script>
         $(document).ready(function() {
-            // Function to update cart display
+            // Function to update the cart display using AJAX
             function updateCartDisplay() {
                 $.ajax({
-                    url: 'carrito.php', // Current file
+                    url: 'carrito.php',
                     method: 'GET',
                     data: { action: 'get_cart_data' },
                     dataType: 'json',
                     success: function(response) {
                         if (response.success) {
-                            $('#cart-items-body').empty(); // Clear existing items
+                            $('#cart-items-body').empty(); // Clear existing cart items
 
                             if (response.carrito.length === 0) {
-                                // Show empty cart message
+                                // Show empty cart message and hide other elements
                                 $('.empty-cart-message').show();
-                                $('.table-responsive, .form-group, #instruccionesPago, .mt-3, .mt-4 button').hide();
+                                $('.table-responsive, .payment-options, .form-group.mt-4, #instruccionesPago, #paypal-payment-section, #confirmOrderBtn').hide();
                             } else {
+                                // Hide empty cart message and show other elements as needed based on initial selection
                                 $('.empty-cart-message').hide();
-                                $('.table-responsive, .form-group, .mt-3, .mt-4 button').show(); // Show cart elements
+                                $('.table-responsive, .form-group.mt-4').show(); // Show cart and payment options
+                                
+                                // Re-evaluate payment method display after cart update
+                                $('input[name="metodo_pago"]:checked').trigger('change');
 
+                                // Populate cart table with updated items
                                 $.each(response.carrito, function(index, item) {
                                     var row = `
                                         <tr class="carrito-item-row" data-id="${item.id}">
@@ -426,10 +430,13 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
                                 });
                             }
 
+                            // Update totals and points display
                             $('#cart-total-amount').html(`<strong>₡${parseFloat(response.cart_total_amount).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>`);
+                            $('#display-total-colones-paypal').text(parseFloat(response.cart_total_amount).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                            $('#display-total-usd-paypal').text(parseFloat(response.total_usd).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+
                             $('#user-points-display').text(response.user_points);
-                            // Update total items in the main navigation (if you have an element for it)
-                            $('.total-count').text(response.total_items);
+                            $('.total-count').text(response.total_items); // Update navbar cart count
                         } else {
                             console.error('Error al obtener datos del carrito:', response.message);
                         }
@@ -440,28 +447,31 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
                 });
             }
 
-            // Initial cart display on page load
+            // Initial cart display update on page load
             updateCartDisplay();
 
-            // Handle quantity increase/decrease and remove
+            // Event listeners for quantity changes and item removal
             $(document).on('click', '.btn-increase-quantity, .btn-decrease-quantity, .btn-remove-item', function() {
                 var productId = $(this).data('id');
                 var currentQuantityInput = $('.product-quantity[data-id="' + productId + '"]');
                 var currentQuantity = parseInt(currentQuantityInput.val());
                 var newQuantity;
-                var actionType = 'update_quantity';
+                var actionType;
 
                 if ($(this).hasClass('btn-increase-quantity')) {
                     newQuantity = currentQuantity + 1;
+                    actionType = 'update_quantity';
                 } else if ($(this).hasClass('btn-decrease-quantity')) {
                     newQuantity = currentQuantity - 1;
-                    if (newQuantity < 0) newQuantity = 0; // Prevent negative quantity
+                    if (newQuantity < 0) newQuantity = 0;
+                    actionType = 'update_quantity';
                 } else if ($(this).hasClass('btn-remove-item')) {
-                    newQuantity = 0; // Set quantity to 0 to trigger removal
+                    newQuantity = 0;
+                    actionType = 'remove';
                 }
 
                 $.ajax({
-                    url: 'carrito.php', // Your PHP script
+                    url: 'carrito.php',
                     method: 'POST',
                     data: {
                         action: actionType,
@@ -471,73 +481,129 @@ $puntosUsuario = $_SESSION['user_points']; // Obtener los puntos del usuario de 
                     dataType: 'json',
                     success: function(response) {
                         if (response.success) {
-                            updateCartDisplay(); // Re-render the cart table
-                            alert(response.message); // For demonstration, use a toast/modal in production
+                            updateCartDisplay();
                         } else {
-                            alert('Error: ' + response.message);
+                            // Implement a custom modal/message box instead of alert()
+                            console.error('Error: ' + response.message);
+                            // Example for a custom modal: showCustomModal('Error', response.message);
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error('Error AJAX:', status, error);
-                        alert('Hubo un error al actualizar el carrito.');
+                        // Implement a custom modal/message box instead of alert()
+                        // Example for a custom modal: showCustomModal('Error', 'Hubo un error al actualizar el carrito.');
                     }
                 });
             });
 
-            // Payment method selection logic
+            // Handle payment method selection
             $('input[name="metodo_pago"]').on('change', function() {
                 var selectedMethod = $(this).val();
-                var instruccionesPago = $('#instruccionesPago');
-                var sinpeInstructions = $('#sinpe-instructions');
-                var transferenciaInstructions = $('#transferencia-instructions');
 
-                // Hide all instructions first
-                instruccionesPago.hide();
-                sinpeInstructions.hide();
-                transferenciaInstructions.hide();
+                // Hide all specific instructions and PayPal section first
+                $('#instruccionesPago').hide();
+                $('#efectivo-instructions').hide();
+                $('#sinpe-instructions').hide();
+                $('#paypal-payment-section').hide();
+                $('#confirmOrderBtn').hide(); // Hide general confirm button
 
-                // Show instructions based on selection
-                if (selectedMethod === 'SINPE Movil') {
-                    instruccionesPago.slideDown();
-                    sinpeInstructions.show();
-                } else if (selectedMethod === 'Transferencia Bancaria') {
-                    instruccionesPago.slideDown();
-                    transferenciaInstructions.show();
+                if (selectedMethod === 'Tarjeta PayPal') {
+                    $('#paypal-payment-section').show();
+                } else if (selectedMethod === 'Efectivo Tienda') {
+                    $('#instruccionesPago').show();
+                    $('#efectivo-instructions').show();
+                    $('#confirmOrderBtn').show(); // Show confirm button for in-store payments
+                } else if (selectedMethod === 'SINPE Movil') {
+                    $('#instruccionesPago').show();
+                    $('#sinpe-instructions').show();
+                    $('#confirmOrderBtn').show(); // Show confirm button for SINPE
                 }
             });
 
-            // Trigger initial check for payment method display in case a reload occurs
+            // Initial trigger to display the default selected method (Efectivo Tienda)
             $('input[name="metodo_pago"]:checked').trigger('change');
 
-            // Example of "Proceder al Pago" button (you'd send cart data to a checkout page/API)
-            $('.btn-proceed-to-checkout').on('click', function() {
-                var selectedPaymentMethod = $('input[name="metodo_pago"]:checked').val();
+            // PayPal Button Integration (Using procesar_pedido.php for consistency)
+        paypal.Buttons({
+            createOrder: function(data, actions) {
+                return fetch('create_order.php', {
+                    method: 'post'
+                }).then(res => res.json())
+                  .then(orderData => orderData.id);
+            },
+            onApprove: function(data, actions) {
+                return fetch('create_order.php', {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        orderID: data.orderID
+                    })
+                })
+                .then(res => res.json())
+                .then(details => {
+                    if (details.status === 'COMPLETED') {
+                        alert('Pago realizado por ' + details.payer.name.given_name);
+                        window.location.href = 'confirmacion.php';
+                    } else {
+                        alert('Error en el pago. Estado: ' + details.status);
+                    }
+                })
+                .catch(err => {
+                    console.error('Error al capturar la orden:', err);
+                    alert('Hubo un problema al procesar el pago.');
+                });
+            },
+            onError: function(err) {
+                console.error('Error en el botón de PayPal:', err);
+                alert('Ocurrió un error con el botón de PayPal.');
+            }
+        }).render('#paypal-button-container');
+
+            // Handle "Confirmar Pedido" button for non-PayPal methods
+            $('#confirmOrderBtn').on('click', function() {
+                var selectedMethod = $('input[name="metodo_pago"]:checked').val();
                 var observaciones = $('#observacionesPedido').val();
                 var canjearPuntos = $('#checkboxCanjearPuntos').is(':checked');
 
-                if (confirm('¿Confirmar tu pedido y proceder al pago con ' + selectedPaymentMethod + '?')) {
-                    // Here you would typically send an AJAX request to a 'process_order.php'
-                    // containing the final cart data, payment method, observations, and points redemption status.
-                    console.log("Procediendo al pago...");
-                    console.log("Método de Pago Seleccionado:", selectedPaymentMethod);
-                    console.log("Observaciones:", observaciones);
-                    console.log("Canjear Puntos:", canjearPuntos);
-                    console.log("Carrito Actual:", <?php echo json_encode($carrito_actual); ?>);
-                    console.log("Total Final:", <?php echo json_encode($total_carrito_final); ?>);
-                    console.log("Puntos del Usuario:", <?php echo json_encode($puntosUsuario); ?>);
-
-                    // Example: Simulate a successful order
-                    alert('Pedido realizado con éxito (simulado). Gracias por tu compra con EcoMariposa!');
-                    // Optionally, clear the cart after successful order
-                    // $.ajax({
-                    //     url: 'carrito.php',
-                    //     method: 'POST',
-                    //     data: { action: 'clear_cart' }, // You'd need to add this action to your PHP
-                    //     success: function() {
-                    //         updateCartDisplay();
-                    //     }
-                    // });
-                    window.location.href = 'confirmation.php'; // Redirect to a confirmation page
+                if (selectedMethod === 'Efectivo Tienda' || selectedMethod === 'SINPE Movil') {
+                    // Implement a custom confirmation modal instead of confirm()
+                    if (confirm(`Estás a punto de confirmar tu pedido con pago por ${selectedMethod}. ¿Deseas continuar?`)) { // Replace with custom modal
+                        $.ajax({
+                            url: 'procesar_pedido.php',
+                            method: 'POST',
+                            data: JSON.stringify({
+                                action: 'manual_order_complete',
+                                observaciones: observaciones,
+                                canjearPuntos: canjearPuntos ? '1' : '0',
+                                metodo_pago_final: selectedMethod
+                            }),
+                            contentType: 'application/json',
+                            dataType: 'json',
+                            success: function(response) {
+                                if (response.success) {
+                                    // Implement a custom modal/message box instead of alert()
+                                    console.log('¡Pedido confirmado! Recibirás un correo con los detalles.');
+                                    // Example: showCustomModal('Éxito', '¡Pedido confirmado! Recibirás un correo con los detalles.');
+                                    window.location.href = 'confirmacion.php';
+                                } else {
+                                    // Implement a custom modal/message box instead of alert()
+                                    console.error('Hubo un error al confirmar tu pedido:', response.message);
+                                    // Example: showCustomModal('Error', 'Hubo un error al confirmar tu pedido: ' + response.message);
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error AJAX al procesar pedido manual:', status, error);
+                                // Implement a custom modal/message box instead of alert()
+                                // Example: showCustomModal('Error', 'Hubo un error de comunicación con el servidor para finalizar el pedido.');
+                            }
+                        });
+                    }
+                } else {
+                    // Implement a custom modal/message box instead of alert()
+                    console.warn('Por favor, selecciona un método de pago válido.');
+                    // Example: showCustomModal('Atención', 'Por favor, selecciona un método de pago válido.');
                 }
             });
         });

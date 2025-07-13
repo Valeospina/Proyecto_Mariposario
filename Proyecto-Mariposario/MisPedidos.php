@@ -86,7 +86,7 @@ if ($userId) {
             text-align: center;
             margin-bottom: 40px;
             font-size: 2.5em;
-            color: #42764D;
+            color: #8BC34A;
         }
 
         /* Estilos para la lista de pedidos */
@@ -137,7 +137,7 @@ if ($userId) {
         }
 
         .progress-step.active {
-            background-color: #80b78d;
+            background-color: #8BC34A;
             color: white;
         }
 
@@ -166,7 +166,7 @@ if ($userId) {
         /* Estilo del botón */
         .btn {
             display: inline-block;
-            background-color: #80b78d;
+            background-color: #8BC34A;
             color: white;
             padding: 12px 20px;
             border-radius: 5px;
@@ -245,7 +245,7 @@ if ($userId) {
         }
 
         .review-form h3 {
-            color: #42764D;
+            color: #8BC34A;
             text-align: center;
             margin-bottom: 20px;
             font-size: 1.5em;
@@ -300,7 +300,7 @@ if ($userId) {
         .btn-submit {
             width: 100%;
             padding: 12px;
-            background-color: #80b78d;
+            background-color: #8BC34A;
             color: white;
             border: none;
             border-radius: 8px;
@@ -311,7 +311,7 @@ if ($userId) {
         }
 
         .btn-submit:hover {
-            background-color: #3e8e41;
+            background-color: #8BC34A;
         }
 
         .rating-text {
@@ -355,8 +355,8 @@ if ($userId) {
         }
 
         :root {
-                --primary-color: #80B78D;
-                --secondary-color: #5A9367;
+                --primary-color: #8BC34A;
+                --secondary-color: #8BC34A;
                 --text-color: #333;
                 --light-color: #f9f9f9;
                 --dark-color: #222;
@@ -578,8 +578,8 @@ if ($userId) {
                                 <a href="user-settings.php" class="btn btn-sm btn-primary">Editar Perfil</a>
                             </div>
                             <ul class="sidebar-menu">
-                                <li><a href="usuario.php" class="active"><i class="fas fa-user"></i> Perfil</a></li>
-                                <li><a href="MisPedidos.php"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
+                                <li><a href="usuario.php" ><i class="fas fa-user"></i> Perfil</a></li>
+                                 <li><a href="MisPedidos.php" class="active"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
                                 <li><a href="eventosReservados.php"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
                                 <li><a href="notificaciones.php"><i class="fas fa-bell"></i> Notificaciones <span class="badge badge-primary">3</span></a></li>
                                 <li><a href="user-favorites.php"><i class="fas fa-heart"></i> Favoritos</a></li>

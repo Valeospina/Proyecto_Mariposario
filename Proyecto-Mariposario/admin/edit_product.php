@@ -200,6 +200,287 @@ $page_title = 'Editar Producto';
     <link rel="stylesheet" href="../css/admin.css">
 </head>
 <body>
+    <style>
+        /* Variables de color de admin.css para consistencia */
+        :root {
+            --sidebar-bg: #2C3E50; 
+            --sidebar-link-color: #ECF0F1;
+            --sidebar-hover-bg: #34495E;
+            --sidebar-active-bg: #1ABC9C; 
+            --sidebar-active-color: #FFFFFF;
+
+            --main-bg: #F0F2F5; 
+            --card-bg: #FFFFFF;
+            --header-top-bg: #FFFFFF;
+            --border-color: #E0E0E0;
+
+            --text-dark: #333333;
+            --text-secondary: #7F8C8D;
+            --accent-blue: #3498DB; 
+            --danger-red: #E74C3C; 
+
+            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-medium: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Estilos generales para el formulario y sus elementos */
+        .admin-form {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-medium);
+            max-width: 700px; /* Ajustado para un poco más de espacio */
+            margin: 20px auto; /* Centrar el formulario con margen superior */
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+        }
+
+        /* Estilos para todos los inputs de texto, número, email, password, textarea y select */
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group textarea,
+        .form-group select,
+        .form-group input[type="email"],
+        .form-group input[type="password"],
+        .form-group input[type="url"] /* Nuevo estilo para input de URL */
+        {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            color: var(--text-dark);
+            background-color: var(--main-bg);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* Estilos de foco para todos los inputs y selects */
+        .form-group input[type="text"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group textarea:focus,
+        .form-group select:focus,
+        .form-group input[type="email"]:focus,
+        .form-group input[type="password"]:focus,
+        .form-group input[type="url"]:focus /* Estilo de foco para input de URL */
+        {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        /* Estilos para la sección de Imagen Actual */
+        .form-group.image-display {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            background-color: var(--main-bg); /* Fondo ligeramente gris para la sección */
+            margin-top: 25px;
+        }
+        .form-group.image-display label {
+            font-size: 1.05rem;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+        .form-group.image-display img {
+            max-width: 180px; /* Un poco más grande */
+            height: auto;
+            display: block;
+            margin-top: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .form-group.image-display small {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            word-break: break-all; /* Permite que la URL larga se rompa */
+        }
+        .form-group.image-display p {
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        /* Estilos para input[type="file"] */
+        .form-group input[type="file"] {
+            padding: 10px 15px; /* Ajustar padding para archivos */
+            height: auto; /* Permitir que la altura se ajuste al contenido */
+            background-color: var(--card-bg); /* Fondo blanco para el input de archivo */
+            cursor: pointer;
+        }
+        .form-group input[type="file"]::-webkit-file-upload-button {
+            visibility: hidden;
+        }
+        .form-group input[type="file"]::before {
+            content: 'Seleccionar archivo...';
+            display: inline-block;
+            background: var(--accent-blue);
+            color: white;
+            border: 1px solid var(--accent-blue);
+            border-radius: 5px;
+            padding: 8px 12px;
+            outline: none;
+            white-space: nowrap;
+            -webkit-user-select: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .form-group input[type="file"]:hover::before {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+        .form-group input[type="file"]:active::before {
+            background-color: #2471a3;
+        }
+        .form-group input[type="file"]::file-selector-button { /* Para Firefox */
+            background: var(--accent-blue);
+            color: white;
+            border: 1px solid var(--accent-blue);
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .form-group input[type="file"]::file-selector-button:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+
+        /* Estilos para el checkbox-group (activo en catálogo, eliminar imagen) */
+        .form-group.checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+        .form-group.checkbox-group input[type="checkbox"] {
+            width: auto; /* Sobrescribe el 100% */
+            margin-right: 10px;
+            transform: scale(1.2); /* Aumenta el tamaño del checkbox */
+            cursor: pointer;
+        }
+        .form-group.checkbox-group label {
+            margin-bottom: 0; /* Elimina el margen inferior del label */
+            display: inline-block; /* Para que el label esté en línea con el checkbox */
+            cursor: pointer;
+            font-weight: 400; /* Menos negrita para labels de checkbox */
+            color: var(--text-dark);
+        }
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* Estilos para el grupo de botones de acción del formulario */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end; /* Alinea los botones a la derecha */
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-primary {
+            background-color: var(--sidebar-active-bg); /* Verde Turquesa */
+            color: var(--sidebar-active-color);
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(26, 188, 156, 0.2);
+        }
+        .btn-primary:hover {
+            background-color: #16A085;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(26, 188, 156, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: var(--text-secondary); /* Gris */
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(127, 140, 141, 0.2);
+        }
+        .btn-secondary:hover {
+            background-color: #6C7A89;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(127, 140, 141, 0.3);
+        }
+        .btn .fas {
+            margin-right: 8px;
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .admin-form {
+                padding: 20px;
+                margin: 15px auto;
+            }
+            .form-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .btn-primary, .btn-secondary {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .admin-form {
+                padding: 15px;
+            }
+            .form-group label {
+                font-size: 0.9rem;
+            }
+            .form-group input, .form-group textarea, .form-group select {
+                font-size: 0.9rem;
+                padding: 10px 12px;
+            }
+            .form-group.image-display img {
+                max-width: 120px;
+            }
+            .form-group.image-display small {
+                font-size: 0.75rem;
+            }
+            .form-group input[type="file"]::before,
+            .form-group input[type="file"]::file-selector-button {
+                font-size: 0.8rem;
+                padding: 6px 10px;
+            }
+            .form-group.checkbox-group label {
+                font-size: 0.85rem;
+            }
+            .btn-primary, .btn-secondary {
+                font-size: 0.9rem;
+                padding: 10px 15px;
+            }
+        }
+    </style>
 
     <div class="admin-dashboard-layout">
         <aside class="sidebar">
@@ -273,7 +554,7 @@ $page_title = 'Editar Producto';
                                 <input type="number" id="precio" name="precio" step="0.01" min="0" required value="<?php echo htmlspecialchars($product['Precio'] ?? ''); ?>">
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group image-display">
                                 <label>Imagen Actual:</label>
                                 <?php if (!empty($product['Imagen_URL'])): ?>
                                     <?php
@@ -283,8 +564,8 @@ $page_title = 'Editar Producto';
                                         $display_image_src = '../' . $product['Imagen_URL']; // Añadir ../ para ruta relativa a admin/
                                     }
                                     ?>
-                                    <img src="<?php echo htmlspecialchars($display_image_src); ?>" alt="Imagen actual" style="max-width: 150px; height: auto; display: block; margin-top: 10px; border-radius: 5px;">
-                                    <small style="display: block; margin-top: 5px;">URL/Ruta actual: <?php echo htmlspecialchars($product['Imagen_URL']); ?></small>
+                                    <img src="<?php echo htmlspecialchars($display_image_src); ?>" alt="Imagen actual">
+                                    <small>URL/Ruta actual: <?php echo htmlspecialchars($product['Imagen_URL']); ?></small>
                                 <?php else: ?>
                                     <p>No hay imagen cargada para este producto.</p>
                                 <?php endif; ?>

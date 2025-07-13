@@ -349,7 +349,7 @@ a:hover{
 	-webkit-transition:all 0.4s ease;
 	-moz-transition:all 0.4s ease;
 	transition:all 0.4s ease;
-	border-radius: 5px; 
+	border-radius: 50px; 
 }
 .btn:hover:before{
 	-webkit-transform: scaleX(1);

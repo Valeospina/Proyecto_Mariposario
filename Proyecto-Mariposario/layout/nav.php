@@ -28,6 +28,13 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                                 <a href="logind.php" class="btn-topbar-action">Iniciar Sesión</a>
                             <?php endif; ?>
                         </li>
+                        <li class="separator">|</li>
+                        <li>
+                            <a href="carrito.php" class="btn-carrito-topbar">
+                                <i class="fa fa-shopping-cart"></i>
+                                <span id="cart-item-count" class="badge badge-pill badge-danger">0</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -55,7 +62,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                                     </li>
                                     <li class="<?= ($currentPage == 'contact.php') ? 'active' : '' ?>">
                                         <a href="contact.php">Contacto</a>
-                                    </li>
+                                    </li>                                    
                                 </ul>
                             </nav>
                         </div>

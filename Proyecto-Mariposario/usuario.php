@@ -37,7 +37,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         
         <style>
             :root {
-                /* Tu color principal (Amarillo Dorado) */
+               
                 --main-yellow: #8BC34A; 
                 --darker-yellow: #8BC34A; /* Un tono un poco más oscuro para hover/acentos sutiles si es necesario */
 
