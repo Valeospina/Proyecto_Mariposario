@@ -235,6 +235,11 @@ $total_usd = convertirColonesADolares($total_carrito_final);
                                     <label class="form-check-label" for="checkboxCanjearPuntos">
                                         Canjear mis puntos en este pedido
                                     </label>
+
+                                    <?php if ($puntosUsuario < 1000): ?>
+                                        <small class="text-danger d-block mt-1">Necesitas al menos 1000 puntos para canjear.</small>
+                                    <?php endif; ?>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -404,10 +409,10 @@ $total_usd = convertirColonesADolares($total_carrito_final);
 
                                 // Populate cart table with updated items
                                 $.each(response.carrito, function(index, item) {
-                                    var row = `
+                                    var row = 
                                         <tr class="carrito-item-row" data-id="${item.id}">
                                             <td data-label="Producto:" class="d-flex align-items-center product-cell">
-                                                ${item.imagen_url ? `<div class="carrito-producto-imagen me-3"><img src="${item.imagen_url}" alt="${item.nombre}"></div>` : ''}
+                                                ${item.imagen_url ? <div class="carrito-producto-imagen me-3"><img src="${item.imagen_url}" alt="${item.nombre}"></div> : ''}
                                                 <span class="carrito-producto-nombre">${item.nombre}</span>
                                             </td>
                                             <td data-label="Precio Unitario:"><span class="carrito-precio">₡${parseFloat(item.precio).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></td>
@@ -425,13 +430,13 @@ $total_usd = convertirColonesADolares($total_carrito_final);
                                                 </button>
                                             </td>
                                         </tr>
-                                    `;
+                                    ;
                                     $('#cart-items-body').append(row);
                                 });
                             }
 
                             // Update totals and points display
-                            $('#cart-total-amount').html(`<strong>₡${parseFloat(response.cart_total_amount).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>`);
+                            $('#cart-total-amount').html(<strong>₡${parseFloat(response.cart_total_amount).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>);
                             $('#display-total-colones-paypal').text(parseFloat(response.cart_total_amount).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
                             $('#display-total-usd-paypal').text(parseFloat(response.total_usd).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
 
@@ -569,7 +574,7 @@ $total_usd = convertirColonesADolares($total_carrito_final);
 
                 if (selectedMethod === 'Efectivo Tienda' || selectedMethod === 'SINPE Movil') {
                     // Implement a custom confirmation modal instead of confirm()
-                    if (confirm(`Estás a punto de confirmar tu pedido con pago por ${selectedMethod}. ¿Deseas continuar?`)) { // Replace with custom modal
+                    if (confirm(Estás a punto de confirmar tu pedido con pago por ${selectedMethod}. ¿Deseas continuar?)) { // Replace with custom modal
                         $.ajax({
                             url: 'procesar_pedido.php',
                             method: 'POST',
@@ -609,4 +614,4 @@ $total_usd = convertirColonesADolares($total_carrito_final);
         });
     </script>
 </body>
-</html>
+</html>  

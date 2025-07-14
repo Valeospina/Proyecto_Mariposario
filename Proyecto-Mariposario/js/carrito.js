@@ -1,11 +1,11 @@
-$(document).ready(function() {
+$(document).ready(function () {
     // Function to update cart display
     function updateCartDisplay() {
         $.ajax({
             url: 'carrito.php?action=get_cart_data',
             method: 'GET',
             dataType: 'json',
-            success: function(response) {
+            success: function (response) {
                 if (response.success) {
                     let cartItemsBody = $('#cart-items-body');
                     cartItemsBody.empty();
@@ -13,7 +13,7 @@ $(document).ready(function() {
                     if (response.carrito.length === 0) {
                         $('.container.my-5').html('<h2 class="text-center mb-4">Tu Carrito de Compras</h2><div class="alert alert-info text-center" role="alert">Tu carrito está vacío. ¡Explora nuestros productos y agrega algunos!</div>');
                     } else {
-                        response.carrito.forEach(function(item) {
+                        response.carrito.forEach(function (item) {
                             let subtotal = (item.precio * item.cantidad).toFixed(2);
                             let newRow = `
                                 <tr data-id="${item.id}" class="carrito-item-row">
@@ -43,21 +43,39 @@ $(document).ready(function() {
                             `;
                             cartItemsBody.append(newRow);
                         });
+
                         $('#cart-total-amount strong').text('₡' + parseFloat(response.cart_total_amount).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
                         $('#cart-item-count').text(response.total_items);
+
+                        // ✅ Forzar el trigger del método de pago seleccionado después de actualizar el carrito
+                        setTimeout(() => {
+                            $('input[name="metodo_pago"]:checked').trigger('change');
+                        }, 100);
                     }
                 } else {
                     console.error('Error al obtener datos del carrito:', response.message);
                 }
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 console.error('AJAX Error:', status, error);
             }
         });
     }
 
+    // --- Validar canje de puntos (mínimo 1000 puntos) ---
+    const checkbox = $('#checkboxCanjearPuntos');
+    if (checkbox.length > 0) {
+        checkbox.on('change', function () {
+            const currentPoints = parseInt($('#user-points-display').text());
+            if (this.checked && currentPoints < 1000) {
+                alert('Necesitas al menos 1000 puntos para poder canjear.');
+                this.checked = false;
+            }
+        });
+    }
+
     // Increase quantity
-    $(document).on('click', '.btn-increase-quantity', function() {
+    $(document).on('click', '.btn-increase-quantity', function () {
         let productId = $(this).data('id');
         let quantityInput = $(this).closest('.quantity-control').find('.product-quantity');
         let currentQuantity = parseInt(quantityInput.val());
@@ -66,7 +84,7 @@ $(document).ready(function() {
     });
 
     // Decrease quantity
-    $(document).on('click', '.btn-decrease-quantity', function() {
+    $(document).on('click', '.btn-decrease-quantity', function () {
         let productId = $(this).data('id');
         let quantityInput = $(this).closest('.quantity-control').find('.product-quantity');
         let currentQuantity = parseInt(quantityInput.val());
@@ -77,7 +95,7 @@ $(document).ready(function() {
     });
 
     // Remove item
-    $(document).on('click', '.btn-remove-item', function() {
+    $(document).on('click', '.btn-remove-item', function () {
         let productId = $(this).data('id');
         removeCartItem(productId);
     });
@@ -92,18 +110,23 @@ $(document).ready(function() {
                 id: id,
                 cantidad: quantity
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.success) {
                     updateCartDisplay();
                     updateHeaderCartCount(response.total_items);
                     if (response.user_points !== undefined) {
                         $('#user-points-display').text(response.user_points + ' Puntos');
                     }
+
+                    // ✅ Forzar actualización visual del método de pago después de cambiar carrito
+                    setTimeout(() => {
+                        $('input[name="metodo_pago"]:checked').trigger('change');
+                    }, 100);
                 } else {
                     alert('Error al actualizar la cantidad: ' + response.message);
                 }
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 console.error('AJAX Error:', status, error);
                 alert('Error de comunicación con el servidor.');
             }
@@ -119,15 +142,19 @@ $(document).ready(function() {
                 action: 'remove',
                 id: id
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.success) {
                     updateCartDisplay();
                     updateHeaderCartCount(response.total_items);
+
+                    setTimeout(() => {
+                        $('input[name="metodo_pago"]:checked').trigger('change');
+                    }, 100);
                 } else {
                     alert('Error al eliminar el producto: ' + response.message);
                 }
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 console.error('AJAX Error:', status, error);
                 alert('Error de comunicación con el servidor.');
             }

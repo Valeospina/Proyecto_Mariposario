@@ -34,7 +34,20 @@ if ($_POST) {
             $_SESSION['user_email'] = $user['Correo'];
             $_SESSION['user_role'] = $user['ID_Rol'];
             $_SESSION['role_name'] = $user['NombreRol'];
+            
+            $puntos_stmt = $conn->prepare("SELECT COUNT(*) FROM Puntos_Usuario WHERE ID_Usuario = ?");
+            $puntos_stmt->bind_param("i", $_SESSION['user_id']);
+            $puntos_stmt->execute();
+            $puntos_stmt->bind_result($puntos_exist);
+            $puntos_stmt->fetch();
+            $puntos_stmt->close();
 
+            if ($puntos_exist == 0) {
+                $crear_puntos_stmt = $conn->prepare("INSERT INTO Puntos_Usuario (ID_Usuario, Puntos_Actuales) VALUES (?, 0)");
+                $crear_puntos_stmt->bind_param("i", $_SESSION['user_id']);
+                $crear_puntos_stmt->execute();
+                $crear_puntos_stmt->close();
+            }
            
             if ($user['ID_Rol'] == 1) {
                 $emp_stmt = $conn->prepare("SELECT ID_Empleado FROM Empleado WHERE ID_Usuario = ?");
