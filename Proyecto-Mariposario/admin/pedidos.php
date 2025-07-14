@@ -27,24 +27,21 @@ try {
     if (isset($conn) && $conn instanceof mysqli) {
         // Consulta para obtener todos los pedidos con su último estado y nombre de usuario
         // Selecciona el último estado para cada pedido basado en la fecha más reciente
-        $sql = "
-            SELECT 
-                p.ID_Pedido,
-                u.Nombre AS Nombre_Usuario,
-                p.Fecha_Pedido,
-                ep.Estado AS Estado_Actual,
-                MAX(ep.Fecha) AS Fecha_Ultimo_Estado
-            FROM 
-                Pedido p
-            JOIN 
-                Usuario u ON p.ID_Usuario = u.ID_Usuario
-            LEFT JOIN 
-                Estado_Pedido ep ON p.ID_Pedido = ep.ID_Pedido
-            GROUP BY 
-                p.ID_Pedido, u.Nombre, p.Fecha_Pedido, ep.Estado 
-            ORDER BY 
-                p.Fecha_Pedido DESC, Fecha_Ultimo_Estado DESC;
-        ";
+    $sql = "
+        SELECT 
+            p.ID_Pedido,
+            u.Nombre AS Nombre_Usuario,
+            p.Fecha_Pedido,
+            ep.Estado AS Estado_Actual
+        FROM Pedido p
+        JOIN Usuario u ON p.ID_Usuario = u.ID_Usuario
+        LEFT JOIN Estado_Pedido ep ON ep.ID_Pedido = p.ID_Pedido
+            AND ep.Fecha = (
+                SELECT MAX(ep2.Fecha) 
+                FROM Estado_Pedido ep2 
+                WHERE ep2.ID_Pedido = p.ID_Pedido
+            )
+        ORDER BY p.Fecha_Pedido DESC";
 
 
         $result = $conn->query($sql);

@@ -486,7 +486,7 @@ $(document).ready(function() {
                 }
             },
             error: function(xhr, status, error) {
-                console.error('Error AJAX al obtener datos del carrito:', status, error);
+                console.error('Error AJAX al obtener datos del carrito:', status, error, xhr.responseText);
             }
         });
     }
@@ -531,7 +531,7 @@ $(document).ready(function() {
                 }
             },
             error: function(xhr, status, error) {
-                console.error('Error AJAX:', status, error);
+                console.error('Error AJAX:', status, error, xhr.responseText);
             }
         });
     });
@@ -558,40 +558,85 @@ $(document).ready(function() {
     // PayPal Button Integration
     paypal.Buttons({
         createOrder: function(data, actions) {
+            console.log('PayPal: Creando orden...');
             return fetch('create_order.php', { method: 'post' })
-                .then(res => res.json())
-                .then(orderData => orderData.id);
+                .then(res => {
+                    if (!res.ok) {
+                        return res.text().then(text => { throw new Error('HTTP error! Status: ' + res.status + ' - ' + text) });
+                    }
+                    return res.json();
+                })
+                .then(orderData => {
+                    console.log('Orden de PayPal creada:', orderData);
+                    if (orderData.id) {
+                        return orderData.id;
+                    } else {
+                        console.error('Error: No se recibió ID de orden de create_order.php', orderData);
+                        throw new Error('No se recibió ID de orden de create_order.php');
+                    }
+                })
+                .catch(err => {
+                    console.error('Error en la llamada fetch de createOrder:', err);
+                    alert('Hubo un problema al iniciar el pago con PayPal. Revisa la consola para más detalles.');
+                    throw err; 
+                });
         },
         onApprove: function(data, actions) {
-            return fetch('create_order.php', {
+            console.log('Pago de PayPal aprobado. ID de Orden:', data.orderID);
+            return fetch('crearOrden.php', {
                 method: 'post',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ orderID: data.orderID })
             })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) {
+                    return res.text().then(text => { throw new Error('HTTP error! Status: ' + res.status + ' - ' + text) });
+                }
+                return res.json();
+            })
             .then(details => {
-                if (details.status === 'COMPLETED') {
-                    alert('Pago realizado por ' + details.payer.name.given_name);
-                    window.location.href = 'confirmacion.php';
+                console.log('Respuesta de crearOrden.php después de la aprobación de PayPal:', details);
+                if (details.success) { 
+                    alert('¡Pago realizado y pedido registrado exitosamente por ' + (details.payer_name || 'PayPal') + '!');
+                    $.ajax({
+                        url: 'carrito.php',
+                        method: 'POST',
+                        data: { action: 'clear_cart' },
+                        dataType: 'json',
+                        success: function(clearResponse) {
+                            if (clearResponse.success) {
+                                console.log('Carrito vaciado después de la compra.');
+                                window.location.href = 'confirmacion.php';
+                            } else {
+                                console.error('Error al vaciar el carrito:', clearResponse.message);
+                                window.location.href = 'confirmacion.php';
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error AJAX al vaciar el carrito:', status, error, xhr.responseText);
+                            window.location.href = 'confirmacion.php';
+                        }
+                    });
                 } else {
-                    alert('Error en el pago. Estado: ' + details.status);
+                    alert('Pago realizado, pero hubo un error al registrar el pedido en el sistema: ' + (details.error || 'Error desconocido.'));
+                    console.error('Error al registrar pedido después de PayPal:', details);
                 }
             })
             .catch(err => {
-                console.error('Error al capturar la orden:', err);
-                alert('Hubo un problema al procesar el pago.');
+                console.error('Error al capturar la orden o procesar respuesta de crearOrden.php:', err);
+                alert('Hubo un problema al procesar el pago o registrar el pedido. Por favor, revisa la consola para más detalles: ' + err.message);
             });
         },
         onError: function(err) {
             console.error('Error en el botón de PayPal:', err);
-            alert('Ocurrió un error con el botón de PayPal.');
+            alert('Ocurrió un error con el botón de PayPal. Esto podría deberse a restricciones de seguridad del navegador o del entorno (como un iframe). Por favor, intenta en un entorno de servidor real.');
         }
     }).render('#paypal-button-container');
 
     // Handle "Confirmar Pedido" button for non-PayPal methods
     $('#confirmOrderBtn').on('click', function() {
         var selectedMethod = $('input[name="metodo_pago"]:checked').val();
-        var observaciones = $('#observacionesPedido').val();
+        var observaciones = $('#observacionesPedido').val(); 
         var canjearPuntos = $('#checkboxCanjearPuntos').is(':checked');
 
         if (selectedMethod === 'Efectivo Tienda' || selectedMethod === 'SINPE Movil') {
@@ -616,7 +661,7 @@ $(document).ready(function() {
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error('Error AJAX al procesar pedido manual:', status, error);
+                        console.error('Error AJAX al procesar pedido manual:', status, error, xhr.responseText);
                     }
                 });
             }
@@ -626,6 +671,7 @@ $(document).ready(function() {
     });
 });
 </script>
+
 
 </body>
 </html>  
