@@ -34,10 +34,11 @@
     <body class="user">
 
        <?php
-
+		require_once 'Calendario.php';
 		include 'layout/nav2.php';
 		
 		require_once 'DB.php';
+		$cal = new Calendario($conn);
 
 // Obtener eventos desde la base de datos
 $sql = "SELECT ID_Evento, Nombre, Descripcion, Precio, Imagen_URL, Fecha, Hora, Ubicacion FROM Evento";
@@ -77,12 +78,25 @@ $resultado = $conn->query($sql);
                     </p>
 
                     <div class="evento-botones d-flex gap-2">
-                        <a href="ReservaForm.php?id=<?= $evento['ID_Evento'] ?>" class="add-to-cart-button-custom agregar-carrito">Reservar</a>
-                        <a href="VerCalendario.php?id=<?= $evento['ID_Evento'] ?>" class="add-to-cart-button-custom agregar-carrito">Ver fechas disponibles</a>
+                        <a href="ReservaForm.php?id=<?= $evento['ID_Evento'] ?>" type="button" class="add-to-cart-button-custom agregar-carrito">Reservar</a>
+                            <button type="button"
+                                    class="btn btn-success btn-sm btn-ver-fechas"
+                                    data-toggle="modal"
+                                    data-target="#calendarModal">
+                                Ver fechas disponibles
+                            </button>
+                        </div>
                     </div>
+                </div>
+            <!-- Inyectar modal + calendario -->
+            <?php $cal->mostrar(); ?>
+					</div>
                 </div>
             </div>
         <?php endwhile; ?>
+
+		           <!-- Inyectar modal + calendario -->
+            <?php $cal->mostrar(); ?>
     </div>
 </div>
 

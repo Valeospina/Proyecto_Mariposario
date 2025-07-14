@@ -361,7 +361,7 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
                             <p>No se encontraron datos de categorías de productos.</p>
                         <?php endif; ?>
                     </div>
-
+                    
                     <div class="report-section">
                         <h3>Próximos Eventos</h3>
                         <?php if (!empty($upcoming_events)): ?>

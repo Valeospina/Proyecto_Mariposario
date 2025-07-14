@@ -1,0 +1,47 @@
+/* calendario.css */
+
+/* Ajustes generales de la tabla */
+#calendarTableContainer table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Bordes de celdas */
+#calendarTableContainer th,
+#calendarTableContainer td {
+  border: 1px solid #dee2e6;
+  padding: 0.75rem;
+  vertical-align: middle;
+}
+
+/* Cabecera de semana */
+#calendarTableContainer thead th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+}
+
+/* Días disponibles (verde claro) */
+#calendarTableContainer .table-success {
+  background-color: #d4edda !important;
+}
+
+/* Días llenos (rojo claro) */
+#calendarTableContainer .table-danger {
+  background-color: #f8d7da !important;
+}
+
+/* Enlaces dentro de las celdas */
+#calendarTableContainer td a {
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Hover de celdas */
+#calendarTableContainer td:hover {
+  background-color: #e2e6ea;
+  cursor: pointer;
+}

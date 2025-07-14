@@ -70,6 +70,7 @@ $reservas = $result->fetch_all(MYSQLI_ASSOC);
                     <li><a href="InsEventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'InsEventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Asistencia</a></li>
                     <li><a href="pedidos.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'pedidos.php' || basename($_SERVER['PHP_SELF']) == 'edit_pedido.php') ? 'active' : ''; ?>"><i class="fas fa-shopping-cart"></i> Gestionar Pedidos</a></li>
                     <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
+                    <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
                 </ul>
             </nav>
             <div class="sidebar-footer">
@@ -108,7 +109,7 @@ $reservas = $result->fetch_all(MYSQLI_ASSOC);
         <form method="GET" class="filter-form" style="margin-bottom: 20px;">
             <input type="date" name="fecha" value="<?= htmlspecialchars($filtro_fecha) ?>" />
             <input type="text" name="usuario" placeholder="Nombre de usuario" value="<?= htmlspecialchars($filtro_usuario) ?>" />
-            <button type="submit" class="btn">Filtrar</button>
+            <button type="submit" class="btn btn-add-product">Filtrar</button>
         </form>
 
         <table class="admin-table">

@@ -393,6 +393,10 @@ ALTER TABLE Factura
 ADD COLUMN id_pago INT,
 ADD FOREIGN KEY (id_pago) REFERENCES pagos(id);
 
+ALTER TABLE Reserva 
+ADD COLUMN Asistio TINYINT(1) NOT NULL DEFAULT 0;
+
+
 
 
 
