@@ -1,7 +1,7 @@
 <?php
 session_start();
 include 'DB.php'; 
-
+$_SESSION['id_usuario'] = $row['ID_Usuario'];
 if ($_POST) {
     $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
     $password = trim($_POST['password']);

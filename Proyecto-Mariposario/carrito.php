@@ -207,13 +207,11 @@ $total_usd = convertirColonesADolares($total_carrito_final);
                         <div class="profile-info">
                             <img src="<?php echo htmlspecialchars($_SESSION['user_avatar'] ?? 'img/user-profile.jpg'); ?>" alt="Foto de perfil">
                             <h3>Hola, <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Usuario'); ?></h3>
-                            <p>Miembro desde: Abril 2023</p>
-                            <a href="user-settings.php" class="btn btn-sm btn-primary">Editar Perfil</a>
+
                         </div>
                         <ul class="sidebar-menu">
-                            <li><a href="user-profile.php"><i class="fas fa-user"></i> Perfil</a></li>
+                            <li><a href="usuario.php"><i class="fas fa-user"></i> Perfil</a></li>
                             <li><a href="MisPedidos.php"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
-                            <li><a href="notificaciones.php"><i class="fas fa-bell"></i> Notificaciones <span class="badge badge-primary">3</span></a></li>
                         </ul>
                     </div>
                 </div>
