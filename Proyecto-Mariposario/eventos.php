@@ -72,13 +72,13 @@ $resultado = $conn->query($sql);
                         <li><strong>Ubicación:</strong> <?= htmlspecialchars($evento['Ubicacion']) ?></li>
                     </ul>
 
-                    <p class="fw-bold text-success mb-3">
+                    <p class="event-price-custom">
                         ₡<?= number_format($evento['Precio'], 2) ?>
                     </p>
 
                     <div class="evento-botones d-flex gap-2">
-                        <a href="ReservaForm.php?id=<?= $evento['ID_Evento'] ?>" class="btn btn-success">Reservar</a>
-                        <a href="VerCalendario.php?id=<?= $evento['ID_Evento'] ?>" class="btn btn-outline-success">Ver fechas disponibles</a>
+                        <a href="ReservaForm.php?id=<?= $evento['ID_Evento'] ?>" class="add-to-cart-button-custom agregar-carrito">Reservar</a>
+                        <a href="VerCalendario.php?id=<?= $evento['ID_Evento'] ?>" class="add-to-cart-button-custom agregar-carrito">Ver fechas disponibles</a>
                     </div>
                 </div>
             </div>

@@ -221,6 +221,13 @@ body.mariposa {
     color: #555;
 }
 
+.event-price-custom {
+    font-size: 1.4em; /* Reducido un poco el tamaño del precio */
+    font-weight: 700;
+    color: #333;
+    text-align: left;
+    width: 100%;
+}
 
 .product-price-custom {
     font-size: 1.4em; /* Reducido un poco el tamaño del precio */
