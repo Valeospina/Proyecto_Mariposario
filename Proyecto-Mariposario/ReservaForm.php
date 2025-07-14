@@ -78,7 +78,7 @@
 	}
 
 	.appointment .form .button .btn {
-		background-color: #d4ac0d; /* Your existing button color - kept for consistency */
+		background-color: #333; /* Your existing button color - kept for consistency */
 		color: white;
 		padding: 14px 30px; /* More padding for a bolder button */
 		border: none;
@@ -91,13 +91,13 @@
 	}
 
 	.appointment .form .button .btn:hover {
-		background-color: #c09f0c; /* Darker shade on hover */
+		background-color: #333; /* Darker shade on hover */
 		transform: translateY(-2px); /* Lift effect on hover */
 	}
 
 	.appointment .form .button .btn:active {
 		transform: translateY(0); /* Reset on click */
-		background-color: #a88d0b; /* Even darker on active */
+		background-color: #333; /* Even darker on active */
 	}
 
 	.appointment .form p {
@@ -129,7 +129,7 @@
 		display: block;
 		width: 60px; /* Width of the underline */
 		height: 4px; /* Thickness of the underline */
-		background: #d4ac0d; /* Accent color for the underline */
+		background: #8BC34A; /* Accent color for the underline */
 		margin: 10px auto 0; /* Center the underline */
 		border-radius: 2px;
 	}
