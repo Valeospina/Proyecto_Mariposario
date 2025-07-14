@@ -382,236 +382,252 @@ $total_usd = convertirColonesADolares($total_carrito_final);
     <script src="js/active.js"></script>
     <script src="js/tienda.js"></script>
 
-    <script>
-        $(document).ready(function() {
-            // Function to update the cart display using AJAX
-            function updateCartDisplay() {
-                $.ajax({
-                    url: 'carrito.php',
-                    method: 'GET',
-                    data: { action: 'get_cart_data' },
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success) {
-                            $('#cart-items-body').empty(); // Clear existing cart items
+<script>
+$(document).ready(function() {
+    // Function to update the cart display using AJAX
+    function updateCartDisplay() {
+        $.ajax({
+            url: 'carrito.php',
+            method: 'GET',
+            data: { action: 'get_cart_data' },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    $('#cart-items-body').empty(); // Clear existing cart items
 
-                            if (response.carrito.length === 0) {
-                                // Show empty cart message and hide other elements
-                                $('.empty-cart-message').show();
-                                $('.table-responsive, .payment-options, .form-group.mt-4, #instruccionesPago, #paypal-payment-section, #confirmOrderBtn').hide();
-                            } else {
-                                // Hide empty cart message and show other elements as needed based on initial selection
-                                $('.empty-cart-message').hide();
-                                $('.table-responsive, .form-group.mt-4').show(); // Show cart and payment options
-                                
-                                // Re-evaluate payment method display after cart update
-                                $('input[name="metodo_pago"]:checked').trigger('change');
-
-                                // Populate cart table with updated items
-                                $.each(response.carrito, function(index, item) {
-                                    var row = 
-                                        <tr class="carrito-item-row" data-id="${item.id}">
-                                            <td data-label="Producto:" class="d-flex align-items-center product-cell">
-                                                ${item.imagen_url ? <div class="carrito-producto-imagen me-3"><img src="${item.imagen_url}" alt="${item.nombre}"></div> : ''}
-                                                <span class="carrito-producto-nombre">${item.nombre}</span>
-                                            </td>
-                                            <td data-label="Precio Unitario:"><span class="carrito-precio">₡${parseFloat(item.precio).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></td>
-                                            <td data-label="Cantidad:">
-                                                <div class="input-group input-group-sm quantity-control">
-                                                    <button class="btn btn-outline-secondary btn-decrease-quantity" type="button" data-id="${item.id}">-</button>
-                                                    <input type="text" class="form-control text-center product-quantity" value="${item.cantidad}" min="1" data-id="${item.id}" data-price="${item.precio}" readonly>
-                                                    <button class="btn btn-outline-secondary btn-increase-quantity" type="button" data-id="${item.id}">+</button>
-                                                </div>
-                                            </td>
-                                            <td data-label="Subtotal:"><span class="item-subtotal">₡${(parseFloat(item.precio) * parseInt(item.cantidad)).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></td>
-                                            <td data-label="Acciones:" class="carrito-item-actions">
-                                                <button class="btn btn-danger btn-sm btn-remove-item" data-id="${item.id}">
-                                                    <i class="fa fa-trash"></i> Eliminar
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ;
-                                    $('#cart-items-body').append(row);
-                                });
-                            }
-
-                            // Update totals and points display
-                            $('#cart-total-amount').html(<strong>₡${parseFloat(response.cart_total_amount).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>);
-                            $('#display-total-colones-paypal').text(parseFloat(response.cart_total_amount).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-                            $('#display-total-usd-paypal').text(parseFloat(response.total_usd).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-
-                            $('#user-points-display').text(response.user_points);
-                            $('.total-count').text(response.total_items); // Update navbar cart count
-                        } else {
-                            console.error('Error al obtener datos del carrito:', response.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error AJAX al obtener datos del carrito:', status, error);
-                    }
-                });
-            }
-
-            // Initial cart display update on page load
-            updateCartDisplay();
-
-            // Event listeners for quantity changes and item removal
-            $(document).on('click', '.btn-increase-quantity, .btn-decrease-quantity, .btn-remove-item', function() {
-                var productId = $(this).data('id');
-                var currentQuantityInput = $('.product-quantity[data-id="' + productId + '"]');
-                var currentQuantity = parseInt(currentQuantityInput.val());
-                var newQuantity;
-                var actionType;
-
-                if ($(this).hasClass('btn-increase-quantity')) {
-                    newQuantity = currentQuantity + 1;
-                    actionType = 'update_quantity';
-                } else if ($(this).hasClass('btn-decrease-quantity')) {
-                    newQuantity = currentQuantity - 1;
-                    if (newQuantity < 0) newQuantity = 0;
-                    actionType = 'update_quantity';
-                } else if ($(this).hasClass('btn-remove-item')) {
-                    newQuantity = 0;
-                    actionType = 'remove';
-                }
-
-                $.ajax({
-                    url: 'carrito.php',
-                    method: 'POST',
-                    data: {
-                        action: actionType,
-                        id: productId,
-                        cantidad: newQuantity
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success) {
-                            updateCartDisplay();
-                        } else {
-                            // Implement a custom modal/message box instead of alert()
-                            console.error('Error: ' + response.message);
-                            // Example for a custom modal: showCustomModal('Error', response.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error AJAX:', status, error);
-                        // Implement a custom modal/message box instead of alert()
-                        // Example for a custom modal: showCustomModal('Error', 'Hubo un error al actualizar el carrito.');
-                    }
-                });
-            });
-
-            // Handle payment method selection
-            $('input[name="metodo_pago"]').on('change', function() {
-                var selectedMethod = $(this).val();
-
-                // Hide all specific instructions and PayPal section first
-                $('#instruccionesPago').hide();
-                $('#efectivo-instructions').hide();
-                $('#sinpe-instructions').hide();
-                $('#paypal-payment-section').hide();
-                $('#confirmOrderBtn').hide(); // Hide general confirm button
-
-                if (selectedMethod === 'Tarjeta PayPal') {
-                    $('#paypal-payment-section').show();
-                } else if (selectedMethod === 'Efectivo Tienda') {
-                    $('#instruccionesPago').show();
-                    $('#efectivo-instructions').show();
-                    $('#confirmOrderBtn').show(); // Show confirm button for in-store payments
-                } else if (selectedMethod === 'SINPE Movil') {
-                    $('#instruccionesPago').show();
-                    $('#sinpe-instructions').show();
-                    $('#confirmOrderBtn').show(); // Show confirm button for SINPE
-                }
-            });
-
-            // Initial trigger to display the default selected method (Efectivo Tienda)
-            $('input[name="metodo_pago"]:checked').trigger('change');
-
-            // PayPal Button Integration (Using procesar_pedido.php for consistency)
-        paypal.Buttons({
-            createOrder: function(data, actions) {
-                return fetch('create_order.php', {
-                    method: 'post'
-                }).then(res => res.json())
-                  .then(orderData => orderData.id);
-            },
-            onApprove: function(data, actions) {
-                return fetch('create_order.php', {
-                    method: 'post',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        orderID: data.orderID
-                    })
-                })
-                .then(res => res.json())
-                .then(details => {
-                    if (details.status === 'COMPLETED') {
-                        alert('Pago realizado por ' + details.payer.name.given_name);
-                        window.location.href = 'confirmacion.php';
+                    if (response.carrito.length === 0) {
+                        // Show empty cart message and hide other elements
+                        $('.empty-cart-message').show();
+                        $('.table-responsive, .payment-options, .form-group.mt-4, #instruccionesPago, #paypal-payment-section, #confirmOrderBtn').hide();
                     } else {
-                        alert('Error en el pago. Estado: ' + details.status);
-                    }
-                })
-                .catch(err => {
-                    console.error('Error al capturar la orden:', err);
-                    alert('Hubo un problema al procesar el pago.');
-                });
-            },
-            onError: function(err) {
-                console.error('Error en el botón de PayPal:', err);
-                alert('Ocurrió un error con el botón de PayPal.');
-            }
-        }).render('#paypal-button-container');
+                        // Hide empty cart message and show other elements as needed based on initial selection
+                        $('.empty-cart-message').hide();
+                        $('.table-responsive, .form-group.mt-4').show(); // Show cart and payment options
+                        
+                        // Re-evaluate payment method display after cart update
+                        $('input[name="metodo_pago"]:checked').trigger('change');
 
-            // Handle "Confirmar Pedido" button for non-PayPal methods
-            $('#confirmOrderBtn').on('click', function() {
-                var selectedMethod = $('input[name="metodo_pago"]:checked').val();
-                var observaciones = $('#observacionesPedido').val();
-                var canjearPuntos = $('#checkboxCanjearPuntos').is(':checked');
-
-                if (selectedMethod === 'Efectivo Tienda' || selectedMethod === 'SINPE Movil') {
-                    // Implement a custom confirmation modal instead of confirm()
-                    if (confirm(Estás a punto de confirmar tu pedido con pago por ${selectedMethod}. ¿Deseas continuar?)) { // Replace with custom modal
-                        $.ajax({
-                            url: 'procesar_pedido.php',
-                            method: 'POST',
-                            data: JSON.stringify({
-                                action: 'manual_order_complete',
-                                observaciones: observaciones,
-                                canjearPuntos: canjearPuntos ? '1' : '0',
-                                metodo_pago_final: selectedMethod
-                            }),
-                            contentType: 'application/json',
-                            dataType: 'json',
-                            success: function(response) {
-                                if (response.success) {
-                                    // Implement a custom modal/message box instead of alert()
-                                    console.log('¡Pedido confirmado! Recibirás un correo con los detalles.');
-                                    // Example: showCustomModal('Éxito', '¡Pedido confirmado! Recibirás un correo con los detalles.');
-                                    window.location.href = 'confirmacion.php';
-                                } else {
-                                    // Implement a custom modal/message box instead of alert()
-                                    console.error('Hubo un error al confirmar tu pedido:', response.message);
-                                    // Example: showCustomModal('Error', 'Hubo un error al confirmar tu pedido: ' + response.message);
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error('Error AJAX al procesar pedido manual:', status, error);
-                                // Implement a custom modal/message box instead of alert()
-                                // Example: showCustomModal('Error', 'Hubo un error de comunicación con el servidor para finalizar el pedido.');
-                            }
+                        // Populate cart table with updated items
+                        $.each(response.carrito, function(index, item) {
+                            var row = `
+                                <tr class="carrito-item-row" data-id="${item.id}">
+                                    <td data-label="Producto:" class="d-flex align-items-center product-cell">
+                                        ${item.imagen_url ? `
+                                            <div class="carrito-producto-imagen me-3">
+                                                <img src="${item.imagen_url}" alt="${item.nombre}">
+                                            </div>
+                                        ` : ''}
+                                        <span class="carrito-producto-nombre">${item.nombre}</span>
+                                    </td>
+                                    <td data-label="Precio Unitario:">
+                                        <span class="carrito-precio">
+                                            ₡${parseFloat(item.precio).toLocaleString('es-CR', {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2
+                                            })}
+                                        </span>
+                                    </td>
+                                    <td data-label="Cantidad:">
+                                        <div class="input-group input-group-sm quantity-control">
+                                            <button class="btn btn-outline-secondary btn-decrease-quantity" type="button" data-id="${item.id}">-</button>
+                                            <input type="text"
+                                                   class="form-control text-center product-quantity"
+                                                   value="${item.cantidad}"
+                                                   min="1"
+                                                   data-id="${item.id}"
+                                                   data-price="${item.precio}"
+                                                   readonly>
+                                            <button class="btn btn-outline-secondary btn-increase-quantity" type="button" data-id="${item.id}">+</button>
+                                        </div>
+                                    </td>
+                                    <td data-label="Subtotal:">
+                                        <span class="item-subtotal">
+                                            ₡${(parseFloat(item.precio) * parseInt(item.cantidad)).toLocaleString('es-CR', {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2
+                                            })}
+                                        </span>
+                                    </td>
+                                    <td data-label="Acciones:" class="carrito-item-actions">
+                                        <button class="btn btn-danger btn-sm btn-remove-item" data-id="${item.id}">
+                                            <i class="fa fa-trash"></i> Eliminar
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+                            $('#cart-items-body').append(row);
                         });
                     }
+
+                    // Update totals and points display
+                    $('#cart-total-amount').html(`
+                        <strong>
+                            ₡${parseFloat(response.cart_total_amount).toLocaleString('es-CR', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            })}
+                        </strong>
+                    `);
+                    $('#display-total-colones-paypal').text(
+                        parseFloat(response.cart_total_amount).toLocaleString('es-CR', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        })
+                    );
+                    $('#display-total-usd-paypal').text(
+                        parseFloat(response.total_usd).toLocaleString('en-US', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        })
+                    );
+
+                    $('#user-points-display').text(response.user_points);
+                    $('.total-count').text(response.total_items); // Update navbar cart count
                 } else {
-                    // Implement a custom modal/message box instead of alert()
-                    console.warn('Por favor, selecciona un método de pago válido.');
-                    // Example: showCustomModal('Atención', 'Por favor, selecciona un método de pago válido.');
+                    console.error('Error al obtener datos del carrito:', response.message);
                 }
-            });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error AJAX al obtener datos del carrito:', status, error);
+            }
         });
-    </script>
+    }
+
+    // Initial cart display update on page load
+    updateCartDisplay();
+
+    // Event listeners for quantity changes and item removal
+    $(document).on('click', '.btn-increase-quantity, .btn-decrease-quantity, .btn-remove-item', function() {
+        var productId = $(this).data('id');
+        var currentQuantityInput = $('.product-quantity[data-id="' + productId + '"]');
+        var currentQuantity = parseInt(currentQuantityInput.val());
+        var newQuantity;
+        var actionType;
+
+        if ($(this).hasClass('btn-increase-quantity')) {
+            newQuantity = currentQuantity + 1;
+            actionType = 'update_quantity';
+        } else if ($(this).hasClass('btn-decrease-quantity')) {
+            newQuantity = currentQuantity - 1;
+            if (newQuantity < 0) newQuantity = 0;
+            actionType = 'update_quantity';
+        } else {
+            newQuantity = 0;
+            actionType = 'remove';
+        }
+
+        $.ajax({
+            url: 'carrito.php',
+            method: 'POST',
+            data: {
+                action: actionType,
+                id: productId,
+                cantidad: newQuantity
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    updateCartDisplay();
+                } else {
+                    console.error('Error: ' + response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error AJAX:', status, error);
+            }
+        });
+    });
+
+    // Handle payment method selection
+    $('input[name="metodo_pago"]').on('change', function() {
+        var selectedMethod = $(this).val();
+
+        // Hide all specific instructions and PayPal section first
+        $('#instruccionesPago, #efectivo-instructions, #sinpe-instructions, #paypal-payment-section, #confirmOrderBtn').hide();
+
+        if (selectedMethod === 'Tarjeta PayPal') {
+            $('#paypal-payment-section').show();
+        } else if (selectedMethod === 'Efectivo Tienda') {
+            $('#instruccionesPago, #efectivo-instructions, #confirmOrderBtn').show();
+        } else if (selectedMethod === 'SINPE Movil') {
+            $('#instruccionesPago, #sinpe-instructions, #confirmOrderBtn').show();
+        }
+    });
+
+    // Initial trigger to display the default selected method
+    $('input[name="metodo_pago"]:checked').trigger('change');
+
+    // PayPal Button Integration
+    paypal.Buttons({
+        createOrder: function(data, actions) {
+            return fetch('create_order.php', { method: 'post' })
+                .then(res => res.json())
+                .then(orderData => orderData.id);
+        },
+        onApprove: function(data, actions) {
+            return fetch('create_order.php', {
+                method: 'post',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orderID: data.orderID })
+            })
+            .then(res => res.json())
+            .then(details => {
+                if (details.status === 'COMPLETED') {
+                    alert('Pago realizado por ' + details.payer.name.given_name);
+                    window.location.href = 'confirmacion.php';
+                } else {
+                    alert('Error en el pago. Estado: ' + details.status);
+                }
+            })
+            .catch(err => {
+                console.error('Error al capturar la orden:', err);
+                alert('Hubo un problema al procesar el pago.');
+            });
+        },
+        onError: function(err) {
+            console.error('Error en el botón de PayPal:', err);
+            alert('Ocurrió un error con el botón de PayPal.');
+        }
+    }).render('#paypal-button-container');
+
+    // Handle "Confirmar Pedido" button for non-PayPal methods
+    $('#confirmOrderBtn').on('click', function() {
+        var selectedMethod = $('input[name="metodo_pago"]:checked').val();
+        var observaciones = $('#observacionesPedido').val();
+        var canjearPuntos = $('#checkboxCanjearPuntos').is(':checked');
+
+        if (selectedMethod === 'Efectivo Tienda' || selectedMethod === 'SINPE Movil') {
+            if (confirm(`Estás a punto de confirmar tu pedido con pago por ${selectedMethod}. ¿Deseas continuar?`)) {
+                $.ajax({
+                    url: 'procesar_pedido.php',
+                    method: 'POST',
+                    data: JSON.stringify({
+                        action: 'manual_order_complete',
+                        observaciones: observaciones,
+                        canjearPuntos: canjearPuntos ? '1' : '0',
+                        metodo_pago_final: selectedMethod
+                    }),
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            console.log('¡Pedido confirmado! Recibirás un correo con los detalles.');
+                            window.location.href = 'confirmacion.php';
+                        } else {
+                            console.error('Hubo un error al confirmar tu pedido:', response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error AJAX al procesar pedido manual:', status, error);
+                    }
+                });
+            }
+        } else {
+            console.warn('Por favor, selecciona un método de pago válido.');
+        }
+    });
+});
+</script>
+
 </body>
 </html>  
