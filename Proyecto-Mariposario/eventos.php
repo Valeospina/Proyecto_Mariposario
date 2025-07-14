@@ -79,12 +79,12 @@ $resultado = $conn->query($sql);
 
                     <div class="evento-botones d-flex gap-2">
                         <a href="ReservaForm.php?id=<?= $evento['ID_Evento'] ?>" type="button" class="add-to-cart-button-custom agregar-carrito">Reservar</a>
-                            <button type="button"
-                                    class="btn btn-success btn-sm btn-ver-fechas"
-                                    data-toggle="modal"
-                                    data-target="#calendarModal">
-                                Ver fechas disponibles
-                            </button>
+                        <a href="#"
+							class="add-to-cart-button-custom btn-ver-fechas"
+							data-toggle="modal"
+							data-target="#calendarModal">
+							Ver fechas disponibles
+							</a>
                         </div>
                     </div>
                 </div>
