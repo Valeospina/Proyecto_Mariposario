@@ -1,7 +1,11 @@
 <?php
 $servername = "localhost";
 $username = "root";
+<<<<<<< Updated upstream
 $password = ""; 
+=======
+$password = "12345"; 
+>>>>>>> Stashed changes
 $dbname = "mariposarioDB";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
