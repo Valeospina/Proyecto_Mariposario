@@ -379,10 +379,10 @@ table tbody tr:hover {
 /* --- Form Styles --- */
 .form-container {
     background-color: var(--card-bg);
-    padding: 30px;
+    padding: 25px;
     border-radius: 12px;
     box-shadow: var(--shadow-medium);
-    max-width: 600px; /* Ancho máximo para formularios */
+    max-width: 500px; /* Ancho máximo para formularios */
     margin: 0 auto; /* Centrar el formulario */
 }
 
@@ -393,7 +393,7 @@ table tbody tr:hover {
 .form-group label {
     display: block;
     margin-bottom: 8px;
-    font-weight: 500;
+    font-weight: 400;
     color: var(--text-dark);
     font-size: 0.95rem;
 }
@@ -666,4 +666,5 @@ table tbody tr:hover {
         padding: 6px 10px;
         font-size: 0.8rem;
     }
+    
 }

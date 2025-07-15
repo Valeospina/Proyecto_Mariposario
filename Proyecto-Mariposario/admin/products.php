@@ -184,6 +184,56 @@ $page_title = 'Gestionar Productos';
         transform: translateY(-1px);
         box-shadow: var(--shadow-medium);
         }
+
+       .action-btn-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Aplica a ambos botones */
+        .btn-action-edit,
+        .btn-action-delete {
+            padding: 17px 15px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 100px;  /* Ancho mínimo uniforme */
+            width: 70%;        /* Ambos ocuparán el mismo ancho */
+            max-width: 110px;   /* Opcional: evita que crezcan demasiado */
+            box-sizing: border-box;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-action-edit {
+            background-color: #00BCD4;
+            color: #fff;
+        }
+
+        .btn-action-edit:hover {
+            background-color: #0097a7;
+        }
+
+        .btn-action-delete {
+            background-color: #E74C3C;
+            color: #fff;
+        }
+
+        .btn-action-delete:hover {
+            background-color: #C0392B;
+        }
+
+        /* Aumentar ancho de la columna de descripción */
+        table td:nth-child(4),
+        table th:nth-child(4) {
+            width: 35%; /* Puedes ajustar a 30%, 35%, etc. según necesidad */
+            white-space: normal;
+        }
+
         </style>
 
    
@@ -208,6 +258,7 @@ $page_title = 'Gestionar Productos';
                     <li><a href="ReservaAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'ReservaAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Reservas</a></li>
                     <li><a href="InsEventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'InsEventoAdmin') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Asistencia</a></li>
                     <li><a href="pedidos.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'pedidos.php' || basename($_SERVER['PHP_SELF']) == 'edit_pedido.php') ? 'active' : ''; ?>"><i class="fas fa-shopping-cart"></i> Gestionar Pedidos</a></li>
+                    <li><a href="reporte_ventas.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reporte_ventas.php') ? 'active' : ''; ?>"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li> 
                     <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
                    <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
 
@@ -289,9 +340,11 @@ $page_title = 'Gestionar Productos';
                                         <td data-label="Activo en Catálogo:">
                                             <?php echo $product['Activo_Catalogo'] ? '<span style="color: var(--sidebar-active-bg);"><i class="fas fa-check-circle"></i> Sí</span>' : '<span style="color: var(--danger-red);"><i class="fas fa-times-circle"></i> No</span>'; ?>
                                         </td>
-                                        <td data-label="Acciones:" class="action-links">
-                                            <a href="edit_product.php?id=<?php echo htmlspecialchars($product['ID_Producto']); ?>" class="btn btn-action-edit" title="Editar"><i class="fas fa-edit"></i> Editar</a>
-                                            <a href="products.php?action=delete&id=<?php echo htmlspecialchars($product['ID_Producto']); ?>" class="btn btn-action-delete" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar este producto? Esto también eliminará todos los ítems de inventario asociados.');"><i class="fas fa-trash-alt"></i> Eliminar</a>
+                                        <td class="action-links">
+                                            <div class="action-btn-group">
+                                                <a href="edit_product.php?id=<?= $product['ID_Producto'] ?>" class="btn btn-action-edit"><i class="fas fa-edit"></i> Editar</a>
+                                                <a href="products.php?action=delete&id=<?= $product['ID_Producto'] ?>" class="btn btn-action-delete" onclick="return confirm('¿Seguro que deseas eliminar este producto?');"><i class="fas fa-trash-alt"></i> Eliminar</a>
+                                            </div>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

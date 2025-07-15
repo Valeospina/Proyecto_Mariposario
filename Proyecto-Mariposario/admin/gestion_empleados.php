@@ -129,6 +129,52 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../css/admin.css">
 
+    <style>
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px 0;
+        }
+
+        /* Estilo base */
+        .btn-action-edit,
+        .btn-action-delete {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 7.5px 1%;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            border: none;
+            color: #fff;
+            width: 120px;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-action-edit {
+            background-color: #00BCD4;
+        }
+        .btn-action-edit:hover {
+            background-color: #0097a7;
+        }
+
+        .btn-action-delete {
+            background-color: #E74C3C;
+        }
+        .btn-action-delete:hover {
+            background-color: #C0392B;
+        }
+
+
+    </style>
+
 </head>
 <body>
 
@@ -148,6 +194,7 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
                     <li><a href="ReservaAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'ReservaAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Reservas</a></li>
                     <li><a href="InsEventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'InsEventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Asistencia</a></li>
                     <li><a href="pedidos.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'pedidos.php' || basename($_SERVER['PHP_SELF']) == 'edit_pedido.php') ? 'active' : ''; ?>"><i class="fas fa-shopping-cart"></i> Gestionar Pedidos</a></li>
+                    <li><a href="reporte_ventas.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reporte_ventas.php') ? 'active' : ''; ?>"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li>
                     <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
                     <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
 
@@ -212,9 +259,14 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
                                             <td>₡<?php echo number_format($empleado['Salario'] ?? 0, 2, ',', '.'); ?></td>
                                             <td><?php echo htmlspecialchars($empleado['Horario'] ?? 'N/A'); ?></td>
                                             <td><?php echo htmlspecialchars($empleado['Fecha_Contratacion'] ?? 'N/A'); ?></td>
+                                            
                                             <td class="action-buttons">
-                                                 <a href="edit_empleado.php?id=<?php echo htmlspecialchars($empleado['ID_Usuario']); ?>" class="btn btn-action-edit" title="Editar"><i class="fas fa-edit"></i> Editar</a>
-                                                 <a href="delete_empleado.php?id=<?php echo htmlspecialchars($empleado['ID_Usuario']); ?>" class="btn btn-action-delete" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar a este empleado? Esta acción es irreversible.');"><i class="fas fa-trash-alt"></i> Eliminar</a>
+                                                <a href="edit_product.php?id=<?= htmlspecialchars($product['ID_Producto']) ?>" class="btn btn-action-edit" title="Editar">
+                                                    <i class="fas fa-edit"></i> Editar
+                                                </a>
+                                                <a href="products.php?action=delete&id=<?= htmlspecialchars($product['ID_Producto']) ?>" class="btn btn-action-delete" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar este producto?');">
+                                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                                </a>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>

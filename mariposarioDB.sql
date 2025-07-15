@@ -407,3 +407,6 @@ CREATE TABLE Estado_Pedido (
 );
 
 
+
+-- Como recomendacion, ejecuten desde 0 la base de datos y de ultimo ejecutan esta linea de codigo
+ALTER TABLE Pedido MODIFY metodo_pago VARCHAR(50) NOT NULL DEFAULT 'PayPal';
