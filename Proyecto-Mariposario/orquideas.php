@@ -113,33 +113,46 @@
                             echo '<h3>No se encontraron productos que coincidan con tu búsqueda.</h3>';
                             echo '</div>';
                         } else {
-                            foreach ($productos as $producto) {
-                                ?>
-                                <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-                                    <div class="product-card-custom"> <div class="product-image-container-custom">
-                                            <?php
-                                            $display_image_src = htmlspecialchars($producto['Imagen_URL']);
-                                            ?>
-                                            <img src="<?php echo $display_image_src; ?>" alt="<?php echo htmlspecialchars($producto['Nombre']); ?>" class="product-image-custom">
-                                        </div>
-                                        <div class="product-content-custom">
+                        foreach ($productos as $producto) {
+                            ?>
+                            <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+                                <div class="product-card-custom position-relative">
+                                    <div class="product-image-container-custom">
+                                        <?php $display_image_src = htmlspecialchars($producto['Imagen_URL']); ?>
+                                        <img src="<?php echo $display_image_src; ?>" alt="<?php echo htmlspecialchars($producto['Nombre']); ?>" class="product-image-custom">
+                                    </div>
+                                    <div class="product-content-custom">
+                                        <!-- Enlace sobre el nombre del producto -->
+                                        <a href="producto.php?id=<?php echo $producto['ID_Producto']; ?>" class="stretched-link text-decoration-none">
                                             <h4 class="product-name-custom"><strong><?php echo htmlspecialchars($producto['Nombre']); ?></strong></h4>
-                                            <p class="product-description-custom"><?php echo htmlspecialchars($producto['Descripcion']); ?></p>
-                                            <div class="product-details-custom">
-                                                <div class="product-price-custom"><span>₡<?php echo number_format($producto['Precio'], 2, ',', '.'); ?></span></div>
-                                            </div>
-                                            <button type="button" class="add-to-cart-button-custom agregar-carrito"
-                                                data-id="<?php echo htmlspecialchars($producto['ID_Producto']); ?>"
-                                                data-nombre="<?php echo htmlspecialchars($producto['Nombre']); ?>"
-                                                data-precio="<?php echo htmlspecialchars($producto['Precio']); ?>"
-                                                data-imagen-url="<?php echo htmlspecialchars($producto['Imagen_URL']); ?>">
-                                                AÑADIR AL CARRITO
-                                            </button>
+                                        </a>
+                                        <p class="product-description-custom"><?php echo htmlspecialchars($producto['Descripcion']); ?></p>
+                                       <div class="product-link-custom">
+                                            <a href="producto.php?id=<?php echo $producto['ID_Producto']; ?>" class="text-dark text-decoration-none small">
+                                                 Ver detalles
+                                            </a>
                                         </div>
+                                        <!-- Precio a la izquierda, Ver detalles a la derecha -->
+                                        <div class="product-details-custom d-flex justify-content-between align-items-center mt-2">
+                                            <div class="product-price-custom">
+                                                <span>₡<?php echo number_format($producto['Precio'], 2, ',', '.'); ?></span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Botón de agregar al carrito -->
+                                        <button type="button" class="add-to-cart-button-custom agregar-carrito mt-2"
+                                            data-id="<?php echo htmlspecialchars($producto['ID_Producto']); ?>"
+                                            data-nombre="<?php echo htmlspecialchars($producto['Nombre']); ?>"
+                                            data-precio="<?php echo htmlspecialchars($producto['Precio']); ?>"
+                                            data-imagen-url="<?php echo htmlspecialchars($producto['Imagen_URL']); ?>">
+                                            AÑADIR AL CARRITO
+                                        </button>
                                     </div>
                                 </div>
-                                <?php
-                            }
+                            </div>
+                            <?php
+                        }
+
                         }
                     } catch (Exception $e) {
                         echo '<div class="col-12 text-center py-5">';

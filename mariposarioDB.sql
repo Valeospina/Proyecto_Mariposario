@@ -410,3 +410,24 @@ CREATE TABLE Estado_Pedido (
 
 -- Como recomendacion, ejecuten desde 0 la base de datos y de ultimo ejecutan esta linea de codigo
 ALTER TABLE Pedido MODIFY metodo_pago VARCHAR(50) NOT NULL DEFAULT 'PayPal';
+
+CREATE TABLE reseñas (
+  ID INT AUTO_INCREMENT PRIMARY KEY,
+  ID_Producto INT NOT NULL,
+  Usuario VARCHAR(100) NOT NULL,
+  Calificacion INT NOT NULL DEFAULT 0,
+  Reseña TEXT NOT NULL,
+  Fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (ID_Producto) REFERENCES producto(ID_Producto)
+);
+
+CREATE TABLE resenas_evento (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    ID_Evento INT NOT NULL,
+    Usuario VARCHAR(100) NOT NULL,
+    Calificacion INT NOT NULL DEFAULT 0,
+    Reseña TEXT NOT NULL,
+    Fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ID_Evento) REFERENCES Evento(ID_Evento)
+);
+

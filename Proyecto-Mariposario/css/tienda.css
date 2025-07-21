@@ -24,7 +24,7 @@ body.mariposa {
 }
 
 /* Ajuste de columnas de Bootstrap para el espaciado de las tarjetas */
-.products-catalog-section .row {
+.product-link-custom .row {
     margin-left: -15px; /* Compensa el padding de las columnas */
     margin-right: -15px; /* Compensa el padding de las columnas */
 }
@@ -38,6 +38,23 @@ body.mariposa {
     padding-right: 15px;
     margin-bottom: 30px; /* Añadido un margen inferior para mejor separación */
 }
+
+
+.product-link-custom a:hover {
+    text-decoration: none;
+    color: #8BC34A; /* Azul o el color que prefieras */
+}
+
+/* Imagen en producto.php (detalle) */
+.product-detail-image {
+    max-height: 400px;
+    object-fit: cover;
+    width: 100%;
+    border-radius: 15px;
+    background-color: #f8f8f8;
+    border: 1px solid #eee;
+}
+
 
 
 /* --- SECCIÓN DEL BUSCADOR: Más prominente y moderna --- */
@@ -449,5 +466,8 @@ body.mariposa {
         flex: 0 0 100%;
         max-width: 100%;
     }
+
+
+    
 }
 
