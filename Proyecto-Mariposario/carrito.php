@@ -335,15 +335,17 @@ $total_usd = convertirColonesADolares($total_carrito_final);
                                 <p id="efectivo-instructions" style="display:none;">
                                     Tu pedido estará listo para ser retirado y pagado en efectivo en nuestra tienda física. Te enviaremos un correo de confirmación con los detalles de la dirección y horario de retiro.
                                 </p>
+
                                 <p id="sinpe-instructions" style="display:none;">
                                     <strong>Número SINPE Móvil:</strong> **8888-8888**<br>
                                     (A nombre de: EcoMariposa S.A. - Cédula Jurídica: 3-101-123456)<br>
-                                    Por favor, realiza el pago a este número y guarda tu comprobante. Nos pondremos en contacto para la confirmación de tu pedido una vez que recibamos el pago.
+                                    Por favor, realiza el pago a este número y guarda tu comprobante. Sube una imagen o PDF del comprobante a continuación:
+                                    <br><br>
+                                    <label for="comprobanteSinpe">Subir Comprobante de Pago:</label>
+                                    <input type="file" id="comprobanteSinpe" name="comprobanteSinpe" accept="image/*,application/pdf" class="form-control-file mt-2">
+                                    <small class="form-text text-muted">Formatos permitidos: JPG, PNG o PDF.</small>
                                 </p>
-                                <!-- General instructions are now specific to each method, this can be removed or used as a fallback -->
-                                <!-- <p id="general-instructions" class="mb-0">
-                                    Por favor, realiza el pago y guarda tu comprobante. En caso de SINPE, contactaremos contigo para la confirmación o se te indicará cómo subir el comprobante en tu perfil de usuario.
-                                </p> -->
+
                             </div>
 
                             <div class="payment-options mt-4" id="paypal-payment-section" style="display: none;">
@@ -633,40 +635,72 @@ $(document).ready(function() {
         }
     }).render('#paypal-button-container');
 
-    // Handle "Confirmar Pedido" button for non-PayPal methods
-    $('#confirmOrderBtn').on('click', function() {
-        var selectedMethod = $('input[name="metodo_pago"]:checked').val();
-        var observaciones = $('#observacionesPedido').val(); 
-        var canjearPuntos = $('#checkboxCanjearPuntos').is(':checked');
+ // Manejar el botón "Confirmar Pedido" para métodos NO PayPal
+$('#confirmOrderBtn').on('click', function() {
+    var selectedMethod = $('input[name="metodo_pago"]:checked').val();
+    var observaciones = $('#observacionesPedido').val(); 
+    var canjearPuntos = $('#checkboxCanjearPuntos').is(':checked');
 
-        if (selectedMethod === 'Efectivo Tienda' || selectedMethod === 'SINPE Movil') {
-            if (confirm(`Estás a punto de confirmar tu pedido con pago por ${selectedMethod}. ¿Deseas continuar?`)) {
-                $.ajax({
-                    url: 'procesar_pedido.php',
-                    method: 'POST',
-                    data: JSON.stringify({
-                        action: 'manual_order_complete',
-                        observaciones: observaciones,
-                        canjearPuntos: canjearPuntos ? '1' : '0',
-                        metodo_pago_final: selectedMethod
-                    }),
-                    contentType: 'application/json',
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success) {
-                            console.log('¡Pedido confirmado! Recibirás un correo con los detalles.');
-                            window.location.href = 'confirmacion.php';
-                        } else {
-                            console.error('Hubo un error al confirmar tu pedido:', response.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error AJAX al procesar pedido manual:', status, error, xhr.responseText);
-                    }
-                });
+    if (selectedMethod === 'SINPE Movil') {
+        const comprobanteFile = document.getElementById('comprobanteSinpe').files[0];
+
+        if (!comprobanteFile) {
+            alert('Por favor, sube el comprobante de pago para completar el pedido.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('action', 'manual_order_complete');
+        formData.append('metodo_pago_final', selectedMethod);
+        formData.append('canjearPuntos', canjearPuntos ? '1' : '0');
+        formData.append('observaciones', observaciones);
+        formData.append('comprobanteSinpe', comprobanteFile);
+
+        $.ajax({
+            url: 'procesar_pedido.php',
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json', // <-- IMPORTANTE
+            success: function(response) {
+                if (response.success) {
+                    window.location.href = 'confirmacion.php';
+                } else {
+                    alert('Error al procesar el pedido: ' + response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error al enviar pedido con SINPE:', xhr.responseText);
+                alert('Error inesperado al enviar pedido SINPE.');
             }
+        });
+        } 
+        else if (selectedMethod === 'Efectivo Tienda') {
+            $.ajax({
+                url: 'procesar_pedido.php',
+                method: 'POST',
+                data: {
+                    action: 'manual_order_complete',
+                    metodo_pago_final: selectedMethod,
+                    canjearPuntos: canjearPuntos ? '1' : '0',
+                    observaciones: observaciones
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        window.location.href = 'confirmacion.php';
+                    } else {
+                        alert('Error al procesar el pedido: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error AJAX en pago efectivo:', xhr.responseText);
+                    alert('Ocurrió un error al registrar el pedido.');
+                }
+            });
         } else {
-            console.warn('Por favor, selecciona un método de pago válido.');
+            alert('Por favor, selecciona un método de pago válido.');
         }
     });
 });
