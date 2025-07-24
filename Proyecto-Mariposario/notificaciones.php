@@ -721,7 +721,7 @@ body {
                             <li><a href="notificaciones.php" class="active"><i class="fas fa-bell"></i> Notificaciones
                                     <span class="badge badge-primary">3</span></a></li>
                             <li><a href="user-favorites.php"><i class="fas fa-heart"></i> Favoritos</a></li>
-                            <li><a href="user-settings.php"><i class="fas fa-cog"></i> Configuración</a></li>
+                            <li><a href="cliente-chat.php"><i class="fas fa-cog"></i> Soporte</a></li>
                             <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
                         </ul>
                     </div>

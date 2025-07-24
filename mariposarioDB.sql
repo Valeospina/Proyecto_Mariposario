@@ -9,6 +9,8 @@
 
 -- Eliminar la base de datos si existe (¡CUIDADO! Esto borrará todos los datos existentes)
 DROP DATABASE IF EXISTS mariposarioDB;
+
+
 CREATE DATABASE mariposarioDB;
 USE mariposarioDB;
 
@@ -302,17 +304,53 @@ CREATE TABLE Reserva (
     FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
 );
 
--- Tabla: Consulta (Consultas o mensajes de usuarios)
+
+
+
+
+
+
+-- ====================================================================
+-- TABLA: Consulta (Soporte al Cliente - Chat o Correo)
+-- ====================================================================
+
 CREATE TABLE Consulta (
     ID_Consulta INT PRIMARY KEY AUTO_INCREMENT,
-    ID_Usuario INT,
-    Fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
-    Tema VARCHAR(100),
-    Mensaje TEXT NOT NULL,
-    Respuesta TEXT,
-    Fecha_Respuesta DATETIME,
+    ID_Usuario INT NULL, -- Puede ser NULL si es invitado
+    Fecha DATETIME DEFAULT CURRENT_TIMESTAMP, -- Fecha de creación del ticket
+    Tema ENUM('Consulta','Reclamo','Sugerencia') NOT NULL, -- Tipo de consulta
+    Estado ENUM('Pendiente','Respondido','Cerrado') DEFAULT 'Pendiente', -- Estado del ticket
+    Canal ENUM('Chat','Correo') DEFAULT 'Chat', -- Medio de soporte
+    Mensajes JSON NULL, -- Historial de mensajes en formato JSON
     FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
 );
+
+
+-- ====================================================================
+-- DATOS DE EJEMPLO PARA PROBAR EL MÓDULO
+-- ====================================================================
+
+
+INSERT INTO Consulta (ID_Usuario, Tema, Estado, Canal, Mensajes) VALUES
+(5, 'Consulta', 'Pendiente', 'Chat', JSON_ARRAY(
+    JSON_OBJECT('role', 'system', 'text', '¡Bienvenido! Un agente responderá en un máximo de 24 horas. Tema: Consulta', 'time', '10:00'),
+    JSON_OBJECT('role', 'cliente', 'text', 'Hola, tengo una duda.', 'time', '10:02')
+)),
+(6, 'Reclamo', 'Respondido', 'Correo', JSON_ARRAY(
+    JSON_OBJECT('role', 'cliente', 'text', 'Mi pedido llegó incompleto.', 'time', '11:10'),
+    JSON_OBJECT('role', 'admin', 'text', 'Estamos revisando su caso, le avisaremos pronto.', 'time', '11:15')
+));
+
+
+
+
+
+
+
+
+
+
+
 
 -- Tabla: Notificacion (Notificaciones generales del sistema)
 CREATE TABLE Notificacion (
@@ -430,3 +468,20 @@ VALUES
 ('Brassavola nodosa', 'Orquídea', 'La Brassavola nodosa es una orquídea nocturna, apreciada por su fragancia durante la noche.', 14575.00, 10, 'https://www.shutterstock.com/image-photo/brassavola-small-white-tough-species-600nw-2548499641.jpg', '2025-09-01', TRUE),
 ('Miltonia spectabilis', 'Orquídea', 'Miltonia spectabilis, conocida como la orquídea del pensamiento, es famosa por sus flores grandes y coloridas.', 18550.00, 7, 'https://png.pngtree.com/thumb_back/fh260/background/20220913/pngtree-miltonia-maui-orchid-plant-white-photo-image_19805376.jpg', '2025-09-05', TRUE),
 ('Epidendrum radicans', 'Orquídea', 'Epidendrum radicans es una orquídea que se caracteriza por sus raíces rojas y flores vibrantes.', 12720.00, 20, 'https://www.picturethisai.com/wiki-image/1080/154019752069562384.jpeg', '2025-09-10', TRUE);
+
+
+DESCRIBE Consulta;
+
+
+SELECT * FROM Consulta;
+
+
+SELECT ID_Consulta, ID_Usuario, Tema, Estado, Canal, Mensajes, Fecha
+FROM Consulta
+ORDER BY Fecha DESC;
+
+SELECT Estado, COUNT(*) AS Total
+FROM Consulta
+GROUP BY Estado;
+
+

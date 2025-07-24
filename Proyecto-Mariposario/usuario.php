@@ -251,7 +251,7 @@ $stmtAct->close();
                             <li><a href="eventosReservados.php" class="<?= $currentPage=='eventosReservados.php'?'active':'' ?>"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
                             <li><a href="notificaciones.php" class="<?= $currentPage=='notificaciones.php'?'active':'' ?>"><i class="fas fa-bell"></i> Notificaciones <span class="badge badge-primary">3</span></a></li>
                             <li><a href="user-favorites.php" class="<?= $currentPage=='user-favorites.php'?'active':'' ?>"><i class="fas fa-heart"></i> Favoritos</a></li>
-                            <li><a href="user-settings.php" class="<?= $currentPage=='user-settings.php'?'active':'' ?>"><i class="fas fa-cog"></i> Configuración</a></li>
+                            <li><a href="cliente-chat.php" class="<?= $currentPage=='cliente-chat.php'?'active':'' ?>"><i class="fas fa-cog"></i> Soporte</a></li>
                             <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
                         </ul>
                     </div>
