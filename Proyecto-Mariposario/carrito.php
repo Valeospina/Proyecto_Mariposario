@@ -199,174 +199,178 @@ $total_usd = convertirColonesADolares($total_carrito_final);
     <?php include 'layout/nav2.php'; ?>
 
     <section class="user-panel section">
-        <div class="container">
-            <div class="row">
-                <!-- User Sidebar -->
-                <div class="col-lg-3 col-md-4 col-12">
-                    <div class="user-sidebar">
-                        <div class="profile-info">
-                            <img src="<?php echo htmlspecialchars($_SESSION['user_avatar'] ?? 'img/user-profile.jpg'); ?>" alt="Foto de perfil">
-                            <h3>Hola, <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Usuario'); ?></h3>
-
-                        </div>
-                        <ul class="sidebar-menu">
-                            <li><a href="usuario.php"><i class="fas fa-user"></i> Perfil</a></li>
-                            <li><a href="MisPedidos.php"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
-                        </ul>
+    <div class="container">
+        <div class="row">
+            <!-- User Sidebar -->
+            <div class="col-lg-3 col-md-4 col-12">
+                <div class="user-sidebar">
+                    <div class="profile-info">
+                        <img src="<?php echo htmlspecialchars($_SESSION['user_avatar'] ?? 'img/user-profile.jpg'); ?>" alt="Foto de perfil">
+                        <h3>Hola, <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Usuario'); ?></h3>
                     </div>
+                    <ul class="sidebar-menu">
+                        <li><a href="usuario.php"><i class="fas fa-user"></i> Perfil</a></li>
+                        <li><a href="MisPedidos.php"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
+                    </ul>
                 </div>
+            </div>
 
-                <!-- Main Cart Content -->
-                <div class="col-lg-9 col-md-8 col-12">
-                    <div class="user-main-content">
-                        <h2 class="text-center mb-4">Tu Carrito de Compras</h2>
+            <!-- Main Cart Content -->
+            <div class="col-lg-9 col-md-8 col-12">
+                <div class="user-main-content">
+                    <h2 class="text-center mb-4">Tu Carrito de Compras</h2>
 
-                        <!-- Points Section -->
-                        <div class="carrito-puntos-wrapper mb-4 p-3">
-                            <div class="puntos-texto">
-                                <h5>¡Hola <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Invitado'); ?>! Tienes <span class="puntos-numero" id="user-points-display"><?php echo htmlspecialchars($puntosUsuario ?? 0); ?></span> Puntos.</h5>
-                                <p>¡Canjea tus puntos por descuentos en tu próxima compra!</p>
+                    <!-- Points Section -->
+                    <div class="carrito-puntos-wrapper mb-4 p-3">
+                        <div class="puntos-texto">
+                            <h5>¡Hola <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Invitado'); ?>! Tienes 
+                                <span class="puntos-numero" id="user-points-display"><?php echo htmlspecialchars($puntosUsuario ?? 0); ?></span> Puntos.
+                            </h5>
+                            <p>¡Canjea tus puntos por descuentos en tu próxima compra!</p>
+                        </div>
+                        <div class="puntos-acciones d-flex align-items-center">
+                            <div class="form-check ms-3">
+                                <input class="form-check-input" type="checkbox" id="checkboxCanjearPuntos">
+                                <label class="form-check-label" for="checkboxCanjearPuntos">
+                                    Canjear mis puntos en este pedido
+                                </label>
+
+                                <?php if ($puntosUsuario < 1000): ?>
+                                    <small class="text-danger d-block mt-1">Necesitas al menos 1000 puntos para canjear.</small>
+                                <?php endif; ?>
                             </div>
-                            <div class="puntos-acciones d-flex align-items-center">
-                                <div class="form-check ms-3">
-                                    <input class="form-check-input" type="checkbox" id="checkboxCanjearPuntos">
-                                    <label class="form-check-label" for="checkboxCanjearPuntos">
-                                        Canjear mis puntos en este pedido
-                                    </label>
+                        </div>
+                    </div>
 
-                                    <?php if ($puntosUsuario < 1000): ?>
-                                        <small class="text-danger d-block mt-1">Necesitas al menos 1000 puntos para canjear.</small>
-                                    <?php endif; ?>
-                                    
-                                </div>
+                    <?php if (empty($carrito_actual)): ?>
+                        <!-- Empty Cart Message -->
+                        <div class="alert alert-info text-center empty-cart-message" role="alert">
+                            Tu carrito está vacío. ¡Empieza a llenarlo con nuestros productos!
+                            <br><a href="tienda.php" class="btn btn-primary mt-3">Ir a la Tienda</a>
+                        </div>
+                    <?php else: ?>
+                        <!-- Cart Items Table -->
+                        <div class="table-responsive">
+                            <table class="table cart-table">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Precio Unitario</th>
+                                        <th>Cantidad</th>
+                                        <th>Subtotal</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cart-items-body">
+                                    <?php foreach ($carrito_actual as $item): ?>
+                                        <tr class="carrito-item-row" data-id="<?php echo htmlspecialchars($item['id']); ?>">
+                                            <td data-label="Producto:" class="d-flex align-items-center product-cell">
+                                                <?php if (!empty($item['imagen_url'])): ?>
+                                                    <div class="carrito-producto-imagen me-3">
+                                                        <img src="<?php echo htmlspecialchars($item['imagen_url']); ?>" alt="<?php echo htmlspecialchars($item['nombre']); ?>">
+                                                    </div>
+                                                <?php endif; ?>
+                                                <span class="carrito-producto-nombre"><?php echo htmlspecialchars($item['nombre']); ?></span>
+                                            </td>
+                                            <td data-label="Precio Unitario:"><span class="carrito-precio">₡<?php echo number_format($item['precio'], 2, ',', '.'); ?></span></td>
+                                            <td data-label="Cantidad:">
+                                                <div class="input-group input-group-sm quantity-control">
+                                                    <button class="btn btn-outline-secondary btn-decrease-quantity" type="button" data-id="<?php echo htmlspecialchars($item['id']); ?>">-</button>
+                                                    <input type="text" class="form-control text-center product-quantity" value="<?php echo htmlspecialchars($item['cantidad']); ?>" min="1" data-id="<?php echo htmlspecialchars($item['id']); ?>" data-price="<?php echo htmlspecialchars($item['precio']); ?>" readonly>
+                                                    <button class="btn btn-outline-secondary btn-increase-quantity" type="button" data-id="<?php echo htmlspecialchars($item['id']); ?>">+</button>
+                                                </div>
+                                            </td>
+                                            <td data-label="Subtotal:"><span class="item-subtotal">₡<?php echo number_format($item['precio'] * $item['cantidad'], 2, ',', '.'); ?></span></td>
+                                            <td data-label="Acciones:" class="carrito-item-actions">
+                                                <button class="btn btn-danger btn-sm btn-remove-item" data-id="<?php echo htmlspecialchars($item['id']); ?>">
+                                                    <i class="fa fa-trash"></i> Eliminar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="4" class="text-right"><strong>Total:</strong></td>
+                                        <td id="cart-total-amount" class="text-right"><strong>₡<?php echo number_format($total_carrito_final, 2, ',', '.'); ?></strong></td>
+                                    </tr>
+                                    <tr id="discount-row" style="display:none;">
+                                        <td colspan="4" class="text-right text-success"><strong>Descuento por puntos:</strong></td>
+                                        <td class="text-right text-success"><strong id="discount-amount">₡0.00</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" class="text-right"><strong>Total con descuento:</strong></td>
+                                        <td class="text-right"><strong id="final-total-amount">₡<?php echo number_format($total_carrito_final, 2, ',', '.'); ?></strong></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        <!-- Payment Method Selection -->
+                        <div class="form-group mt-4">
+                            <label class="mb-3"><h5>Selecciona tu Método de Pago:</h5></label>
+                            <div class="payment-methods-grid">
+                                <label class="payment-card">
+                                    <input class="form-check-input" type="radio" name="metodo_pago" id="pagoEfectivo" value="Efectivo Tienda" checked>
+                                    <div class="payment-card-content">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                        <span>Pagar en Efectivo (en tienda física)</span>
+                                    </div>
+                                </label>
+                                <label class="payment-card">
+                                    <input class="form-check-input" type="radio" name="metodo_pago" id="pagoTarjeta" value="Tarjeta PayPal">
+                                    <div class="payment-card-content">
+                                        <i class="fab fa-paypal"></i>
+                                        <span>Pagar con PayPal</span>
+                                    </div>
+                                </label>
+                                <label class="payment-card">
+                                    <input class="form-check-input" type="radio" name="metodo_pago" id="pagoSinpe" value="SINPE Movil">
+                                    <div class="payment-card-content">
+                                        <i class="fas fa-mobile-alt"></i>
+                                        <span>SINPE Móvil</span>
+                                    </div>
+                                </label>
                             </div>
                         </div>
 
-                        <?php if (empty($carrito_actual)): ?>
-                            <!-- Empty Cart Message -->
-                            <div class="alert alert-info text-center empty-cart-message" role="alert">
-                                Tu carrito está vacío. ¡Empieza a llenarlo con nuestros productos!
-                                <br><a href="tienda.php" class="btn btn-primary mt-3">Ir a la Tienda</a>
+                        <!-- Payment Instructions and PayPal Button Container -->
+                        <div id="instruccionesPago" class="alert alert-info mt-3" style="display: none;">
+                            <h6 class="alert-heading">Instrucciones para el Pago:</h6>
+                            <p id="efectivo-instructions" style="display:none;">
+                                Tu pedido estará listo para ser retirado y pagado en efectivo en nuestra tienda física. Te enviaremos un correo de confirmación con los detalles de la dirección y horario de retiro.
+                            </p>
+
+                            <p id="sinpe-instructions" style="display:none;">
+                                <strong>Número SINPE Móvil:</strong> **8888-8888**<br>
+                                (A nombre de: EcoMariposa S.A. - Cédula Jurídica: 3-101-123456)<br>
+                                Por favor, realiza el pago a este número y guarda tu comprobante. Sube una imagen o PDF del comprobante a continuación:
+                                <br><br>
+                                <label for="comprobanteSinpe">Subir Comprobante de Pago:</label>
+                                <input type="file" id="comprobanteSinpe" name="comprobanteSinpe" accept="image/*,application/pdf" class="form-control-file mt-2">
+                                <small class="form-text text-muted">Formatos permitidos: JPG, PNG o PDF.</small>
+                            </p>
+                        </div>
+
+                        <div class="payment-options mt-4" id="paypal-payment-section" style="display: none;">
+                            <div class="alert alert-info">
+                                <h5>Total a pagar:</h5>
+                                <p><strong>₡<span id="display-total-colones-paypal"><?php echo number_format($total_carrito_final, 2); ?></span></strong></p>
+                                <p>Se convertirá aproximadamente a <strong>$<span id="display-total-usd-paypal"><?php echo number_format($total_usd, 2); ?></span></strong> para el pago con PayPal.</p>
                             </div>
-                        <?php else: ?>
-                            <!-- Cart Items Table -->
-                            <div class="table-responsive">
-                                <table class="table cart-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Producto</th>
-                                            <th>Precio Unitario</th>
-                                            <th>Cantidad</th>
-                                            <th>Subtotal</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="cart-items-body">
-                                        <?php foreach ($carrito_actual as $item): ?>
-                                            <tr class="carrito-item-row" data-id="<?php echo htmlspecialchars($item['id']); ?>">
-                                                <td data-label="Producto:" class="d-flex align-items-center product-cell">
-                                                    <?php if (!empty($item['imagen_url'])): ?>
-                                                        <div class="carrito-producto-imagen me-3">
-                                                            <img src="<?php echo htmlspecialchars($item['imagen_url']); ?>" alt="<?php echo htmlspecialchars($item['nombre']); ?>">
-                                                        </div>
-                                                    <?php endif; ?>
-                                                    <span class="carrito-producto-nombre"><?php echo htmlspecialchars($item['nombre']); ?></span>
-                                                </td>
-                                                <td data-label="Precio Unitario:"><span class="carrito-precio">₡<?php echo number_format($item['precio'], 2, ',', '.'); ?></span></td>
-                                                <td data-label="Cantidad:">
-                                                    <div class="input-group input-group-sm quantity-control">
-                                                        <button class="btn btn-outline-secondary btn-decrease-quantity" type="button" data-id="<?php echo htmlspecialchars($item['id']); ?>">-</button>
-                                                        <input type="text" class="form-control text-center product-quantity" value="<?php echo htmlspecialchars($item['cantidad']); ?>" min="1" data-id="<?php echo htmlspecialchars($item['id']); ?>" data-price="<?php echo htmlspecialchars($item['precio']); ?>" readonly>
-                                                        <button class="btn btn-outline-secondary btn-increase-quantity" type="button" data-id="<?php echo htmlspecialchars($item['id']); ?>">+</button>
-                                                    </div>
-                                                </td>
-                                                <td data-label="Subtotal:"><span class="item-subtotal">₡<?php echo number_format($item['precio'] * $item['cantidad'], 2, ',', '.'); ?></span></td>
-                                                <td data-label="Acciones:" class="carrito-item-actions">
-                                                    <button class="btn btn-danger btn-sm btn-remove-item" data-id="<?php echo htmlspecialchars($item['id']); ?>">
-                                                        <i class="fa fa-trash"></i> Eliminar
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan="3" class="d-none d-md-table-cell"></td>
-                                            <td colspan="2" class="d-md-none text-right"></td>
-                                            <td class="text-right"><strong>Total:</strong></td>
-                                            <td id="cart-total-amount" class="text-right"><strong>₡<?php echo number_format($total_carrito_final, 2, ',', '.'); ?></strong></td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
+                            <h3>Pagar con PayPal</h3>
+                            <div id="paypal-button-container" class="mt-3"></div>
+                        </div>
 
-
-                            <!-- Payment Method Selection -->
-                            <div class="form-group mt-4">
-                                <label class="mb-3"><h5>Selecciona tu Método de Pago:</h5></label>
-                                <div class="payment-methods-grid">
-                                    <label class="payment-card">
-                                        <input class="form-check-input" type="radio" name="metodo_pago" id="pagoEfectivo" value="Efectivo Tienda" checked>
-                                        <div class="payment-card-content">
-                                            <i class="fas fa-money-bill-wave"></i>
-                                            <span>Pagar en Efectivo (en tienda física)</span>
-                                        </div>
-                                    </label>
-                                    <label class="payment-card">
-                                        <input class="form-check-input" type="radio" name="metodo_pago" id="pagoTarjeta" value="Tarjeta PayPal">
-                                        <div class="payment-card-content">
-                                            <i class="fab fa-paypal"></i>
-                                            <span>Pagar con PayPal</span>
-                                        </div>
-                                    </label>
-                                    <label class="payment-card">
-                                        <input class="form-check-input" type="radio" name="metodo_pago" id="pagoSinpe" value="SINPE Movil">
-                                        <div class="payment-card-content">
-                                            <i class="fas fa-mobile-alt"></i>
-                                            <span>SINPE Móvil</span>
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- Payment Instructions and PayPal Button Container -->
-                            <div id="instruccionesPago" class="alert alert-info mt-3" style="display: none;">
-                                <h6 class="alert-heading">Instrucciones para el Pago:</h6>
-                                <p id="efectivo-instructions" style="display:none;">
-                                    Tu pedido estará listo para ser retirado y pagado en efectivo en nuestra tienda física. Te enviaremos un correo de confirmación con los detalles de la dirección y horario de retiro.
-                                </p>
-
-                                <p id="sinpe-instructions" style="display:none;">
-                                    <strong>Número SINPE Móvil:</strong> **8888-8888**<br>
-                                    (A nombre de: EcoMariposa S.A. - Cédula Jurídica: 3-101-123456)<br>
-                                    Por favor, realiza el pago a este número y guarda tu comprobante. Sube una imagen o PDF del comprobante a continuación:
-                                    <br><br>
-                                    <label for="comprobanteSinpe">Subir Comprobante de Pago:</label>
-                                    <input type="file" id="comprobanteSinpe" name="comprobanteSinpe" accept="image/*,application/pdf" class="form-control-file mt-2">
-                                    <small class="form-text text-muted">Formatos permitidos: JPG, PNG o PDF.</small>
-                                </p>
-
-                            </div>
-
-                            <div class="payment-options mt-4" id="paypal-payment-section" style="display: none;">
-                                <div class="alert alert-info">
-                                    <h5>Total a pagar:</h5>
-                                    <p><strong>₡<span id="display-total-colones-paypal"><?php echo number_format($total_carrito_final, 2); ?></span></strong></p>
-                                    <p>Se convertirá aproximadamente a <strong>$<span id="display-total-usd-paypal"><?php echo number_format($total_usd, 2); ?></span></strong> para el pago con PayPal.</p>
-                                </div>
-                                <h3>Pagar con PayPal</h3>
-                                <div id="paypal-button-container" class="mt-3"></div>
-                            </div>
-
-                            <div class="mt-4 text-center">
-                                <button type="button" id="confirmOrderBtn" class="btn btn-success btn-lg btn-proceed-to-checkout" style="display:none;">Confirmar Pedido</button>
-                            </div>
-                        <?php endif; ?>
-                    </div>
+                        <div class="mt-4 text-center">
+                            <button type="button" id="confirmOrderBtn" class="btn btn-success btn-lg btn-proceed-to-checkout" style="display:none;">Confirmar Pedido</button>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
     <!-- JavaScript includes -->
     <script src="js/jquery.min.js"></script>
@@ -384,6 +388,27 @@ $total_usd = convertirColonesADolares($total_carrito_final);
 
 <script>
 $(document).ready(function() {
+    // Función para aplicar descuento dinámico
+    function applyPointsDiscount() {
+        let cartTotalText = $('#cart-total-amount strong').text().replace(/[₡\s]/g, '').replace(/\./g, '').replace(',', '.');
+        let cartTotal = parseFloat(cartTotalText) || 0;
+        let userPoints = parseInt($('#user-points-display').text()) || 0;
+        let discount = 0;
+
+        if ($('#checkboxCanjearPuntos').is(':checked') && userPoints >= 1000) {
+            discount = Math.min(cartTotal, userPoints); // No excede el total
+            $('#discount-row').show();
+            $('#discount-amount').text('₡' + discount.toLocaleString('es-CR', { minimumFractionDigits: 2 }));
+        } else {
+            $('#discount-row').hide();
+        }
+
+        let finalTotal = cartTotal - discount;
+        $('#final-total-amount').text('₡' + finalTotal.toLocaleString('es-CR', { minimumFractionDigits: 2 }));
+
+        return discount;
+    }
+
     // Function to update the cart display using AJAX
     function updateCartDisplay() {
         $.ajax({
@@ -400,14 +425,11 @@ $(document).ready(function() {
                         $('.empty-cart-message').show();
                         $('.table-responsive, .payment-options, .form-group.mt-4, #instruccionesPago, #paypal-payment-section, #confirmOrderBtn').hide();
                     } else {
-                        // Hide empty cart message and show other elements as needed based on initial selection
                         $('.empty-cart-message').hide();
-                        $('.table-responsive, .form-group.mt-4').show(); // Show cart and payment options
-                        
-                        // Re-evaluate payment method display after cart update
+                        $('.table-responsive, .form-group.mt-4').show();
+
                         $('input[name="metodo_pago"]:checked').trigger('change');
 
-                        // Populate cart table with updated items
                         $.each(response.carrito, function(index, item) {
                             var row = `
                                 <tr class="carrito-item-row" data-id="${item.id}">
@@ -421,31 +443,21 @@ $(document).ready(function() {
                                     </td>
                                     <td data-label="Precio Unitario:">
                                         <span class="carrito-precio">
-                                            ₡${parseFloat(item.precio).toLocaleString('es-CR', {
-                                                minimumFractionDigits: 2,
-                                                maximumFractionDigits: 2
-                                            })}
+                                            ₡${parseFloat(item.precio).toLocaleString('es-CR', { minimumFractionDigits: 2 })}
                                         </span>
                                     </td>
                                     <td data-label="Cantidad:">
                                         <div class="input-group input-group-sm quantity-control">
                                             <button class="btn btn-outline-secondary btn-decrease-quantity" type="button" data-id="${item.id}">-</button>
-                                            <input type="text"
-                                                   class="form-control text-center product-quantity"
-                                                   value="${item.cantidad}"
-                                                   min="1"
-                                                   data-id="${item.id}"
-                                                   data-price="${item.precio}"
-                                                   readonly>
+                                            <input type="text" class="form-control text-center product-quantity"
+                                                   value="${item.cantidad}" min="1" data-id="${item.id}"
+                                                   data-price="${item.precio}" readonly>
                                             <button class="btn btn-outline-secondary btn-increase-quantity" type="button" data-id="${item.id}">+</button>
                                         </div>
                                     </td>
                                     <td data-label="Subtotal:">
                                         <span class="item-subtotal">
-                                            ₡${(parseFloat(item.precio) * parseInt(item.cantidad)).toLocaleString('es-CR', {
-                                                minimumFractionDigits: 2,
-                                                maximumFractionDigits: 2
-                                            })}
+                                            ₡${(parseFloat(item.precio) * parseInt(item.cantidad)).toLocaleString('es-CR', { minimumFractionDigits: 2 })}
                                         </span>
                                     </td>
                                     <td data-label="Acciones:" class="carrito-item-actions">
@@ -462,27 +474,17 @@ $(document).ready(function() {
                     // Update totals and points display
                     $('#cart-total-amount').html(`
                         <strong>
-                            ₡${parseFloat(response.cart_total_amount).toLocaleString('es-CR', {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2
-                            })}
+                            ₡${parseFloat(response.cart_total_amount).toLocaleString('es-CR', { minimumFractionDigits: 2 })}
                         </strong>
                     `);
-                    $('#display-total-colones-paypal').text(
-                        parseFloat(response.cart_total_amount).toLocaleString('es-CR', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
-                        })
-                    );
-                    $('#display-total-usd-paypal').text(
-                        parseFloat(response.total_usd).toLocaleString('en-US', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
-                        })
-                    );
+                    $('#display-total-colones-paypal').text(parseFloat(response.cart_total_amount).toLocaleString('es-CR', { minimumFractionDigits: 2 }));
+                    $('#display-total-usd-paypal').text(parseFloat(response.total_usd).toLocaleString('en-US', { minimumFractionDigits: 2 }));
 
                     $('#user-points-display').text(response.user_points);
-                    $('.total-count').text(response.total_items); // Update navbar cart count
+                    $('.total-count').text(response.total_items);
+
+                    // Aplicar descuento si el checkbox está activo
+                    applyPointsDiscount();
                 } else {
                     console.error('Error al obtener datos del carrito:', response.message);
                 }
@@ -495,6 +497,15 @@ $(document).ready(function() {
 
     // Initial cart display update on page load
     updateCartDisplay();
+
+    // Checkbox para aplicar puntos
+    $('#checkboxCanjearPuntos').on('change', function() {
+        if (this.checked && parseInt($('#user-points-display').text()) < 1000) {
+            alert('Necesitas al menos 1000 puntos para poder canjear.');
+            this.checked = false;
+        }
+        applyPointsDiscount();
+    });
 
     // Event listeners for quantity changes and item removal
     $(document).on('click', '.btn-increase-quantity, .btn-decrease-quantity, .btn-remove-item', function() {
@@ -542,7 +553,6 @@ $(document).ready(function() {
     $('input[name="metodo_pago"]').on('change', function() {
         var selectedMethod = $(this).val();
 
-        // Hide all specific instructions and PayPal section first
         $('#instruccionesPago, #efectivo-instructions, #sinpe-instructions, #paypal-payment-section, #confirmOrderBtn').hide();
 
         if (selectedMethod === 'Tarjeta PayPal') {
@@ -554,129 +564,69 @@ $(document).ready(function() {
         }
     });
 
-    // Initial trigger to display the default selected method
     $('input[name="metodo_pago"]:checked').trigger('change');
 
-    // PayPal Button Integration
+    // PayPal Button Integration (igual que antes)
     paypal.Buttons({
         createOrder: function(data, actions) {
-            console.log('PayPal: Creando orden...');
             return fetch('create_order.php', { method: 'post' })
-                .then(res => {
-                    if (!res.ok) {
-                        return res.text().then(text => { throw new Error('HTTP error! Status: ' + res.status + ' - ' + text) });
-                    }
-                    return res.json();
-                })
-                .then(orderData => {
-                    console.log('Orden de PayPal creada:', orderData);
-                    if (orderData.id) {
-                        return orderData.id;
-                    } else {
-                        console.error('Error: No se recibió ID de orden de create_order.php', orderData);
-                        throw new Error('No se recibió ID de orden de create_order.php');
-                    }
-                })
-                .catch(err => {
-                    console.error('Error en la llamada fetch de createOrder:', err);
-                    alert('Hubo un problema al iniciar el pago con PayPal. Revisa la consola para más detalles.');
-                    throw err; 
-                });
+                .then(res => res.json())
+                .then(orderData => orderData.id);
         },
         onApprove: function(data, actions) {
-            console.log('Pago de PayPal aprobado. ID de Orden:', data.orderID);
             return fetch('crearOrden.php', {
                 method: 'post',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ orderID: data.orderID })
             })
-            .then(res => {
-                if (!res.ok) {
-                    return res.text().then(text => { throw new Error('HTTP error! Status: ' + res.status + ' - ' + text) });
-                }
-                return res.json();
-            })
+            .then(res => res.json())
             .then(details => {
-                console.log('Respuesta de crearOrden.php después de la aprobación de PayPal:', details);
-                if (details.success) { 
-                    alert('¡Pago realizado y pedido registrado exitosamente por ' + (details.payer_name || 'PayPal') + '!');
-                    $.ajax({
-                        url: 'carrito.php',
-                        method: 'POST',
-                        data: { action: 'clear_cart' },
-                        dataType: 'json',
-                        success: function(clearResponse) {
-                            if (clearResponse.success) {
-                                console.log('Carrito vaciado después de la compra.');
-                                window.location.href = 'confirmacion.php';
-                            } else {
-                                console.error('Error al vaciar el carrito:', clearResponse.message);
-                                window.location.href = 'confirmacion.php';
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error AJAX al vaciar el carrito:', status, error, xhr.responseText);
-                            window.location.href = 'confirmacion.php';
-                        }
-                    });
+                if (details.success) {
+                    window.location.href = 'confirmacion.php';
                 } else {
-                    alert('Pago realizado, pero hubo un error al registrar el pedido en el sistema: ' + (details.error || 'Error desconocido.'));
-                    console.error('Error al registrar pedido después de PayPal:', details);
+                    alert('Error al procesar el pedido: ' + (details.error || 'Error desconocido.'));
                 }
-            })
-            .catch(err => {
-                console.error('Error al capturar la orden o procesar respuesta de crearOrden.php:', err);
-                alert('Hubo un problema al procesar el pago o registrar el pedido. Por favor, revisa la consola para más detalles: ' + err.message);
             });
-        },
-        onError: function(err) {
-            console.error('Error en el botón de PayPal:', err);
-            alert('Ocurrió un error con el botón de PayPal. Esto podría deberse a restricciones de seguridad del navegador o del entorno (como un iframe). Por favor, intenta en un entorno de servidor real.');
         }
     }).render('#paypal-button-container');
 
- // Manejar el botón "Confirmar Pedido" para métodos NO PayPal
-$('#confirmOrderBtn').on('click', function() {
-    var selectedMethod = $('input[name="metodo_pago"]:checked').val();
-    var observaciones = $('#observacionesPedido').val(); 
-    var canjearPuntos = $('#checkboxCanjearPuntos').is(':checked');
+    // Botón "Confirmar Pedido" para métodos no PayPal
+    $('#confirmOrderBtn').on('click', function() {
+        var selectedMethod = $('input[name="metodo_pago"]:checked').val();
+        var observaciones = $('#observacionesPedido').val();
+        var canjearPuntos = $('#checkboxCanjearPuntos').is(':checked');
 
-    if (selectedMethod === 'SINPE Movil') {
-        const comprobanteFile = document.getElementById('comprobanteSinpe').files[0];
+        if (selectedMethod === 'SINPE Movil') {
+            const comprobanteFile = document.getElementById('comprobanteSinpe').files[0];
 
-        if (!comprobanteFile) {
-            alert('Por favor, sube el comprobante de pago para completar el pedido.');
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('action', 'manual_order_complete');
-        formData.append('metodo_pago_final', selectedMethod);
-        formData.append('canjearPuntos', canjearPuntos ? '1' : '0');
-        formData.append('observaciones', observaciones);
-        formData.append('comprobanteSinpe', comprobanteFile);
-
-        $.ajax({
-            url: 'procesar_pedido.php',
-            method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            dataType: 'json', // <-- IMPORTANTE
-            success: function(response) {
-                if (response.success) {
-                    window.location.href = 'confirmacion.php';
-                } else {
-                    alert('Error al procesar el pedido: ' + response.message);
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('Error al enviar pedido con SINPE:', xhr.responseText);
-                alert('Error inesperado al enviar pedido SINPE.');
+            if (!comprobanteFile) {
+                alert('Por favor, sube el comprobante de pago para completar el pedido.');
+                return;
             }
-        });
-        } 
-        else if (selectedMethod === 'Efectivo Tienda') {
+
+            const formData = new FormData();
+            formData.append('action', 'manual_order_complete');
+            formData.append('metodo_pago_final', selectedMethod);
+            formData.append('canjearPuntos', canjearPuntos ? '1' : '0');
+            formData.append('observaciones', observaciones);
+            formData.append('comprobanteSinpe', comprobanteFile);
+
+            $.ajax({
+                url: 'procesar_pedido.php',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        window.location.href = 'confirmacion.php';
+                    } else {
+                        alert('Error al procesar el pedido: ' + response.message);
+                    }
+                }
+            });
+        } else if (selectedMethod === 'Efectivo Tienda') {
             $.ajax({
                 url: 'procesar_pedido.php',
                 method: 'POST',
@@ -693,10 +643,6 @@ $('#confirmOrderBtn').on('click', function() {
                     } else {
                         alert('Error al procesar el pedido: ' + response.message);
                     }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error AJAX en pago efectivo:', xhr.responseText);
-                    alert('Ocurrió un error al registrar el pedido.');
                 }
             });
         } else {
