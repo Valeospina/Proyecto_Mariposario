@@ -10,8 +10,10 @@
 -- Eliminar la base de datos si existe (¡CUIDADO! Esto borrará todos los datos existentes)
 DROP DATABASE IF EXISTS mariposarioDB;
 
-
+-- Crear la base de datos
 CREATE DATABASE mariposarioDB;
+
+-- Seleccionar la base de datos para su uso
 USE mariposarioDB;
 
 -- ====================================================================
@@ -19,6 +21,7 @@ USE mariposarioDB;
 -- ====================================================================
 
 -- Tabla: Rol
+-- Define los diferentes roles de usuario en el sistema.
 CREATE TABLE Rol (
     ID_Rol INT PRIMARY KEY,
     Nombre VARCHAR(100) NOT NULL,
@@ -26,14 +29,15 @@ CREATE TABLE Rol (
     Descripcion VARCHAR(300)
 );
 
--- Tabla: Usuario (Información de todos los usuarios: clientes, administradores, empleados)
+-- Tabla: Usuario
+-- Almacena la información general para todos los usuarios, incluyendo clientes, administradores y empleados.
 CREATE TABLE Usuario (
     ID_Usuario INT PRIMARY KEY AUTO_INCREMENT,
     ID_Rol INT NOT NULL,
     Nombre VARCHAR(100) NOT NULL,
     Apellido VARCHAR(100),
     Correo VARCHAR(255) UNIQUE NOT NULL,
-    Contrasena VARCHAR(255) NOT NULL,
+    Contrasena VARCHAR(255) NOT NULL, -- Almacenar contraseñas hasheadas (ej: bcrypt)
     Telefono VARCHAR(20),
     Direccion TEXT,
     Fecha_Registro DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -41,7 +45,8 @@ CREATE TABLE Usuario (
     FOREIGN KEY (ID_Rol) REFERENCES Rol(ID_Rol)
 );
 
--- Tabla: Empleado (Detalles específicos de los empleados, vinculados a la tabla Usuario)
+-- Tabla: Empleado
+-- Detalles específicos para empleados, vinculados a la tabla Usuario.
 CREATE TABLE Empleado (
     ID_Empleado INT PRIMARY KEY AUTO_INCREMENT,
     ID_Usuario INT UNIQUE NOT NULL,
@@ -54,7 +59,8 @@ CREATE TABLE Empleado (
     FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
 );
 
--- Tabla: Horario (Horarios de trabajo detallados por empleado y día)
+-- Tabla: Horario
+-- Horarios de trabajo detallados por empleado y día.
 CREATE TABLE Horario (
     ID_Horario INT PRIMARY KEY AUTO_INCREMENT,
     ID_Empleado INT NOT NULL,
@@ -64,7 +70,8 @@ CREATE TABLE Horario (
     FOREIGN KEY (ID_Empleado) REFERENCES Empleado(ID_Empleado)
 );
 
--- Tabla: Asistencia (Registro de asistencia de empleados)
+-- Tabla: Asistencia
+-- Registros de asistencia de empleados.
 CREATE TABLE Asistencia (
     ID_Asistencia INT PRIMARY KEY AUTO_INCREMENT,
     ID_Empleado INT NOT NULL,
@@ -75,7 +82,8 @@ CREATE TABLE Asistencia (
     FOREIGN KEY (ID_Empleado) REFERENCES Empleado(ID_Empleado)
 );
 
--- Tabla: Pago_Empleado (Registro de pagos a empleados)
+-- Tabla: Pago_Empleado
+-- Registros de pagos realizados a empleados.
 CREATE TABLE Pago_Empleado (
     ID_Pago INT PRIMARY KEY AUTO_INCREMENT,
     ID_Empleado INT NOT NULL,
@@ -86,7 +94,8 @@ CREATE TABLE Pago_Empleado (
     FOREIGN KEY (ID_Empleado) REFERENCES Empleado(ID_Empleado)
 );
 
--- Tabla: Producto (Productos disponibles para la venta)
+-- Tabla: Producto
+-- Productos disponibles para la venta (mariposas, orquídeas, etc.).
 CREATE TABLE Producto (
     ID_Producto INT PRIMARY KEY AUTO_INCREMENT,
     Nombre VARCHAR(255) NOT NULL,
@@ -100,7 +109,8 @@ CREATE TABLE Producto (
     Fecha_Creacion DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabla: Inventario (Gestión de stock de productos en diferentes ubicaciones/lotes)
+-- Tabla: Inventario
+-- Gestiona el stock de productos en diferentes ubicaciones/lotes.
 CREATE TABLE Inventario (
     ID_Inventario INT AUTO_INCREMENT PRIMARY KEY,
     ID_Producto INT NOT NULL,
@@ -115,7 +125,8 @@ CREATE TABLE Inventario (
     FOREIGN KEY (ID_Producto) REFERENCES Producto(ID_Producto) ON DELETE CASCADE
 );
 
--- Tabla: Carrito (Carrito de compras persistente en DB - Opcional si solo usas sesión)
+-- Tabla: Carrito
+-- Carrito de compras persistente en la base de datos.
 CREATE TABLE Carrito (
     ID_Carrito INT AUTO_INCREMENT PRIMARY KEY,
     ID_Usuario INT NOT NULL,
@@ -124,7 +135,8 @@ CREATE TABLE Carrito (
     FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
 );
 
--- Tabla: Carrito_Producto (Productos dentro del carrito persistente)
+-- Tabla: Carrito_Producto
+-- Productos dentro del carrito de compras persistente.
 CREATE TABLE Carrito_Producto (
     ID_Carrito INT NOT NULL,
     ID_Producto INT NOT NULL,
@@ -134,18 +146,20 @@ CREATE TABLE Carrito_Producto (
     FOREIGN KEY (ID_Producto) REFERENCES Producto(ID_Producto)
 );
 
--- Tabla: Pagos (Registro de pagos realizados)
+-- Tabla: Pagos
+-- Registro centralizado de todos los pagos realizados.
 CREATE TABLE pagos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_transaccion VARCHAR(50) NOT NULL UNIQUE,
     fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
     status VARCHAR(20) NOT NULL,
     email VARCHAR(100) NOT NULL,
-    id_cliente VARCHAR(50),
+    id_cliente VARCHAR(50), -- Considerar vincular a ID_Usuario si siempre se refiere a un usuario interno
     total DECIMAL(10,2) NOT NULL
 );
 
--- Tabla: Pedido (Pedidos de productos realizados por los usuarios - Proformas)
+-- Tabla: Pedido
+-- Pedidos de productos realizados por los usuarios (considerados como proformas).
 CREATE TABLE Pedido (
     ID_Pedido INT AUTO_INCREMENT PRIMARY KEY,
     ID_Usuario INT NOT NULL,
@@ -162,7 +176,7 @@ CREATE TABLE Pedido (
     Observaciones TEXT NULL DEFAULT NULL,
     Puntos_Canjeados INT DEFAULT 0,
     Monto_Canjeado DECIMAL(10, 2) DEFAULT 0.00,
-    Metodo_Pago VARCHAR(50) NOT NULL DEFAULT 'PayPal', -- Modificado a VARCHAR para mayor flexibilidad, valor por defecto PayPal
+    Metodo_Pago VARCHAR(50) NOT NULL DEFAULT 'PayPal',
     Estado_Envio ENUM(
         'Pedido Recibido',
         'En Preparacion',
@@ -174,9 +188,10 @@ CREATE TABLE Pedido (
     FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
 );
 
--- Tabla: Detalle_Pedido (Detalles de los productos en cada pedido)
--- Esta tabla parece ser un duplicado de Pedido_Producto. Se mantiene si hay una razón específica para tenerla separada,
--- de lo contrario, se recomienda usar solo una.
+-- Tabla: Detalle_Pedido
+-- Detalles de los productos en cada pedido.
+-- Nota: Esta tabla parece ser un duplicado de Pedido_Producto. Se mantiene si hay una razón específica para tenerla separada,
+-- de lo contrario, se recomienda usar solo una (Pedido_Producto).
 CREATE TABLE Detalle_Pedido (
     ID_Detalle INT AUTO_INCREMENT PRIMARY KEY,
     ID_Pedido INT NOT NULL,
@@ -187,7 +202,8 @@ CREATE TABLE Detalle_Pedido (
     FOREIGN KEY (ID_Producto) REFERENCES Producto(ID_Producto)
 );
 
--- Tabla: Pedido_Producto (Detalles de los productos en cada pedido - Usada como base para los detalles del pedido)
+-- Tabla: Pedido_Producto
+-- Detalles de los productos en cada pedido - Usada como base para los detalles del pedido.
 CREATE TABLE Pedido_Producto (
     ID_Pedido INT NOT NULL,
     ID_Producto INT NOT NULL,
@@ -199,7 +215,8 @@ CREATE TABLE Pedido_Producto (
     FOREIGN KEY (ID_Producto) REFERENCES Producto(ID_Producto)
 );
 
--- Tabla: Estado_Pedido (Historial de estados de un pedido)
+-- Tabla: Estado_Pedido
+-- Historial de estados de un pedido.
 CREATE TABLE Estado_Pedido (
     ID_Estado INT AUTO_INCREMENT PRIMARY KEY,
     ID_Pedido INT NOT NULL,
@@ -208,7 +225,8 @@ CREATE TABLE Estado_Pedido (
     FOREIGN KEY (ID_Pedido) REFERENCES Pedido(ID_Pedido)
 );
 
--- Tabla: Detalle_Pago (Detalles de los productos incluidos en un pago)
+-- Tabla: Detalle_Pago
+-- Detalles de los productos incluidos en un pago.
 CREATE TABLE detalle_pago (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_pago INT NOT NULL,
@@ -219,7 +237,8 @@ CREATE TABLE detalle_pago (
     FOREIGN KEY (id_pago) REFERENCES pagos(id) ON DELETE CASCADE
 );
 
--- Tabla: Factura (Facturas Electrónicas Oficiales)
+-- Tabla: Factura
+-- Facturas Electrónicas Oficiales.
 CREATE TABLE Factura (
     ID_Factura INT AUTO_INCREMENT PRIMARY KEY,
     ID_Pedido INT UNIQUE NOT NULL,
@@ -238,10 +257,11 @@ CREATE TABLE Factura (
     Fecha_Respuesta_Hacienda DATETIME,
     Referencia_Pago VARCHAR(255),
     FOREIGN KEY (ID_Pedido) REFERENCES Pedido(ID_Pedido),
-    FOREIGN KEY (id_pago) REFERENCES pagos(id) -- Foreign Key para la tabla `pagos`
+    FOREIGN KEY (id_pago) REFERENCES pagos(id)
 );
 
--- Tabla: Factura_Producto (Detalles de los productos en cada factura)
+-- Tabla: Factura_Producto
+-- Detalles de los productos en cada factura.
 CREATE TABLE Factura_Producto (
     ID_Factura INT NOT NULL,
     ID_Producto INT NOT NULL,
@@ -253,7 +273,8 @@ CREATE TABLE Factura_Producto (
     FOREIGN KEY (ID_Producto) REFERENCES Producto(ID_Producto)
 );
 
--- Tabla: Puntos_Usuario (Puntos de lealtad actuales de cada usuario)
+-- Tabla: Puntos_Usuario
+-- Puntos de lealtad actuales de cada usuario.
 CREATE TABLE Puntos_Usuario (
     ID_Puntos INT AUTO_INCREMENT PRIMARY KEY,
     ID_Usuario INT UNIQUE NOT NULL,
@@ -263,7 +284,8 @@ CREATE TABLE Puntos_Usuario (
     FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
 );
 
--- Tabla: Historial_Puntos (Registro de transacciones de puntos)
+-- Tabla: Historial_Puntos
+-- Registro de transacciones de puntos.
 CREATE TABLE Historial_Puntos (
     ID_Historial INT AUTO_INCREMENT PRIMARY KEY,
     ID_Usuario INT NOT NULL,
@@ -276,7 +298,8 @@ CREATE TABLE Historial_Puntos (
     FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
 );
 
--- Tabla: Evento (Eventos o actividades del mariposario)
+-- Tabla: Evento
+-- Eventos o actividades del mariposario.
 CREATE TABLE Evento (
     ID_Evento INT PRIMARY KEY AUTO_INCREMENT,
     Nombre VARCHAR(100) NOT NULL,
@@ -288,7 +311,8 @@ CREATE TABLE Evento (
     Imagen_URL VARCHAR(255) NOT NULL
 );
 
--- Tabla: Reserva (Reservas para eventos)
+-- Tabla: Reserva
+-- Reservas para eventos.
 CREATE TABLE Reserva (
     ID_Reserva INT PRIMARY KEY AUTO_INCREMENT,
     ID_Evento INT NOT NULL,
@@ -304,16 +328,8 @@ CREATE TABLE Reserva (
     FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
 );
 
-
-
-
-
-
-
--- ====================================================================
--- TABLA: Consulta (Soporte al Cliente - Chat o Correo)
--- ====================================================================
-
+-- Tabla: Consulta
+-- Soporte al Cliente (Chat o Correo).
 CREATE TABLE Consulta (
     ID_Consulta INT PRIMARY KEY AUTO_INCREMENT,
     ID_Usuario INT NULL, -- Puede ser NULL si es invitado
@@ -325,34 +341,8 @@ CREATE TABLE Consulta (
     FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
 );
 
-
--- ====================================================================
--- DATOS DE EJEMPLO PARA PROBAR EL MÓDULO
--- ====================================================================
-
-
-INSERT INTO Consulta (ID_Usuario, Tema, Estado, Canal, Mensajes) VALUES
-(5, 'Consulta', 'Pendiente', 'Chat', JSON_ARRAY(
-    JSON_OBJECT('role', 'system', 'text', '¡Bienvenido! Un agente responderá en un máximo de 24 horas. Tema: Consulta', 'time', '10:00'),
-    JSON_OBJECT('role', 'cliente', 'text', 'Hola, tengo una duda.', 'time', '10:02')
-)),
-(6, 'Reclamo', 'Respondido', 'Correo', JSON_ARRAY(
-    JSON_OBJECT('role', 'cliente', 'text', 'Mi pedido llegó incompleto.', 'time', '11:10'),
-    JSON_OBJECT('role', 'admin', 'text', 'Estamos revisando su caso, le avisaremos pronto.', 'time', '11:15')
-));
-
-
-
-
-
-
-
-
-
-
-
-
--- Tabla: Notificacion (Notificaciones generales del sistema)
+-- Tabla: Notificacion
+-- Notificaciones generales del sistema.
 CREATE TABLE Notificacion (
     ID_Notificacion INT PRIMARY KEY AUTO_INCREMENT,
     ID_Usuario INT,
@@ -363,7 +353,8 @@ CREATE TABLE Notificacion (
     FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
 );
 
--- Tabla: Bitacora (Registro centralizado de actividades del sistema y auditoría)
+-- Tabla: Bitacora
+-- Registro centralizado de actividades del sistema y auditoría.
 CREATE TABLE Bitacora (
     ID_Log INT AUTO_INCREMENT PRIMARY KEY,
     Fecha_Hora DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -396,6 +387,7 @@ CREATE TABLE Bitacora (
 );
 
 -- Tabla: Reseñas de Productos
+-- Permite a los usuarios dejar reseñas y calificaciones para productos.
 CREATE TABLE reseñas (
     ID INT AUTO_INCREMENT PRIMARY KEY,
     ID_Producto INT NOT NULL,
@@ -407,6 +399,7 @@ CREATE TABLE reseñas (
 );
 
 -- Tabla: Reseñas de Eventos
+-- Permite a los usuarios dejar reseñas y calificaciones para eventos.
 CREATE TABLE resenas_evento (
     ID INT AUTO_INCREMENT PRIMARY KEY,
     ID_Evento INT NOT NULL,
@@ -429,7 +422,7 @@ INSERT INTO Rol (ID_Rol, Nombre, Tipo_Notificacion, Descripcion) VALUES
 
 -- Insertar usuarios de prueba
 -- Contraseña para todos los usuarios: "123456" (hash bcrypt)
--- Puedes usar password_hash('123456', PASSWORD_DEFAULT) en PHP para generar estos hashes
+-- Puedes usar password_hash('123456', PASSWORD_DEFAULT) en PHP para generar estos hashes.
 INSERT INTO Usuario (ID_Usuario, ID_Rol, Nombre, Apellido, Correo, Contrasena, Telefono, Direccion) VALUES
 (1, 1, 'Carlos', 'Rodríguez', 'admin@mariposario.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '2234-5678', 'San José, Costa Rica'),
 (2, 1, 'María', 'González', 'maria.admin@mariposario.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '2345-6789', 'Cartago, Costa Rica'),
@@ -456,8 +449,7 @@ VALUES
 ('Archaeprepona', 'Mariposa', 'Mariposa tropical, especialmente conocida por su coloración verde.', 10070.00, 9, 'https://i.redd.it/a-one-spot-prepona-archaeoprepona-demophon-aka-banded-king-v0-23ufry6af6je1.jpg?width=8688&format=pjpg&auto=webp&s=1d012cc0bc98e278574d7a40aaf8e9ad76a1a75b', '2025-07-30', TRUE),
 ('Cónsul fabius', 'Mariposa', 'Mariposa color marrón, con patrones llamativos en sus alas.', 8612.50, 7, 'https://inaturalist-open-data.s3.amazonaws.com/photos/60274029/original.jpeg', '2025-08-05', TRUE);
 
-
--- Insertar Orquideas a la tabla productos
+-- Insertar Orquídeas a la tabla productos
 INSERT INTO Producto (Nombre, Categoria, Descripcion, Precio, Stock, Imagen_URL, Fecha_Reposicion, Activo_Catalogo)
 VALUES
 ('Guaria Morada', 'Orquídea', 'La Guaria Morada es una orquídea nativa de América Central, famosa por sus flores de color morado brillante.', 13250.00, 15, 'https://static.wixstatic.com/media/cdfea7_41bf369fee304c6687a2a41513851c6c~mv2.jpg/v1/fill/w_568,h_378,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/cdfea7_41bf369fee304c6687a2a41513851c6c~mv2.jpg', '2025-08-01', TRUE),
@@ -469,19 +461,33 @@ VALUES
 ('Miltonia spectabilis', 'Orquídea', 'Miltonia spectabilis, conocida como la orquídea del pensamiento, es famosa por sus flores grandes y coloridas.', 18550.00, 7, 'https://png.pngtree.com/thumb_back/fh260/background/20220913/pngtree-miltonia-maui-orchid-plant-white-photo-image_19805376.jpg', '2025-09-05', TRUE),
 ('Epidendrum radicans', 'Orquídea', 'Epidendrum radicans es una orquídea que se caracteriza por sus raíces rojas y flores vibrantes.', 12720.00, 20, 'https://www.picturethisai.com/wiki-image/1080/154019752069562384.jpeg', '2025-09-10', TRUE);
 
+-- Insertar datos de ejemplo para la tabla Consulta
+INSERT INTO Consulta (ID_Usuario, Tema, Estado, Canal, Mensajes) VALUES
+(5, 'Consulta', 'Pendiente', 'Chat', JSON_ARRAY(
+    JSON_OBJECT('role', 'system', 'text', '¡Bienvenido! Un agente responderá en un máximo de 24 horas. Tema: Consulta', 'time', '10:00'),
+    JSON_OBJECT('role', 'cliente', 'text', 'Hola, tengo una duda.', 'time', '10:02')
+)),
+(6, 'Reclamo', 'Respondido', 'Correo', JSON_ARRAY(
+    JSON_OBJECT('role', 'cliente', 'text', 'Mi pedido llegó incompleto.', 'time', '11:10'),
+    JSON_OBJECT('role', 'admin', 'text', 'Estamos revisando su caso, le avisaremos pronto.', 'time', '11:15')
+));
 
-DESCRIBE Consulta;
+-- ====================================================================
+-- 3. EJEMPLOS DE CONSULTAS (OPCIONAL)
+-- ====================================================================
 
+-- Describir la estructura de la tabla Consulta
+-- DESCRIBE Consulta;
 
-SELECT * FROM Consulta;
+-- Seleccionar todos los registros de la tabla Consulta
+-- SELECT * FROM Consulta;
 
+-- Seleccionar columnas específicas de la tabla Consulta, ordenadas por fecha descendente
+-- SELECT ID_Consulta, ID_Usuario, Tema, Estado, Canal, Mensajes, Fecha
+-- FROM Consulta
+-- ORDER BY Fecha DESC;
 
-SELECT ID_Consulta, ID_Usuario, Tema, Estado, Canal, Mensajes, Fecha
-FROM Consulta
-ORDER BY Fecha DESC;
-
-SELECT Estado, COUNT(*) AS Total
-FROM Consulta
-GROUP BY Estado;
-
-
+-- Contar el número de consultas por estado
+-- SELECT Estado, COUNT(*) AS Total
+-- FROM Consulta
+-- GROUP BY Estado;
