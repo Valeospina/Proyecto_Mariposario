@@ -4,7 +4,7 @@ require_once 'DB.php';
 require_once 'Calendario.php';
 
 $cal = new Calendario($conn);
-
+$cal->mostrar();
 // 1) Obtener el ID y sanitizar
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 if (!$id) {
@@ -119,11 +119,15 @@ $reseñas = $revStmt->get_result();
         </ul>
         <div class="mt-3 d-flex flex-row align-items-center gap-2">
           <a href="ReservaForm.php?id=<?= $id ?>" class="add-to-cart-button-custom small-button-custom">Reservar</a>
-          <button class="add-to-cart-button-custom small-button-custom" data-toggle="modal" data-target="#calendarModal">
+            <!-- botón toggle calendario + contenedor -->
+        <div class="mt-3 d-flex flex-row align-items-center gap-2">
+          <button id="toggleCalendarBtn" class="add-to-cart-button-custom small-button-custom">
             Ver calendario
           </button>
+        </div>
           <a href="#form-review" class="add-to-cart-button-custom small-button-custom">Dejar reseña</a>
         </div>
+         <div id="calendarContainer" style="margin-top:1rem; display:none;"></div>
       </div>
     </div>
 
@@ -189,6 +193,91 @@ $reseñas = $revStmt->get_result();
       });
     });
   });
+
+    $(function(){
+    const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                        'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    let year  = new Date().getFullYear(),
+        month = new Date().getMonth() + 1;
+
+    function renderCalendar(data) {
+      const firstDay    = new Date(year, month-1, 1).getDay();
+      const offset      = (firstDay + 6) % 7;
+      const daysInMonth = new Date(year, month, 0).getDate();
+      let html = '<table class="table table-bordered mb-0">';
+      html += '<thead><tr>';
+      ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].forEach(d => {
+        html += `<th>${d}</th>`;
+      });
+      html += '</tr></thead><tbody><tr>';
+      for (let i = 0; i < offset; i++) {
+        html += '<td></td>';
+      }
+      for (let d = 1; d <= daysInMonth; d++) {
+        if ((d + offset - 1) % 7 === 0 && d !== 1) html += '</tr><tr>';
+        const key = `${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        if (data[key]) {
+          const estado = data[key];
+          const cls    = estado === 'disponible' ? 'celeste' : 'rojo';
+          const idEv   = data[key + '_id'] || '#';
+          html += `<td class="${cls}"><a href="detalle_evento.php?id=${idEv}">${d}</a></td>`;
+        } else {
+          html += `<td class="gris">${d}</td>`;
+        }
+      }
+      html += '</tr></tbody></table>';
+      html += `
+        <div class="d-flex justify-content-between align-items-center mt-2">
+          <button id="prevBtn" class="btn btn-sm btn-light">‹ Anterior</button>
+          <strong>${monthNames[month-1]} ${year}</strong>
+          <button id="nextBtn" class="btn btn-sm btn-light">Siguiente ›</button>
+        </div>
+      `;
+      $('#calendarContainer').html(html);
+    }
+
+    function loadCalendar() {
+      $.getJSON(`?accion=fechas&year=${year}&month=${month}`)
+        .done(renderCalendar)
+        .fail(err=> console.error('Error al cargar fechas:', err));
+    }
+
+    $('#toggleCalendarBtn').on('click', function(){
+      const cont = $('#calendarContainer');
+      cont.toggle();
+      if (cont.is(':visible') && cont.is(':empty')) {
+        loadCalendar();
+      }
+    });
+
+    $('#calendarContainer')
+      .on('click', '#prevBtn', function(){
+        month = month>1?month-1:12;
+        if (month===12) year--;
+        loadCalendar();
+      })
+      .on('click', '#nextBtn', function(){
+        month = month<12?month+1:1;
+        if (month===1) year++;
+        loadCalendar();
+      });
+  });
+  </script>
+
+  <script>
+    // estrella-rating
+    document.querySelectorAll('.star-rating .star').forEach(function(star) {
+      star.addEventListener('click', function() {
+        var rating = this.getAttribute('data-rating');
+        document.getElementById('rating').value = rating;
+        document.querySelector('.rating-text').textContent =
+          rating + ' estrella' + (rating > 1 ? 's' : '') + ' seleccionada';
+        document.querySelectorAll('.star-rating .star').forEach(function(s) {
+          s.classList.toggle('selected', s.getAttribute('data-rating') <= rating);
+        });
+      });
+    });
+  </script>
 </script>
 </body>
 </html>

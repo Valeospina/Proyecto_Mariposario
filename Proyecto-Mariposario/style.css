@@ -1355,3 +1355,40 @@
     line-height: 1.5;
     margin-bottom: 0;
 }
+
+/* ===== Calendario inline ===== */
+#calendarContainer {
+  margin-top: 1rem;
+}
+#calendarContainer table {
+  margin: 0 auto;
+  width: auto;
+  max-width: 100%;
+  border-collapse: collapse;
+}
+#calendarContainer table td.celeste {
+  background-color: #8BC34A !important;
+}
+#calendarContainer table td.rojo {
+  background-color: #E57373 !important;
+}
+#calendarContainer table td.gris {
+  background-color: #ececec !important;
+  color: #666 !important;
+}
+#calendarContainer table td a {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: .5em 0;
+  text-decoration: none;
+  color: inherit;
+  text-align: center;
+}
+#calendarContainer table th,
+#calendarContainer table td {
+  border: 1px solid #dee2e6;
+  vertical-align: middle;
+  height: 3rem;
+  padding: 0;
+}
