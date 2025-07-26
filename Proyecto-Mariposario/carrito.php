@@ -390,24 +390,31 @@ $total_usd = convertirColonesADolares($total_carrito_final);
 $(document).ready(function() {
     // Función para aplicar descuento dinámico
     function applyPointsDiscount() {
-        let cartTotalText = $('#cart-total-amount strong').text().replace(/[₡\s]/g, '').replace(/\./g, '').replace(',', '.');
-        let cartTotal = parseFloat(cartTotalText) || 0;
-        let userPoints = parseInt($('#user-points-display').text()) || 0;
-        let discount = 0;
+    let cartTotalText = $('#cart-total-amount strong').text().replace(/[₡\s]/g, '').replace(/\./g, '').replace(',', '.');
+    let cartTotal = parseFloat(cartTotalText) || 0;
+    let userPoints = parseInt($('#user-points-display').text()) || 0;
+    let discount = 0;
 
-        if ($('#checkboxCanjearPuntos').is(':checked') && userPoints >= 1000) {
-            discount = Math.min(cartTotal, userPoints); // No excede el total
-            $('#discount-row').show();
-            $('#discount-amount').text('₡' + discount.toLocaleString('es-CR', { minimumFractionDigits: 2 }));
-        } else {
-            $('#discount-row').hide();
-        }
-
-        let finalTotal = cartTotal - discount;
-        $('#final-total-amount').text('₡' + finalTotal.toLocaleString('es-CR', { minimumFractionDigits: 2 }));
-
-        return discount;
+    if ($('#checkboxCanjearPuntos').is(':checked') && userPoints >= 1000) {
+        discount = Math.min(cartTotal, userPoints);
+        $('#discount-row').show();
+        $('#discount-amount').text('₡' + discount.toLocaleString('es-CR', { minimumFractionDigits: 2 }));
+    } else {
+        $('#discount-row').hide();
     }
+
+    let finalTotal = cartTotal - discount;
+    $('#final-total-amount').text('₡' + finalTotal.toLocaleString('es-CR', { minimumFractionDigits: 2 }));
+
+    // Actualizar sección PayPal
+    $('#display-total-colones-paypal').text(finalTotal.toLocaleString('es-CR', { minimumFractionDigits: 2 }));
+
+    // Calcular aproximación en USD (tipo de cambio fijo 500)
+    let finalTotalUSD = (finalTotal / 500).toFixed(2);
+    $('#display-total-usd-paypal').text(finalTotalUSD);
+
+    return discount;
+}
 
     // Function to update the cart display using AJAX
     function updateCartDisplay() {
@@ -568,27 +575,52 @@ $(document).ready(function() {
 
     // PayPal Button Integration (igual que antes)
     paypal.Buttons({
-        createOrder: function(data, actions) {
-            return fetch('create_order.php', { method: 'post' })
-                .then(res => res.json())
-                .then(orderData => orderData.id);
-        },
-        onApprove: function(data, actions) {
-            return fetch('crearOrden.php', {
-                method: 'post',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ orderID: data.orderID })
+    createOrder: function(data, actions) {
+        // ✅ Obtenemos si el cliente quiere canjear puntos
+        let canjearPuntos = $('#checkboxCanjearPuntos').is(':checked') ? 1 : 0;
+
+        return fetch('create_order.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                canjearPuntos: canjearPuntos
             })
-            .then(res => res.json())
-            .then(details => {
-                if (details.success) {
-                    window.location.href = 'confirmacion.php';
-                } else {
-                    alert('Error al procesar el pedido: ' + (details.error || 'Error desconocido.'));
-                }
-            });
-        }
-    }).render('#paypal-button-container');
+        })
+        .then(res => res.json())
+        .then(orderData => {
+            if (!orderData.id) {
+                throw new Error('Error al crear la orden de PayPal: ' + (orderData.error || 'Desconocido.'));
+            }
+            return orderData.id; // ✅ Retorna el ID de la orden PayPal
+        });
+    },
+    onApprove: function(data, actions) {
+        return fetch('crearOrden.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                orderID: data.orderID,
+                canjearPuntos: $('#checkboxCanjearPuntos').is(':checked') ? 1 : 0 // ✅ También lo enviamos aquí
+            })
+        })
+        .then(res => res.json())
+        .then(details => {
+            if (details.success) {
+                window.location.href = 'confirmacion.php';
+            } else {
+                alert('Error al procesar el pedido: ' + (details.error || 'Error desconocido.'));
+            }
+        })
+        .catch(err => {
+            console.error('Error en el flujo PayPal:', err);
+            alert('Ocurrió un problema con el pago. Intenta nuevamente.');
+        });
+    }
+}).render('#paypal-button-container');
 
     // Botón "Confirmar Pedido" para métodos no PayPal
     $('#confirmOrderBtn').on('click', function() {

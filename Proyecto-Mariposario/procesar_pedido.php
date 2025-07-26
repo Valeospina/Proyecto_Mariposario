@@ -157,14 +157,14 @@ try {
     // 14. Vaciar carrito
     unset($_SESSION['carrito']);
 
-    // ✅ Respuesta con datos adicionales
+    // Respuesta con datos adicionales
     $response['success'] = true;
     $response['message'] = 'Pedido creado exitosamente.';
     $response['pedido_id'] = $idPedido;
     $response['numero_proforma'] = $numeroProforma;
     $response['total_final'] = $totalPedido;
     $response['descuento_aplicado'] = $descuentoAplicado;
-    $response['puntos_restantes'] = 0; // ✅ Siempre 0 tras el canje completo
+    $response['puntos_restantes'] = 0; // Siempre 0 tras el canje completo
 
 } catch (Exception $e) {
     if ($conn) {

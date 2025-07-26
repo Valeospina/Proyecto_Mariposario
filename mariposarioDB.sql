@@ -472,6 +472,10 @@ INSERT INTO Consulta (ID_Usuario, Tema, Estado, Canal, Mensajes) VALUES
     JSON_OBJECT('role', 'admin', 'text', 'Estamos revisando su caso, le avisaremos pronto.', 'time', '11:15')
 ));
 
+
+
+
+
 -- ====================================================================
 -- 3. EJEMPLOS DE CONSULTAS (OPCIONAL)
 -- ====================================================================
