@@ -151,6 +151,35 @@ try {
     }
     $stmtEstado->close();
 
+    //  Calcular puntos ganados si no se canjeó todo
+    $totalParaPuntos = $totalPedido; // Total ya con descuento aplicado
+    $puntos_ganados = floor($totalParaPuntos / 100);
+
+    if ($puntos_ganados > 0) {
+        // Actualizar base de datos
+        $stmt = $conn->prepare("INSERT INTO Puntos_Usuario (ID_Usuario, Puntos_Actuales) VALUES (?, ?)
+                                ON DUPLICATE KEY UPDATE Puntos_Actuales = Puntos_Actuales + VALUES(Puntos_Actuales)");
+        $stmt->bind_param("ii", $idUsuario, $puntos_ganados);
+        $stmt->execute();
+        $stmt->close();
+
+        // Insertar historial
+        $stmtHist = $conn->prepare("
+            INSERT INTO Historial_Puntos (ID_Usuario, Fecha, Accion, Monto, Descripcion, ID_Referencia, Tipo_Referencia)
+            VALUES (?, NOW(), 'Ganado', ?, 'Puntos por pedido', ?, 'Pedido')
+        ");
+        $stmtHist->bind_param("iii", $idUsuario, $puntos_ganados, $idPedido);
+        $stmtHist->execute();
+        $stmtHist->close();
+
+        //  Actualizar sesión
+        $_SESSION['user_points'] = ($_SESSION['user_points'] ?? 0) + $puntos_ganados;
+    } else {
+        // Si no ganó puntos, mantener los que ya tenga
+        $_SESSION['user_points'] = $_SESSION['user_points'] ?? 0;
+    }
+
+
     // 13. Confirmar transacción
     $conn->commit();
 
@@ -165,6 +194,8 @@ try {
     $response['total_final'] = $totalPedido;
     $response['descuento_aplicado'] = $descuentoAplicado;
     $response['puntos_restantes'] = 0; // Siempre 0 tras el canje completo
+    $response['puntos_actualizados'] = $_SESSION['user_points'];
+
 
 } catch (Exception $e) {
     if ($conn) {

@@ -629,33 +629,32 @@ if ($userId) {
                                                 </div>
 
                                                 <div class="order-details">
-    <p><span>Fecha Pedido:</span>
-        <?php echo date("j \\d\\e F, Y", strtotime($row['Fecha_Pedido'])); ?>
-    </p>
 
-    <?php if ($row['Monto_Canjeado'] > 0): ?>
-        <p><span>Total Original:</span>
-            <s>₡<?php echo number_format($row['Total_Original'], 2, ',', '.'); ?></s>
-        </p>
-        <p><span>Descuento por puntos:</span>
-            -₡<?php echo number_format($row['Monto_Canjeado'], 2, ',', '.'); ?>
-            <small>(<?php echo $row['Puntos_Canjeados']; ?> pts)</small>
-        </p>
-    <?php endif; ?>
+                                            <?php
+                                            $totalOriginal = $row['Total_Pedido'] + $row['Monto_Canjeado'];
+                                            ?>
 
-    <p><span>Total Pagado:</span>
-        <strong style="color:#4CAF50;">
-            ₡<?php echo number_format($row['Total_Pedido'], 2, ',', '.'); ?>
-        </strong>
-    </p>
+                                            <p><span>Fecha Pedido:</span>
+                                                <?php echo date("j \\d\\e F, Y", strtotime($row['Fecha_Pedido'])); ?>
+                                            </p>
 
-    <p><span>Método de pago:</span>
-        <?php echo htmlspecialchars($row['Metodo_Pago']); ?>
-    </p>
-    <p><span>Estado de envío:</span>
-        <?php echo htmlspecialchars($row['Estado_Envio']); ?>
-    </p>
-</div>
+                                            <?php if ($row['Monto_Canjeado'] > 0): ?>
+                                                <p><span>Total Original:</span>
+                                                    <s>₡<?php echo number_format($totalOriginal, 2, ',', '.'); ?></s>
+                                                </p>
+                                                <p><span>Descuento por puntos:</span>
+                                                    -₡<?php echo number_format($row['Monto_Canjeado'], 2, ',', '.'); ?>
+                                                    <small>(<?php echo $row['Puntos_Canjeados']; ?> pts)</small>
+                                                </p>
+                                            <?php endif; ?>
+
+                                            <p><span>Total Pagado:</span>
+                                                <strong style="color:#4CAF50;">
+                                                    ₡<?php echo number_format($row['Total_Pedido'], 2, ',', '.'); ?>
+                                                </strong>
+                                            </p>
+
+                                            </div>
 
                                                 <a href="detallePedido.php?id=<?php echo $row['ID_Pedido']; ?>" class="btn">Ver Detalles</a>
 
