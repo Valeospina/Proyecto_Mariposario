@@ -16,12 +16,21 @@ $userName = $_SESSION['user_name'] ?? 'Usuario';
 
 // 3) Prepara y ejecuta la consulta
 if ($userId) {
-    $stmt  = $conn->prepare(
-        "SELECT ID_Pedido, Numero_Proforma, Fecha_Pedido, Total_Pedido, Metodo_Pago, Estado_Envio
-         FROM Pedido
-         WHERE ID_Usuario = ?
-         ORDER BY Fecha_Pedido DESC"
-    );
+    $stmt = $conn->prepare("
+        SELECT 
+            p.ID_Pedido, 
+            p.Numero_Proforma, 
+            p.Fecha_Pedido, 
+            p.Total_Pedido,
+            p.Metodo_Pago, 
+            p.Estado_Envio,
+            (p.Total_Pedido + p.Monto_Canjeado) AS Total_Original,
+            p.Monto_Canjeado,
+            p.Puntos_Canjeados
+        FROM Pedido p
+        WHERE p.ID_Usuario = ?
+        ORDER BY p.Fecha_Pedido DESC
+    ");
     $stmt->bind_param("i", $userId);
     $stmt->execute();
     $pedidos = $stmt->get_result();
@@ -594,69 +603,74 @@ if ($userId) {
                         <!-- Contenido Principal -->
                         <div class="container">
                             <h1>Mis Pedidos</h1>
-<?php if ($pedidos && $pedidos->num_rows > 0): ?>
-    <ul class="order-list">
-        <?php
-        // Definimos el orden de los pasos de envío:
-        $steps = ['Pedido Recibido', 'En Preparación', 'En Tránsito', 'Entregado'];
-        ?>
-        <?php while($row = $pedidos->fetch_assoc()): ?>
-            <li class="order-item">
-                <h2>Pedido #<?php echo htmlspecialchars($row['Numero_Proforma']); ?></h2>
+                                <?php if ($pedidos && $pedidos->num_rows > 0): ?>
+                                    <ul class="order-list">
+                                        <?php
+                                        $steps = ['Pedido Recibido', 'En Preparación', 'En Tránsito', 'Entregado'];
+                                        ?>
 
-                <div class="progress-bar">
-                    <?php
-                    // Recorremos cada paso y decidimos la clase
-                    foreach ($steps as $idx => $label) {
-                        $class = '';
-                        // Si ya pasó ese estado:
-                        if (array_search($row['Estado_Envio'], $steps) > $idx) {
-                            $class = 'completed';
-                        }
-                        // Estado actual:
-                        if ($row['Estado_Envio'] === $label) {
-                            $class = 'active';
-                        }
-                        echo "<div class=\"progress-step {$class}\">{$label}</div>";
-                    }
-                    ?>
-                </div>
+                                        <?php while($row = $pedidos->fetch_assoc()): ?>
+                                            <li class="order-item">
+                                                <h2>Pedido #<?php echo htmlspecialchars($row['Numero_Proforma']); ?></h2>
 
-                <div class="order-details">
-                    <p><span>Fecha Pedido:</span>
-                       <?php
-                          echo date("j \\d\\e F, Y",
-                                    strtotime($row['Fecha_Pedido']));
-                       ?>
-                    </p>
-                    <p><span>Total:</span>
-                       ₡<?php echo number_format($row['Total_Pedido'], 2, ',', '.'); ?>
-                    </p>
-                    <p><span>Método de pago:</span>
-                       <?php echo htmlspecialchars($row['Metodo_Pago']); ?>
-                    </p>
-                    <p><span>Estado de envío:</span>
-                       <?php echo htmlspecialchars($row['Estado_Envio']); ?>
-                    </p>
-                </div>
+                                                <div class="progress-bar">
+                                                    <?php
+                                                    foreach ($steps as $idx => $label) {
+                                                        $class = '';
+                                                        if (array_search($row['Estado_Envio'], $steps) > $idx) {
+                                                            $class = 'completed';
+                                                        }
+                                                        if ($row['Estado_Envio'] === $label) {
+                                                            $class = 'active';
+                                                        }
+                                                        echo "<div class=\"progress-step {$class}\">{$label}</div>";
+                                                    }
+                                                    ?>
+                                                </div>
 
-                <a href="detallePedido.php?id=<?php echo $row['ID_Pedido']; ?>"
-                   class="btn">Ver Detalles</a>
+                                                <div class="order-details">
+    <p><span>Fecha Pedido:</span>
+        <?php echo date("j \\d\\e F, Y", strtotime($row['Fecha_Pedido'])); ?>
+    </p>
 
-                <button class="btn btn-review"
-                        onclick="openReviewModal('<?php echo $row['ID_Pedido']; ?>')">
-                    <i class="fas fa-star"></i> Dar mi Opinión
-                </button>
-            </li>
-        <?php endwhile; ?>
-    </ul>
-<?php else: ?>
-    <div class="order-item no-orders" style="text-align:center; padding:40px;">
-        <h2>Hola, <?php echo htmlspecialchars($userName); ?></h2>
-        <p>Usted aún no tiene pedidos con nosotros.</p>
-    </div>
-<?php endif; ?>
+    <?php if ($row['Monto_Canjeado'] > 0): ?>
+        <p><span>Total Original:</span>
+            <s>₡<?php echo number_format($row['Total_Original'], 2, ',', '.'); ?></s>
+        </p>
+        <p><span>Descuento por puntos:</span>
+            -₡<?php echo number_format($row['Monto_Canjeado'], 2, ',', '.'); ?>
+            <small>(<?php echo $row['Puntos_Canjeados']; ?> pts)</small>
+        </p>
+    <?php endif; ?>
 
+    <p><span>Total Pagado:</span>
+        <strong style="color:#4CAF50;">
+            ₡<?php echo number_format($row['Total_Pedido'], 2, ',', '.'); ?>
+        </strong>
+    </p>
+
+    <p><span>Método de pago:</span>
+        <?php echo htmlspecialchars($row['Metodo_Pago']); ?>
+    </p>
+    <p><span>Estado de envío:</span>
+        <?php echo htmlspecialchars($row['Estado_Envio']); ?>
+    </p>
+</div>
+
+                                                <a href="detallePedido.php?id=<?php echo $row['ID_Pedido']; ?>" class="btn">Ver Detalles</a>
+
+                                                <button class="btn btn-review" onclick="openReviewModal('<?php echo $row['ID_Pedido']; ?>')">
+                                                    <i class="fas fa-star"></i> Dar mi Opinión
+                                                </button>
+                                            </li>
+                                        <?php endwhile; ?>
+                                    </ul>
+                                <?php else: ?>
+                                    <div class="order-item no-orders" style="text-align:center; padding:40px;">
+                                        <h2>Hola, <?php echo htmlspecialchars($userName); ?></h2>
+                                        <p>Usted aún no tiene pedidos con nosotros.</p>
+                                    </div>
+                                <?php endif; ?>
                         </div>
                     </div>
                 </div>
