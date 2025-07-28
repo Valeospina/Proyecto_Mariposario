@@ -440,26 +440,65 @@ INSERT INTO Empleado (ID_Usuario, Nombre, Correo, Salario, Rol, Horario, Fecha_C
 -- Insertar mariposas a la tabla productos
 INSERT INTO Producto (Nombre, Categoria, Descripcion, Precio, Stock, Imagen_URL, Fecha_Reposicion, Activo_Catalogo)
 VALUES
-('Hamadrias laodamia', 'Mariposa', 'Mariposa de colores vibrantes, común en áreas tropicales.', 8215.00, 10, 'https://static.inaturalist.org/photos/337837645/medium.jpg', '2025-07-15', TRUE),
-('Mircelia cisniris', 'Mariposa', 'Mariposa con patrones únicos en las alas, encontrada en zonas de bosques.', 9940.00, 5, 'https://southcoastbotanicgarden.org/wp-content/uploads/2023/07/Shady-Spots-4.jpg', '2025-07-18', TRUE),
-('Morpho', 'Mariposa', 'Mariposa azul brillante, conocida por su impresionante coloración metálica.', 10600.00, 12, 'https://contexto.udlap.mx/wp-content/uploads/2021/11/mariposa.jpg', '2025-07-20', TRUE),
-('Igna', 'Mariposa', 'Igna es una mariposa exótica con alas de colores variados, habitante de zonas tropicales.', 7420.00, 8, 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Agraulis_vanillae_at_Isla_Margarita.jpg/250px-Agraulis_vanillae_at_Isla_Margarita.jpg', '2025-08-20', TRUE),
-('Catonephele mexicana', 'Mariposa', 'Mariposa tropical mexicana con un diseño particular en sus alas.', 9220.00, 8, 'https://pictureinsect.com/wiki-image/1080/153820706105196555.jpeg', '2025-07-25', TRUE),
-('Siproeta stelenis', 'Mariposa', 'Mariposa tropical de colores vibrantes, conocida por su tamaño y belleza.', 11925.00, 6, 'https://static.inaturalist.org/photos/33050984/medium.jpeg', '2025-07-27', TRUE),
-('Archaeprepona', 'Mariposa', 'Mariposa tropical, especialmente conocida por su coloración verde.', 10070.00, 9, 'https://i.redd.it/a-one-spot-prepona-archaeoprepona-demophon-aka-banded-king-v0-23ufry6af6je1.jpg?width=8688&format=pjpg&auto=webp&s=1d012cc0bc98e278574d7a40aaf8e9ad76a1a75b', '2025-07-30', TRUE),
-('Cónsul fabius', 'Mariposa', 'Mariposa color marrón, con patrones llamativos en sus alas.', 8612.50, 7, 'https://inaturalist-open-data.s3.amazonaws.com/photos/60274029/original.jpeg', '2025-08-05', TRUE);
+('Hamadrias laodamia', 'Mariposa', 'La Hamadrias laodamia es conocida como "mariposa caracolera". Presenta un patrón de puntos y rayas en tonos negros y azules metálicos. Habita en zonas tropicales y subtropicales de América. Suele encontrarse cerca de árboles de Fabaceae, ya que sus orugas se alimentan de estas plantas. Posee un característico zumbido al volar.', 750.00, 10, 'https://static.inaturalist.org/photos/337837645/medium.jpg', '2025-07-15', TRUE),
+
+('Mircelia cisniris', 'Mariposa', 'La Mircelia cisniris destaca por sus alas con patrones irregulares y tonos marrones y naranjas, que sirven como camuflaje. Es habitual en bosques húmedos y selvas tropicales, donde se alimenta del néctar de flores silvestres. Sus larvas suelen alimentarse de hojas tiernas de plantas trepadoras.', 990.00, 5, 'https://southcoastbotanicgarden.org/wp-content/uploads/2023/07/Shady-Spots-4.jpg', '2025-07-18', TRUE),
+
+('Morpho', 'Mariposa', 'Las mariposas Morpho son reconocidas mundialmente por sus alas de un azul metálico brillante que reflejan la luz, lo que las hace únicas en el reino animal. Habitan selvas tropicales de América Central y del Sur, volando principalmente a nivel del sotobosque. Además de su belleza, desempeñan un papel importante en la polinización.', 600.00, 12, 'https://contexto.udlap.mx/wp-content/uploads/2021/11/mariposa.jpg', '2025-07-20', TRUE),
+
+('Igna', 'Mariposa', 'La mariposa Igna es una especie exótica con alas decoradas con manchas y tonos vivos que van desde el naranja hasta el negro. Prefiere climas tropicales y es muy activa durante el día. Sus orugas se alimentan de plantas herbáceas, y los adultos se nutren principalmente del néctar de flores.', 750.00, 8, 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Agraulis_vanillae_at_Isla_Margarita.jpg/250px-Agraulis_vanillae_at_Isla_Margarita.jpg', '2025-08-20', TRUE),
+
+('Catonephele mexicana', 'Mariposa', 'La Catonephele mexicana es una mariposa tropical de gran belleza, originaria de México y América Central. Sus alas negras presentan puntos anaranjados que forman un patrón distintivo. Prefiere áreas húmedas y sombreadas, y se alimenta de savia y frutas fermentadas en lugar de néctar.', 820.00, 8, 'https://pictureinsect.com/wiki-image/1080/153820706105196555.jpeg', '2025-07-25', TRUE),
+
+('Siproeta stelenis', 'Mariposa', 'La Siproeta stelenis, conocida como mariposa "malaquita", debe su nombre a sus alas verdes con bordes negros, que imitan el color de la piedra semipreciosa. Es común en selvas y bosques húmedos, donde se alimenta del néctar y frutas en descomposición. Es muy apreciada por su elegante diseño natural.', 925.00, 6, 'https://static.inaturalist.org/photos/33050984/medium.jpeg', '2025-07-27', TRUE),
+
+('Archaeprepona', 'Mariposa', 'El género Archaeprepona incluye mariposas tropicales muy llamativas, con alas de colores azules y verdes metálicos en la parte superior y marrón en la inferior, brindando camuflaje cuando reposan. Son rápidas en vuelo y suelen frecuentar frutas fermentadas y savia en bosques tropicales.', 870.00, 9, 'https://i.redd.it/a-one-spot-prepona-archaeoprepona-demophon-aka-banded-king-v0-23ufry6af6je1.jpg?width=8688&format=pjpg&auto=webp&s=1d012cc0bc98e278574d7a40aaf8e9ad76a1a75b', '2025-07-30', TRUE),
+
+('Cónsul fabius', 'Mariposa', 'La mariposa Cónsul fabius se distingue por su color marrón con líneas y puntos que imitan hojas secas, lo que le otorga un camuflaje perfecto. Es frecuente en bosques húmedos y claros tropicales. Su comportamiento críptico la hace difícil de detectar en la naturaleza.', 650.00, 7, 'https://inaturalist-open-data.s3.amazonaws.com/photos/60274029/original.jpeg', '2025-08-05', TRUE);
 
 -- Insertar Orquídeas a la tabla productos
 INSERT INTO Producto (Nombre, Categoria, Descripcion, Precio, Stock, Imagen_URL, Fecha_Reposicion, Activo_Catalogo)
 VALUES
-('Guaria Morada', 'Orquídea', 'La Guaria Morada es una orquídea nativa de América Central, famosa por sus flores de color morado brillante.', 13250.00, 15, 'https://static.wixstatic.com/media/cdfea7_41bf369fee304c6687a2a41513851c6c~mv2.jpg/v1/fill/w_568,h_378,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/cdfea7_41bf369fee304c6687a2a41513851c6c~mv2.jpg', '2025-08-01', TRUE),
-('Cattleya trianae', 'Orquídea', 'La Cattleya trianae es conocida como la orquídea nacional de Colombia, con flores grandes y coloridas.', 15900.00, 10, 'https://media.istockphoto.com/id/1479201464/es/foto/cattleya-trianae-u-orqu%C3%ADdea-flor-de-mayo-con-punta-dentada-p%C3%A9talos-blancos-en-medio-de-los.jpg?s=170667a&w=0&k=20&c=hzpxAbT31sGZ1GUgsmoPnsuC9PLinD2WNX2igRGfqmU=', '2025-08-10', TRUE),
-('Oncidium sphacelatum', 'Orquídea', 'Oncidium sphacelatum es una orquídea conocida por sus pequeñas flores que se asemejan a una mariposa.', 11925.00, 12, 'https://www.picturethisai.com/wiki-image/1080/154113820443279364.jpeg', '2025-08-15', TRUE),
-('Psychopsis papilio', 'Orquídea', 'La Psychopsis papilio, o Orquídea mariposa, es famosa por sus flores que parecen alas de mariposa.', 14840.00, 8, 'https://www.picturethisai.com/wiki-image/1080/218296531776962560.jpeg', '2025-08-20', TRUE),
-('Dendrobium', 'Orquídea', 'Dendrobium es un género que agrupa varias especies de orquídeas, conocidas por sus flores en racimo.', 10600.00, 18, 'https://www.interflora.es/blog/wp-content/uploads/orquidea-dendrobium.jpg', '2025-08-25', TRUE),
-('Brassavola nodosa', 'Orquídea', 'La Brassavola nodosa es una orquídea nocturna, apreciada por su fragancia durante la noche.', 14575.00, 10, 'https://www.shutterstock.com/image-photo/brassavola-small-white-tough-species-600nw-2548499641.jpg', '2025-09-01', TRUE),
-('Miltonia spectabilis', 'Orquídea', 'Miltonia spectabilis, conocida como la orquídea del pensamiento, es famosa por sus flores grandes y coloridas.', 18550.00, 7, 'https://png.pngtree.com/thumb_back/fh260/background/20220913/pngtree-miltonia-maui-orchid-plant-white-photo-image_19805376.jpg', '2025-09-05', TRUE),
-('Epidendrum radicans', 'Orquídea', 'Epidendrum radicans es una orquídea que se caracteriza por sus raíces rojas y flores vibrantes.', 12720.00, 20, 'https://www.picturethisai.com/wiki-image/1080/154019752069562384.jpeg', '2025-09-10', TRUE);
+('Copper Queen', 'Orquídea', 'La Copper Queen es una orquídea híbrida de gran elegancia, caracterizada por sus pétalos en tonos cobrizos y anaranjados que evocan el brillo metálico del cobre. Florece en climas cálidos y húmedos, ideal para cultivadores que buscan plantas vistosas. Sus flores pueden durar varias semanas y requieren luz brillante pero indirecta.', 16500, 10, 'https://cdn11.bigcommerce.com/s-pxrevx9n0f/images/stencil/1280x1280/products/4593/23281/Rby._copper_queen11__53919.1730150731.jpg?c=2', '2025-08-15', 1),
+
+('Sagarik Wax', 'Orquídea', 'La Sagarik Wax es una orquídea tailandesa muy apreciada por la textura cerosa y brillante de sus pétalos, que suelen presentarse en colores vibrantes como el blanco, rosado y púrpura. Posee un aroma delicado y es conocida por su resistencia, lo que la convierte en una excelente opción para cultivadores principiantes y experimentados.', 15800, 12, 'https://static1.squarespace.com/static/55b8e840e4b0b3ab4e21b1dc/5e4daa9cee5bb23bd71cd226/5f491592401f346d88d01abe/1648083759123/IMG_5007.jpg?format=1500w', '2025-08-20', 1),
+
+('Rungnapha Fancy', 'Orquídea', 'La Rungnapha Fancy destaca por su espectacular combinación de colores vivos, que pueden incluir tonos amarillos, rojos y púrpuras. Es una orquídea híbrida, muy popular en exposiciones por la elegancia de sus pétalos ondulados. Prefiere ambientes cálidos y húmedos, con luz filtrada para mantener la intensidad de sus colores.', 18750, 8, 'https://www.tropicalorchidsportugal.com/wp-content/uploads/2024/03/cattleya-rungnapha-warm-welcome-01.jpg', '2025-08-22', 1),
+
+('Cattleya máxima', 'Orquídea', 'La Cattleya máxima es una especie originaria de Sudamérica, famosa por sus flores grandes y fragantes, que presentan tonalidades lilas con el labelo más oscuro. Es muy valorada en floristería por su belleza y perfume. Necesita alta luminosidad y buena ventilación para un desarrollo óptimo.', 20100, 15, 'https://www.shutterstock.com/image-photo/bright-purple-cattleya-maxima-orchid-600nw-1764983171.jpg', '2025-08-18', 1),
+
+('Rlc Fort Waston', 'Orquídea', 'El híbrido Rlc Fort Waston combina la elegancia y tamaño de las cattleyas con colores intensos y vibrantes. Sus flores pueden medir más de 15 cm, lo que la hace ideal para exhibiciones y coleccionistas. Prefiere ambientes cálidos, con buena humedad y luz moderada.', 16500, 6, 'https://orchidroots.com/static/utils/images/hybrid/Rhyncholaeliocattleya_100071713_000006953.jpeg', '2025-08-25', 1),
+
+('Cattleya tenebrosa', 'Orquídea', 'La Cattleya tenebrosa es una orquídea brasileña rara, apreciada por sus pétalos de tonos oscuros, entre marrón y burdeos, y su fragancia intensa. Florece en verano y requiere luz brillante con sombra parcial. Es considerada una joya para coleccionistas por su rareza y elegancia.', 17000, 5, 'https://http2.mlstatic.com/D_NQ_NP_642976-MLB75419045260_042024-O-cattleya-laelia-tenebrosa-orquidea-adulta.webp', '2025-08-30', 1),
+
+('Rlc Liu''s Joyance', 'Orquídea', 'La Rlc Liu''s Joyance es un híbrido espectacular con flores grandes en tonalidades moradas y amarillas, con el centro intensamente contrastado. Es muy resistente y florece varias veces al año si recibe la luz adecuada. Ideal para coleccionistas que buscan variedades llamativas.', 16800, 7, 'https://orchidgarden.co.uk/wp-content/uploads/2023/09/Cattleya-Rlc.-Lius-Joyance-2.jpg', '2025-08-28', 1),
+
+('Miltassia Shelob', 'Orquídea', 'La Miltassia Shelob es un híbrido entre Miltonia y Brassia, famosa por sus pétalos alargados y moteados en tonos púrpura y crema, lo que le da un aspecto exótico. Prefiere ambientes húmedos y frescos, con luz tenue, siendo ideal para cultivo en interiores.', 22150, 9, 'https://www.orquidariooriental.com.br/produtos/396.jpg', '2025-08-24', 1),
+
+('Grammatophyllum ', 'Orquídea', 'Esta especie es una de las orquídeas más grandes, conocida por sus racimos de flores amarillas con manchas verdes. Puede alcanzar gran tamaño y florecer espectacularmente una vez al año. Es resistente y perfecta para espacios amplios y bien iluminados.', 17550, 4, 'https://orchideeen-shop.nl/cdn/shop/products/orchid_big325.jpg?v=1676552033', '2025-09-01', 1),
+
+('Cymbidium cinderella', 'Orquídea', 'La Cymbidium cinderella es una variedad elegante y compacta, con flores en tonos pastel que duran varias semanas. Es muy apreciada para arreglos florales y decoración de interiores por su resistencia y facilidad de cuidado.', 19580, 10, 'https://media.istockphoto.com/id/1345528717/es/foto/flor-de-orqu%C3%ADdea-cymbidium.jpg?s=612x612&w=0&k=20&c=5xOLW8n5aiQ6zEEpazLcIBy-gW26XkXA_e-4XISQ3ZY=', '2025-08-27', 1),
+
+('Cymbidium tracyanum', 'Orquídea', 'El Cymbidium tracyanum es una especie originaria de Asia, caracterizada por sus flores grandes, fragantes, en tonos verdosos con marcas marrones. Florece en invierno y es muy resistente a bajas temperaturas, lo que la hace ideal para climas fríos.', 16200, 8, 'https://inaturalist-open-data.s3.amazonaws.com/photos/10919961/original.jpg', '2025-08-26', 1),
+
+('Cymbidium marco polo', 'Orquídea', 'El Cymbidium Marco Polo es un híbrido moderno con flores elegantes en tonos rosados y centros intensos. Florece en invierno y primavera, siendo muy valorado en arreglos ornamentales por su durabilidad y belleza.', 18400, 6, 'https://www.interflora.es/blog/wp-content/uploads/orquidea-cymbidium-1024x683.jpg.webp', '2025-08-29', 1);
+
+
+-- Insertar Eventos en la tabla de eventos
+INSERT INTO Evento (Nombre, Descripcion, Precio, Fecha, Hora, Ubicacion, Imagen_URL)
+VALUES
+('Tour al mariposario',
+'Disfruta de un recorrido guiado por nuestro espectacular mariposario en La Paz de Alajuela, donde podrás observar diferentes especies tropicales en su hábitat natural. Conoce su ciclo de vida, aprende sobre su importancia ecológica y admira la belleza de sus colores y patrones. Ideal para toda la familia y amantes de la naturaleza.', 
+3500, '2025-08-10', '09:00:00', 'La Paz, Alajuela', 'https://a.travel-assets.com/findyours-php/viewfinder/images/res70/116000/116350-Butterfly-Farm.jpg'),
+
+('Tour orquídeas',
+'Explora la fascinante colección de orquídeas exóticas en nuestro jardín especializado. Aprende sobre las especies más raras, sus cuidados y la historia detrás de estas hermosas flores. Un recorrido lleno de color y fragancias que cautivará tus sentidos, en un ambiente tranquilo rodeado de naturaleza.', 
+3500, '2025-08-12', '10:00:00', 'La Paz, Alajuela', 'https://cdn-imgix.headout.com/tour/25577/TOUR-IMAGE/37f64084-d2ff-4f81-8b91-e399eaf665f2-NOG-4.JPG?auto=format&w=900&h=562.5&q=90&ar=16%3A10&crop=faces%2Ccenter&fit=crop'),
+
+('Tour completo ', 
+'Vive la experiencia más completa con nuestro tour premium que combina lo mejor de ambos mundos: un recorrido por diversos mariposarios y la exclusiva zona de orquídeas. Incluye guías expertos, actividades interactivas, tiempo para fotografías y acceso a áreas únicas donde podrás aprender y disfrutar de la biodiversidad tropical en todo su esplendor.', 
+5000, '2025-08-15', '08:30:00', 'La Paz, Alajuela', 'https://media.istockphoto.com/id/849220498/photo/blue-tiger-butterfly-on-a-pink-zinnia-flower-with-green-background.jpg?b=1&s=612x612&w=0&k=20&c=vGMeC-fi_URdA3IhC_3MYb-068m1Jaxw9iwsuQcZmdo=');
+
 
 -- Insertar datos de ejemplo para la tabla Consulta
 INSERT INTO Consulta (ID_Usuario, Tema, Estado, Canal, Mensajes) VALUES

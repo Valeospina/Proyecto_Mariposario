@@ -116,7 +116,7 @@ $reservas = $result->fetch_all(MYSQLI_ASSOC);
         <table class="admin-table">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th></th>
                     <th>Evento</th>
                     <th>Usuario</th>
                     <th>Personas</th>
@@ -130,7 +130,7 @@ $reservas = $result->fetch_all(MYSQLI_ASSOC);
             <tbody>
                 <?php foreach ($reservas as $res): ?>
                     <tr>
-                        <td><?= $res['ID_Reserva']; ?></td>
+                        <td></td>
                         <td><?= $res['Nombre_Evento']; ?></td>
                         <td><?= $res['Nombre_Usuario'] ?? 'No registrado'; ?></td>
                         <td><?= $res['Cantidad_Personas']; ?></td>

@@ -136,7 +136,7 @@ $page_title = 'Gestionar Usuarios';
                             <table class="data-table">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
+                                        <th></th>
                                         <th>Nombre de Usuario</th>
                                         <th>Email</th>
                                         <th>Rol</th>
@@ -146,13 +146,13 @@ $page_title = 'Gestionar Usuarios';
                                 <tbody>
                                     <?php foreach ($users as $user): ?>
                                         <tr>
-                                            <td><?php echo htmlspecialchars($user['ID_Usuario']); ?></td>
+                                            <td></td>
                                             <td><?php echo htmlspecialchars($user['Nombre_Usuario']); ?></td>
                                             <td><?php echo htmlspecialchars($user['Email']); ?></td>
                                             <td><?php echo htmlspecialchars($user['Nombre_Rol']); ?></td>
                                             <td class="actions">
-                                                <a href="edit_user.php?id=<?php echo htmlspecialchars($user['ID_Usuario']); ?>" class="btn btn-action-edit" title="Editar"><i class="fas fa-edit"></i> Editar</a>
-                                                <a href="delete_user.php?id=<?php echo htmlspecialchars($user['ID_Usuario']); ?>" class="btn btn-action-delete" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar a este usuario? Esta acción es irreversible.');"><i class="fas fa-trash-alt"></i> Eliminar</a>
+                                                <a href="edit_user.php?id=<?php echo htmlspecialchars($user['ID_Usuario']); ?>" class="btn btn-action-edit" title="Editar"><i class="fas fa-edit"></i></a>
+                                                <a href="delete_user.php?id=<?php echo htmlspecialchars($user['ID_Usuario']); ?>" class="btn btn-action-delete" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar a este usuario? Esta acción es irreversible.');"><i class="fas fa-trash-alt"></i></a>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>

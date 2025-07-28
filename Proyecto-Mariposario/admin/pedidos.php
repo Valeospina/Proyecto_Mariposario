@@ -212,7 +212,7 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
                             <table class="data-table">
                                 <thead>
                                     <tr>
-                                        <th>ID Pedido</th>
+                                        <th></th>
                                         <th>Usuario</th>
                                         <th>Fecha Pedido</th>
                                         <th>Método de Pago</th>
@@ -224,7 +224,7 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
                                 <tbody>
                                     <?php foreach ($pedidos as $pedido): ?>
                                         <tr>
-                                            <td><?php echo htmlspecialchars($pedido['ID_Pedido']); ?></td>
+                                            <td></td>
                                             <td><?php echo htmlspecialchars($pedido['Nombre_Usuario']); ?></td>
                                             <td><?php echo htmlspecialchars($pedido['Fecha_Pedido']); ?></td>
                                             <td><?php echo htmlspecialchars($pedido['Metodo_Pago']); ?></td>

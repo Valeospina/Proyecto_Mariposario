@@ -61,7 +61,7 @@ $stmt->close();
     <style>
       .small-button-custom { width:auto!important; padding:6px 12px; font-size:0.85em; }
       .star-rating .star { font-size:1.5em; cursor:pointer; color:#ccc; margin-right:5px; transition:color 0.2s; }
-      .star-rating .star.selected { color:#ffc107; }
+      .star-rating .star.selected { color:#8BC34A; }
       .rating-text { font-size:0.9em; color:#555; margin-top:5px; }
       textarea#comment { width:100%; }
     </style>
@@ -79,7 +79,11 @@ $stmt->close();
       </div>
       <div class="col-md-6">
         <h2 class="product-name-custom"><?= htmlspecialchars($producto['Nombre']); ?></h2>
+
+        <!-- Descripción con botón "Leer más" -->
         <p class="product-description-custom"><?= htmlspecialchars($producto['Descripcion']); ?></p>
+        <button class="toggle-description btn btn-link p-0" style="font-size: 0.85em; color:#8BC34A; background:none; border:none;">Leer más</button>
+
         <div class="product-price-custom mb-3">₡<?= number_format($producto['Precio'], 2, ',', '.'); ?></div>
         <button class="add-to-cart-button-custom agregar-carrito small-button-custom"
             data-id="<?= $producto['ID_Producto']; ?>"
@@ -114,7 +118,7 @@ $stmt->close();
 
     <hr>
 
-    <!-- Formulario de reseña siempre visible -->
+    <!-- Formulario de reseña -->
     <h4 id="form-review">Deja tu reseña</h4>
     <form method="post" class="mb-5">
       <div class="form-group mb-2">
@@ -138,6 +142,7 @@ $stmt->close();
 <script src="js/jquery.min.js"></script>
 <script src="js/cart_interaction.js"></script>
 <script>
+  // Script para la calificación por estrellas
   document.querySelectorAll('.star-rating .star').forEach(star => {
     star.addEventListener('click', () => {
       let rating = star.dataset.rating;
@@ -146,6 +151,16 @@ $stmt->close();
       document.querySelectorAll('.star-rating .star').forEach(s => s.classList.toggle('selected', s.dataset.rating <= rating));
     });
   });
+
+  // Script para "Leer más / Leer menos" en la descripción del producto
+  const toggleBtn = document.querySelector('.toggle-description');
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', function() {
+      const desc = document.querySelector('.product-description-custom');
+      desc.classList.toggle('expanded');
+      this.textContent = desc.classList.contains('expanded') ? 'Leer menos' : 'Leer más';
+    });
+  }
 </script>
 </body>
 </html>

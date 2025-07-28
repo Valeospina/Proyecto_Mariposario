@@ -92,7 +92,7 @@ $reseñas = $revStmt->get_result();
   <style>
     .small-button-custom { width: auto !important; padding: 6px 12px; font-size: 0.85em; }
     .star-rating .star { font-size: 1.5em; cursor: pointer; color: #ccc; margin-right: 5px; transition: color 0.2s ease; }
-    .star-rating .star.selected { color: #ffc107; }
+    .star-rating .star.selected { color: #8BC34A; }
     .rating-text { font-size: 0.9em; color: #555; margin-top: 5px; }
     textarea#comment { width: 100%; }
   </style>
@@ -113,15 +113,15 @@ $reseñas = $revStmt->get_result();
         <p><?= nl2br(htmlspecialchars($evento['Descripcion'])) ?></p>
         <ul class="list-unstyled">
           <li><strong>Fecha:</strong> <?= date("d/m/Y", strtotime($evento['Fecha'])) ?></li>
-          <li><strong>Hora:</strong> <?= date("H:i", strtotime($evento['Hora'])) ?></li>
+          <li><strong>Hora Inicial:</strong> <?= date("H:i", strtotime($evento['Hora'])) ?></li>
           <li><strong>Ubicación:</strong> <?= htmlspecialchars($evento['Ubicacion']) ?></li>
           <li><strong>Precio:</strong> ₡<?= number_format($evento['Precio'], 2) ?></li>
         </ul>
-       <div class="mt-3 d-flex flex-row align-items-center gap-2">
-        <a href="ReservaForm.php?id=<?= $id ?>" class="add-to-cart-button-custom small-button-custom">Reservar</a>
-        <button id="toggleCalendarBtn" class="add-to-cart-button-custom small-button-custom">Ver calendario</button>
-        <a href="#form-review" class="add-to-cart-button-custom small-button-custom">Dejar reseña</a>
-      </div>
+        <div class="mt-3 button-group-custom">
+          <a href="ReservaForm.php?id=<?= $id ?>" class="add-to-cart-button-custom small-button-custom">Reservar</a>
+          <button id="toggleCalendarBtn" class="add-to-cart-button-custom small-button-custom">Ver calendario</button>
+          <a href="#form-review" class="add-to-cart-button-custom small-button-custom">Dejar reseña</a>
+        </div>
 
       <div id="calendarContainer" style="margin-top:1rem; display:none;"></div>
       </div>

@@ -126,7 +126,7 @@ $page_title = 'Gestionar Eventos';
                         <table>
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    <th></th>
                                     <th>Nombre</th>
                                     <th>Descripción</th>
                                     <th>Precio</th>
@@ -136,13 +136,13 @@ $page_title = 'Gestionar Eventos';
                             <tbody>
                                 <?php foreach ($eventos as $evento): ?>
                                     <tr>
-                                        <td data-label="ID:"><?php echo htmlspecialchars($evento['ID_Evento']); ?></td>
+                                        <td></td>
                                         <td data-label="Nombre:"><?php echo htmlspecialchars($evento['Nombre']); ?></td>
                                         <td data-label="Descripción:"><?php echo htmlspecialchars($evento['Descripcion']); ?></td>
                                         <td data-label="Precio:">₡<?php echo number_format($evento['Precio'], 2); ?></td>
                                         <td data-label="Acciones:" class="action-links">
-                                            <a class="btn btn-action-edit" href="edit_evento.php?id=<?php echo htmlspecialchars($evento['ID_Evento']); ?>"><i class="fas fa-edit"></i> Editar</a>
-                                            <a class="btn btn-action-delete" href="delete_evento.php?id=<?php echo htmlspecialchars($evento['ID_Evento']); ?>" onclick="return confirm('¿Estás seguro de que quieres eliminar este evento?');"><i class="fas fa-trash-alt"></i> Eliminar</a>
+                                            <a class="btn btn-action-edit" href="edit_evento.php?id=<?php echo htmlspecialchars($evento['ID_Evento']); ?>"><i class="fas fa-edit"></i></a>
+                                            <a class="btn btn-action-delete" href="delete_evento.php?id=<?php echo htmlspecialchars($evento['ID_Evento']); ?>" onclick="return confirm('¿Estás seguro de que quieres eliminar este evento?');"><i class="fas fa-trash-alt"></i></a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

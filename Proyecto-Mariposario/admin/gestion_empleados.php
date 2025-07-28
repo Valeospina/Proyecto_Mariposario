@@ -239,7 +239,7 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
                             <table class="data-table">
                                 <thead>
                                     <tr>
-                                        <th>ID Usuario</th>
+                                        <th></th>
                                         <th>Nombre</th>
                                         <th>Correo</th>
                                         <th>Rol</th>
@@ -252,7 +252,7 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
                                 <tbody>
                                     <?php foreach ($empleados as $empleado): ?>
                                         <tr>
-                                            <td><?php echo htmlspecialchars($empleado['ID_Usuario']); ?></td>
+                                            <td></td>
                                             <td><?php echo htmlspecialchars($empleado['Nombre']); ?></td>
                                             <td><?php echo htmlspecialchars($empleado['Correo']); ?></td>
                                             <td><?php echo htmlspecialchars($empleado['Rol_Nombre']); ?></td>
@@ -262,10 +262,10 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
                                             
                                             <td class="action-buttons">
                                                 <a href="edit_product.php?id=<?= htmlspecialchars($product['ID_Producto']) ?>" class="btn btn-action-edit" title="Editar">
-                                                    <i class="fas fa-edit"></i> Editar
+                                                    <i class="fas fa-edit"></i> 
                                                 </a>
                                                 <a href="products.php?action=delete&id=<?= htmlspecialchars($product['ID_Producto']) ?>" class="btn btn-action-delete" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar este producto?');">
-                                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                                    <i class="fas fa-trash-alt"></i> 
                                                 </a>
                                             </td>
                                         </tr>

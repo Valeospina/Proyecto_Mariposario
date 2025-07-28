@@ -199,16 +199,18 @@ body.mariposa {
 }
 
 .product-description-custom {
-    font-size: 0.9em; /* Reducido un poco el tamaño de la descripción */
+    font-size: 0.9em;
     color: #666;
-    line-height: 1.4; /* Ajustada la altura de línea */
-    margin-bottom: 10px; /* Reducido el margen inferior */
-    min-height: auto; /* Permitir que la altura de la descripción se ajuste */
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* Limita a 2 líneas para que sea más compacta */
-    -webkit-box-orient: vertical;
+    line-height: 1.4;
+    margin-bottom: 10px;
     overflow: hidden;
-    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Mostramos 2 líneas inicialmente */
+    -webkit-box-orient: vertical;
+}
+.product-description-custom.expanded {
+    -webkit-line-clamp: unset; /* Quita la restricción */
+    overflow: visible;
 }
 
 .product-details-custom {
@@ -266,6 +268,18 @@ body.mariposa {
     text-transform: uppercase;
     font-weight: 500;
     cursor: pointer;
+    text-align: center;
+}
+
+.button-group-custom {
+    display: flex;
+    gap: 10px; /* Espacio entre botones */
+    flex-wrap: wrap; /* Para móviles se apilan */
+}
+
+.button-group-custom .add-to-cart-button-custom {
+    flex: 1; /* Hace que los tres botones tengan la misma anchura */
+    width: auto !important; /* Anula el width:100% original */
     text-align: center;
 }
 
