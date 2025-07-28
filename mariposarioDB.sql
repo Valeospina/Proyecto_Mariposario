@@ -511,6 +511,8 @@ INSERT INTO Consulta (ID_Usuario, Tema, Estado, Canal, Mensajes) VALUES
     JSON_OBJECT('role', 'admin', 'text', 'Estamos revisando su caso, le avisaremos pronto.', 'time', '11:15')
 ));
 
+--  Tienen que ejecutar este comando para que les funcione la parte de pagos
+ALTER TABLE Pedido MODIFY Estado_Envio VARCHAR(50) NOT NULL DEFAULT 'Pedido Recibido';
 
 
 

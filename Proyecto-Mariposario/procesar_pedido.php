@@ -134,8 +134,13 @@ try {
 
     // 11. Insertar comprobante si es SINPE
     if ($metodoPago === 'SINPE Movil' && $rutaComprobante) {
-        $stmtFactura = $conn->prepare("INSERT INTO Factura (ID_Pedido, Ruta_PDF_Factura) VALUES (?, ?)");
-        $stmtFactura->bind_param("is", $idPedido, $rutaComprobante);
+       $numeroFactura = 'FAC-' . strtoupper(uniqid());
+ 
+        $stmtFactura = $conn->prepare("
+            INSERT INTO Factura (ID_Pedido, Subtotal, Total, Metodo_Pago, Numero_Factura, Ruta_PDF_Factura) 
+            VALUES (?, ?, ?, ?, ?, ?)
+        ");
+        $stmtFactura->bind_param("iddsss", $idPedido, $totalPedido, $totalPedido, $metodoPago, $numeroFactura, $rutaComprobante);
         if (!$stmtFactura->execute()) {
             throw new Exception('Error al guardar el comprobante: ' . $stmtFactura->error);
         }
