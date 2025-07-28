@@ -1,12 +1,27 @@
 <?php
 session_start();
-include 'DB.php'; 
-$_SESSION['id_usuario'] = $row['ID_Usuario'];
-if ($_POST) {
+include 'DB.php';
+
+// Mostrar errores en desarrollo (puedes quitar esto en producción)
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
     $password = trim($_POST['password']);
 
-    $login_query = "SELECT u.*, r.Nombre as NombreRol FROM Usuario u
+    // Validar campos vacíos
+    if (empty($email) || empty($password)) {
+        echo "<script>
+                alert('Por favor, ingresa correo y contraseña.');
+                window.location.href = './logind.php';
+              </script>";
+        exit;
+    }
+
+    // Consultar usuario
+    $login_query = "SELECT u.*, r.Nombre AS NombreRol 
+                    FROM Usuario u
                     LEFT JOIN Rol r ON u.ID_Rol = r.ID_Rol
                     WHERE u.Correo = ?";
     $login_stmt = $conn->prepare($login_query);
@@ -26,7 +41,7 @@ if ($_POST) {
 
         $user = $result->fetch_assoc();
 
-
+        // Validar contraseña
         if (password_verify($password, $user['Contrasena'])) {
             // Guardar datos en sesión
             $_SESSION['user_id'] = $user['ID_Usuario'];
@@ -34,7 +49,8 @@ if ($_POST) {
             $_SESSION['user_email'] = $user['Correo'];
             $_SESSION['user_role'] = $user['ID_Rol'];
             $_SESSION['role_name'] = $user['NombreRol'];
-            
+
+            // Comprobar si el usuario tiene registro en Puntos_Usuario
             $puntos_stmt = $conn->prepare("SELECT COUNT(*) FROM Puntos_Usuario WHERE ID_Usuario = ?");
             $puntos_stmt->bind_param("i", $_SESSION['user_id']);
             $puntos_stmt->execute();
@@ -48,7 +64,8 @@ if ($_POST) {
                 $crear_puntos_stmt->execute();
                 $crear_puntos_stmt->close();
             }
-           
+
+            // Registrar actividad si es Admin
             if ($user['ID_Rol'] == 1) {
                 $emp_stmt = $conn->prepare("SELECT ID_Empleado FROM Empleado WHERE ID_Usuario = ?");
                 $emp_stmt->bind_param("i", $user['ID_Usuario']);
@@ -65,16 +82,16 @@ if ($_POST) {
                 $emp_stmt->close();
             }
 
-            // **Redirección basada en el rol de usuario**
+            // Redirección según el rol
             if ($_SESSION['user_role'] == 1) { 
                 echo "<script>
-                          alert('¡Bienvenido Administrador " . htmlspecialchars($user['Nombre']) . "!');
-                          window.location.href = './admin/dashboard.php'; 
+                        alert('¡Bienvenido Administrador " . htmlspecialchars($user['Nombre']) . "!');
+                        window.location.href = './admin/dashboard.php'; 
                       </script>";
             } else { 
                 echo "<script>
-                          alert('¡Bienvenido " . htmlspecialchars($user['Nombre']) . "!');
-                          window.location.href = './index.php'; 
+                        alert('¡Bienvenido " . htmlspecialchars($user['Nombre']) . "!');
+                        window.location.href = './index.php'; 
                       </script>";
             }
             exit;

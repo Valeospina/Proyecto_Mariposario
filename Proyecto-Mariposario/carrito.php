@@ -1,56 +1,74 @@
 <?php
-session_start(); // Inicia la sesión al principio de todo
+session_start();
+include 'DB.php';
 
-// --- Simulación de datos de usuario (para testing si no hay login real)
-if (!isset($_SESSION['user_logged_in'])) {
-    $_SESSION['user_logged_in'] = true; // Set to true for testing dashboard features
-}
-if (!isset($_SESSION['user_name'])) {
-    $_SESSION['user_name'] = 'EcoMariposa User'; // Default name
-}
-// Using the uploaded image for the user avatar by default
-if (!isset($_SESSION['user_avatar'])) {
-    $_SESSION['user_avatar'] = 'img/user-profile.jpg'; // Assuming 'img/' is the correct path
-}
-if (!isset($_SESSION['user_points'])) {
-    $_SESSION['user_points'] = 0; // Default points for testing. Estos puntos se gestionarán en la compra real.
+// --- Validar que el usuario está logueado ---
+if (!isset($_SESSION['user_id'])) {
+    // Si no está logueado, mostrar mensaje y salir
+    echo "<div style='text-align:center; padding:20px;'>
+            <h2>Debes iniciar sesión para continuar con tu compra.</h2>
+            <a href='logind.php' style='display:inline-block; padding:10px 20px; background:#28a745; color:white; text-decoration:none; border-radius:5px;'>Ir al Login</a>
+          </div>";
+    exit;
 }
 
-// Ensure $_SESSION['carrito'] is always an array
+$idUsuario = (int) $_SESSION['user_id'];
+
+// --- Consultar nombre del usuario ---
+$stmt = $conn->prepare("SELECT Nombre FROM Usuario WHERE ID_Usuario = ?");
+$stmt->bind_param("i", $idUsuario);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+$stmt->close();
+
+$nombreUsuario = $row['Nombre'] ?? 'Usuario';
+
+// --- Consultar puntos del usuario ---
+$stmt = $conn->prepare("SELECT Puntos_Actuales FROM Puntos_Usuario WHERE ID_Usuario = ?");
+$stmt->bind_param("i", $idUsuario);
+$stmt->execute();
+$result = $stmt->get_result();
+$puntosRow = $result->fetch_assoc();
+$stmt->close();
+
+$puntosUsuario = (int)($puntosRow['Puntos_Actuales'] ?? 0);
+
+// --- Actualizar datos en sesión ---
+$_SESSION['user_name'] = $nombreUsuario;
+$_SESSION['user_points'] = $puntosUsuario;
+
+// --- Asegurar carrito ---
 if (!isset($_SESSION['carrito']) || !is_array($_SESSION['carrito'])) {
     $_SESSION['carrito'] = [];
 }
 
-// Define la variable $response al inicio para evitar errores de referencia
-$response = ['success' => false, 'message' => ''];
-
-// Function to calculate total items in cart
+// --- Funciones auxiliares ---
 function getTotalCartItems() {
-    $total_items = 0;
-    if (isset($_SESSION['carrito']) && is_array($_SESSION['carrito'])) {
-        foreach ($_SESSION['carrito'] as $item) {
-            $total_items += $item['cantidad'];
-        }
-    }
-    return $total_items;
+    return array_sum(array_column($_SESSION['carrito'], 'cantidad'));
 }
 
-// Function to calculate cart total amount
 function getCartTotalAmount() {
-    $total_amount = 0;
-    if (isset($_SESSION['carrito']) && is_array($_SESSION['carrito'])) {
-        foreach ($_SESSION['carrito'] as $item) {
-            $total_amount += $item['precio'] * $item['cantidad'];
-        }
+    $total = 0;
+    foreach ($_SESSION['carrito'] as $item) {
+        $total += $item['precio'] * $item['cantidad'];
     }
-    return $total_amount;
+    return $total;
 }
 
-// Function to convert Colones to Dollars
 function convertirColonesADolares($colones) {
-    $tipoCambio = 500; // Example exchange rate
+    $tipoCambio = 500; // Ajusta según el tipo real
     return round($colones / $tipoCambio, 2);
 }
+
+// --- Variables para la vista ---
+$carrito_actual = $_SESSION['carrito'];
+$total_carrito_final = getCartTotalAmount();
+$total_usd = convertirColonesADolares($total_carrito_final);
+$puntosUsuario = $_SESSION['user_points'];
+
+
+
 
 // --- Lógica para Peticiones AJAX (POST y GET para el carrito) ---
 if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
