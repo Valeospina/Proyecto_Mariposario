@@ -117,17 +117,13 @@ $reseñas = $revStmt->get_result();
           <li><strong>Ubicación:</strong> <?= htmlspecialchars($evento['Ubicacion']) ?></li>
           <li><strong>Precio:</strong> ₡<?= number_format($evento['Precio'], 2) ?></li>
         </ul>
-        <div class="mt-3 d-flex flex-row align-items-center gap-2">
-          <a href="ReservaForm.php?id=<?= $id ?>" class="add-to-cart-button-custom small-button-custom">Reservar</a>
-            <!-- botón toggle calendario + contenedor -->
-        <div class="mt-3 d-flex flex-row align-items-center gap-2">
-          <button id="toggleCalendarBtn" class="add-to-cart-button-custom small-button-custom">
-            Ver calendario
-          </button>
-        </div>
-          <a href="#form-review" class="add-to-cart-button-custom small-button-custom">Dejar reseña</a>
-        </div>
-         <div id="calendarContainer" style="margin-top:1rem; display:none;"></div>
+       <div class="mt-3 d-flex flex-row align-items-center gap-2">
+        <a href="ReservaForm.php?id=<?= $id ?>" class="add-to-cart-button-custom small-button-custom">Reservar</a>
+        <button id="toggleCalendarBtn" class="add-to-cart-button-custom small-button-custom">Ver calendario</button>
+        <a href="#form-review" class="add-to-cart-button-custom small-button-custom">Dejar reseña</a>
+      </div>
+
+      <div id="calendarContainer" style="margin-top:1rem; display:none;"></div>
       </div>
     </div>
 
@@ -206,7 +202,7 @@ $reseñas = $revStmt->get_result();
       const daysInMonth = new Date(year, month, 0).getDate();
       let html = '<table class="table table-bordered mb-0">';
       html += '<thead><tr>';
-      ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].forEach(d => {
+      ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'].forEach(d => {
         html += `<th>${d}</th>`;
       });
       html += '</tr></thead><tbody><tr>';
