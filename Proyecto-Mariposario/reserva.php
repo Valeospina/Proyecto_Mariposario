@@ -71,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <a href='index.php' style='display: inline-block; margin-top: 20px; background-color: #198754; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Volver al inicio</a>
             </div>";
 
-            require_once 'EmailService.php';
+            require_once __DIR__ . '/EmailService.php'; // ruta correcta
             $emailService = new EmailService();
             $emailService->enviarCorreoConfirmacion([
                 'nombre'        => $nombre,
@@ -134,3 +134,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 			<script src="js/main.js"></script>
 		</body>
 	</html>
+
+
+  

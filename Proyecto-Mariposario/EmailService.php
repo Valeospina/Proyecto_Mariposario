@@ -1,35 +1,42 @@
 <?php
+// EmailService.php
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require 'vendor/autoload.php';
+// Ajusta estas rutas si tienes PHPMailer en otro sitio:
+require __DIR__ . '/PHPMailer/Exception.php';
+require __DIR__ . '/PHPMailer/PHPMailer.php';
+require __DIR__ . '/PHPMailer/SMTP.php';
 
-function enviarCorreoConfirmacion($datos) {
-    $mail = new PHPMailer(true);
-    try {
-        // SMTP Configuración
-        $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com';
-        $mail->SMTPAuth   = true;
-        $mail->Username   = 'ecomariposa7@gmail.com'; 
-        $mail->Password   = 'TU_APP_PASSWORD'; // Usa App Password seguro
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
+class EmailService
+{
+    public function enviarCorreoConfirmacion(array $datos): void
+    {
+        $mail = new PHPMailer(true);
+        try {
+            // Configuración SMTP
+            $mail->isSMTP();
+            $mail->Host       = 'smtp.gmail.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'ecomariposa7@gmail.com';
+            $mail->Password   = 'pjzp zldn thrp tisa';
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = 587;
 
-        // Remitente
-        $mail->setFrom('ecomariposa7@gmail.com', 'EcoMariposa');
-        $mail->addAddress($datos['email'], $datos['nombre']); // Cliente
-        $mail->addBCC('ecomariposa7@gmail.com'); // Admin recibe copia
+            // Remitente y destinatarios
+            $mail->setFrom('ecomariposa7@gmail.com', 'EcoMariposa');
+            $mail->addAddress($datos['email'], $datos['nombre']);
+            $mail->addBCC('ecomariposa7@gmail.com');
 
-        // Embebemos el logo
-        $logoPath = '/ruta/a/logo.png'; // Ajusta ruta real
-        $mail->AddEmbeddedImage($logoPath, 'logoimg');
+            // Imagen embebida: ruta al fichero, no HTML
+            $logoPath = __DIR__ . '/img/logo.png';
+            $mail->addEmbeddedImage($logoPath, 'logoimg');
 
-        // Contenido
-        $mail->isHTML(true);
-        $mail->Subject = "✅ Confirmación de tu reserva en EcoMariposa";
-
-        $mail->Body = "
+            // Cuerpo HTML
+            $mail->isHTML(true);
+            $mail->Subject = 'Confirmación de tu reserva en EcoMariposa';
+            $mail->Body    =   "
         <div style='font-family: Arial, sans-serif; max-width:600px; margin:auto; color:#333;'>
             <div style='text-align:center; padding:20px; background:#f5f5f5;'>
                 <img src='cid:logoimg' alt='EcoMariposa' style='max-width:150px;'>
@@ -51,9 +58,10 @@ function enviarCorreoConfirmacion($datos) {
             <p style='font-size:12px; color:#777; text-align:center; margin-top:20px;'>© " . date("Y") . " EcoMariposa. Todos los derechos reservados.</p>
         </div>
         ";
-
-        $mail->send();
-    } catch (Exception $e) {
-        error_log("Error enviando correo: {$mail->ErrorInfo}");
+            
+            $mail->send();
+        } catch (Exception $e) {
+            error_log('Error enviando correo: ' . $mail->ErrorInfo);
+        }
     }
 }
