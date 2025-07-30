@@ -73,7 +73,7 @@ body { margin:0; font-family:'Poppins',sans-serif; background:#f4f4f4; }
             <a href="gestion_empleados.php">Gestionar Empleados</a>
             <a href="users.php">Gestionar Usuarios</a>
             <a href="products.php">Gestionar Productos</a>
-            <a href="admin-chats.php" class="active">Soporte</a>
+            <a href="./admin-chats.php" class="active">Soporte</a>
         </nav>
     </div>
 
@@ -112,7 +112,7 @@ body { margin:0; font-family:'Poppins',sans-serif; background:#f4f4f4; }
             <div class="chat-window">
                 <div class="chat-header">
                     <span id="chatUser">Selecciona un chat</span>
-                    <button onclick="cerrarChat()">Cerrar Chat</button>
+                    
                 </div>
                 <div class="chat-body" id="chatBody">
                     <div class="system-msg">Selecciona un chat para comenzar</div>
@@ -174,7 +174,7 @@ function abrirChat(id,userName,estado){
     chatEstado=estado;
     document.getElementById('chatUser').textContent=userName;
 
-    fetch('get_chat.php?id='+id)
+    fetch('./get_chat.php?id='+id)
     .then(r=>r.json())
     .then(data=>{
         const body=document.getElementById('chatBody');

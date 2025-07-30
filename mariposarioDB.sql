@@ -332,14 +332,17 @@ CREATE TABLE Reserva (
 -- Soporte al Cliente (Chat o Correo).
 CREATE TABLE Consulta (
     ID_Consulta INT PRIMARY KEY AUTO_INCREMENT,
-    ID_Usuario INT NULL, -- Puede ser NULL si es invitado
-    Fecha DATETIME DEFAULT CURRENT_TIMESTAMP, -- Fecha de creación del ticket
-    Tema ENUM('Consulta','Reclamo','Sugerencia') NOT NULL, -- Tipo de consulta
-    Estado ENUM('Pendiente','Respondido','Cerrado') DEFAULT 'Pendiente', -- Estado del ticket
-    Canal ENUM('Chat','Correo') DEFAULT 'Chat', -- Medio de soporte
-    Mensajes JSON NULL, -- Historial de mensajes en formato JSON
+    ID_Usuario INT NULL,
+    Fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+    Tema ENUM('Consulta','Reclamo','Sugerencia') NOT NULL,
+    Estado ENUM('Pendiente','Respondido','Cerrado') DEFAULT 'Pendiente',
+    Canal ENUM('Chat','Correo') DEFAULT 'Chat',
+    Mensajes JSON NULL,
+    Ultima_Actividad DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
 );
+
+
 
 -- Tabla: Notificacion
 -- Notificaciones generales del sistema.
