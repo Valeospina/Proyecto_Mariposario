@@ -1,6 +1,7 @@
 {
     "require": {
         "cboden/ratchet": "^0.4.4",
-        "dompdf/dompdf": "^3.1"
+        "dompdf/dompdf": "^3.1",
+        "react/promise": "^3.2"
     }
 }
