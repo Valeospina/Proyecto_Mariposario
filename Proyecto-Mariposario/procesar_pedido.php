@@ -1,12 +1,11 @@
 <?php
 header('Content-Type: application/json');
 session_start();
-include 'DB.php'; // Este archivo debe crear la conexión $conn (MySQLi)
+include 'DB.php';
 
 $response = ['success' => false, 'message' => 'Error desconocido'];
 
 try {
-    // 1. Validar sesión y carrito
     if (!isset($_SESSION['user_id'])) {
         throw new Exception('Usuario no autenticado.');
     }
@@ -17,13 +16,11 @@ try {
     $idUsuario = $_SESSION['user_id'];
     $carrito = $_SESSION['carrito'];
 
-    // 2. Calcular total del pedido antes del descuento
     $totalPedido = 0;
     foreach ($carrito as $item) {
         $totalPedido += $item['precio'] * $item['cantidad'];
     }
 
-    // 3. Validar método POST
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception('Método no permitido.');
     }
@@ -33,7 +30,6 @@ try {
         throw new Exception('Acción inválida.');
     }
 
-    // 4. Capturar datos enviados
     $metodoPago = $_POST['metodo_pago_final'] ?? '';
     $observaciones = $_POST['observaciones'] ?? '';
     $canjearPuntos = ($_POST['canjearPuntos'] ?? '0') === '1';
@@ -42,7 +38,6 @@ try {
         throw new Exception('Método de pago no válido.');
     }
 
-    // 5. Validar comprobante SINPE
     $rutaComprobante = null;
     if ($metodoPago === 'SINPE Movil') {
         if (!isset($_FILES['comprobanteSinpe']) || $_FILES['comprobanteSinpe']['error'] !== 0) {
@@ -51,7 +46,7 @@ try {
 
         $allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
         if (!in_array($_FILES['comprobanteSinpe']['type'], $allowedTypes)) {
-            throw new Exception('Formato de archivo no permitido. Solo JPG, PNG o PDF.');
+            throw new Exception('Formato de archivo no permitido.');
         }
 
         $targetDir = "uploads/comprobantes/";
@@ -67,145 +62,85 @@ try {
         }
     }
 
-    // 6. Generar proforma única
     $numeroProforma = 'PROF-' . strtoupper(uniqid());
-
-    // 7. Iniciar transacción
     $conn->begin_transaction();
 
-    // 8. Aplicar descuento por puntos si corresponde
-    $descuentoAplicado = 0;
-    if ($canjearPuntos) {
-        // Obtener puntos actuales del usuario
-        $stmtCheck = $conn->prepare("SELECT Puntos_Actuales FROM Puntos_Usuario WHERE ID_Usuario = ?");
-        $stmtCheck->bind_param("i", $idUsuario);
-        $stmtCheck->execute();
-        $stmtCheck->bind_result($puntosActuales);
-        $stmtCheck->fetch();
-        $stmtCheck->close();
-
-        if ($puntosActuales >= 1000) {
-            // Calcular el descuento aplicable
-            $descuentoAplicado = min($puntosActuales, $totalPedido); // No excede el total del pedido
-            $totalPedido -= $descuentoAplicado;
-
-            // ✅ Dejar puntos en 0 después del canje
-            $stmtUpdate = $conn->prepare("UPDATE Puntos_Usuario SET Puntos_Actuales = 0 WHERE ID_Usuario = ?");
-            $stmtUpdate->bind_param("i", $idUsuario);
-            $stmtUpdate->execute();
-            $stmtUpdate->close();
-
-            // ✅ Actualizar la sesión para reflejar visualmente 0 puntos
-            $_SESSION['user_points'] = 0;
-
-            // Registrar en historial
-            $stmtHist = $conn->prepare("
-                INSERT INTO Historial_Puntos (ID_Usuario, Fecha, Accion, Monto, Descripcion)
-                VALUES (?, NOW(), 'Canjeado', ?, 'Canje de puntos en compra')
-            ");
-            $stmtHist->bind_param("ii", $idUsuario, $descuentoAplicado);
-            $stmtHist->execute();
-            $stmtHist->close();
-        }
-    }
-
-    // 9. Insertar en Pedido con el total ya actualizado
-    $estadoPedido = 'Pendiente de Pago';
+    // Insertar pedido
+    $estadoPedido = ($metodoPago === 'SINPE Movil') ? 'Pendiente de verificación' : 'Pendiente de Pago';
     $stmtPedido = $conn->prepare("
         INSERT INTO Pedido (ID_Usuario, Fecha_Pedido, Total_Pedido, Estado_Pedido, Numero_Proforma, Observaciones, Metodo_Pago) 
         VALUES (?, NOW(), ?, ?, ?, ?, ?)
     ");
     $stmtPedido->bind_param("idssss", $idUsuario, $totalPedido, $estadoPedido, $numeroProforma, $observaciones, $metodoPago);
-    if (!$stmtPedido->execute()) {
-        throw new Exception('Error al crear el pedido: ' . $stmtPedido->error);
-    }
+    $stmtPedido->execute();
     $idPedido = $stmtPedido->insert_id;
     $stmtPedido->close();
 
-    // 10. Insertar productos en Detalle_Pedido
+    // Insertar productos en detalle
     $stmtDetalle = $conn->prepare("INSERT INTO Detalle_Pedido (ID_Pedido, ID_Producto, Cantidad, Precio) VALUES (?, ?, ?, ?)");
     foreach ($carrito as $item) {
         $stmtDetalle->bind_param("iiid", $idPedido, $item['id'], $item['cantidad'], $item['precio']);
-        if (!$stmtDetalle->execute()) {
-            throw new Exception('Error al insertar detalle: ' . $stmtDetalle->error);
-        }
+        $stmtDetalle->execute();
     }
     $stmtDetalle->close();
 
-    // 11. Insertar comprobante si es SINPE
+    // Si SINPE, guardar comprobante en Factura como evidencia
     if ($metodoPago === 'SINPE Movil' && $rutaComprobante) {
-       $numeroFactura = 'FAC-' . strtoupper(uniqid());
- 
         $stmtFactura = $conn->prepare("
-            INSERT INTO Factura (ID_Pedido, Subtotal, Total, Metodo_Pago, Numero_Factura, Ruta_PDF_Factura) 
+            INSERT INTO Factura (ID_Pedido, Subtotal, Total, Metodo_Pago, Numero_Factura, Ruta_PDF_Factura)
             VALUES (?, ?, ?, ?, ?, ?)
         ");
-        $stmtFactura->bind_param("iddsss", $idPedido, $totalPedido, $totalPedido, $metodoPago, $numeroFactura, $rutaComprobante);
-        if (!$stmtFactura->execute()) {
-            throw new Exception('Error al guardar el comprobante: ' . $stmtFactura->error);
-        }
+        $dummyFactura = 'PENDIENTE-' . strtoupper(uniqid());
+        $stmtFactura->bind_param("iddsss", $idPedido, $totalPedido, $totalPedido, $metodoPago, $dummyFactura, $rutaComprobante);
+        $stmtFactura->execute();
         $stmtFactura->close();
     }
 
-    // 12. Insertar estado inicial en Estado_Pedido
-    $estadoInicial = 'Pendiente';
-    $stmtEstado = $conn->prepare("INSERT INTO Estado_Pedido (ID_Pedido, Estado, Fecha) VALUES (?, ?, NOW())");
-    $stmtEstado->bind_param("is", $idPedido, $estadoInicial);
-    if (!$stmtEstado->execute()) {
-        throw new Exception('Error al insertar el estado inicial: ' . $stmtEstado->error);
-    }
-    $stmtEstado->close();
-
-    //  Calcular puntos ganados si no se canjeó todo
-    $totalParaPuntos = $totalPedido; // Total ya con descuento aplicado
-    $puntos_ganados = floor($totalParaPuntos / 100);
-
-    if ($puntos_ganados > 0) {
-        // Actualizar base de datos
-        $stmt = $conn->prepare("INSERT INTO Puntos_Usuario (ID_Usuario, Puntos_Actuales) VALUES (?, ?)
-                                ON DUPLICATE KEY UPDATE Puntos_Actuales = Puntos_Actuales + VALUES(Puntos_Actuales)");
-        $stmt->bind_param("ii", $idUsuario, $puntos_ganados);
-        $stmt->execute();
-        $stmt->close();
-
-        // Insertar historial
-        $stmtHist = $conn->prepare("
-            INSERT INTO Historial_Puntos (ID_Usuario, Fecha, Accion, Monto, Descripcion, ID_Referencia, Tipo_Referencia)
-            VALUES (?, NOW(), 'Ganado', ?, 'Puntos por pedido', ?, 'Pedido')
-        ");
-        $stmtHist->bind_param("iii", $idUsuario, $puntos_ganados, $idPedido);
-        $stmtHist->execute();
-        $stmtHist->close();
-
-        //  Actualizar sesión
-        $_SESSION['user_points'] = ($_SESSION['user_points'] ?? 0) + $puntos_ganados;
-    } else {
-        // Si no ganó puntos, mantener los que ya tenga
-        $_SESSION['user_points'] = $_SESSION['user_points'] ?? 0;
-    }
-
-
-    // 13. Confirmar transacción
     $conn->commit();
 
-    // 14. Vaciar carrito
+    // ✅ Generar factura y enviar SOLO si es PayPal o Efectivo
+    if ($metodoPago !== 'SINPE Movil') {
+        require_once __DIR__ . '/FacturaService.php';
+        $numeroFactura = 'FAC-' . strtoupper(uniqid());
+        $rutaFacturaDir = "uploads/facturas/";
+        if (!file_exists($rutaFacturaDir)) mkdir($rutaFacturaDir, 0777, true);
+        $rutaFactura = $rutaFacturaDir . $numeroFactura . ".pdf";
+
+        $facturaService = new FacturaService();
+        $facturaService->generarFacturaPDF([
+            'numero_factura' => $numeroFactura,
+            'nombre_cliente' => $_SESSION['user_name'] ?? 'Cliente',
+            'email' => $_SESSION['user_email'] ?? 'sin-correo@dominio.com',
+            'fecha' => date('d/m/Y'),
+            'subtotal' => $totalPedido,
+            'descuento' => 0,
+            'total' => $totalPedido,
+            'metodo_pago' => $metodoPago
+        ], $carrito, $rutaFactura);
+
+        // Insertar factura
+        $stmtFactura = $conn->prepare("
+            UPDATE Factura SET Numero_Factura = ?, Ruta_PDF_Factura = ? WHERE ID_Pedido = ?
+        ");
+        $stmtFactura->bind_param("ssi", $numeroFactura, $rutaFactura, $idPedido);
+        $stmtFactura->execute();
+        $stmtFactura->close();
+
+        // Enviar correo
+        require_once __DIR__ . '/FacturaEmailService.php';
+        $emailFactura = new FacturaEmailService();
+        $emailFactura->enviarFactura(['nombre' => $_SESSION['user_name'], 'email' => $_SESSION['user_email']], $rutaFactura);
+    }
+
     unset($_SESSION['carrito']);
-
-    // Respuesta con datos adicionales
     $response['success'] = true;
-    $response['message'] = 'Pedido creado exitosamente.';
+    $response['message'] = ($metodoPago === 'SINPE Movil') 
+        ? 'Pedido registrado. Comprobante en revisión por el administrador.' 
+        : 'Pedido creado exitosamente. Factura enviada.';
     $response['pedido_id'] = $idPedido;
-    $response['numero_proforma'] = $numeroProforma;
-    $response['total_final'] = $totalPedido;
-    $response['descuento_aplicado'] = $descuentoAplicado;
-    $response['puntos_restantes'] = 0; // Siempre 0 tras el canje completo
-    $response['puntos_actualizados'] = $_SESSION['user_points'];
-
 
 } catch (Exception $e) {
-    if ($conn) {
-        $conn->rollback();
-    }
+    if ($conn) $conn->rollback();
     $response['success'] = false;
     $response['message'] = $e->getMessage();
 }

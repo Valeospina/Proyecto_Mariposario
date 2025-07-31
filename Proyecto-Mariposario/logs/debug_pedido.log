@@ -1,0 +1,78 @@
+[2025-07-31 05:43:12] Inicio del proceso de pedido manual.
+[2025-07-31 05:43:12] Usuario ID: 9 | Carrito con 1 productos.
+[2025-07-31 05:43:12] Total inicial del pedido: 15800
+[2025-07-31 05:43:12] Método de pago: SINPE Movil | Canje puntos: No
+[2025-07-31 05:43:12] Comprobante SINPE detectado.
+[2025-07-31 05:43:12] Comprobante guardado en: uploads/comprobantes/688ae6507b710_arquitectura.png
+[2025-07-31 05:43:12] Número de proforma generado: PROF-688AE6507BA17
+[2025-07-31 05:43:12] Pedido insertado con ID: 72
+[2025-07-31 05:43:12] Productos insertados en detalle de pedido.
+[2025-07-31 05:43:12] Transacción confirmada.
+[2025-07-31 05:43:12] Generando factura PDF en: uploads/facturas/FAC-688AE6507D1CA.pdf
+[2025-07-31 05:43:12] Factura PDF generada.
+[2025-07-31 05:43:12] Factura registrada en base de datos.
+[2025-07-31 05:43:12] Error en factura/envío: Unknown column 'Email' in 'field list'
+[2025-07-31 05:45:06] Inicio del proceso de pedido manual.
+[2025-07-31 05:45:06] Usuario ID: 9 | Carrito con 1 productos.
+[2025-07-31 05:45:06] Total inicial del pedido: 20100
+[2025-07-31 05:45:06] Método de pago: SINPE Movil | Canje puntos: No
+[2025-07-31 05:45:06] Comprobante SINPE detectado.
+[2025-07-31 05:45:06] Comprobante guardado en: uploads/comprobantes/688ae6c238402_arquitectura.png
+[2025-07-31 05:45:06] Número de proforma generado: PROF-688AE6C23874D
+[2025-07-31 05:45:06] Pedido insertado con ID: 73
+[2025-07-31 05:45:06] Productos insertados en detalle de pedido.
+[2025-07-31 05:45:06] Transacción confirmada.
+[2025-07-31 05:45:06] Generando factura PDF en: uploads/facturas/FAC-688AE6C23A047.pdf
+[2025-07-31 05:45:06] Factura PDF generada.
+[2025-07-31 05:45:06] Factura registrada en base de datos.
+[2025-07-31 05:45:10] Correo enviado a: rengifovale7@gmail.com
+[2025-07-31 05:45:10] Inicio del proceso de pedido manual.
+[2025-07-31 05:45:10] ERROR GENERAL: El carrito está vacío.
+[2025-07-31 05:45:34] Inicio del proceso de pedido manual.
+[2025-07-31 05:45:34] Usuario ID: 9 | Carrito con 1 productos.
+[2025-07-31 05:45:34] Total inicial del pedido: 17000
+[2025-07-31 05:45:34] Método de pago: SINPE Movil | Canje puntos: No
+[2025-07-31 05:45:34] Comprobante SINPE detectado.
+[2025-07-31 05:45:34] Comprobante guardado en: uploads/comprobantes/688ae6deecd04_arquitectura.png
+[2025-07-31 05:45:34] Número de proforma generado: PROF-688AE6DEED05C
+[2025-07-31 05:45:34] Pedido insertado con ID: 74
+[2025-07-31 05:45:34] Productos insertados en detalle de pedido.
+[2025-07-31 05:45:34] Transacción confirmada.
+[2025-07-31 05:45:34] Generando factura PDF en: uploads/facturas/FAC-688AE6DEEE84B.pdf
+[2025-07-31 05:45:35] Factura PDF generada.
+[2025-07-31 05:45:35] Factura registrada en base de datos.
+[2025-07-31 05:45:38] Correo enviado a: rengifovale7@gmail.com
+[2025-07-31 05:45:38] Inicio del proceso de pedido manual.
+[2025-07-31 05:45:38] ERROR GENERAL: El carrito está vacío.
+[2025-07-31 05:47:05] Inicio del proceso de pedido manual.
+[2025-07-31 05:47:05] Usuario ID: 9 | Carrito con 1 productos.
+[2025-07-31 05:47:05] Total inicial del pedido: 18750
+[2025-07-31 05:47:05] Método de pago: SINPE Movil | Canje puntos: No
+[2025-07-31 05:47:05] Comprobante SINPE detectado.
+[2025-07-31 05:47:05] Comprobante guardado en: uploads/comprobantes/688ae7399839b_arquitectura.png
+[2025-07-31 05:47:05] Número de proforma generado: PROF-688AE7399868F
+[2025-07-31 05:47:05] Pedido insertado con ID: 75
+[2025-07-31 05:47:05] Productos insertados en detalle de pedido.
+[2025-07-31 05:47:05] Transacción confirmada.
+[2025-07-31 05:47:05] Generando factura PDF en: uploads/facturas/FAC-688AE73999D2F.pdf
+[2025-07-31 05:47:05] Factura PDF generada.
+[2025-07-31 05:47:05] Factura registrada en base de datos.
+[2025-07-31 05:47:09] Correo enviado a: rengifovale7@gmail.com
+[2025-07-31 05:47:09] Inicio del proceso de pedido manual.
+[2025-07-31 05:47:09] ERROR GENERAL: El carrito está vacío.
+[2025-07-31 05:47:09] Inicio del proceso de pedido manual.
+[2025-07-31 05:47:09] ERROR GENERAL: El carrito está vacío.
+[2025-07-31 05:47:30] Inicio del proceso de pedido manual.
+[2025-07-31 05:47:30] Usuario ID: 9 | Carrito con 1 productos.
+[2025-07-31 05:47:30] Total inicial del pedido: 16500
+[2025-07-31 05:47:30] Método de pago: SINPE Movil | Canje puntos: No
+[2025-07-31 05:47:30] Comprobante SINPE detectado.
+[2025-07-31 05:47:30] Comprobante guardado en: uploads/comprobantes/688ae75290ef1_arquitectura.png
+[2025-07-31 05:47:30] Número de proforma generado: PROF-688AE7529121A
+[2025-07-31 05:47:30] Pedido insertado con ID: 76
+[2025-07-31 05:47:30] Productos insertados en detalle de pedido.
+[2025-07-31 05:47:30] Transacción confirmada.
+[2025-07-31 05:47:30] Generando factura PDF en: uploads/facturas/FAC-688AE752927A7.pdf
+[2025-07-31 05:47:30] Factura PDF generada.
+[2025-07-31 05:47:30] Factura registrada en base de datos.
+[2025-07-31 05:47:35] Correo enviado a: rengifovale7@gmail.com

@@ -27,7 +27,6 @@ $estados_disponibles = ['Pendiente', 'Procesando', 'Enviado', 'Entregado', 'Canc
 if (!$pedido_id || !is_numeric($pedido_id)) {
     $message = "ID de pedido no válido.";
     $message_type = "danger";
-    // Redirige o muestra un error crítico
     header('Location: pedidos.php?message=' . urlencode($message) . '&type=' . urlencode($message_type));
     exit;
 }
@@ -35,7 +34,12 @@ if (!$pedido_id || !is_numeric($pedido_id)) {
 try {
     if (isset($conn) && $conn instanceof mysqli) {
         // Obtener detalles del pedido
-        $stmt = $conn->prepare("SELECT p.ID_Pedido, u.Nombre AS Nombre_Usuario, p.Fecha_Pedido FROM Pedido p JOIN Usuario u ON p.ID_Usuario = u.ID_Usuario WHERE p.ID_Pedido = ?");
+        $stmt = $conn->prepare("
+            SELECT p.ID_Pedido, p.ID_Usuario, p.Fecha_Pedido, p.Metodo_Pago, p.Total_Pedido, u.Nombre AS Nombre_Usuario
+            FROM Pedido p 
+            JOIN Usuario u ON p.ID_Usuario = u.ID_Usuario
+            WHERE p.ID_Pedido = ?
+        ");
         $stmt->bind_param("i", $pedido_id);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -47,7 +51,7 @@ try {
         }
         $stmt->close();
 
-        // Obtener historial de estados del pedido
+        // Obtener historial de estados
         $stmt = $conn->prepare("SELECT Estado, Fecha FROM Estado_Pedido WHERE ID_Pedido = ? ORDER BY Fecha DESC");
         $stmt->bind_param("i", $pedido_id);
         $stmt->execute();
@@ -61,19 +65,75 @@ try {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_status'])) {
             $new_status = $_POST['new_status'];
 
-            // Validar que el nuevo estado sea uno de los permitidos
             if (!in_array($new_status, $estados_disponibles)) {
                 $message = "Estado seleccionado no válido.";
                 $message_type = "danger";
             } else {
-                // Insertar el nuevo estado en la tabla Estado_Pedido
+                // Insertar nuevo estado
                 $stmt = $conn->prepare("INSERT INTO Estado_Pedido (ID_Pedido, Estado, Fecha) VALUES (?, ?, NOW())");
                 $stmt->bind_param("is", $pedido_id, $new_status);
+
                 if ($stmt->execute()) {
                     $message = "Estado del pedido actualizado exitosamente a '" . htmlspecialchars($new_status) . "'.";
                     $message_type = "success";
-                    // Recargar los detalles e historial para reflejar el cambio
-                    $historial_estados = []; // Resetear para recargar
+
+                    // ✅ Si cambia a "Procesando" y el método fue SINPE Movil, generar y enviar factura
+                    if ($new_status === 'Procesando' && $pedido_detalle['Metodo_Pago'] === 'SINPE Movil') {
+                        $checkFactura = $conn->prepare("SELECT Ruta_PDF_Factura FROM Factura WHERE ID_Pedido = ?");
+                        $checkFactura->bind_param("i", $pedido_id);
+                        $checkFactura->execute();
+                        $facturaData = $checkFactura->get_result()->fetch_assoc();
+                        $checkFactura->close();
+
+                        if (empty($facturaData['Ruta_PDF_Factura']) || strpos($facturaData['Ruta_PDF_Factura'], 'uploads/comprobantes') !== false) {
+                            require_once __DIR__ . '/../FacturaService.php';
+                            $numeroFactura = 'FAC-' . strtoupper(uniqid());
+                            $rutaFacturaDir = "../uploads/facturas/";
+                            if (!file_exists($rutaFacturaDir)) mkdir($rutaFacturaDir, 0777, true);
+                            $rutaFactura = $rutaFacturaDir . $numeroFactura . ".pdf";
+
+                            // ✅ Generar factura con datos reales
+                            $facturaService = new FacturaService();
+                            $facturaService->generarFacturaPDF(
+                                [
+                                    'numero_factura' => $numeroFactura,
+                                    'nombre_cliente' => $pedido_detalle['Nombre_Usuario'],
+                                    'fecha'          => date('d/m/Y'),
+                                    'subtotal'       => $pedido_detalle['Total_Pedido'],
+                                    'descuento'      => 0,
+                                    'total'          => $pedido_detalle['Total_Pedido'],
+                                    'metodo_pago'    => $pedido_detalle['Metodo_Pago']
+                                ],
+                                [], // Aquí podrías cargar los productos si quieres mostrarlos en la factura
+                                $rutaFactura
+                            );
+
+                            // ✅ Actualizar Factura
+                            $stmtUpdFactura = $conn->prepare("UPDATE Factura SET Numero_Factura = ?, Ruta_PDF_Factura = ? WHERE ID_Pedido = ?");
+                            $stmtUpdFactura->bind_param("ssi", $numeroFactura, $rutaFactura, $pedido_id);
+                            $stmtUpdFactura->execute();
+                            $stmtUpdFactura->close();
+
+                            // ✅ Obtener email del usuario
+                            $stmtUser = $conn->prepare("SELECT Correo FROM Usuario WHERE ID_Usuario = ?");
+                            $stmtUser->bind_param("i", $pedido_detalle['ID_Usuario']);
+                            $stmtUser->execute();
+                            $userData = $stmtUser->get_result()->fetch_assoc();
+                            $stmtUser->close();
+
+                            if (!empty($userData['Correo'])) {
+                                require_once __DIR__ . '/../FacturaEmailService.php';
+                                $emailFactura = new FacturaEmailService();
+                                $emailFactura->enviarFactura(
+                                    ['nombre' => $pedido_detalle['Nombre_Usuario'], 'email' => $userData['Correo']],
+                                    $rutaFactura
+                                );
+                            }
+                        }
+                    }
+
+                    // Recargar historial
+                    $historial_estados = [];
                     $stmt_reload = $conn->prepare("SELECT Estado, Fecha FROM Estado_Pedido WHERE ID_Pedido = ? ORDER BY Fecha DESC");
                     $stmt_reload->bind_param("i", $pedido_id);
                     $stmt_reload->execute();
@@ -89,7 +149,6 @@ try {
                 $stmt->close();
             }
         }
-
     } else {
         throw new Exception("Error: La conexión a la base de datos no está disponible o no es MySQLi.");
     }
@@ -118,244 +177,92 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../css/admin.css">
     <style>
-        /* Estilos específicos para edit_pedido.php */
-        .order-details-card {
-            background-color: #fff;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            margin-bottom: 30px;
-        }
-        .order-details-card h3 {
-            margin-top: 0;
-            color: #333;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        .order-details-card p {
-            margin-bottom: 10px;
-            font-size: 1.1em;
-            color: #555;
-        }
-        .order-details-card p strong {
-            color: #333;
-        }
-
-        .status-update-form {
-            background-color: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            margin-top: 30px;
-        }
-        .status-update-form label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-        .status-update-form select {
-            width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            margin-bottom: 15px;
-            font-size: 1em;
-            background-color: #fff;
-        }
-        .status-update-form button {
-            background-color: #28a745;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s ease;
-        }
-        .status-update-form button:hover {
-            background-color: #218838;
-        }
-
-        .status-history {
-            margin-top: 30px;
-        }
-        .status-history h3 {
-            font-size: 1.6em;
-            color: #333;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-        }
-        .status-history ul {
-            list-style: none;
-            padding: 0;
-        }
-        .status-history ul li {
-            background-color: #fff;
-            border: 1px solid #e0e0e0;
-            border-radius: 5px;
-            padding: 10px 15px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 1em;
-            color: #666;
-        }
-        .status-history ul li strong {
-            color: #333;
-        }
-        .back-button-container {
-            margin-top: 20px;
-            text-align: right; /* Alinea el botón a la derecha */
-        }
-        .back-button-container .btn-back {
-            background-color: #6c757d;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 1em;
-            transition: background-color 0.3s ease;
-        }
-        .back-button-container .btn-back:hover {
-            background-color: #5a6268;
-        }
-
-        /* Estilos de alerta (si no están en admin.css) */
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid transparent;
-            border-radius: 4px;
-            font-size: 1em;
-        }
-        .alert-success {
-            color: #155724;
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-        }
-        .alert-danger {
-            color: #721c24;
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-        }
+        .order-details-card {background:#fff;padding:25px;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,0.08);margin-bottom:30px;}
+        .order-details-card h3 {margin-top:0;color:#333;border-bottom:2px solid #eee;padding-bottom:10px;margin-bottom:20px;}
+        .order-details-card p {margin-bottom:10px;font-size:1.1em;color:#555;}
+        .status-update-form {background:#f9f9f9;padding:20px;border-radius:8px;border:1px solid #ddd;margin-top:30px;}
+        .status-update-form select {width:100%;padding:10px;border-radius:5px;border:1px solid #ccc;margin-bottom:15px;font-size:1em;}
+        .status-update-form button {background:#28a745;color:#fff;padding:10px 20px;border:none;border-radius:5px;cursor:pointer;}
+        .status-history {margin-top:30px;}
+        .status-history ul {list-style:none;padding:0;}
+        .status-history ul li {background:#fff;border:1px solid #e0e0e0;border-radius:5px;padding:10px 15px;margin-bottom:10px;display:flex;justify-content:space-between;}
+        .back-button-container {margin-top:20px;text-align:right;}
+        .btn-back {background:#6c757d;color:#fff;padding:10px 20px;border:none;border-radius:5px;text-decoration:none;}
     </style>
 </head>
 <body>
+<div class="admin-dashboard-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header"><h3>Admin Panel</h3></div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="dashboard.php"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="pedidos.php" class="active"><i class="fas fa-shopping-cart"></i> Gestionar Pedidos</a></li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer"><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></div>
+    </aside>
+    <div class="main-panel">
+        <header class="main-panel-header"><h2><?php echo $page_title; ?></h2></header>
+        <main class="content-area">
+            <div class="admin-content">
+                <?php if (!empty($message)): ?>
+                    <div class="alert alert-<?php echo htmlspecialchars($message_type); ?>"><?php echo htmlspecialchars($message); ?></div>
+                <?php endif; ?>
 
-    <div class="admin-dashboard-layout">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h3>Admin Panel</h3>
-            </div>
-            <nav class="sidebar-nav">
-                <ul>
-                    <li><a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-home"></i> Dashboard</a></li>
-                    <li><a href="users.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'users.php' || basename($_SERVER['PHP_SELF']) == 'add_user.php' || basename($_SERVER['PHP_SELF']) == 'edit_user.php') ? 'active' : ''; ?>"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
-                    <li><a href="products.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'products.php' || basename($_SERVER['PHP_SELF']) == 'add_product.php' || basename($_SERVER['PHP_SELF']) == 'edit_product.php') ? 'active' : ''; ?>"><i class="fas fa-box"></i> Gestionar Productos</a></li>
-                    <li><a href="inventarioAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'inventarioAdmin.php' || basename($_SERVER['PHP_SELF']) == 'add_inventario.php' || basename($_SERVER['PHP_SELF']) == 'edit_inventario.php') ? 'active' : ''; ?>"><i class="fas fa-warehouse"></i> Gestionar Inventario</a></li>
-                    <li><a href="eventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'eventoAdmin.php' || basename($_SERVER['PHP_SELF']) == 'add_evento.php' || basename($_SERVER['PHP_SELF']) == 'edit_evento.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Eventos</a></li>
-                    <li><a href="pedidos.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'pedidos.php' || basename($_SERVER['PHP_SELF']) == 'edit_pedido.php') ? 'active' : ''; ?>"><i class="fas fa-shopping-cart"></i> Gestionar Pedidos</a></li> <!-- Enlace activo -->
-                    <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
-                </ul>
-            </nav>
-            <div class="sidebar-footer">
-                <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
-            </div>
-        </aside>
-
-        <div class="main-panel">
-            <header class="main-panel-header">
-                <div class="header-left">
-                    <h2><?php echo $page_title; ?></h2>
-                </div>
-                <div class="header-right">
-                    <div class="search-bar">
-                        <input type="text" placeholder="Buscar...">
-                        <i class="fas fa-search"></i>
+                <?php if ($pedido_detalle): ?>
+                    <div class="order-details-card">
+                        <h3>Detalles del Pedido #<?php echo htmlspecialchars($pedido_detalle['ID_Pedido']); ?></h3>
+                        <p><strong>Usuario:</strong> <?php echo htmlspecialchars($pedido_detalle['Nombre_Usuario']); ?></p>
+                        <p><strong>Fecha del Pedido:</strong> <?php echo htmlspecialchars($pedido_detalle['Fecha_Pedido']); ?></p>
+                        <p><strong>Método de Pago:</strong> <?php echo htmlspecialchars($pedido_detalle['Metodo_Pago']); ?></p>
+                        <p><strong>Total:</strong> ₡<?php echo htmlspecialchars($pedido_detalle['Total_Pedido']); ?></p>
                     </div>
-                    <div class="user-profile">
-                        <span><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Admin'); ?></span>
-                        <img src="../images/user-avatar.png" alt="User Avatar">
+
+                    <div class="status-update-form">
+                        <h3>Actualizar Estado del Pedido</h3>
+                        <form action="edit_pedido.php?id=<?php echo htmlspecialchars($pedido_id); ?>" method="POST">
+                            <label for="new_status">Seleccionar nuevo estado:</label>
+                            <select name="new_status" id="new_status" required>
+                                <?php foreach ($estados_disponibles as $estado): ?>
+                                    <option value="<?php echo htmlspecialchars($estado); ?>"
+                                        <?php echo (!empty($historial_estados) && $historial_estados[0]['Estado'] == $estado) ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($estado); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <button type="submit">Guardar Estado</button>
+                        </form>
                     </div>
-                </div>
-            </header>
 
-            <main class="content-area">
-                <div class="admin-content">
-                    <?php if (!empty($message)): ?>
-                        <div class="alert alert-<?php echo htmlspecialchars($message_type); ?>">
-                            <?php echo htmlspecialchars($message); ?>
-                        </div>
-                    <?php endif; ?>
-
-                    <?php if ($pedido_detalle): ?>
-                        <div class="order-details-card">
-                            <h3>Detalles del Pedido #<?php echo htmlspecialchars($pedido_detalle['ID_Pedido']); ?></h3>
-                            <p><strong>Usuario:</strong> <?php echo htmlspecialchars($pedido_detalle['Nombre_Usuario']); ?></p>
-                            <p><strong>Fecha del Pedido:</strong> <?php echo htmlspecialchars($pedido_detalle['Fecha_Pedido']); ?></p>
-                            <?php if (!empty($historial_estados)): ?>
-                                <p><strong>Estado Actual:</strong> <span style="font-weight: bold; color: <?php 
-                                    $current_state = $historial_estados[0]['Estado'];
-                                    if ($current_state == 'Entregado') echo 'green';
-                                    else if ($current_state == 'Cancelado') echo 'red';
-                                    else if ($current_state == 'Procesando' || $current_state == 'Enviado') echo 'orange';
-                                    else echo 'blue';
-                                ?>;"><?php echo htmlspecialchars($current_state); ?></span></p>
-                            <?php else: ?>
-                                <p><strong>Estado Actual:</strong> No se ha definido un estado.</p>
-                            <?php endif; ?>
-                        </div>
-
-                        <div class="status-update-form">
-                            <h3>Actualizar Estado del Pedido</h3>
-                            <form action="edit_pedido.php?id=<?php echo htmlspecialchars($pedido_id); ?>" method="POST">
-                                <label for="new_status">Seleccionar nuevo estado:</label>
-                                <select name="new_status" id="new_status" required>
-                                    <?php foreach ($estados_disponibles as $estado): ?>
-                                        <option value="<?php echo htmlspecialchars($estado); ?>"
-                                            <?php echo (!empty($historial_estados) && $historial_estados[0]['Estado'] == $estado) ? 'selected' : ''; ?>>
-                                            <?php echo htmlspecialchars($estado); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                                <button type="submit">Guardar Estado</button>
-                            </form>
-                        </div>
-
-                        <div class="status-history">
-                            <h3>Historial de Estados</h3>
-                            <?php if (!empty($historial_estados)): ?>
-                                <ul>
-                                    <?php foreach ($historial_estados as $estado_entry): ?>
-                                        <li>
-                                            <span><strong>Estado:</strong> <?php echo htmlspecialchars($estado_entry['Estado']); ?></span>
-                                            <span><strong>Fecha:</strong> <?php echo htmlspecialchars($estado_entry['Fecha']); ?></span>
-                                        </li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            <?php else: ?>
-                                <p>No hay historial de estados para este pedido.</p>
-                            <?php endif; ?>
-                        </div>
-                        <div class="back-button-container">
-                            <a href="pedidos.php" class="btn-back">Volver al Listado de Pedidos</a>
-                        </div>
-                    <?php else: ?>
-                        <p>No se pudo cargar la información del pedido. Por favor, regrese al listado.</p>
-                        <div class="back-button-container">
-                            <a href="pedidos.php" class="btn-back">Volver al Listado de Pedidos</a>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            </main>
-        </div>
+                    <div class="status-history">
+                        <h3>Historial de Estados</h3>
+                        <?php if (!empty($historial_estados)): ?>
+                            <ul>
+                                <?php foreach ($historial_estados as $estado_entry): ?>
+                                    <li>
+                                        <span><strong>Estado:</strong> <?php echo htmlspecialchars($estado_entry['Estado']); ?></span>
+                                        <span><strong>Fecha:</strong> <?php echo htmlspecialchars($estado_entry['Fecha']); ?></span>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php else: ?>
+                            <p>No hay historial de estados para este pedido.</p>
+                        <?php endif; ?>
+                    </div>
+                    <div class="back-button-container">
+                        <a href="pedidos.php" class="btn-back">Volver al Listado de Pedidos</a>
+                    </div>
+                <?php else: ?>
+                    <p>No se pudo cargar la información del pedido.</p>
+                    <div class="back-button-container">
+                        <a href="pedidos.php" class="btn-back">Volver</a>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </main>
     </div>
-
+</div>
 </body>
 </html>
 <?php

@@ -2,7 +2,10 @@
 session_start();
 header('Content-Type: application/json');
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/logs/paypal_errors.log');
+
 include 'DB.php';
 
 $response = ['success' => false, 'error' => 'Error desconocido'];
@@ -96,12 +99,11 @@ try {
     }
     $stmtDet->close();
 
-    // 8. Calcular puntos ganados (solo sobre el monto pagado real)
+    // 8. Calcular puntos ganados
     $totalParaPuntos = max(0, $total_carrito_final - $monto_canjeado);
     $puntos_ganados = floor($totalParaPuntos / 100);
 
     if ($puntos_ganados > 0) {
-        // Insertar en historial
         $stmtHist = $conn->prepare("
             INSERT INTO Historial_Puntos (ID_Usuario, Fecha, Accion, Monto, Descripcion, ID_Referencia, Tipo_Referencia)
             VALUES (?, NOW(), 'Ganado', ?, 'Puntos por pedido', ?, 'Pedido')
@@ -110,7 +112,6 @@ try {
         $stmtHist->execute();
         $stmtHist->close();
 
-        // Actualizar o insertar puntos
         $stmtPts = $conn->prepare("
             INSERT INTO Puntos_Usuario (ID_Usuario, Puntos_Actuales) VALUES (?, ?)
             ON DUPLICATE KEY UPDATE Puntos_Actuales = Puntos_Actuales + VALUES(Puntos_Actuales)
@@ -119,18 +120,82 @@ try {
         $stmtPts->execute();
         $stmtPts->close();
 
-        // Actualizar sesión
         $_SESSION['user_points'] = ($_SESSION['user_points'] ?? 0) + $puntos_ganados;
     }
 
-    // 9. Confirmar transacción
+    // Confirmar transacción
     $conn->commit();
 
-    // 10. Limpiar carrito y variables temporales
+    // ✅ Generar y enviar factura con protección para evitar errores fatales
+    try {
+        $numeroFactura = 'FAC-' . strtoupper(uniqid());
+        $rutaFacturaDir = "uploads/facturas/";
+        if (!file_exists($rutaFacturaDir)) {
+            mkdir($rutaFacturaDir, 0777, true);
+        }
+        $rutaFactura = $rutaFacturaDir . $numeroFactura . ".pdf";
+
+        require_once __DIR__ . '/FacturaService.php';
+        $facturaService = new FacturaService();
+        $facturaService->generarFacturaPDF(
+            [
+                'numero_factura' => $numeroFactura,
+                'nombre_cliente' => $_SESSION['user_name'],
+                'email' => $_SESSION['user_email'],
+                'fecha' => date('d/m/Y'),
+                'subtotal' => $total_carrito_final,
+                'descuento' => $monto_canjeado,
+                'total' => $total_carrito_final - $monto_canjeado,
+                'metodo_pago' => 'PayPal'
+            ],
+            $cart_data,
+            $rutaFactura
+        );
+
+        $stmtFactura = $conn->prepare("
+            INSERT INTO Factura (ID_Pedido, Subtotal, Total, Metodo_Pago, Numero_Factura, Ruta_PDF_Factura) 
+            VALUES (?, ?, ?, ?, ?, ?)
+        ");
+        // Variables para bind_param
+        $metodoPago = 'PayPal';
+        $totalFactura = $total_carrito_final - $monto_canjeado;
+
+        $stmtFactura = $conn->prepare("
+            INSERT INTO Factura (ID_Pedido, Subtotal, Total, Metodo_Pago, Numero_Factura, Ruta_PDF_Factura) 
+            VALUES (?, ?, ?, ?, ?, ?)
+        ");
+
+        $stmtFactura->bind_param("iddsss", 
+            $idPedido, 
+            $total_carrito_final, 
+            $totalFactura, 
+            $metodoPago, 
+            $numeroFactura, 
+            $rutaFactura
+        );
+
+        $stmtFactura->execute();
+        $stmtFactura->close();
+
+
+        require_once __DIR__ . '/FacturaEmailService.php';
+        $emailFactura = new FacturaEmailService();
+        $emailFactura->enviarFactura(
+            [
+                'nombre' => $_SESSION['user_name'],
+                'email'  => $_SESSION['user_email']
+            ],
+            $rutaFactura
+        );
+    } catch (Exception $ex) {
+        error_log("Error generando o enviando factura: " . $ex->getMessage());
+    }
+
+    // Limpiar carrito y variables temporales
     $_SESSION['carrito'] = [];
     unset($_SESSION['puntos_canjeados'], $_SESSION['monto_canjeado']);
 
-    // 11. Respuesta final
+    // Respuesta final
     $response = [
         'success' => true,
         'pedido_id' => $idPedido,
