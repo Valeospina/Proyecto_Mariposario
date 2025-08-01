@@ -79,61 +79,71 @@ try {
                     $message = "Estado del pedido actualizado exitosamente a '" . htmlspecialchars($new_status) . "'.";
                     $message_type = "success";
 
-                    // ✅ Si cambia a "Procesando" y el método fue SINPE Movil, generar y enviar factura
-                    if ($new_status === 'Procesando' && $pedido_detalle['Metodo_Pago'] === 'SINPE Movil') {
-                        $checkFactura = $conn->prepare("SELECT Ruta_PDF_Factura FROM Factura WHERE ID_Pedido = ?");
-                        $checkFactura->bind_param("i", $pedido_id);
-                        $checkFactura->execute();
-                        $facturaData = $checkFactura->get_result()->fetch_assoc();
-                        $checkFactura->close();
+                if ($new_status === 'Procesando' && $pedido_detalle['Metodo_Pago'] === 'SINPE Movil') {
+                    $checkFactura = $conn->prepare("SELECT Ruta_PDF_Factura FROM Factura WHERE ID_Pedido = ?");
+                    $checkFactura->bind_param("i", $pedido_id);
+                    $checkFactura->execute();
+                    $facturaData = $checkFactura->get_result()->fetch_assoc();
+                    $checkFactura->close();
 
-                        if (empty($facturaData['Ruta_PDF_Factura']) || strpos($facturaData['Ruta_PDF_Factura'], 'uploads/comprobantes') !== false) {
-                            require_once __DIR__ . '/../FacturaService.php';
-                            $numeroFactura = 'FAC-' . strtoupper(uniqid());
-                            $rutaFacturaDir = "../uploads/facturas/";
-                            if (!file_exists($rutaFacturaDir)) mkdir($rutaFacturaDir, 0777, true);
-                            $rutaFactura = $rutaFacturaDir . $numeroFactura . ".pdf";
+                    if (empty($facturaData['Ruta_PDF_Factura']) || strpos($facturaData['Ruta_PDF_Factura'], 'uploads/comprobantes') !== false) {
+                        require_once __DIR__ . '/../FacturaService.php';
+                        $numeroFactura = 'FAC-' . strtoupper(uniqid());
+                        $rutaFacturaDir = "../uploads/facturas/";
+                        if (!file_exists($rutaFacturaDir)) mkdir($rutaFacturaDir, 0777, true);
+                        $rutaFactura = $rutaFacturaDir . $numeroFactura . ".pdf";
 
-                            // ✅ Generar factura con datos reales
-                            $facturaService = new FacturaService();
-                            $facturaService->generarFacturaPDF(
-                                [
-                                    'numero_factura' => $numeroFactura,
-                                    'nombre_cliente' => $pedido_detalle['Nombre_Usuario'],
-                                     'email'          => $pedido_detalle['Correo'],
-                                    'fecha'          => date('d/m/Y'),
-                                    'subtotal'       => $pedido_detalle['Total_Pedido'],
-                                    'descuento'      => 0,
-                                    'total'          => $pedido_detalle['Total_Pedido'],
-                                    'metodo_pago'    => $pedido_detalle['Metodo_Pago']
-                                ],
-                                [], // Aquí podrías cargar los productos si quieres mostrarlos en la factura
+                        //  Obtener productos del pedido
+                        $productos_pedido = [];
+                        $stmtProd = $conn->prepare("
+                            SELECT p.Nombre AS nombre, dp.Cantidad AS cantidad, dp.Precio AS precio
+                            FROM Detalle_Pedido dp
+                            JOIN Producto p ON dp.ID_Producto = p.ID_Producto
+                            WHERE dp.ID_Pedido = ?
+                        ");
+                        $stmtProd->bind_param("i", $pedido_id);
+                        $stmtProd->execute();
+                        $resProd = $stmtProd->get_result();
+                        while ($row = $resProd->fetch_assoc()) {
+                            $productos_pedido[] = $row;
+                        }
+                        $stmtProd->close();
+
+                        //  Generar factura con productos
+                        $facturaService = new FacturaService();
+                        $facturaService->generarFacturaPDF(
+                            [
+                                'numero_factura' => $numeroFactura,
+                                'nombre_cliente' => $pedido_detalle['Nombre_Usuario'],
+                                'email'          => $pedido_detalle['Correo'],
+                                'fecha'          => date('d/m/Y'),
+                                'subtotal'       => $pedido_detalle['Total_Pedido'],
+                                'descuento'      => 0,
+                                'total'          => $pedido_detalle['Total_Pedido'],
+                                'metodo_pago'    => $pedido_detalle['Metodo_Pago']
+                            ],
+                            $productos_pedido, 
+                            $rutaFactura
+                        );
+
+                        //  Actualizar Factura
+                        $stmtUpdFactura = $conn->prepare("UPDATE Factura SET Numero_Factura = ?, Ruta_PDF_Factura = ? WHERE ID_Pedido = ?");
+                        $stmtUpdFactura->bind_param("ssi", $numeroFactura, $rutaFactura, $pedido_id);
+                        $stmtUpdFactura->execute();
+                        $stmtUpdFactura->close();
+
+                        //  Enviar email con la factura
+                        if (!empty($pedido_detalle['Correo'])) {
+                            require_once __DIR__ . '/../FacturaEmailService.php';
+                            $emailFactura = new FacturaEmailService();
+                            $emailFactura->enviarFactura(
+                                ['nombre' => $pedido_detalle['Nombre_Usuario'], 'email' => $pedido_detalle['Correo']],
                                 $rutaFactura
                             );
-
-                            // ✅ Actualizar Factura
-                            $stmtUpdFactura = $conn->prepare("UPDATE Factura SET Numero_Factura = ?, Ruta_PDF_Factura = ? WHERE ID_Pedido = ?");
-                            $stmtUpdFactura->bind_param("ssi", $numeroFactura, $rutaFactura, $pedido_id);
-                            $stmtUpdFactura->execute();
-                            $stmtUpdFactura->close();
-
-                            // ✅ Obtener email del usuario
-                            $stmtUser = $conn->prepare("SELECT Correo FROM Usuario WHERE ID_Usuario = ?");
-                            $stmtUser->bind_param("i", $pedido_detalle['ID_Usuario']);
-                            $stmtUser->execute();
-                            $userData = $stmtUser->get_result()->fetch_assoc();
-                            $stmtUser->close();
-
-                            if (!empty($userData['Correo'])) {
-                                require_once __DIR__ . '/../FacturaEmailService.php';
-                                $emailFactura = new FacturaEmailService();
-                                $emailFactura->enviarFactura(
-                                    ['nombre' => $pedido_detalle['Nombre_Usuario'], 'email' => $userData['Correo']],
-                                    $rutaFactura
-                                );
-                            }
                         }
                     }
+                }
+
 
                     // Recargar historial
                     $historial_estados = [];
