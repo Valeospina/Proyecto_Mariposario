@@ -515,7 +515,8 @@ INSERT INTO Consulta (ID_Usuario, Tema, Estado, Canal, Mensajes) VALUES
 ));
 
 --  Tienen que ejecutar este comando para que les funcione la parte de pagos
-ALTER TABLE Pedido MODIFY Estado_Envio VARCHAR(50) NOT NULL DEFAULT 'Pedido Recibido';
+ALTER TABLE Pedido MODIFY Estado_Envio VARCHAR(100) NOT NULL DEFAULT 'Pedido Recibido';
+ALTER TABLE pedidos MODIFY Estado_Pedido VARCHAR(100);
 
 
 

@@ -109,7 +109,18 @@ try {
                         }
                         $stmtProd->close();
 
-                        //  Generar factura con productos
+                        // Generar factura con productos
+                        $stmtExtra = $conn->prepare("SELECT Total_Pedido, Monto_Canjeado FROM Pedido WHERE ID_Pedido = ?");
+                        $stmtExtra->bind_param("i", $pedido_id);
+                        $stmtExtra->execute();
+                        $stmtExtra->bind_result($totalPedido, $montoCanjeado);
+                        $stmtExtra->fetch();
+                        $stmtExtra->close();
+
+                        // Calcular subtotal original (precio antes del descuento)
+                        $subtotalOriginal = $totalPedido + $montoCanjeado;
+
+                        // Generar factura con datos correctos
                         $facturaService = new FacturaService();
                         $facturaService->generarFacturaPDF(
                             [
@@ -117,9 +128,9 @@ try {
                                 'nombre_cliente' => $pedido_detalle['Nombre_Usuario'],
                                 'email'          => $pedido_detalle['Correo'],
                                 'fecha'          => date('d/m/Y'),
-                                'subtotal'       => $pedido_detalle['Total_Pedido'],
-                                'descuento'      => 0,
-                                'total'          => $pedido_detalle['Total_Pedido'],
+                                'subtotal'       => $subtotalOriginal,
+                                'descuento'      => $montoCanjeado,
+                                'total'          => $totalPedido,
                                 'metodo_pago'    => $pedido_detalle['Metodo_Pago']
                             ],
                             $productos_pedido, 
