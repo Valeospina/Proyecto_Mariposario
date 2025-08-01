@@ -35,10 +35,12 @@ try {
     if (isset($conn) && $conn instanceof mysqli) {
         // Obtener detalles del pedido
         $stmt = $conn->prepare("
-            SELECT p.ID_Pedido, p.ID_Usuario, p.Fecha_Pedido, p.Metodo_Pago, p.Total_Pedido, u.Nombre AS Nombre_Usuario
+            SELECT p.ID_Pedido, p.ID_Usuario, p.Fecha_Pedido, p.Metodo_Pago, p.Total_Pedido, 
+                u.Nombre AS Nombre_Usuario, u.Correo
             FROM Pedido p 
             JOIN Usuario u ON p.ID_Usuario = u.ID_Usuario
             WHERE p.ID_Pedido = ?
+
         ");
         $stmt->bind_param("i", $pedido_id);
         $stmt->execute();
@@ -98,6 +100,7 @@ try {
                                 [
                                     'numero_factura' => $numeroFactura,
                                     'nombre_cliente' => $pedido_detalle['Nombre_Usuario'],
+                                     'email'          => $pedido_detalle['Correo'],
                                     'fecha'          => date('d/m/Y'),
                                     'subtotal'       => $pedido_detalle['Total_Pedido'],
                                     'descuento'      => 0,

@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
 $username = "root";
-$password = "Motarola181103."; 
+$password = ""; 
 $dbname = "mariposarioDB";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -16,4 +16,5 @@ $conn->set_charset("utf8mb4");
     echo "Conexión exitosa a la base de datos $dbname";
 }*/
 ?>
+
 

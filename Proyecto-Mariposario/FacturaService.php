@@ -14,13 +14,15 @@ class FacturaService
      */
     public function generarFacturaPDF(array $pedido, array $productos, string $rutaFactura): void
     {
+        $simbolo_colon = "₡"; // Unicode para colón costarricense
+
         $html = "
         <html>
         <head>
             <meta charset='UTF-8'>
             <style>
                 body {
-                    font-family: 'Helvetica', Arial, sans-serif;
+                    font-family: 'DejaVu Sans', sans-serif; /* Fuente compatible con UTF-8 */
                     font-size: 12px;
                     color: #333;
                     margin: 0;
@@ -131,8 +133,8 @@ class FacturaService
             $html .= "<tr>
                 <td>{$prod['nombre']}</td>
                 <td>{$prod['cantidad']}</td>
-                <td>&#8353;" . number_format($prod['precio'], 2) . "</td>
-                <td>&#8353;" . number_format($subtotal, 2) . "</td>
+                <td>{$simbolo_colon}" . number_format($prod['precio'], 2) . "</td>
+                <td>{$simbolo_colon}" . number_format($subtotal, 2) . "</td>
             </tr>";
         }
 
@@ -140,9 +142,9 @@ class FacturaService
                     </tbody>
                 </table>
                 <table style='margin-top:20px; width:100%;'>
-                    <tr class='totales'><td colspan='3' style='text-align:right;'>Subtotal</td><td>&#8353;" . number_format($pedido['subtotal'], 2) . "</td></tr>
-                    <tr class='totales'><td colspan='3' style='text-align:right;'>Descuento</td><td>&#8353;" . number_format($pedido['descuento'], 2) . "</td></tr>
-                    <tr class='totales'><td colspan='3' style='text-align:right;'>Total a Pagar</td><td>&#8353;" . number_format($pedido['total'], 2) . "</td></tr>
+                    <tr class='totales'><td colspan='3' style='text-align:right;'>Subtotal</td><td>{$simbolo_colon}" . number_format($pedido['subtotal'], 2) . "</td></tr>
+                    <tr class='totales'><td colspan='3' style='text-align:right;'>Descuento</td><td>{$simbolo_colon}" . number_format($pedido['descuento'], 2) . "</td></tr>
+                    <tr class='totales'><td colspan='3' style='text-align:right;'>Total a Pagar</td><td>{$simbolo_colon}" . number_format($pedido['total'], 2) . "</td></tr>
                 </table>
 
                 <div class='payment-info'>
@@ -158,7 +160,8 @@ class FacturaService
         </html>";
 
         $dompdf = new Dompdf();
-        $dompdf->loadHtml($html);
+        $dompdf->set_option('isHtml5ParserEnabled', true);
+        $dompdf->loadHtml($html, 'UTF-8');
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
         file_put_contents($rutaFactura, $dompdf->output());

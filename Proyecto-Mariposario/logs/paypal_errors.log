@@ -46,3 +46,33 @@ Stack trace:
 [31-Jul-2025 04:12:58 Europe/Berlin] Error generando o enviando factura: The PHP GD extension is required, but is not installed.
 [31-Jul-2025 04:55:24 Europe/Berlin] Error generando o enviando factura: The PHP GD extension is required, but is not installed.
 [31-Jul-2025 04:56:36 Europe/Berlin] Error generando o enviando factura: The PHP GD extension is required, but is not installed.
+[01-Aug-2025 03:41:03 Europe/Berlin] PHP Warning:  require(C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\vendor\composer/../react/promise/src/functions_include.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\vendor\composer\autoload_real.php on line 41
+[01-Aug-2025 03:41:03 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\vendor\composer/../react/promise/src/functions_include.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\vendor\composer\autoload_real.php:41
+Stack trace:
+#0 C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\vendor\composer\autoload_real.php(45): {closure}('ad155f8f1cf0d41...', 'C:\\xampp\\htdocs...')
+#1 C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\vendor\autoload.php(22): ComposerAutoloaderInit2185d2f99bcd56787481d9357a5972d3::getLoader()
+#2 C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\FacturaService.php(2): require_once('C:\\xampp\\htdocs...')
+#3 C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\crearOrden.php(138): require_once('C:\\xampp\\htdocs...')
+#4 {main}
+  thrown in C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\vendor\composer\autoload_real.php on line 41
+[01-Aug-2025 03:43:08 Europe/Berlin] PHP Warning:  require(C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\vendor\composer/../react/promise/src/functions_include.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\vendor\composer\autoload_real.php on line 41
+[01-Aug-2025 03:43:08 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\vendor\composer/../react/promise/src/functions_include.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\vendor\composer\autoload_real.php:41
+Stack trace:
+#0 C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\vendor\composer\autoload_real.php(45): {closure}('ad155f8f1cf0d41...', 'C:\\xampp\\htdocs...')
+#1 C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\vendor\autoload.php(22): ComposerAutoloaderInit2185d2f99bcd56787481d9357a5972d3::getLoader()
+#2 C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\FacturaService.php(2): require_once('C:\\xampp\\htdocs...')
+#3 C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\crearOrden.php(138): require_once('C:\\xampp\\htdocs...')
+#4 {main}
+  thrown in C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\vendor\composer\autoload_real.php on line 41
+[01-Aug-2025 03:43:26 Europe/Berlin] PHP Warning:  require(C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\vendor\composer/../react/promise/src/functions_include.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\vendor\composer\autoload_real.php on line 41
+[01-Aug-2025 03:43:26 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\vendor\composer/../react/promise/src/functions_include.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\vendor\composer\autoload_real.php:41
+Stack trace:
+#0 C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\vendor\composer\autoload_real.php(45): {closure}('ad155f8f1cf0d41...', 'C:\\xampp\\htdocs...')
+#1 C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\vendor\autoload.php(22): ComposerAutoloaderInit2185d2f99bcd56787481d9357a5972d3::getLoader()
+#2 C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\FacturaService.php(2): require_once('C:\\xampp\\htdocs...')
+#3 C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\crearOrden.php(138): require_once('C:\\xampp\\htdocs...')
+#4 {main}
+  thrown in C:\xampp\htdocs\Proyecto_Mariposario\Proyecto-Mariposario\vendor\composer\autoload_real.php on line 41
+[01-Aug-2025 05:13:50 Europe/Berlin] Error generando o enviando factura: The PHP GD extension is required, but is not installed.
+[01-Aug-2025 05:14:32 Europe/Berlin] Error generando o enviando factura: The PHP GD extension is required, but is not installed.
+[01-Aug-2025 05:16:08 Europe/Berlin] Error generando o enviando factura: The PHP GD extension is required, but is not installed.
