@@ -519,6 +519,11 @@ ALTER TABLE Pedido MODIFY Estado_Envio VARCHAR(100) NOT NULL DEFAULT 'Pedido Rec
 ALTER TABLE pedidos MODIFY Estado_Pedido VARCHAR(100);
 
 
+-- Este comando tienen que instalarlo en la terminal de visual para el tema de las facturas
+-- ====================================================================
+--composer install
+-- ====================================================================
+
 
 
 -- ====================================================================
