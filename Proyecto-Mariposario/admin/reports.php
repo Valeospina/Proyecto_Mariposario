@@ -233,6 +233,7 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
                     <li><a href="reporte_ventas.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reporte_ventas.php') ? 'active' : ''; ?>"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li>
                     <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
                     <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reportAsis.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li> 
+                    <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Soporte</a></li>  
                 </ul>
             </nav>
             <div class="sidebar-footer">
@@ -282,7 +283,7 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
                         <div class="report-card">
                             <i class="fas fa-calendar-alt icon"></i>
                             <h3>Total Eventos</h3>
-                            <span class="value"><?<?php echo htmlspecialchars($total_events); ?></span>
+                             <span class="value"><?<?php echo htmlspecialchars($total_events); ?></span>
                         </div>
                     </div>
 
