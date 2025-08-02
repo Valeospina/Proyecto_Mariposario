@@ -180,7 +180,7 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
 
         .report-card .icon {
             font-size: 2.5em;
-            color: #007bff;
+            color: #00BCD4;
             margin-bottom: 10px;
         }
         .report-card h3 {
@@ -215,190 +215,191 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
 <body>
 
     <div class="admin-dashboard-layout">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h3>Admin Panel</h3>
-            </div>
-            <nav class="sidebar-nav">
-                <ul>
-                    <li><a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-home"></i> Dashboard</a></li>
-                    <li><a href="gestion_empleados.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'gestion_empleados.php' || basename($_SERVER['PHP_SELF']) == 'add_empleado.php' || basename($_SERVER['PHP_SELF']) == 'edit_empleado.php') ? 'active' : ''; ?>"><i class="fas fa-user-tie"></i> Gestionar Empleados</a></li>
-                    <li><a href="users.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'users.php') ? 'active' : ''; ?>"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
-                    <li><a href="products.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'products.php') ? 'active' : ''; ?>"><i class="fas fa-box"></i> Gestionar Productos</a></li>
-                    <li><a href="inventarioAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'inventarioAdmin.php' || basename($_SERVER['PHP_SELF']) == 'add_inventario.php' || basename($_SERVER['PHP_SELF']) == 'edit_inventario.php') ? 'active' : ''; ?>"><i class="fas fa-warehouse"></i> Gestionar Inventario</a></li>
-                    <li><a href="eventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'eventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Eventos</a></li>                
-                    <li><a href="ReservaAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'ReservaAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Reservas</a></li>
-                    <li><a href="InsEventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'InsEventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Asistencia</a></li>
-                    <li><a href="pedidos.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'pedidos.php' || basename($_SERVER['PHP_SELF']) == 'edit_pedido.php') ? 'active' : ''; ?>"><i class="fas fa-shopping-cart"></i> Gestionar Pedidos</a></li>
-                    <li><a href="reporte_ventas.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reporte_ventas.php') ? 'active' : ''; ?>"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li>
-                    <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
-                    <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reportAsis.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li> 
-                    <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Soporte</a></li>  
-                </ul>
-            </nav>
-            <div class="sidebar-footer">
-                <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
-            </div>
-        </aside>
-
-        <div class="main-panel">
-            <header class="main-panel-header">
-                <div class="header-left">
-                    <h2><?php echo $page_title; ?></h2>
-                </div>
-                <div class="header-right">
-                    <div class="search-bar">
-                        <input type="text" placeholder="Buscar...">
-                        <i class="fas fa-search"></i>
-                    </div>
-                    <div class="user-profile">
-                        <span><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Admin'); ?></span>
-                        <img src="../images/user-avatar.png" alt="User Avatar">
-                    </div>
-                </div>
-            </header>
-
-            <main class="content-area">
-                <div class="admin-content">
-                    <?php if (!empty($message)): ?>
-                        <div class="alert alert-<?php echo htmlspecialchars($message_type); ?>">
-                            <?php echo htmlspecialchars($message); ?>
-                        </div>
-                    <?php endif; ?>
-
-                    <h2>Resumen de Reportes</h2>
-                    <p>Una vista general de las estadísticas clave del sistema.</p>
-
-                    <div class="report-cards">
-                        <div class="report-card">
-                            <i class="fas fa-users icon"></i>
-                            <h3>Total Usuarios</h3>
-                            <span class="value"><?php echo htmlspecialchars($total_users); ?></span>
-                        </div>
-                        <div class="report-card">
-                            <i class="fas fa-box icon"></i>
-                            <h3>Total Productos</h3>
-                            <span class="value"><?php echo htmlspecialchars($total_products); ?></span>
-                        </div>
-                        <div class="report-card">
-                            <i class="fas fa-calendar-alt icon"></i>
-                            <h3>Total Eventos</h3>
-                             <span class="value"><?<?php echo htmlspecialchars($total_events); ?></span>
-                        </div>
-                    </div>
-
-                    <div class="report-section">
-                        <h3>Usuarios por Rol</h3>
-                        <?php if (!empty($users_by_role)): ?>
-                            <div class="table-container">
-                                <table class="data-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Rol</th>
-                                            <th>Cantidad de Usuarios</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($users_by_role as $row): ?>
-                                            <tr>
-                                                <td><?php echo htmlspecialchars($row['role_name']); ?></td>
-                                                <td><?php echo htmlspecialchars($row['user_count']); ?></td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <?php else: ?>
-                            <p>No se encontraron datos de roles de usuario.</p>
-                        <?php endif; ?>
-                    </div>
-
-                    <div class="report-section">
-                        <h3>Productos con Bajo Stock (<= 10 unidades)</h3>
-                        <?php if (!empty($low_stock_products)): ?>
-                            <div class="table-container">
-                                <table class="data-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Nombre del Producto</th>
-                                            <th>Stock Actual</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($low_stock_products as $product): ?>
-                                            <tr>
-                                                <td><?php echo htmlspecialchars($product['Nombre']); ?></td>
-                                                <td><?php echo htmlspecialchars($product['Total_Stock']); ?></td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <?php else: ?>
-                            <p>No hay productos con bajo stock actualmente.</p>
-                        <?php endif; ?>
-                    </div>
-
-                    <div class="report-section">
-                        <h3>Productos por Categoría</h3>
-                        <?php if (!empty($products_by_category)): ?>
-                            <div class="table-container">
-                                <table class="data-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Categoría</th>
-                                            <th>Cantidad de Productos</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($products_by_category as $category): ?>
-                                            <tr>
-                                                <td><?php echo htmlspecialchars($category['Categoria']); ?></td>
-                                                <td><?php echo htmlspecialchars($category['product_count']); ?></td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <?php else: ?>
-                            <p>No se encontraron datos de categorías de productos.</p>
-                        <?php endif; ?>
-                    </div>
-                    
-                    <div class="report-section">
-                        <h3>Próximos Eventos</h3>
-                        <?php if (!empty($upcoming_events)): ?>
-                            <div class="table-container">
-                                <table class="data-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Nombre del Evento</th>
-                                            <th>Fecha</th>
-                                            <th>Hora</th>
-                                            <th>Ubicación</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($upcoming_events as $event): ?>
-                                            <tr>
-                                                <td><?php echo htmlspecialchars($event['Nombre']); ?></td>
-                                                <td><?php echo htmlspecialchars($event['Fecha']); ?></td>
-                                                <td><?php echo htmlspecialchars($event['Hora']); ?></td>
-                                                <td><?php echo htmlspecialchars($event['Ubicacion']); ?></td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <?php else: ?>
-                            <p>No hay próximos eventos programados.</p>
-                        <?php endif; ?>
-                    </div>
-
-                </div>
-            </main>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>Admin Panel</h3>
         </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="gestion_empleados.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'gestion_empleados.php' || basename($_SERVER['PHP_SELF']) == 'add_empleado.php' || basename($_SERVER['PHP_SELF']) == 'edit_empleado.php') ? 'active' : ''; ?>"><i class="fas fa-user-tie"></i> Gestionar Empleados</a></li>
+                <li><a href="users.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'users.php') ? 'active' : ''; ?>"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
+                <li><a href="products.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'products.php') ? 'active' : ''; ?>"><i class="fas fa-box"></i> Gestionar Productos</a></li>
+                <li><a href="inventarioAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'inventarioAdmin.php' || basename($_SERVER['PHP_SELF']) == 'add_inventario.php' || basename($_SERVER['PHP_SELF']) == 'edit_inventario.php') ? 'active' : ''; ?>"><i class="fas fa-warehouse"></i> Gestionar Inventario</a></li>
+                <li><a href="eventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'eventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Eventos</a></li>                
+                <li><a href="ReservaAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'ReservaAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Reservas</a></li>
+                <li><a href="InsEventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'InsEventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Asistencia</a></li>
+                <li><a href="pedidos.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'pedidos.php' || basename($_SERVER['PHP_SELF']) == 'edit_pedido.php') ? 'active' : ''; ?>"><i class="fas fa-shopping-cart"></i> Gestionar Pedidos</a></li>
+                <li><a href="reporte_ventas.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reporte_ventas.php') ? 'active' : ''; ?>"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li>
+                <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
+                <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reportAsis.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li> 
+                <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Soporte</a></li>  
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+        </div>
+    </aside>
+
+    <div class="main-panel">
+        <header class="main-panel-header">
+            <div class="header-left">
+                <h2><?php echo $page_title; ?></h2>
+            </div>
+            <div class="header-right">
+                <div class="search-bar">
+                    <input type="text" placeholder="Buscar...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="user-profile">
+                    <span><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Admin'); ?></span>
+                    <img src="../images/user-avatar.png" alt="User Avatar">
+                </div>
+            </div>
+        </header>
+
+        <main class="content-area">
+            <div class="admin-content">
+                <?php if (!empty($message)): ?>
+                    <div class="alert alert-<?php echo htmlspecialchars($message_type); ?>">
+                        <?php echo htmlspecialchars($message); ?>
+                    </div>
+                <?php endif; ?>
+
+                <h2>Resumen de Reportes</h2>
+                <p>Una vista general de las estadísticas clave del sistema.</p>
+
+                <div class="report-cards">
+                    <div class="report-card">
+                        <i class="fas fa-users icon"></i>
+                        <h3>Total Usuarios</h3>
+                        <span class="value"><?php echo htmlspecialchars($total_users); ?></span>
+                    </div>
+                    <div class="report-card">
+                        <i class="fas fa-box icon"></i>
+                        <h3>Total Productos</h3>
+                        <span class="value"><?php echo htmlspecialchars($total_products); ?></span>
+                    </div>
+                    <div class="report-card">
+                        <i class="fas fa-calendar-alt icon"></i>
+                        <h3>Total Eventos</h3>
+                        <span class="value"><?php echo htmlspecialchars($total_events); ?></span>
+                    </div>
+                </div> 
+
+                <div class="report-section">
+                    <h3>Usuarios por Rol</h3>
+                    <?php if (!empty($users_by_role)): ?>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Rol</th>
+                                        <th>Cantidad de Usuarios</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($users_by_role as $row): ?>
+                                        <tr>
+                                            <td><?php echo htmlspecialchars($row['role_name']); ?></td>
+                                            <td><?php echo htmlspecialchars($row['user_count']); ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php else: ?>
+                        <p>No se encontraron datos de roles de usuario.</p>
+                    <?php endif; ?>
+                </div>
+
+                <div class="report-section">
+                    <h3>Productos con Bajo Stock (<= 10 unidades)</h3>
+                    <?php if (!empty($low_stock_products)): ?>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre del Producto</th>
+                                        <th>Stock Actual</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($low_stock_products as $product): ?>
+                                        <tr>
+                                            <td><?php echo htmlspecialchars($product['Nombre']); ?></td>
+                                            <td><?php echo htmlspecialchars($product['Total_Stock']); ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php else: ?>
+                        <p>No hay productos con bajo stock actualmente.</p>
+                    <?php endif; ?>
+                </div>
+
+                <div class="report-section">
+                    <h3>Productos por Categoría</h3>
+                    <?php if (!empty($products_by_category)): ?>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Categoría</th>
+                                        <th>Cantidad de Productos</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($products_by_category as $category): ?>
+                                        <tr>
+                                            <td><?php echo htmlspecialchars($category['Categoria']); ?></td>
+                                            <td><?php echo htmlspecialchars($category['product_count']); ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php else: ?>
+                        <p>No se encontraron datos de categorías de productos.</p>
+                    <?php endif; ?>
+                </div>
+                
+                <div class="report-section">
+                    <h3>Próximos Eventos</h3>
+                    <?php if (!empty($upcoming_events)): ?>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre del Evento</th>
+                                        <th>Fecha</th>
+                                        <th>Hora</th>
+                                        <th>Ubicación</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($upcoming_events as $event): ?>
+                                        <tr>
+                                            <td><?php echo htmlspecialchars($event['Nombre']); ?></td>
+                                            <td><?php echo htmlspecialchars($event['Fecha']); ?></td>
+                                            <td><?php echo htmlspecialchars($event['Hora']); ?></td>
+                                            <td><?php echo htmlspecialchars($event['Ubicacion']); ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php else: ?>
+                        <p>No hay próximos eventos programados.</p>
+                    <?php endif; ?>
+                </div>
+
+            </div> 
+        </main>
     </div>
+</div>
+
 
 </body>
 </html>

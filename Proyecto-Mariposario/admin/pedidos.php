@@ -22,11 +22,49 @@ if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] != 1) {
 
 $page_title = 'Gestionar Pedidos';
 
+// Parámetros de paginación
+$registrosPorPagina = 10;
+$paginaActual = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($paginaActual - 1) * $registrosPorPagina;
+$totalPaginas = 0;
+
 // --- Lógica para obtener datos de los pedidos ---
 try {
     if ($conn instanceof mysqli) {
         $filtro_pago = $_GET['filtro_pago'] ?? '';
 
+        // Contar total de registros
+        $sqlCount = "
+            SELECT COUNT(*) as total
+            FROM Pedido p
+            JOIN Usuario u ON p.ID_Usuario = u.ID_Usuario
+            LEFT JOIN (
+                SELECT ID_Pedido, Estado
+                FROM Estado_Pedido
+                WHERE (ID_Pedido, Fecha) IN (
+                    SELECT ID_Pedido, MAX(Fecha)
+                    FROM Estado_Pedido
+                    GROUP BY ID_Pedido
+                )
+            ) ep ON ep.ID_Pedido = p.ID_Pedido
+        ";
+
+        if ($filtro_pago) {
+            $sqlCount .= " WHERE p.Metodo_Pago = ?";
+        }
+
+        $stmtCount = $conn->prepare($sqlCount);
+        if ($filtro_pago) {
+            $stmtCount->bind_param("s", $filtro_pago);
+        }
+        $stmtCount->execute();
+        $resultadoCount = $stmtCount->get_result();
+        $totalRegistros = $resultadoCount->fetch_assoc()['total'] ?? 0;
+        $stmtCount->close();
+
+        $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
+
+        // Consulta principal con LIMIT y OFFSET
         $sql = "
             SELECT 
                 p.ID_Pedido, 
@@ -53,13 +91,14 @@ try {
             $sql .= " WHERE p.Metodo_Pago = ?";
         }
 
-        $sql .= " ORDER BY p.Fecha_Pedido DESC";
-
+        $sql .= " ORDER BY p.Fecha_Pedido DESC LIMIT ? OFFSET ?";
 
         $stmt = $conn->prepare($sql);
 
         if ($filtro_pago) {
-            $stmt->bind_param("s", $filtro_pago);
+            $stmt->bind_param("sii", $filtro_pago, $registrosPorPagina, $offset);
+        } else {
+            $stmt->bind_param("ii", $registrosPorPagina, $offset);
         }
         $stmt->execute();
         $result = $stmt->get_result();
@@ -123,11 +162,11 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
         }
 
         .action-buttons .btn-edit {
-            background-color: #007bff;
+            background-color: #00BCD4;
         }
 
         .action-buttons .btn-edit:hover {
-            background-color: #0056b3;
+            background-color: #00BCD4;
         }
 
         .table-container {
@@ -136,6 +175,28 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
 
         .mb-3 {
             margin-bottom: 1rem; /* Added this as it was in your form tag */
+        }
+
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+        .pagination a {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            text-decoration: none;
+            color: #333;
+            border-radius: 5px;
+        }
+        .pagination a.active {
+            background-color: #8BC34A;
+            color: #fff;
+            font-weight: bold;
+        }
+        .pagination a:hover {
+            background-color: #f0f0f0;
         }
     </style>
 </head>
@@ -193,18 +254,16 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
                         </div>
                     <?php endif; ?>
 
- 
-
                     <h3>Listado de Pedidos</h3>
 
                     <form method="GET" class="mb-3">
-                    <label for="filtro_pago">Filtrar por método de pago:</label>
-                    <select name="filtro_pago" id="filtro_pago" onchange="this.form.submit()">
-                        <option value="" <?= ($_GET['filtro_pago'] ?? '') == '' ? 'selected' : '' ?>>Todos</option>
-                        <option value="Efectivo Tienda" <?= ($_GET['filtro_pago'] ?? '') == 'Efectivo Tienda' ? 'selected' : '' ?>>Efectivo Tienda</option>
-                        <option value="SINPE Movil" <?= ($_GET['filtro_pago'] ?? '') == 'SINPE Movil' ? 'selected' : '' ?>>SINPE Movil</option>
-                        <option value="PayPal" <?= ($_GET['filtro_pago'] ?? '') == 'PayPal' ? 'selected' : '' ?>>PayPal</option>
-                    </select>
+                        <label for="filtro_pago">Filtrar por método de pago:</label>
+                        <select name="filtro_pago" id="filtro_pago" onchange="this.form.submit()">
+                            <option value="" <?= ($_GET['filtro_pago'] ?? '') == '' ? 'selected' : '' ?>>Todos</option>
+                            <option value="Efectivo Tienda" <?= ($_GET['filtro_pago'] ?? '') == 'Efectivo Tienda' ? 'selected' : '' ?>>Efectivo Tienda</option>
+                            <option value="SINPE Movil" <?= ($_GET['filtro_pago'] ?? '') == 'SINPE Movil' ? 'selected' : '' ?>>SINPE Movil</option>
+                            <option value="PayPal" <?= ($_GET['filtro_pago'] ?? '') == 'PayPal' ? 'selected' : '' ?>>PayPal</option>
+                        </select>
                     </form>
 
                     <?php if (!empty($pedidos)): ?>
@@ -231,12 +290,11 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
                                             <td><?php echo htmlspecialchars($pedido['Estado_Actual'] ?? 'Pendiente'); ?></td>
                                             <td>
                                                 <?php
-                                                // Solo mostramos comprobante si el método es SINPE Movil y existe una ruta de comprobante en la factura
                                                 if ($pedido['Metodo_Pago'] === 'SINPE Movil' && !empty($pedido['Ruta_Comprobante_Factura'])) {
                                                     echo "<a href='../" . htmlspecialchars($pedido['Ruta_Comprobante_Factura']) . "' target='_blank'>Ver Comprobante</a>";
                                                 }
                                                 else {
-                                                    echo '-'; // Si no es SINPE Movil o no hay comprobante, muestra un guion
+                                                    echo '-';
                                                 }
                                                 ?>
                                             </td>
@@ -247,6 +305,19 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
                                     <?php endforeach; ?>
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- PAGINACIÓN -->
+                        <div class="pagination">
+                            <?php if ($paginaActual > 1): ?>
+                                <a href="?filtro_pago=<?= urlencode($filtro_pago) ?>&page=<?= $paginaActual - 1 ?>">Anterior</a>
+                            <?php endif; ?>
+                            <?php for ($i = 1; $i <= $totalPaginas; $i++): ?>
+                                <a href="?filtro_pago=<?= urlencode($filtro_pago) ?>&page=<?= $i ?>" class="<?= ($i == $paginaActual) ? 'active' : '' ?>"><?= $i ?></a>
+                            <?php endfor; ?>
+                            <?php if ($paginaActual < $totalPaginas): ?>
+                                <a href="?filtro_pago=<?= urlencode($filtro_pago) ?>&page=<?= $paginaActual + 1 ?>">Siguiente</a>
+                            <?php endif; ?>
                         </div>
                     <?php else: ?>
                         <p>No hay pedidos registrados en el sistema.</p>

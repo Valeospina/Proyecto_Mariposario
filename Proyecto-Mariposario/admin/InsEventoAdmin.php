@@ -8,15 +8,40 @@ $eventos = $conn->query($sql_eventos)->fetch_all(MYSQLI_ASSOC);
 $evento_id = $_GET['evento_id'] ?? '';
 $inscritos = [];
 
+// Parámetros de paginación
+$registrosPorPagina = 10;
+$paginaActual = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($paginaActual - 1) * $registrosPorPagina;
+$totalPaginas = 0;
+
 if ($evento_id) {
-    $sql = "SELECT r.*, u.Nombre AS Nombre_Usuario 
-            FROM Reserva r 
-            LEFT JOIN Usuario u ON r.ID_Usuario = u.ID_Usuario
-            WHERE r.ID_Evento = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param('i', $evento_id);
-    $stmt->execute();
-    $inscritos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    try {
+        // Contar total de registros
+        $sqlCount = "SELECT COUNT(*) as total FROM Reserva WHERE ID_Evento = ?";
+        $stmtCount = $conn->prepare($sqlCount);
+        $stmtCount->bind_param('i', $evento_id);
+        $stmtCount->execute();
+        $resultadoCount = $stmtCount->get_result();
+        $totalRegistros = $resultadoCount->fetch_assoc()['total'] ?? 0;
+        $stmtCount->close();
+
+        $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
+
+        // Consulta principal con LIMIT y OFFSET
+        $sql = "SELECT r.*, u.Nombre AS Nombre_Usuario 
+                FROM Reserva r 
+                LEFT JOIN Usuario u ON r.ID_Usuario = u.ID_Usuario
+                WHERE r.ID_Evento = ?
+                ORDER BY r.Fecha_Reserva DESC
+                LIMIT ? OFFSET ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('iii', $evento_id, $registrosPorPagina, $offset);
+        $stmt->execute();
+        $inscritos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+    } catch (Exception $e) {
+        error_log("Error al obtener inscripciones: " . $e->getMessage());
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -30,6 +55,29 @@ if ($evento_id) {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../css/admin.css">
+    <style>
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+        .pagination a {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            text-decoration: none;
+            color: #333;
+            border-radius: 5px;
+        }
+        .pagination a.active {
+            background-color: #8BC34A;
+            color: #fff;
+            font-weight: bold;
+        }
+        .pagination a:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
 </head>
 <body>
 
@@ -53,7 +101,6 @@ if ($evento_id) {
                     <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
                     <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
                     <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Soporte</a></li>  
-
                 </ul>
             </nav>
             <div class="sidebar-footer">
@@ -132,6 +179,19 @@ if ($evento_id) {
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
+
+                        <!-- PAGINACIÓN -->
+                        <div class="pagination">
+                            <?php if ($paginaActual > 1): ?>
+                                <a href="?evento_id=<?= $evento_id ?>&page=<?= $paginaActual - 1 ?>">Anterior</a>
+                            <?php endif; ?>
+                            <?php for ($i = 1; $i <= $totalPaginas; $i++): ?>
+                                <a href="?evento_id=<?= $evento_id ?>&page=<?= $i ?>" class="<?= ($i == $paginaActual) ? 'active' : '' ?>"><?= $i ?></a>
+                            <?php endfor; ?>
+                            <?php if ($paginaActual < $totalPaginas): ?>
+                                <a href="?evento_id=<?= $evento_id ?>&page=<?= $paginaActual + 1 ?>">Siguiente</a>
+                            <?php endif; ?>
+                        </div>
                     <?php elseif ($evento_id): ?>
                         <p>No hay inscripciones para este evento.</p>
                     <?php endif; ?>

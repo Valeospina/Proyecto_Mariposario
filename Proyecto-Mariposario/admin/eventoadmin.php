@@ -17,21 +17,34 @@ if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] != 1) { // Añadido
     exit;
 }
 
-// Consulta para obtener los eventos
-$eventos_query = "SELECT ID_Evento, Nombre, Descripcion, Precio, Imagen_URL FROM Evento";
+// ******************************************************************
+// PAGINACIÓN PARA LISTADO DE EVENTOS
+// ******************************************************************
+$registrosPorPagina = 10; // Número de eventos por página
+$paginaActual = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($paginaActual - 1) * $registrosPorPagina;
+
+// Contar total de eventos
+$totalQuery = "SELECT COUNT(*) AS total FROM Evento";
+$totalResult = $conn->query($totalQuery);
+$totalRegistros = $totalResult->fetch_assoc()['total'];
+$totalPaginas = ceil($totalRegistros / $registrosPorPagina);
+
+// Consulta para obtener los eventos con paginación
+$eventos_query = "SELECT ID_Evento, Nombre, Descripcion, Precio, Imagen_URL FROM Evento ORDER BY ID_Evento DESC LIMIT ? OFFSET ?";
 $eventos_result = null;
 $eventos = [];
 
 try {
     if (isset($conn) && $conn instanceof mysqli) {
-        $eventos_result = $conn->query($eventos_query);
-        if ($eventos_result) {
-            while ($row = $eventos_result->fetch_assoc()) {
-                $eventos[] = $row;
-            }
-        } else {
-            throw new Exception("Error en la consulta SQL: " . $conn->error);
+        $stmt = $conn->prepare($eventos_query);
+        $stmt->bind_param("ii", $registrosPorPagina, $offset);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        while ($row = $result->fetch_assoc()) {
+            $eventos[] = $row;
         }
+        $stmt->close();
     } else {
         throw new Exception("Error: La conexión a la base de datos no está disponible o no es MySQLi.");
     }
@@ -62,7 +75,32 @@ $page_title = 'Gestionar Eventos';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="../css/admin.css"> </head>
+    <link rel="stylesheet" href="../css/admin.css"> 
+
+    <style>
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+        .pagination a {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            text-decoration: none;
+            color: #333;
+            border-radius: 5px;
+        }
+        .pagination a.active {
+            background-color: #8BC34A;
+            color: #fff;
+            font-weight: bold;
+        }
+        .pagination a:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
 <body>
 
     <div class="admin-dashboard-layout">
@@ -84,7 +122,6 @@ $page_title = 'Gestionar Eventos';
                     <li><a href="reporte_ventas.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reporte_ventas.php') ? 'active' : ''; ?>"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li>
                     <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
                     <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
-
                 </ul>
             </nav>
             <div class="sidebar-footer">
@@ -140,14 +177,32 @@ $page_title = 'Gestionar Eventos';
                                         <td data-label="Nombre:"><?php echo htmlspecialchars($evento['Nombre']); ?></td>
                                         <td data-label="Descripción:"><?php echo htmlspecialchars($evento['Descripcion']); ?></td>
                                         <td data-label="Precio:">₡<?php echo number_format($evento['Precio'], 2); ?></td>
-                                        <td data-label="Acciones:" class="action-links">
-                                            <a class="btn btn-action-edit" href="edit_evento.php?id=<?php echo htmlspecialchars($evento['ID_Evento']); ?>"><i class="fas fa-edit"></i></a>
-                                            <a class="btn btn-action-delete" href="delete_evento.php?id=<?php echo htmlspecialchars($evento['ID_Evento']); ?>" onclick="return confirm('¿Estás seguro de que quieres eliminar este evento?');"><i class="fas fa-trash-alt"></i></a>
+                                        <td class="actions">
+                                            <a href="edit_evento.php?id=<?php echo htmlspecialchars($evento['ID_Evento']); ?>" class="btn btn-action-edit" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="delete_evento.php?id=<?php echo htmlspecialchars($evento['ID_Evento']); ?>" class="btn btn-action-delete" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar este evento?');">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
+
+                        <!-- PAGINACIÓN -->
+                        <div class="pagination">
+                            <?php if ($paginaActual > 1): ?>
+                                <a href="?page=<?php echo $paginaActual - 1; ?>">Anterior</a>
+                            <?php endif; ?>
+                            <?php for ($i = 1; $i <= $totalPaginas; $i++): ?>
+                                <a href="?page=<?php echo $i; ?>" class="<?php echo ($i == $paginaActual) ? 'active' : ''; ?>"><?php echo $i; ?></a>
+                            <?php endfor; ?>
+                            <?php if ($paginaActual < $totalPaginas): ?>
+                                <a href="?page=<?php echo $paginaActual + 1; ?>">Siguiente</a>
+                            <?php endif; ?>
+                        </div>
+
                     <?php else: ?>
                         <p>No hay eventos registrados.</p>
                     <?php endif; ?>

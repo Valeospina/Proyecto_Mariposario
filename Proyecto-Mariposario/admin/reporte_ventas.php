@@ -12,7 +12,44 @@ $hasta = $_GET['hasta'] ?? date('Y-m-d');
 $producto = $_GET['producto'] ?? '';
 $usuario = $_GET['usuario'] ?? '';
 
-// Consulta principal
+$registrosPorPagina = 10;
+$paginaActual = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($paginaActual - 1) * $registrosPorPagina;
+
+// Consulta para contar registros
+$sqlCount = "
+SELECT COUNT(*) AS total
+FROM (
+    SELECT pp.ID_Producto
+    FROM Pedido_Producto pp
+    JOIN Pedido p ON p.ID_Pedido = pp.ID_Pedido
+    WHERE p.Fecha_Pedido BETWEEN ? AND ?
+";
+
+$params = [$desde, $hasta];
+$types = 'ss';
+
+if (!empty($producto)) {
+    $sqlCount .= " AND pp.ID_Producto = ?";
+    $params[] = $producto;
+    $types .= 'i';
+}
+if (!empty($usuario)) {
+    $sqlCount .= " AND p.ID_Usuario = ?";
+    $params[] = $usuario;
+    $types .= 'i';
+}
+
+$sqlCount .= " GROUP BY pp.ID_Producto, p.ID_Usuario, DATE(p.Fecha_Pedido)
+) AS sub";
+
+$stmtCount = $conn->prepare($sqlCount);
+$stmtCount->bind_param($types, ...$params);
+$stmtCount->execute();
+$totalRegistros = $stmtCount->get_result()->fetch_assoc()['total'];
+$totalPaginas = ceil($totalRegistros / $registrosPorPagina);
+
+// Consulta principal con paginación
 $sql = "
 SELECT 
     pp.ID_Producto,
@@ -28,21 +65,18 @@ JOIN Pedido p ON p.ID_Pedido = pp.ID_Pedido
 JOIN Usuario u ON p.ID_Usuario = u.ID_Usuario
 WHERE p.Fecha_Pedido BETWEEN ? AND ?";
 
-$params = [$desde, $hasta];
-$types = 'ss';
-
 if (!empty($producto)) {
     $sql .= " AND pp.ID_Producto = ?";
-    $params[] = $producto;
-    $types .= 'i';
 }
 if (!empty($usuario)) {
     $sql .= " AND p.ID_Usuario = ?";
-    $params[] = $usuario;
-    $types .= 'i';
 }
 
-$sql .= " GROUP BY pp.ID_Producto, pr.Nombre, u.Nombre, Fecha_Pedido ORDER BY Fecha_Pedido DESC";
+$sql .= " GROUP BY pp.ID_Producto, pr.Nombre, u.Nombre, Fecha_Pedido ORDER BY Fecha_Pedido DESC LIMIT ? OFFSET ?";
+
+$params[] = $registrosPorPagina;
+$params[] = $offset;
+$types .= 'ii';
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param($types, ...$params);
@@ -63,6 +97,29 @@ $usuarios = $conn->query("SELECT ID_Usuario, Nombre FROM Usuario ORDER BY Nombre
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../css/admin.css">
+    <style>
+        .pagination {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+        .pagination a {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            text-decoration: none;
+            color: #333;
+            border-radius: 5px;
+        }
+        .pagination a.active {
+            background-color: #8BC34A;
+            color: #fff;
+            font-weight: bold;
+        }
+        .pagination a:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
 </head>
 <body>
 <div class="admin-dashboard-layout">
@@ -162,6 +219,22 @@ $usuarios = $conn->query("SELECT ID_Usuario, Nombre FROM Usuario ORDER BY Nombre
                         <?php endwhile; ?>
                     </tbody>
                 </table>
+
+                <!-- Paginación -->
+                <div class="pagination">
+                    <?php if ($paginaActual > 1): ?>
+                        <a href="?page=<?= $paginaActual - 1 ?>&desde=<?= $desde ?>&hasta=<?= $hasta ?>&producto=<?= $producto ?>&usuario=<?= $usuario ?>">Anterior</a>
+                    <?php endif; ?>
+
+                    <?php for ($i = 1; $i <= $totalPaginas; $i++): ?>
+                        <a href="?page=<?= $i ?>&desde=<?= $desde ?>&hasta=<?= $hasta ?>&producto=<?= $producto ?>&usuario=<?= $usuario ?>" class="<?= $i == $paginaActual ? 'active' : '' ?>"><?= $i ?></a>
+                    <?php endfor; ?>
+
+                    <?php if ($paginaActual < $totalPaginas): ?>
+                        <a href="?page=<?= $paginaActual + 1 ?>&desde=<?= $desde ?>&hasta=<?= $hasta ?>&producto=<?= $producto ?>&usuario=<?= $usuario ?>">Siguiente</a>
+                    <?php endif; ?>
+                </div>
+
             </div>
         </main>
     </div>
@@ -169,3 +242,4 @@ $usuarios = $conn->query("SELECT ID_Usuario, Nombre FROM Usuario ORDER BY Nombre
 </body>
 </html>
 <?php $conn->close(); ?>
+

@@ -23,7 +23,7 @@ $page_title = 'Gestionar Empleados';
 
 // --- Lógica para eliminar empleado ---
 if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'])) {
-    $empleado_usuario_id = $_GET['id']; // Este es el ID_Usuario del empleado
+    $empleado_usuario_id = intval($_GET['id']); // Seguridad: convertir a entero
 
     if ($empleado_usuario_id == $_SESSION['user_id']) {
         $message = "No puedes eliminar tu propia cuenta de administrador.";
@@ -38,7 +38,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
             $stmt_empleado->bind_param("i", $empleado_usuario_id);
             $stmt_empleado->execute();
             $stmt_empleado->close();
-            // No verificamos affected_rows aquí porque un usuario podría no tener un registro en 'Empleado' aún.
 
             // 2. Eliminar de la tabla Usuario
             $stmt_usuario = $conn->prepare("DELETE FROM Usuario WHERE ID_Usuario = ?");
@@ -68,12 +67,24 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
     }
 }
 
+// --- Paginación ---
+$registrosPorPagina = 10;
+$paginaActual = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($paginaActual - 1) * $registrosPorPagina;
+
+// Contar total de empleados (sin clientes)
+$sqlCount = "SELECT COUNT(*) AS total 
+             FROM Usuario u 
+             JOIN Rol r ON u.ID_Rol = r.ID_Rol 
+             WHERE r.Nombre != 'Cliente'";
+$totalRegistros = $conn->query($sqlCount)->fetch_assoc()['total'];
+$totalPaginas = ceil($totalRegistros / $registrosPorPagina);
+
 // --- Lógica para obtener datos de los empleados ---
 $empleados = [];
 try {
     if (isset($conn) && $conn instanceof mysqli) {
         // Unir Usuario con Empleado para obtener todos los datos necesarios
-        // Filtramos para incluir roles que no sean 'Cliente'
         $sql = "SELECT 
                     u.ID_Usuario, 
                     u.Nombre, 
@@ -82,18 +93,17 @@ try {
                     e.Salario, 
                     e.Horario, 
                     e.Fecha_Contratacion 
-                FROM 
-                    Usuario u 
-                JOIN 
-                    Rol r ON u.ID_Rol = r.ID_Rol 
-                LEFT JOIN 
-                    Empleado e ON u.ID_Usuario = e.ID_Usuario 
-                WHERE 
-                    r.Nombre != 'Cliente' -- Excluir a los clientes del listado de empleados
-                ORDER BY 
-                    u.Nombre ASC";
-        
-        $result = $conn->query($sql);
+                FROM Usuario u 
+                JOIN Rol r ON u.ID_Rol = r.ID_Rol 
+                LEFT JOIN Empleado e ON u.ID_Usuario = e.ID_Usuario 
+                WHERE r.Nombre != 'Cliente'
+                ORDER BY u.Nombre ASC
+                LIMIT ? OFFSET ?";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ii", $registrosPorPagina, $offset);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
         if ($result) {
             while ($row = $result->fetch_assoc()) {
@@ -105,7 +115,7 @@ try {
     } else {
         throw new Exception("Error: La conexión a la base de datos no está disponible o no es MySQLi.");
     }
-} catch (Exception | mysqli_sql_exception $e) { // Capturar también excepciones de MySQLi
+} catch (Exception | mysqli_sql_exception $e) {
     error_log("Error al cargar empleados: " . $e->getMessage());
     $message = "Error al cargar los empleados: " . htmlspecialchars($e->getMessage());
     $message_type = "danger";
@@ -130,157 +140,138 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
     <link rel="stylesheet" href="../css/admin.css">
 
     <style>
+        
 
-        .action-buttons {
+        /* Estilos para la paginación */
+        .pagination {
+            margin-top: 20px;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            gap: 10px;
-            padding: 10px 0;
+            gap: 8px;
         }
-
-        /* Estilo base */
-        .btn-action-edit,
-        .btn-action-delete {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 7.5px 1%;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 500;
+        .pagination a {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
             text-decoration: none;
-            border: none;
+            color: #333;
+            border-radius: 5px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .pagination a.active {
+            background-color: #8BC34A;
             color: #fff;
-            width: 120px;
-            transition: all 0.2s ease-in-out;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            font-weight: bold;
+            border-color: #8BC34A;
         }
-
-        .btn-action-edit {
-            background-color: #00BCD4;
+        .pagination a:hover {
+            background-color: #f0f0f0;
         }
-        .btn-action-edit:hover {
-            background-color: #0097a7;
-        }
-
-        .btn-action-delete {
-            background-color: #E74C3C;
-        }
-        .btn-action-delete:hover {
-            background-color: #C0392B;
-        }
-
-
     </style>
-
 </head>
 <body>
-
-    <div class="admin-dashboard-layout">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h3>Admin Panel</h3>
-            </div>
-            <nav class="sidebar-nav">
-                <ul>
-                    <li><a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-home"></i> Dashboard</a></li>
-                    <li><a href="gestion_empleados.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'gestion_empleados.php' || basename($_SERVER['PHP_SELF']) == 'add_empleado.php' || basename($_SERVER['PHP_SELF']) == 'edit_empleado.php') ? 'active' : ''; ?>"><i class="fas fa-user-tie"></i> Gestionar Empleados</a></li>
-                    <li><a href="users.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'users.php') ? 'active' : ''; ?>"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
-                    <li><a href="products.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'products.php') ? 'active' : ''; ?>"><i class="fas fa-box"></i> Gestionar Productos</a></li>
-                    <li><a href="inventarioAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'inventarioAdmin.php' || basename($_SERVER['PHP_SELF']) == 'add_inventario.php' || basename($_SERVER['PHP_SELF']) == 'edit_inventario.php') ? 'active' : ''; ?>"><i class="fas fa-warehouse"></i> Gestionar Inventario</a></li>
-                    <li><a href="eventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'eventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Eventos</a></li>                
-                    <li><a href="ReservaAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'ReservaAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Reservas</a></li>
-                    <li><a href="InsEventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'InsEventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Asistencia</a></li>
-                    <li><a href="pedidos.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'pedidos.php' || basename($_SERVER['PHP_SELF']) == 'edit_pedido.php') ? 'active' : ''; ?>"><i class="fas fa-shopping-cart"></i> Gestionar Pedidos</a></li>
-                    <li><a href="reporte_ventas.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reporte_ventas.php') ? 'active' : ''; ?>"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li>
-                    <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
-                    <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
-
-                </ul>
-            </nav>
-            <div class="sidebar-footer">
-                <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
-            </div>
-        </aside>
-
-        <div class="main-panel">
-            <header class="main-panel-header">
-                <div class="header-left">
-                    <h2><?php echo $page_title; ?></h2>
-                </div>
-                <div class="header-right">
-                    <div class="search-bar">
-                        <input type="text" placeholder="Buscar...">
-                        <i class="fas fa-search"></i>
-                    </div>
-                    <div class="user-profile">
-                        <span><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Admin'); ?></span>
-                        <img src="../images/user-avatar.png" alt="User Avatar">
-                    </div>
-                </div>
-            </header>
-
-            <main class="content-area">
-                <div class="admin-content">
-                    <?php if (!empty($message)): ?>
-                        <div class="alert alert-<?php echo htmlspecialchars($message_type); ?>">
-                            <?php echo htmlspecialchars($message); ?>
-                        </div>
-                    <?php endif; ?>
-
-                    <div class="actions-bar">
-                        <a href="add_empleado.php" class="btn btn-add-product"><i class="fas fa-user-plus"></i> Añadir Nuevo Empleado</a>
-                    </div>
-
-                    <?php if (!empty($empleados)): ?>
-                        <div class="table-container">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>Nombre</th>
-                                        <th>Correo</th>
-                                        <th>Rol</th>
-                                        <th>Salario</th>
-                                        <th>Horario</th>
-                                        <th>Fecha Contratación</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($empleados as $empleado): ?>
-                                        <tr>
-                                            <td></td>
-                                            <td><?php echo htmlspecialchars($empleado['Nombre']); ?></td>
-                                            <td><?php echo htmlspecialchars($empleado['Correo']); ?></td>
-                                            <td><?php echo htmlspecialchars($empleado['Rol_Nombre']); ?></td>
-                                            <td>₡<?php echo number_format($empleado['Salario'] ?? 0, 2, ',', '.'); ?></td>
-                                            <td><?php echo htmlspecialchars($empleado['Horario'] ?? 'N/A'); ?></td>
-                                            <td><?php echo htmlspecialchars($empleado['Fecha_Contratacion'] ?? 'N/A'); ?></td>
-                                            
-                                            <td class="action-buttons">
-                                                <a href="edit_product.php?id=<?= htmlspecialchars($product['ID_Producto']) ?>" class="btn btn-action-edit" title="Editar">
-                                                    <i class="fas fa-edit"></i> 
-                                                </a>
-                                                <a href="products.php?action=delete&id=<?= htmlspecialchars($product['ID_Producto']) ?>" class="btn btn-action-delete" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar este producto?');">
-                                                    <i class="fas fa-trash-alt"></i> 
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    <?php else: ?>
-                        <p>No hay empleados registrados en el sistema.</p>
-                    <?php endif; ?>
-                </div>
-            </main>
+<div class="admin-dashboard-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>Admin Panel</h3>
         </div>
-    </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="gestion_empleados.php" class="active"><i class="fas fa-user-tie"></i> Gestionar Empleados</a></li>
+                <li><a href="users.php"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
+                <li><a href="products.php"><i class="fas fa-box"></i> Gestionar Productos</a></li>
+                <li><a href="inventarioAdmin.php"><i class="fas fa-warehouse"></i> Gestionar Inventario</a></li>
+                <li><a href="eventoAdmin.php"><i class="fas fa-calendar-alt"></i> Gestionar Eventos</a></li>
+                <li><a href="ReservaAdmin.php"><i class="fas fa-calendar-check"></i> Gestionar Reservas</a></li>
+                <li><a href="InsEventoAdmin.php"><i class="fas fa-clipboard-list"></i> Gestionar Asistencia</a></li>
+                <li><a href="pedidos.php"><i class="fas fa-shopping-cart"></i> Gestionar Pedidos</a></li>
+                <li><a href="reporte_ventas.php"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li>
+                <li><a href="reports.php"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
+                <li><a href="reportAsis.php"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+        </div>
+    </aside>
 
+    <div class="main-panel">
+        <header class="main-panel-header">
+            <div class="header-left">
+                <h2><?php echo $page_title; ?></h2>
+            </div>
+        </header>
+
+        <main class="content-area">
+            <div class="admin-content">
+                <?php if (!empty($message)): ?>
+                    <div class="alert alert-<?php echo htmlspecialchars($message_type); ?>">
+                        <?php echo htmlspecialchars($message); ?>
+                    </div>
+                <?php endif; ?>
+
+                <div class="actions-bar">
+                    <a href="add_empleado.php" class="btn btn-add-product"><i class="fas fa-user-plus"></i> Añadir Nuevo Empleado</a>
+                </div>
+
+                <?php if (!empty($empleados)): ?>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Nombre</th>
+                                    <th>Correo</th>
+                                    <th>Rol</th>
+                                    <th>Salario</th>
+                                    <th>Horario</th>
+                                    <th>Fecha Contratación</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($empleados as $empleado): ?>
+                                    <tr>
+                                        <td></td>
+                                        <td><?php echo htmlspecialchars($empleado['Nombre']); ?></td>
+                                        <td><?php echo htmlspecialchars($empleado['Correo']); ?></td>
+                                        <td><?php echo htmlspecialchars($empleado['Rol_Nombre']); ?></td>
+                                        <td>₡<?php echo number_format($empleado['Salario'] ?? 0, 2, ',', '.'); ?></td>
+                                        <td><?php echo htmlspecialchars($empleado['Horario'] ?? 'N/A'); ?></td>
+                                        <td><?php echo htmlspecialchars($empleado['Fecha_Contratacion'] ?? 'N/A'); ?></td>
+                                        <td class="actions">
+                                            <a href="edit_empleado.php?id=<?php echo htmlspecialchars($empleado['ID_Usuario']); ?>" class="btn btn-action-edit" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="gestion_empleados.php?action=delete&id=<?php echo htmlspecialchars($empleado['ID_Usuario']); ?>" class="btn btn-action-delete" title="Eliminar" onclick="return confirm('¿Estás seguro de eliminar este empleado? Esta acción no se puede deshacer.');">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Paginación -->
+                    <div class="pagination">
+                        <?php if ($paginaActual > 1): ?>
+                            <a href="?page=<?php echo $paginaActual - 1; ?>">Anterior</a>
+                        <?php endif; ?>
+                        <?php for ($i = 1; $i <= $totalPaginas; $i++): ?>
+                            <a href="?page=<?php echo $i; ?>" class="<?php echo ($i == $paginaActual) ? 'active' : ''; ?>"><?php echo $i; ?></a>
+                        <?php endfor; ?>
+                        <?php if ($paginaActual < $totalPaginas): ?>
+                            <a href="?page=<?php echo $paginaActual + 1; ?>">Siguiente</a>
+                        <?php endif; ?>
+                    </div>
+                <?php else: ?>
+                    <p>No hay empleados registrados en el sistema.</p>
+                <?php endif; ?>
+            </div>
+        </main>
+    </div>
+</div>
 </body>
 </html>
 <?php

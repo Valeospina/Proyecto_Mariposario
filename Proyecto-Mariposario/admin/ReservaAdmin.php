@@ -6,14 +6,56 @@ include '../DB.php';
 $filtro_fecha = $_GET['fecha'] ?? '';
 $filtro_usuario = $_GET['usuario'] ?? '';
 
-// Query base
+// ******************************************************************
+// PAGINACIÓN
+// ******************************************************************
+$registrosPorPagina = 10;
+$paginaActual = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($paginaActual - 1) * $registrosPorPagina;
+
+// Query base para contar resultados con filtros
+$sqlCount = "SELECT COUNT(*) AS total
+             FROM Reserva r
+             LEFT JOIN Evento e ON r.ID_Evento = e.ID_Evento
+             LEFT JOIN Usuario u ON r.ID_Usuario = u.ID_Usuario
+             WHERE 1=1";
+
+$params = [];
+$types = '';
+
+if ($filtro_fecha) {
+    $sqlCount .= " AND DATE(r.Fecha_Reserva) = ?";
+    $types .= 's';
+    $params[] = $filtro_fecha;
+}
+if ($filtro_usuario) {
+    $sqlCount .= " AND u.Nombre LIKE ?";
+    $types .= 's';
+    $params[] = '%' . $filtro_usuario . '%';
+}
+
+// Preparar y ejecutar la consulta para contar total de registros
+$stmtCount = $conn->prepare($sqlCount);
+if ($types) {
+    $stmtCount->bind_param($types, ...$params);
+}
+$stmtCount->execute();
+$resultCount = $stmtCount->get_result();
+$totalRegistros = $resultCount->fetch_assoc()['total'] ?? 0;
+$stmtCount->close();
+
+// Calcular total de páginas
+$totalPaginas = ceil($totalRegistros / $registrosPorPagina);
+
+// ******************************************************************
+// CONSULTA PRINCIPAL CON LIMIT Y OFFSET
+// ******************************************************************
 $sql = "SELECT r.*, e.Nombre AS Nombre_Evento, u.Nombre AS Nombre_Usuario 
         FROM Reserva r
         LEFT JOIN Evento e ON r.ID_Evento = e.ID_Evento
         LEFT JOIN Usuario u ON r.ID_Usuario = u.ID_Usuario
         WHERE 1=1";
 
-// Aplicar filtros
 if ($filtro_fecha) {
     $sql .= " AND DATE(r.Fecha_Reserva) = ?";
 }
@@ -21,36 +63,55 @@ if ($filtro_usuario) {
     $sql .= " AND u.Nombre LIKE ?";
 }
 
+$sql .= " ORDER BY r.Fecha_Reserva DESC LIMIT ? OFFSET ?";
+
 $stmt = $conn->prepare($sql);
-$params = [];
-$types = '';
-if ($filtro_fecha) {
-    $types .= 's';
-    $params[] = $filtro_fecha;
-}
-if ($filtro_usuario) {
-    $types .= 's';
-    $params[] = '%' . $filtro_usuario . '%';
-}
-if ($types) {
-    $stmt->bind_param($types, ...$params);
-}
+
+$params[] = $registrosPorPagina;
+$params[] = $offset;
+$types .= 'ii'; // Dos enteros para LIMIT y OFFSET
+
+$stmt->bind_param($types, ...$params);
 $stmt->execute();
 $result = $stmt->get_result();
 $reservas = $result->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
-   <head>
-    <meta charset="UTF-8">
+   <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $page_title; ?> - Panel de Administración</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="../css/admin.css"> </head>
+    <link rel="stylesheet" href="../css/admin.css">
+    <style>
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+        .pagination a {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            text-decoration: none;
+            color: #333;
+            border-radius: 5px;
+        }
+        .pagination a.active {
+            background-color: #8BC34A;
+            color: #fff;
+            font-weight: bold;
+        }
+        .pagination a:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
 <body>
 
     <div class="admin-dashboard-layout">
@@ -99,60 +160,71 @@ $reservas = $result->fetch_all(MYSQLI_ASSOC);
 
             <main class="content-area">
                 <div class="admin-content">
-                    <?php if (!empty($message)): ?>
-                        <div class="alert alert-<?php echo htmlspecialchars($message_type); ?>">
-                            <?php echo htmlspecialchars($message); ?>
-                        </div>
-                    <?php endif; ?>
-
                     <h2>Gestionar Reservas</h2>
                     <p>Reservas por usuario o fecha.</p>
 
-        <form method="GET" class="filter-form" style="margin-bottom: 20px;">
-            <input type="date" name="fecha" value="<?= htmlspecialchars($filtro_fecha) ?>" />
-            <input type="text" name="usuario" placeholder="Nombre de usuario" value="<?= htmlspecialchars($filtro_usuario) ?>" />
-            <button type="submit" class="btn btn-add-product">Filtrar</button>
-        </form>
+                    <form method="GET" class="filter-form" style="margin-bottom: 20px;">
+                        <input type="date" name="fecha" value="<?= htmlspecialchars($filtro_fecha) ?>" />
+                        <input type="text" name="usuario" placeholder="Nombre de usuario" value="<?= htmlspecialchars($filtro_usuario) ?>" />
+                        <button type="submit" class="btn btn-add-product">Filtrar</button>
+                    </form>
 
-        <table class="admin-table">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>Evento</th>
-                    <th>Usuario</th>
-                    <th>Personas</th>
-                    <th>Fecha Reserva</th>
-                    <th>Estado</th>
-                    <th>Teléfono</th>
-                    <th>Correo</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($reservas as $res): ?>
-                    <tr>
-                        <td></td>
-                        <td><?= $res['Nombre_Evento']; ?></td>
-                        <td><?= $res['Nombre_Usuario'] ?? 'No registrado'; ?></td>
-                        <td><?= $res['Cantidad_Personas']; ?></td>
-                        <td><?= $res['Fecha_Reserva']; ?></td>
-                        <td><?= $res['Estado']; ?></td>
-                        <td><?= $res['Telefono']; ?></td>
-                        <td><?= $res['Correo']; ?></td>
-                        <td>
-                            <a href="confirm_reserva.php?id=<?= $res['ID_Reserva']; ?>" class="btn btn-action-edit">Confirmar</a>
-                            <a href="cancel_reserva.php?id=<?= $res['ID_Reserva']; ?>" class="btn btn-action-delete" onclick="return confirm('¿Cancelar esta reserva?')">Cancelar</a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-                <?php if (empty($reservas)) echo "<tr><td colspan='9'>No hay resultados.</td></tr>"; ?>
-            </tbody>
-        </table>
-    </div>
-</main>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Evento</th>
+                                <th>Usuario</th>
+                                <th>Personas</th>
+                                <th>Fecha Reserva</th>
+                                <th>Estado</th>
+                                <th>Teléfono</th>
+                                <th>Correo</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($reservas as $res): ?>
+                                <tr>
+                                    <td></td>
+                                    <td><?= htmlspecialchars($res['Nombre_Evento']); ?></td>
+                                    <td><?= htmlspecialchars($res['Nombre_Usuario'] ?? 'No registrado'); ?></td>
+                                    <td><?= htmlspecialchars($res['Cantidad_Personas']); ?></td>
+                                    <td><?= htmlspecialchars($res['Fecha_Reserva']); ?></td>
+                                    <td><?= htmlspecialchars($res['Estado']); ?></td>
+                                    <td><?= htmlspecialchars($res['Telefono']); ?></td>
+                                    <td><?= htmlspecialchars($res['Correo']); ?></td>
+                                    <td class="actions">
+                                        <a href="confirm_reserva.php?id=<?= $res['ID_Reserva']; ?>" class="btn btn-action-edit" title="Confirmar">
+                                            <i class="fas fa-check"></i>
+                                        </a>
+                                        <a href="cancel_reserva.php?id=<?= $res['ID_Reserva']; ?>" class="btn btn-action-delete" title="Cancelar" onclick="return confirm('¿Cancelar esta reserva?');">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                            <?php if (empty($reservas)) echo "<tr><td colspan='9'>No hay resultados.</td></tr>"; ?>
+                        </tbody>
+                    </table>
+
+                    <!-- PAGINACIÓN -->
+                    <div class="pagination">
+                        <?php if ($paginaActual > 1): ?>
+                            <a href="?page=<?= $paginaActual - 1 ?>&fecha=<?= urlencode($filtro_fecha) ?>&usuario=<?= urlencode($filtro_usuario) ?>">Anterior</a>
+                        <?php endif; ?>
+                        <?php for ($i = 1; $i <= $totalPaginas; $i++): ?>
+                            <a href="?page=<?= $i ?>&fecha=<?= urlencode($filtro_fecha) ?>&usuario=<?= urlencode($filtro_usuario) ?>" class="<?= ($i == $paginaActual) ? 'active' : '' ?>"><?= $i ?></a>
+                        <?php endfor; ?>
+                        <?php if ($paginaActual < $totalPaginas): ?>
+                            <a href="?page=<?= $paginaActual + 1 ?>&fecha=<?= urlencode($filtro_fecha) ?>&usuario=<?= urlencode($filtro_usuario) ?>">Siguiente</a>
+                        <?php endif; ?>
+                    </div>
+
+                </div>
+            </main>
 
         </div>
     </div>
 </body>
 </html>
-

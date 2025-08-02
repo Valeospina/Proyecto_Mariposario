@@ -325,15 +325,15 @@ a:hover {
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--sidebar-active-color);
-    background-color: var(--sidebar-active-bg);
+    background-color: #8BC34A;
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
     box-shadow: 0 4px 10px rgba(26, 188, 156, 0.2);
 }
 
 .btn-submit:hover {
-    background-color: #16A085;
+    background-color: #8BC34A;
     transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(26, 188, 156, 0.3);
+    box-shadow: 0 6px 15px #8BC34A(26, 188, 156, 0.3);
 }
 
 /* --- Table Styling --- */
@@ -667,4 +667,33 @@ table tbody tr:hover {
         font-size: 0.8rem;
     }
     
+}
+
+
+/* --- Estilos para organizar filtros en dos columnas --- */
+.form-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Espacio entre elementos */
+    max-width: 800px; /* Aumentamos un poco el ancho */
+    justify-content: space-between;
+}
+
+.form-group {
+    flex: 1 1 calc(50% - 10px); /* Ocupa el 50% menos el gap */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Botón ocupa todo el ancho en la parte inferior */
+.form-container .btn-submit {
+    flex: 1 1 100%;
+    margin-top: 10px;
+}
+
+/* Ajuste responsive para pantallas pequeñas */
+@media (max-width: 768px) {
+    .form-group {
+        flex: 1 1 100%; /* En pantallas pequeñas, cada uno en su fila */
+    }
 }

@@ -31,7 +31,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
             $conn->begin_transaction();
 
             // 1. Eliminar ítems de inventario asociados al producto
-            // Esto es crucial para evitar errores de clave foránea si no tienes ON DELETE CASCADE
             $stmt_delete_inventory = $conn->prepare("DELETE FROM Inventario WHERE ID_Producto = ?");
             if ($stmt_delete_inventory === false) {
                 throw new Exception("Error al preparar la eliminación de inventario: " . $conn->error);
@@ -74,33 +73,41 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
     exit;
 }
 
+// ******************************************************************
+// PAGINACIÓN PARA LISTADO DE PRODUCTOS
+// ******************************************************************
+$registrosPorPagina = 7; // Número de productos por página
+$paginaActual = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($paginaActual - 1) * $registrosPorPagina;
 
-// Lógica para obtener y mostrar productos
-// Consulta la tabla 'Producto' con los nombres de columnas actualizados.
-// Ya no seleccionamos 'Stock', sino 'Activo_Catalogo'.
+// Contar total de productos
+$totalQuery = "SELECT COUNT(*) AS total FROM Producto";
+$totalResult = $conn->query($totalQuery);
+$totalRegistros = $totalResult->fetch_assoc()['total'];
+$totalPaginas = ceil($totalRegistros / $registrosPorPagina);
+
+// Lógica para obtener y mostrar productos con paginación
 $products_query = "SELECT ID_Producto, Nombre, Categoria, Descripcion, Precio, Imagen_URL, Activo_Catalogo
-                   FROM Producto"; 
+                   FROM Producto
+                   ORDER BY ID_Producto DESC
+                   LIMIT ? OFFSET ?";
 
-$products_result = null;
-$products = []; 
-
+$products = [];
 try {
     if (isset($conn) && $conn instanceof mysqli) {
-        $products_result = $conn->query($products_query);
-        if ($products_result) {
-            while ($row = $products_result->fetch_assoc()) {
-                $products[] = $row;
-            }
-            $products_result->free(); 
-        } else {
-            throw new Exception("Error en la consulta SQL: " . $conn->error);
+        $stmt = $conn->prepare($products_query);
+        $stmt->bind_param("ii", $registrosPorPagina, $offset);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        while ($row = $result->fetch_assoc()) {
+            $products[] = $row;
         }
+        $stmt->close();
     } else {
         throw new Exception("Error: La conexión a la base de datos no está disponible o no es MySQLi.");
     }
 } catch (Exception $e) {
     error_log("Error al obtener productos: " . $e->getMessage());
-    // Muestra un mensaje de error legible al usuario
     $message = "Error al cargar los productos: " . htmlspecialchars($e->getMessage());
     $message_type = "danger";
 }
@@ -128,120 +135,32 @@ $page_title = 'Gestionar Productos';
     <link rel="stylesheet" href="../css/admin.css"> 
  
     <style>
-        :root {
-        --vibrant-pink: #e74c3c;
-        --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
-        --shadow-medium: 0 6px 16px rgba(0, 0, 0, 0.1);
-        }
-
-        /* 0) Aseguramos que las celdas centren su contenido */
-        table td, table th {
-        vertical-align: middle;
-        }
-
-        /* 1) Contenedor flex para alinear en fila y espaciar */
-        .action-links {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        }
-
-        /* 2) Estilos base de todos los botones de acción */
-        .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;                    /* espacio icono–texto */
-        padding: 8px 12px;           /* tamaño que pedías */
-        border-radius: 8px;
-        font-weight: 500;
-        font-size: 0.9rem;           /* tamaño que pedías */
-        cursor: pointer;
-        transition: background-color .2s, transform .2s, box-shadow .2s;
-        border: none;
-        text-decoration: none;
-        color: #fff;
-        flex: none;
-        line-height: 1;
-        box-sizing: border-box;
-        }
-
-        /* 3) Colores y estados */
-        .btn-action-edit {
-        background-color: #00BCD4;
-        }
-        .btn-action-edit:hover {
-        background-color: #00acc1;
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-medium);
-        }
-
-        .btn-action-delete {
-        background-color: var(--vibrant-pink);
-        }
-        .btn-action-delete:hover {
-        background-color: #d96974;
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-medium);
-        }
-
-       .action-btn-group {
+        
+        /* PAGINACIÓN */
+        .pagination {
+            margin-top: 20px;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Aplica a ambos botones */
-        .btn-action-edit,
-        .btn-action-delete {
-            padding: 17px 15px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
             justify-content: center;
-            min-width: 100px;  /* Ancho mínimo uniforme */
-            width: 70%;        /* Ambos ocuparán el mismo ancho */
-            max-width: 110px;   /* Opcional: evita que crezcan demasiado */
-            box-sizing: border-box;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            gap: 8px;
         }
-
-        .btn-action-edit {
-            background-color: #00BCD4;
+        .pagination a {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            text-decoration: none;
+            color: #333;
+            border-radius: 5px;
+        }
+        .pagination a.active {
+            background-color: #8BC34A;
             color: #fff;
+            font-weight: bold;
         }
-
-        .btn-action-edit:hover {
-            background-color: #0097a7;
+        .pagination a:hover {
+            background-color: #f0f0f0;
         }
-
-        .btn-action-delete {
-            background-color: #E74C3C;
-            color: #fff;
-        }
-
-        .btn-action-delete:hover {
-            background-color: #C0392B;
-        }
-
-        /* Aumentar ancho de la columna de descripción */
-        table td:nth-child(4),
-        table th:nth-child(4) {
-            width: 35%; /* Puedes ajustar a 30%, 35%, etc. según necesidad */
-            white-space: normal;
-        }
-
-        </style>
-
-   
+    </style>
 </head>
 <body>
-
-    <!-- El preloader ha sido eliminado de aquí -->
-
     <div class="admin-dashboard-layout">
         <aside class="sidebar">
             <div class="sidebar-header">
@@ -260,8 +179,7 @@ $page_title = 'Gestionar Productos';
                     <li><a href="pedidos.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'pedidos.php' || basename($_SERVER['PHP_SELF']) == 'edit_pedido.php') ? 'active' : ''; ?>"><i class="fas fa-shopping-cart"></i> Gestionar Pedidos</a></li>
                     <li><a href="reporte_ventas.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reporte_ventas.php') ? 'active' : ''; ?>"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li> 
                     <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
-                   <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
-
+                    <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
                 </ul>
             </nav>
             <div class="sidebar-footer">
@@ -325,10 +243,7 @@ $page_title = 'Gestionar Productos';
                                             <?php if (!empty($product['Imagen_URL'])): ?>
                                                 <?php
                                                 $image_src = htmlspecialchars($product['Imagen_URL']);
-                                                // Comprobar si la URL de la imagen es una URL externa (http/https)
-                                                // O si es una ruta local que empieza con 'uploads/productos/' (nuestra convención)
                                                 if (!filter_var($image_src, FILTER_VALIDATE_URL) && strpos($image_src, 'uploads/productos/') === 0) {
-                                                    // Si es una ruta local y estamos en admin/, añadir '../' para acceder correctamente
                                                     $image_src = '../' . $image_src;
                                                 }
                                                 ?>
@@ -340,16 +255,32 @@ $page_title = 'Gestionar Productos';
                                         <td data-label="Activo en Catálogo:">
                                             <?php echo $product['Activo_Catalogo'] ? '<span style="color: var(--sidebar-active-bg);"><i class="fas fa-check-circle"></i> Sí</span>' : '<span style="color: var(--danger-red);"><i class="fas fa-times-circle"></i> No</span>'; ?>
                                         </td>
-                                        <td class="action-links">
-                                            <div class="action-btn-group">
-                                                <a href="edit_product.php?id=<?= $product['ID_Producto'] ?>" class="btn btn-action-edit"><i class="fas fa-edit"></i> Editar</a>
-                                                <a href="products.php?action=delete&id=<?= $product['ID_Producto'] ?>" class="btn btn-action-delete" onclick="return confirm('¿Seguro que deseas eliminar este producto?');"><i class="fas fa-trash-alt"></i> Eliminar</a>
-                                            </div>
+                                        <td class="actions">
+                                            <a href="edit_product.php?id=<?= $product['ID_Producto'] ?>" class="btn btn-action-edit" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="products.php?action=delete&id=<?= $product['ID_Producto'] ?>" class="btn btn-action-delete" title="Eliminar" onclick="return confirm('¿Seguro que deseas eliminar este producto?');">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
+
+                        <!-- PAGINACIÓN -->
+                        <div class="pagination">
+                            <?php if ($paginaActual > 1): ?>
+                                <a href="?page=<?php echo $paginaActual - 1; ?>">Anterior</a>
+                            <?php endif; ?>
+                            <?php for ($i = 1; $i <= $totalPaginas; $i++): ?>
+                                <a href="?page=<?php echo $i; ?>" class="<?php echo ($i == $paginaActual) ? 'active' : ''; ?>"><?php echo $i; ?></a>
+                            <?php endfor; ?>
+                            <?php if ($paginaActual < $totalPaginas): ?>
+                                <a href="?page=<?php echo $paginaActual + 1; ?>">Siguiente</a>
+                            <?php endif; ?>
+                        </div>
+
                     <?php else: ?>
                         <p>No hay productos registrados.</p>
                     <?php endif; ?>

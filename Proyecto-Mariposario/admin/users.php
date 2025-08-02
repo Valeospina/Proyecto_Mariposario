@@ -18,22 +18,33 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
     $message_type = htmlspecialchars($_GET['type']);
 }
 
+// --- Paginación ---
+$registrosPorPagina = 10; // Cantidad de usuarios por página
+$paginaActual = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($paginaActual - 1) * $registrosPorPagina;
+
+// Contar total de usuarios
+$sqlCount = "SELECT COUNT(*) AS total FROM Usuario";
+$totalRegistros = $conn->query($sqlCount)->fetch_assoc()['total'];
+$totalPaginas = ceil($totalRegistros / $registrosPorPagina);
+
+// --- Consulta de usuarios con LIMIT y OFFSET ---
 $users = []; // Array para almacenar los usuarios
-// ATENCIÓN: Nombres de columna adaptados a tu DB: 'Nombre' (para usuario y rol) y 'Correo'
 $query = "SELECT u.ID_Usuario, u.Nombre AS Nombre_Usuario, u.Correo AS Email_Usuario, r.Nombre AS Nombre_Rol 
           FROM Usuario u
           JOIN Rol r ON u.ID_Rol = r.ID_Rol
-          ORDER BY u.Nombre"; // Ordenar por el nombre del usuario
+          ORDER BY u.Nombre
+          LIMIT ? OFFSET ?";
 
 try {
     if (isset($conn) && $conn instanceof mysqli) {
         $stmt = $conn->prepare($query);
+        $stmt->bind_param("ii", $registrosPorPagina, $offset);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
-                // Aquí usamos los alias para que el resto del código que usa 'Nombre_Usuario', 'Email' y 'Nombre_Rol' no cambie
                 $users[] = [
                     'ID_Usuario' => $row['ID_Usuario'],
                     'Nombre_Usuario' => $row['Nombre_Usuario'],
@@ -69,6 +80,29 @@ $page_title = 'Gestionar Usuarios';
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../css/admin.css">
+    <style>
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+        .pagination a {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            text-decoration: none;
+            color: #333;
+            border-radius: 5px;
+        }
+        .pagination a.active {
+            background-color: #8BC34A;
+            color: #fff;
+            font-weight: bold;
+        }
+        .pagination a:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
 </head>
 <body>
 
@@ -158,6 +192,19 @@ $page_title = 'Gestionar Usuarios';
                                     <?php endforeach; ?>
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- Paginación -->
+                        <div class="pagination">
+                            <?php if ($paginaActual > 1): ?>
+                                <a href="?page=<?php echo $paginaActual - 1; ?>">Anterior</a>
+                            <?php endif; ?>
+                            <?php for ($i = 1; $i <= $totalPaginas; $i++): ?>
+                                <a href="?page=<?php echo $i; ?>" class="<?php echo ($i == $paginaActual) ? 'active' : ''; ?>"><?php echo $i; ?></a>
+                            <?php endfor; ?>
+                            <?php if ($paginaActual < $totalPaginas): ?>
+                                <a href="?page=<?php echo $paginaActual + 1; ?>">Siguiente</a>
+                            <?php endif; ?>
                         </div>
                     <?php else: ?>
                         <p>No hay usuarios para mostrar.</p>
