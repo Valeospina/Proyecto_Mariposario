@@ -326,6 +326,96 @@ try {
             background-color: #fff3cd;
             border-color: #ffeeba;
         }
+
+                /* Estilos para el grupo de botones al final del formulario */
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px; /* Espacio entre los botones */
+            margin-top: 30px;
+        }
+
+        /* Estilo general para los botones */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            border: none;
+            text-decoration: none;
+        }
+
+        /* Estilo para el botón de Guardar Cambios */
+        .btn-submit {
+            background-color: var(--sidebar-active-bg); /* Verde Turquesa */
+            color: var(--sidebar-active-color);
+            flex-grow: 1; /* Permite que el botón ocupe el espacio disponible */
+            box-shadow: 0 4px 10px rgba(26, 188, 156, 0.2);
+        }
+
+        .btn-submit:hover {
+            background-color: #16A085; /* Tono más oscuro */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(26, 188, 156, 0.3);
+        }
+
+        /* Estilo para el botón Volver a la lista */
+        .btn-secondary {
+            background-color: var(--text-secondary); /* Gris */
+            color: white;
+            flex-grow: 1; /* Permite que el botón ocupe el espacio disponible */
+            box-shadow: 0 4px 10px rgba(127, 140, 141, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background-color: #6C7A89; /* Gris más oscuro */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(127, 140, 141, 0.3);
+        }
+
+        /* Iconos dentro de los botones */
+        .btn .fas {
+            margin-right: 8px;
+        }
+
+        /* Estilos de alerta (copiados de admin.css para consistencia) */
+        .alert {
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-light);
+        }
+
+        .alert-success { background-color: #D4EDDA; color: #155724; border: 1px solid #C3E6CB; }
+        .alert-danger { background-color: #F8D7DA; color: #721C24; border: 1px solid #F5C6CB; }
+        .alert-warning { background-color: #FFF3CD; color: #856404; border: 1px solid #FFEBAe; }
+        .alert-info { background-color: #D1ECF1; color: #0C5460; border: 1px solid #BEE5EB; }
+
+        /* Responsive adjustments for form */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 20px;
+            }
+            .button-group {
+                flex-direction: column; /* Apila los botones en pantallas pequeñas */
+            }
+            .btn-submit, .btn-secondary {
+                width: 100%; /* Ocupa todo el ancho cuando están apilados */
+                margin-bottom: 10px; /* Espacio entre botones apilados */
+            }
+            .btn-secondary {
+                margin-bottom: 0; /* Elimina el margen inferior del último botón apilado */
+            }
+        }
     </style>
 </head>
 <body>
@@ -336,15 +426,23 @@ try {
                 <h3>Admin Panel</h3>
             </div>
             <nav class="sidebar-nav">
-                <ul>
-                    <li><a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-home"></i> Dashboard</a></li>
-                    <li><a href="gestion_empleados.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'gestion_empleados.php' || basename($_SERVER['PHP_SELF']) == 'add_empleado.php' || basename($_SERVER['PHP_SELF']) == 'edit_empleado.php') ? 'active' : ''; ?>"><i class="fas fa-user-tie"></i> Gestionar Empleados</a></li>
-                    <li><a href="products.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'products.php' || basename($_SERVER['PHP_SELF']) == 'add_product.php' || basename($_SERVER['PHP_SELF']) == 'edit_product.php') ? 'active' : ''; ?>"><i class="fas fa-box"></i> Gestionar Productos</a></li>
-                    <li><a href="inventarioAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'inventarioAdmin.php' || basename($_SERVER['PHP_SELF']) == 'add_inventario.php' || basename($_SERVER['PHP_SELF']) == 'edit_inventario.php') ? 'active' : ''; ?>"><i class="fas fa-warehouse"></i> Gestionar Inventario</a></li>
-                    <li><a href="eventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'eventoAdmin.php' || basename($_SERVER['PHP_SELF']) == 'add_evento.php' || basename($_SERVER['PHP_SELF']) == 'edit_evento.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Eventos</a></li>
-                    <li><a href="pedidos.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'pedidos.php' || basename($_SERVER['PHP_SELF']) == 'edit_pedido.php') ? 'active' : ''; ?>"><i class="fas fa-shopping-cart"></i> Gestionar Pedidos</a></li>
-                    <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
-                </ul>
+                <div class="menu-scroll">
+                    <ul>
+                        <li><a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-home"></i> Dashboard</a></li>
+                        <li><a href="gestion_empleados.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['gestion_empleados.php', 'add_empleado.php', 'edit_empleado.php'])) ? 'active' : ''; ?>"><i class="fas fa-user-tie"></i> Gestionar Empleados</a></li>
+                        <li><a href="users.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'users.php') ? 'active' : ''; ?>"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
+                        <li><a href="products.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'products.php') ? 'active' : ''; ?>"><i class="fas fa-box"></i> Gestionar Productos</a></li>
+                        <li><a href="inventarioAdmin.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['inventarioAdmin.php', 'add_inventario.php', 'edit_inventario.php'])) ? 'active' : ''; ?>"><i class="fas fa-warehouse"></i> Gestionar Inventario</a></li>
+                        <li><a href="eventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'eventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Eventos</a></li>
+                        <li><a href="ReservaAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'ReservaAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-check"></i> Gestionar Reservas</a></li>
+                        <li><a href="InsEventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'InsEventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-clipboard-list"></i> Gestionar Asistencia</a></li>
+                        <li><a href="pedidos.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['pedidos.php', 'edit_pedido.php'])) ? 'active' : ''; ?>"><i class="fas fa-shopping-cart"></i> Gestionar Pedidos</a></li>
+                        <li><a href="reporte_ventas.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reporte_ventas.php') ? 'active' : ''; ?>"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li>
+                        <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
+                        <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
+                        <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Soporte</a></li>  
+                    </ul>
+                </div>
             </nav>
             <div class="sidebar-footer">
                 <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>

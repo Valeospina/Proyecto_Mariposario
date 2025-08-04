@@ -123,8 +123,9 @@ try {
 
 // Lógica para mostrar mensajes si vienen de una redirección
 if (isset($_GET['message']) && isset($_GET['type'])) {
-    $message = htmlspecialchars($_GET['message']);
-    $message_type = htmlspecialchars($_GET['type']);
+    // *** CORRECCIÓN APLICADA AQUÍ: Decodificar el mensaje antes de mostrarlo ***
+    $message = urldecode($_GET['message']); // Decodifica la URL primero
+    $message_type = htmlspecialchars($_GET['type']); // El tipo no necesita decodificación de URL
 }
 ?>
 <!DOCTYPE html>
@@ -140,8 +141,6 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
     <link rel="stylesheet" href="../css/admin.css">
 
     <style>
-        
-
         /* Estilos para la paginación */
         .pagination {
             margin-top: 20px;
@@ -174,22 +173,25 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
         <div class="sidebar-header">
             <h3>Admin Panel</h3>
         </div>
-        <nav class="sidebar-nav">
-            <ul>
-                <li><a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="gestion_empleados.php" class="active"><i class="fas fa-user-tie"></i> Gestionar Empleados</a></li>
-                <li><a href="users.php"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
-                <li><a href="products.php"><i class="fas fa-box"></i> Gestionar Productos</a></li>
-                <li><a href="inventarioAdmin.php"><i class="fas fa-warehouse"></i> Gestionar Inventario</a></li>
-                <li><a href="eventoAdmin.php"><i class="fas fa-calendar-alt"></i> Gestionar Eventos</a></li>
-                <li><a href="ReservaAdmin.php"><i class="fas fa-calendar-check"></i> Gestionar Reservas</a></li>
-                <li><a href="InsEventoAdmin.php"><i class="fas fa-clipboard-list"></i> Gestionar Asistencia</a></li>
-                <li><a href="pedidos.php"><i class="fas fa-shopping-cart"></i> Gestionar Pedidos</a></li>
-                <li><a href="reporte_ventas.php"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li>
-                <li><a href="reports.php"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
-                <li><a href="reportAsis.php"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
-            </ul>
-        </nav>
+            <nav class="sidebar-nav">
+                <div class="menu-scroll">
+                    <ul>
+                        <li><a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-home"></i> Dashboard</a></li>
+                        <li><a href="gestion_empleados.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['gestion_empleados.php', 'add_empleado.php', 'edit_empleado.php'])) ? 'active' : ''; ?>"><i class="fas fa-user-tie"></i> Gestionar Empleados</a></li>
+                        <li><a href="users.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'users.php') ? 'active' : ''; ?>"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
+                        <li><a href="products.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'products.php') ? 'active' : ''; ?>"><i class="fas fa-box"></i> Gestionar Productos</a></li>
+                        <li><a href="inventarioAdmin.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['inventarioAdmin.php', 'add_inventario.php', 'edit_inventario.php'])) ? 'active' : ''; ?>"><i class="fas fa-warehouse"></i> Gestionar Inventario</a></li>
+                        <li><a href="eventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'eventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Eventos</a></li>
+                        <li><a href="ReservaAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'ReservaAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-check"></i> Gestionar Reservas</a></li>
+                        <li><a href="InsEventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'InsEventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-clipboard-list"></i> Gestionar Asistencia</a></li>
+                        <li><a href="pedidos.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['pedidos.php', 'edit_pedido.php'])) ? 'active' : ''; ?>"><i class="fas fa-shopping-cart"></i> Gestionar Pedidos</a></li>
+                        <li><a href="reporte_ventas.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reporte_ventas.php') ? 'active' : ''; ?>"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li>
+                        <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
+                        <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
+                        <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Soporte</a></li>  
+                    </ul>
+                </div>
+            </nav>
         <div class="sidebar-footer">
             <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
         </div>
@@ -204,11 +206,11 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
 
         <main class="content-area">
             <div class="admin-content">
-                <?php if (!empty($message)): ?>
-                    <div class="alert alert-<?php echo htmlspecialchars($message_type); ?>">
-                        <?php echo htmlspecialchars($message); ?>
-                    </div>
-                <?php endif; ?>
+            <?php if (!empty($message)): ?>
+                <div class="alert alert-<?php echo htmlspecialchars($message_type); ?>">
+                    <?php echo htmlspecialchars($message); ?>
+                </div>
+            <?php endif; ?>
 
                 <div class="actions-bar">
                     <a href="add_empleado.php" class="btn btn-add-product"><i class="fas fa-user-plus"></i> Añadir Nuevo Empleado</a>
@@ -253,7 +255,6 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
                         </table>
                     </div>
 
-                    <!-- Paginación -->
                     <div class="pagination">
                         <?php if ($paginaActual > 1): ?>
                             <a href="?page=<?php echo $paginaActual - 1; ?>">Anterior</a>

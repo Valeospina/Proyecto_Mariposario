@@ -103,6 +103,122 @@ $page_title = 'Gestionar Inventario';
     <link rel="stylesheet" href="../css/admin.css" />
 </head>
 <body>
+   <style>
+        .admin-content {
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .btn-main {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #28a745;
+            color: #fff;
+            font-weight: 600;
+            padding: 10px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.3s ease;
+        }
+        .btn-main:hover { background: #218838; }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        table th, table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        table tbody tr:hover {
+            background: #f4f4f4;
+        }
+
+        .description-cell {
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        table img {
+            width: 50px;
+            height: 50px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+
+        .actions {
+            
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .btn-edit, .btn-delete {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+        }
+
+        .btn-edit { background: #007bff; }
+        .btn-edit:hover { background: #0056b3; }
+        .btn-delete { background: #dc3545; }
+        .btn-delete:hover { background: #c82333; }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 8px;
+        }
+
+        .pagination a {
+            padding: 8px 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .pagination a.active {
+            background: #28a745;
+            color: #fff;
+            border-color: #28a745;
+        }
+
+        .pagination a:hover {
+            background: #f1f1f1;
+        }
+    </style>
 
     <div class="admin-dashboard-layout">
         <aside class="sidebar">
@@ -110,21 +226,23 @@ $page_title = 'Gestionar Inventario';
                 <h3>Admin Panel</h3>
             </div>
             <nav class="sidebar-nav">
-                <ul>
-                    <li><a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-home"></i> Dashboard</a></li>
-                    <li><a href="gestion_empleados.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'gestion_empleados.php' || basename($_SERVER['PHP_SELF']) == 'add_empleado.php' || basename($_SERVER['PHP_SELF']) == 'edit_empleado.php') ? 'active' : ''; ?>"><i class="fas fa-user-tie"></i> Gestionar Empleados</a></li>
-                    <li><a href="users.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'users.php') ? 'active' : ''; ?>"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
-                    <li><a href="products.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'products.php') ? 'active' : ''; ?>"><i class="fas fa-box"></i> Gestionar Productos</a></li>
-                    <li><a href="inventarioAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'inventarioAdmin.php' || basename($_SERVER['PHP_SELF']) == 'add_inventario.php' || basename($_SERVER['PHP_SELF']) == 'edit_inventario.php') ? 'active' : ''; ?>"><i class="fas fa-warehouse"></i> Gestionar Inventario</a></li>
-                    <li><a href="eventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'eventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Eventos</a></li>                
-                    <li><a href="ReservaAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'ReservaAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Reservas</a></li>
-                    <li><a href="InsEventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'InsEventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Asistencia</a></li>
-                    <li><a href="pedidos.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'pedidos.php' || basename($_SERVER['PHP_SELF']) == 'edit_pedido.php') ? 'active' : ''; ?>"><i class="fas fa-shopping-cart"></i> Gestionar Pedidos</a></li>
-                    <li><a href="reporte_ventas.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reporte_ventas.php') ? 'active' : ''; ?>"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li>
-                    <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
-                    <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
-
-                </ul>
+                <div class="menu-scroll">
+                    <ul>
+                        <li><a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-home"></i> Dashboard</a></li>
+                        <li><a href="gestion_empleados.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['gestion_empleados.php', 'add_empleado.php', 'edit_empleado.php'])) ? 'active' : ''; ?>"><i class="fas fa-user-tie"></i> Gestionar Empleados</a></li>
+                        <li><a href="users.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'users.php') ? 'active' : ''; ?>"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
+                        <li><a href="products.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'products.php') ? 'active' : ''; ?>"><i class="fas fa-box"></i> Gestionar Productos</a></li>
+                        <li><a href="inventarioAdmin.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['inventarioAdmin.php', 'add_inventario.php', 'edit_inventario.php'])) ? 'active' : ''; ?>"><i class="fas fa-warehouse"></i> Gestionar Inventario</a></li>
+                        <li><a href="eventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'eventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Eventos</a></li>
+                        <li><a href="ReservaAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'ReservaAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-check"></i> Gestionar Reservas</a></li>
+                        <li><a href="InsEventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'InsEventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-clipboard-list"></i> Gestionar Asistencia</a></li>
+                        <li><a href="pedidos.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['pedidos.php', 'edit_pedido.php'])) ? 'active' : ''; ?>"><i class="fas fa-shopping-cart"></i> Gestionar Pedidos</a></li>
+                        <li><a href="reporte_ventas.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reporte_ventas.php') ? 'active' : ''; ?>"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li>
+                        <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
+                        <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
+                        <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-headset"></i> Soporte</a></li>  
+                    </ul>
+                </div>
             </nav>
             <div class="sidebar-footer">
                 <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
@@ -169,7 +287,7 @@ $page_title = 'Gestionar Inventario';
                         <table>
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                
                                     <th>Nombre del Producto</th> <th>Tipo/Categoría</th> <th>SKU</th>
                                     <th>Stock Actual</th>
                                     <th>Stock Mínimo</th>
@@ -180,7 +298,7 @@ $page_title = 'Gestionar Inventario';
                             <tbody>
                                 <?php foreach ($inventario_items as $item): ?>
                                     <tr>
-                                        <td data-label="ID"><?php echo htmlspecialchars($item['ID_Inventario']); ?></td>
+                                       
                                         <td data-label="Nombre del Producto"><?php echo htmlspecialchars($item['NombreProducto']); ?></td>
                                         <td data-label="Tipo/Categoría"><?php echo htmlspecialchars($item['TipoProducto']); ?></td>
                                         <td data-label="SKU"><?php echo htmlspecialchars($item['SKU']); ?></td>
@@ -198,10 +316,18 @@ $page_title = 'Gestionar Inventario';
                                         <td data-label="Activo (Inventario)">
                                             <?php echo $item['Activo'] ? '<span style="color: var(--sidebar-active-bg);"><i class="fas fa-check-circle"></i> Sí</span>' : '<span style="color: #E74C3C;"><i class="fas fa-times-circle"></i> No</span>'; ?>
                                         </td>
-                                        <td class="action-links">
-                                            <a href="edit_inventario.php?id=<?php echo htmlspecialchars($item['ID_Inventario']); ?>" class="btn btn-action-edit" title="Editar"><i class="fas fa-edit"></i></a>
-                                            <a href="inventarioAdmin.php?action=delete&id=<?php echo htmlspecialchars($item['ID_Inventario']); ?>" class="btn btn-action-delete" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar este ítem del inventario?');"><i class="fas fa-trash-alt"></i></a>
-                                        </td>
+                                            <td class="actions">
+                                                <a href="edit_inventario.php?id=<?php echo htmlspecialchars($item['ID_Inventario']); ?>" 
+                                                class="btn-edit" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="inventarioAdmin.php?action=delete&id=<?php echo htmlspecialchars($item['ID_Inventario']); ?>" 
+                                                class="btn-delete" title="Eliminar" 
+                                                onclick="return confirm('¿Estás seguro de que quieres eliminar este ítem del inventario?');">
+                                                <i class="fas fa-trash-alt"></i>
+                                                </a>
+                                            </td>
+
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>

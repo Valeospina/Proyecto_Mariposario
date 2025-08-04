@@ -17,7 +17,7 @@ if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] != 1) {
     exit;
 }
 
-$page_title = 'Añadir Nuevo Empleado';
+$page_title = 'Agregar Empleado';
 $roles = [];
 
 try {
@@ -32,19 +32,19 @@ try {
             throw new Exception("Error al cargar roles: " . $conn->error);
         }
 
-        // --- Lógica para procesar el formulario de añadir empleado ---
+        // --- Lógica para procesar el formulario de añadir nuevo empleado ---
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $nombre = trim($_POST['nombre'] ?? '');
             $correo = trim($_POST['correo'] ?? '');
             $contrasena = $_POST['contrasena'] ?? '';
             $id_rol = $_POST['id_rol'] ?? '';
             $salario = $_POST['salario'] ?? 0.00;
-            $horario = trim($_POST['horario'] ?? 'No especificado');
+            $horario = trim($_POST['horario'] ?? '');
             $fecha_contratacion = trim($_POST['fecha_contratacion'] ?? '');
 
             // Validaciones básicas
             if (empty($nombre) || empty($correo) || empty($contrasena) || empty($id_rol)) {
-                $message = "Todos los campos obligatorios deben ser completados (Nombre, Correo, Contraseña, Rol).";
+                $message = "Los campos Nombre, Correo, Contraseña y Rol son obligatorios.";
                 $message_type = "danger";
             } elseif (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
                 $message = "El formato del correo electrónico no es válido.";
@@ -66,7 +66,6 @@ try {
                         $message_type = "danger";
                         $conn->rollback(); // Revertir la transacción
                     } else {
-                        // Hashear la contraseña
                         $contrasena_hash = password_hash($contrasena, PASSWORD_DEFAULT);
 
                         // 1. Insertar en la tabla Usuario
@@ -75,11 +74,10 @@ try {
                         if (!$stmt_user->execute()) {
                             throw new Exception("Error al insertar usuario: " . $stmt_user->error);
                         }
-                        $new_user_id = $stmt_user->insert_id; // Obtener el ID del nuevo usuario
+                        $nuevo_usuario_id = $stmt_user->insert_id; // Obtener el ID del usuario recién insertado
                         $stmt_user->close();
 
-                        // 2. Insertar en la tabla Empleado (si se ha agregado el rol de empleado o similar)
-                        // Asegurarse de que la fecha de contratación es válida
+                        // 2. Insertar en la tabla Empleado
                         $fecha_contratacion_valid = null;
                         if (!empty($fecha_contratacion)) {
                             $date_obj = DateTime::createFromFormat('Y-m-d', $fecha_contratacion);
@@ -88,45 +86,44 @@ try {
                             } else {
                                 $message = "Formato de fecha de contratación no válido. Use AAAA-MM-DD.";
                                 $message_type = "danger";
-                                $conn->rollback(); // Revertir si la fecha es inválida
-                                goto end_of_post_logic; // Salir del bloque POST
+                                $conn->rollback();
+                                goto end_of_post_logic_add; // Saltar al final de la lógica POST
                             }
                         }
-                        
-                        // Insertar en la tabla Empleado
+
                         $stmt_empleado = $conn->prepare("INSERT INTO Empleado (ID_Usuario, Salario, Horario, Fecha_Contratacion) VALUES (?, ?, ?, ?)");
-                        $stmt_empleado->bind_param("idss", $new_user_id, $salario, $horario, $fecha_contratacion_valid);
-                        
+                        $stmt_empleado->bind_param("idss", $nuevo_usuario_id, $salario, $horario, $fecha_contratacion_valid);
                         if (!$stmt_empleado->execute()) {
                             throw new Exception("Error al insertar en Empleado: " . $stmt_empleado->error);
                         }
                         $stmt_empleado->close();
 
                         $conn->commit(); // Confirmar la transacción
-                        $message = "Empleado '" . htmlspecialchars($nombre) . "' añadido exitosamente.";
+                        $message = "Empleado '" . htmlspecialchars($nombre) . "' agregado exitosamente.";
                         $message_type = "success";
-                        header('Location: gestion_empleados.php?message=' . urlencode($message) . '&type=' . urlencode($message_type));
-                        exit;
+
+                        // Limpiar campos del formulario después de una inserción exitosa si lo deseas
+                        $_POST = array(); // Esto vaciaría el formulario
                     }
-                } catch (Exception $e) {
-                    $conn->rollback(); // Revertir cualquier cambio si ocurre un error
-                    error_log("Error en transacción al añadir empleado: " . $e->getMessage());
-                    $message = "Error en transacción al añadir empleado: " . htmlspecialchars($e->getMessage());
+                } catch (Exception | mysqli_sql_exception $e) {
+                    $conn->rollback();
+                    error_log("Error en transacción al agregar empleado: " . $e->getMessage());
+                    $message = "Error en transacción al agregar empleado: " . htmlspecialchars($e->getMessage());
                     $message_type = "danger";
                 } finally {
                     $check_stmt->close();
                 }
             }
         }
+        end_of_post_logic_add: // Etiqueta para el goto
     } else {
         throw new Exception("Error: La conexión a la base de datos no está disponible o no es MySQLi.");
     }
-} catch (Exception $e) {
-    error_log("Error general al añadir empleado: " . $e->getMessage());
-    $message = "Error general al añadir empleado: " . htmlspecialchars($e->getMessage());
+} catch (Exception | mysqli_sql_exception $e) {
+    error_log("Error general al cargar/agregar empleado: " . $e->getMessage());
+    $message = "Error general al cargar/agregar empleado: " . htmlspecialchars($e->getMessage());
     $message_type = "danger";
 }
-end_of_post_logic: // Etiqueta para el goto
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -140,7 +137,7 @@ end_of_post_logic: // Etiqueta para el goto
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../css/admin.css">
     <style>
-        /* Estilos específicos para formularios */
+        /* Estilos generales para formularios */
         .form-container {
             background-color: #fff;
             padding: 30px;
@@ -181,7 +178,7 @@ end_of_post_logic: // Etiqueta para el goto
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 1em;
-            box-sizing: border-box; /* Incluye padding y borde en el ancho total */
+            box-sizing: border-box;
         }
 
         .form-group input[type="text"]:focus,
@@ -196,64 +193,96 @@ end_of_post_logic: // Etiqueta para el goto
             outline: none;
         }
 
-        .form-actions {
-            text-align: right;
+         /* Estilos para el grupo de botones al final del formulario */
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px; /* Espacio entre los botones */
             margin-top: 30px;
         }
 
-        .form-actions button, .form-actions a {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
+        /* Estilo general para los botones */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 1rem;
             cursor: pointer;
-            font-size: 1em;
+            transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            border: none;
             text-decoration: none;
-            display: inline-block;
-            margin-left: 10px;
-            transition: background-color 0.3s ease;
         }
 
-        .form-actions .btn-submit {
-            background-color: #28a745;
+        /* Estilo para el botón de Guardar Cambios */
+        .btn-submit {
+            background-color: var(--sidebar-active-bg); /* Verde Turquesa */
+            color: var(--sidebar-active-color);
+            flex-grow: 1; /* Permite que el botón ocupe el espacio disponible */
+            box-shadow: 0 4px 10px rgba(26, 188, 156, 0.2);
+        }
+
+        .btn-submit:hover {
+            background-color: #16A085; /* Tono más oscuro */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(26, 188, 156, 0.3);
+        }
+
+        /* Estilo para el botón Volver a la lista */
+        .btn-secondary {
+            background-color: var(--text-secondary); /* Gris */
             color: white;
+            flex-grow: 1; /* Permite que el botón ocupe el espacio disponible */
+            box-shadow: 0 4px 10px rgba(127, 140, 141, 0.2);
         }
 
-        .form-actions .btn-submit:hover {
-            background-color: #218838;
+        .btn-secondary:hover {
+            background-color: #6C7A89; /* Gris más oscuro */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(127, 140, 141, 0.3);
         }
 
-        .form-actions .btn-cancel {
-            background-color: #6c757d;
-            color: white;
+        /* Iconos dentro de los botones */
+        .btn .fas {
+            margin-right: 8px;
         }
 
-        .form-actions .btn-cancel:hover {
-            background-color: #5a6268;
-        }
-
-        /* Estilos de alerta (si no están en admin.css) */
+        /* Estilos de alerta (copiados de admin.css para consistencia) */
         .alert {
-            padding: 15px;
+            padding: 15px 20px;
             margin-bottom: 20px;
-            border: 1px solid transparent;
-            border-radius: 4px;
-            font-size: 1em;
+            border-radius: 8px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-light);
         }
-        .alert-success {
-            color: #155724;
-            background-color: #d4edda;
-            border-color: #c3e6cb;
+
+        .alert-success { background-color: #D4EDDA; color: #155724; border: 1px solid #C3E6CB; }
+        .alert-danger { background-color: #F8D7DA; color: #721C24; border: 1px solid #F5C6CB; }
+        .alert-warning { background-color: #FFF3CD; color: #856404; border: 1px solid #FFEBAe; }
+        .alert-info { background-color: #D1ECF1; color: #0C5460; border: 1px solid #BEE5EB; }
+
+        /* Responsive adjustments for form */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 20px;
+            }
+            .button-group {
+                flex-direction: column; /* Apila los botones en pantallas pequeñas */
+            }
+            .btn-submit, .btn-secondary {
+                width: 100%; /* Ocupa todo el ancho cuando están apilados */
+                margin-bottom: 10px; /* Espacio entre botones apilados */
+            }
+            .btn-secondary {
+                margin-bottom: 0; /* Elimina el margen inferior del último botón apilado */
+            }
         }
-        .alert-danger {
-            color: #721c24;
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-        }
-        .alert-warning {
-            color: #856404;
-            background-color: #fff3cd;
-            border-color: #ffeeba;
-        }
+
     </style>
 </head>
 <body>
@@ -264,15 +293,23 @@ end_of_post_logic: // Etiqueta para el goto
                 <h3>Admin Panel</h3>
             </div>
             <nav class="sidebar-nav">
-                <ul>
-                    <li><a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-home"></i> Dashboard</a></li>
-                    <li><a href="gestion_empleados.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'gestion_empleados.php' || basename($_SERVER['PHP_SELF']) == 'add_empleado.php' || basename($_SERVER['PHP_SELF']) == 'edit_empleado.php') ? 'active' : ''; ?>"><i class="fas fa-user-tie"></i> Gestionar Empleados</a></li>
-                    <li><a href="products.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'products.php' || basename($_SERVER['PHP_SELF']) == 'add_product.php' || basename($_SERVER['PHP_SELF']) == 'edit_product.php') ? 'active' : ''; ?>"><i class="fas fa-box"></i> Gestionar Productos</a></li>
-                    <li><a href="inventarioAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'inventarioAdmin.php' || basename($_SERVER['PHP_SELF']) == 'add_inventario.php' || basename($_SERVER['PHP_SELF']) == 'edit_inventario.php') ? 'active' : ''; ?>"><i class="fas fa-warehouse"></i> Gestionar Inventario</a></li>
-                    <li><a href="eventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'eventoAdmin.php' || basename($_SERVER['PHP_SELF']) == 'add_evento.php' || basename($_SERVER['PHP_SELF']) == 'edit_evento.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Eventos</a></li>
-                    <li><a href="pedidos.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'pedidos.php' || basename($_SERVER['PHP_SELF']) == 'edit_pedido.php') ? 'active' : ''; ?>"><i class="fas fa-shopping-cart"></i> Gestionar Pedidos</a></li>
-                    <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
-                </ul>
+                <div class="menu-scroll">
+                    <ul>
+                        <li><a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-home"></i> Dashboard</a></li>
+                        <li><a href="gestion_empleados.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['gestion_empleados.php', 'add_empleado.php', 'edit_empleado.php'])) ? 'active' : ''; ?>"><i class="fas fa-user-tie"></i> Gestionar Empleados</a></li>
+                        <li><a href="users.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'users.php') ? 'active' : ''; ?>"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
+                        <li><a href="products.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'products.php') ? 'active' : ''; ?>"><i class="fas fa-box"></i> Gestionar Productos</a></li>
+                        <li><a href="inventarioAdmin.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['inventarioAdmin.php', 'add_inventario.php', 'edit_inventario.php'])) ? 'active' : ''; ?>"><i class="fas fa-warehouse"></i> Gestionar Inventario</a></li>
+                        <li><a href="eventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'eventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Eventos</a></li>
+                        <li><a href="ReservaAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'ReservaAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-check"></i> Gestionar Reservas</a></li>
+                        <li><a href="InsEventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'InsEventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-clipboard-list"></i> Gestionar Asistencia</a></li>
+                        <li><a href="pedidos.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['pedidos.php', 'edit_pedido.php'])) ? 'active' : ''; ?>"><i class="fas fa-shopping-cart"></i> Gestionar Pedidos</a></li>
+                        <li><a href="reporte_ventas.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reporte_ventas.php') ? 'active' : ''; ?>"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li>
+                        <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
+                        <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
+                        <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Soporte</a></li>
+                    </ul>
+                </div>
             </nav>
             <div class="sidebar-footer">
                 <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
@@ -304,55 +341,58 @@ end_of_post_logic: // Etiqueta para el goto
                         </div>
                     <?php endif; ?>
 
-                    <div class="form-container">
-                        <h3>Añadir Nuevo Empleado</h3>
-                        <form action="add_empleado.php" method="POST">
-                            <div class="form-group">
-                                <label for="nombre">Nombre Completo:</label>
-                                <input type="text" id="nombre" name="nombre" required>
+                            <div class="form-container">
+                                <h3>Agregar Nuevo Empleado</h3>
+                                <form action="add_empleado.php" method="POST">
+                                    <div class="form-group">
+                                        <label for="nombre">Nombre Completo:</label>
+                                        <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($_POST['nombre'] ?? ''); ?>" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="correo">Correo Electrónico:</label>
+                                        <input type="email" id="correo" name="correo" value="<?php echo htmlspecialchars($_POST['correo'] ?? ''); ?>" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="contrasena">Contraseña:</label>
+                                        <input type="password" id="contrasena" name="contrasena" minlength="6" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="id_rol">Rol:</label>
+                                        <select id="id_rol" name="id_rol" required>
+                                            <option value="">Seleccione un Rol</option>
+                                            <?php foreach ($roles as $rol): ?>
+                                                <option value="<?php echo htmlspecialchars($rol['ID_Rol']); ?>"
+                                                    <?php echo (isset($_POST['id_rol']) && $_POST['id_rol'] == $rol['ID_Rol']) ? 'selected' : ''; ?>>
+                                                    <?php echo htmlspecialchars($rol['Nombre']); ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="salario">Salario (₡):</label>
+                                        <input type="number" id="salario" name="salario" step="0.01" min="0" value="<?php echo htmlspecialchars($_POST['salario'] ?? '0.00'); ?>">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="horario">Horario:</label>
+                                        <input type="text" id="horario" name="horario" value="<?php echo htmlspecialchars($_POST['horario'] ?? ''); ?>" placeholder="Ej: L-V 8:00 AM - 5:00 PM">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="fecha_contratacion">Fecha de Contratación:</label>
+                                        <input type="date" id="fecha_contratacion" name="fecha_contratacion" value="<?php echo htmlspecialchars($_POST['fecha_contratacion'] ?? ''); ?>">
+                                    </div>
+                                    <div class="button-group">
+                                        <button type="submit" class="btn btn-submit"><i class="fas fa-save"></i> Guardar Empleado</button>
+                                        <a href="gestion_empleados.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver a la lista</a>
+                                    </div>
+                                </form>
                             </div>
-                            <div class="form-group">
-                                <label for="correo">Correo Electrónico:</label>
-                                <input type="email" id="correo" name="correo" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="contrasena">Contraseña:</label>
-                                <input type="password" id="contrasena" name="contrasena" required minlength="6">
-                            </div>
-                            <div class="form-group">
-                                <label for="id_rol">Rol:</label>
-                                <select id="id_rol" name="id_rol" required>
-                                    <option value="">Seleccione un Rol</option>
-                                    <?php foreach ($roles as $rol): ?>
-                                        <option value="<?php echo htmlspecialchars($rol['ID_Rol']); ?>">
-                                            <?php echo htmlspecialchars($rol['Nombre']); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="salario">Salario (₡):</label>
-                                <input type="number" id="salario" name="salario" step="0.01" min="0" value="0.00">
-                            </div>
-                            <div class="form-group">
-                                <label for="horario">Horario:</label>
-                                <input type="text" id="horario" name="horario" placeholder="Ej: L-V 8:00 AM - 5:00 PM">
-                            </div>
-                            <div class="form-group">
-                                <label for="fecha_contratacion">Fecha de Contratación:</label>
-                                <input type="date" id="fecha_contratacion" name="fecha_contratacion">
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit" class="btn-submit"><i class="fas fa-save"></i> Guardar Empleado</button>
-                                <a href="gestion_empleados.php" class="btn-cancel"><i class="fas fa-times"></i> Cancelar</a>
-                            </div>
+
                         </form>
                     </div>
                 </div>
             </main>
         </div>
     </div>
-
 </body>
 </html>
 <?php

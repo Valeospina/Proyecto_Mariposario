@@ -1,4 +1,4 @@
-/* admin.css - Estilo de Panel de Administración moderno (Inspirado en la imagen) */
+/* admin.css - Estilo de Panel de Administración moderno */
 
 /* --- Variables de Color --- */
 :root {
@@ -17,6 +17,11 @@
     --text-secondary: #7F8C8D;      /* Texto secundario (gris) */
     --accent-blue: #3498DB;         /* Azul vibrante (para botones secundarios, iconos) */
     --danger-red: #E74C3C;          /* Rojo para eliminar */
+
+    /* Nuevas variables para el verde de los botones, más específico */
+    --primary-green-btn: #8BC34A; /* Verde más claro para botones principales */
+    --primary-green-btn-hover: #7CB342; /* Verde un poco más oscuro para hover */
+
 
     /* Sombras */
     --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -39,12 +44,14 @@ body {
 
 a {
     text-decoration: none;
-    color: var(--primary-green);
+    /* Considera cambiar esto a una variable si este verde es distinto al de los botones */
+    color: var(--primary-green-btn);
     transition: color 0.2s ease;
 }
 
 a:hover {
-    color: var(--secondary-green);
+    /* Considera cambiar esto a una variable si este verde es distinto al de los botones */
+    color: var(--primary-green-btn-hover);
 }
 
 /* --- Main Layout --- */
@@ -57,7 +64,7 @@ a:hover {
 /* --- Sidebar --- */
 .sidebar {
     width: 250px; /* Ancho fijo de la sidebar */
-    background-color: #212529;
+    background-color: #212529; /* Color de fondo oscuro para la sidebar */
     color: var(--sidebar-link-color);
     display: flex;
     flex-direction: column;
@@ -114,9 +121,9 @@ a:hover {
 }
 
 .sidebar-nav ul li a.active {
-    background-color: #8BC34A;
+    background-color: var(--primary-green-btn); /* Usar la nueva variable para el activo */
     color: var(--sidebar-active-color);
-    border-left-color: #8BC34A; /* Resalta el activo */
+    border-left-color: var(--primary-green-btn); /* Resalta el activo */
     font-weight: 500;
 }
 
@@ -138,6 +145,27 @@ a:hover {
 .sidebar-footer a i {
     margin-right: 8px;
 }
+
+.sidebar-nav .menu-scroll {
+    max-height: calc(100vh - 150px); /* Ajusta 150px según el header/footer de la sidebar */
+    overflow-y: auto;
+    overflow-x: hidden; /* Para evitar scroll horizontal innecesario */
+}
+
+/* Opcional: para hacer el scroll más bonito */
+.sidebar-nav .menu-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-nav .menu-scroll::-webkit-scrollbar-thumb {
+    background-color: #bbb;
+    border-radius: 3px;
+}
+
+.sidebar-nav .menu-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: #999;
+}
+
 
 /* --- Main Content Area --- */
 .main-panel {
@@ -267,23 +295,24 @@ a:hover {
     cursor: pointer;
     transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
     border: none;
+    text-decoration: none; /* Asegurar que los botones que son enlaces no tengan subrayado */
 }
 
 .btn i {
     margin-right: 8px;
 }
 
-/* Primary Button (Add Product) */
+/* Primary Button (Add Product, general green button) */
 .btn-add-product {
-    background-color: #8BC34A; /* Verde Turquesa */
+    background-color: var(--primary-green-btn);
     color: var(--sidebar-active-color);
-    box-shadow: 0 4px 10px rgba(26, 188, 156, 0.2);
+    box-shadow: 0 4px 10px rgba(139, 195, 74, 0.2);
 }
 
 .btn-add-product:hover {
-    background-color: #8BC34A; /* Tono más oscuro */
+    background-color: var(--primary-green-btn-hover);
     transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(26, 188, 156, 0.3);
+    box-shadow: 0 6px 15px rgba(139, 195, 74, 0.3);
 }
 
 /* Action Buttons (Edit, Delete) in tables */
@@ -296,9 +325,9 @@ a:hover {
 }
 
 .btn-action-edit:hover {
-    background-color: #00BCD4; /* Tono más oscuro */
+    background-color: #008C9E; /* Tono más oscuro */
     transform: translateY(-1px);
-    box-shadow: 0 2px 5px rgba(52, 152, 219, 0.2);
+    box-shadow: 0 2px 5px rgba(0, 188, 212, 0.2);
 }
 
 .btn-action-delete {
@@ -312,28 +341,6 @@ a:hover {
     background-color: #C0392B; /* Tono más oscuro */
     transform: translateY(-1px);
     box-shadow: 0 2px 5px rgba(231, 76, 60, 0.2);
-}
-
-/* Form Submit Button */
-.btn-submit {
-    display: block;
-    width: 100%;
-    padding: 15px 25px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--sidebar-active-color);
-    background-color: #8BC34A;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 4px 10px rgba(26, 188, 156, 0.2);
-}
-
-.btn-submit:hover {
-    background-color: #8BC34A;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px #8BC34A(26, 188, 156, 0.3);
 }
 
 /* --- Table Styling --- */
@@ -376,38 +383,57 @@ table tbody tr:hover {
     transition: background-color 0.2s ease;
 }
 
-/* --- Form Styles --- */
+/* --- Form Styles (Aplicado a add_empleado.php y otros formularios) --- */
 .form-container {
     background-color: var(--card-bg);
-    padding: 25px;
+    padding: 30px; /* Más espacio interior */
     border-radius: 12px;
     box-shadow: var(--shadow-medium);
-    max-width: 500px; /* Ancho máximo para formularios */
-    margin: 0 auto; /* Centrar el formulario */
+    max-width: 650px; /* Ancho máximo para formularios de 2 columnas */
+    margin: 30px auto; /* Centrar con margen superior/inferior */
+    display: flex; /* Habilita Flexbox */
+    flex-wrap: wrap; /* Permite que los elementos se envuelvan */
+    gap: 20px; /* Espacio uniforme entre los grupos de formulario */
+}
+
+.form-container h3 {
+    width: 100%; /* El título siempre ocupa todo el ancho */
+    margin-top: 0;
+    margin-bottom: 25px; /* Más espacio debajo del título */
+    color: var(--text-dark);
+    font-size: 1.7rem; /* Ajusta el tamaño del título */
+    font-weight: 600;
+    border-bottom: 2px solid var(--border-color); /* Usa la variable de borde */
+    padding-bottom: 15px;
 }
 
 .form-group {
-    margin-bottom: 20px;
+    flex: 1 1 calc(50% - 10px); /* Ocupa el 50% del ancho menos la mitad del gap para 2 columnas */
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0; /* Resetea el margen inferior ya que el gap lo maneja */
 }
 
 .form-group label {
     display: block;
     margin-bottom: 8px;
-    font-weight: 400;
+    font-weight: 500;
     color: var(--text-dark);
     font-size: 0.95rem;
 }
 
 .form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
 .form-group input[type="number"],
 .form-group input[type="date"],
-.form-group textarea,
-.form-group select {
+.form-group select,
+.form-group textarea {
     width: 100%;
     padding: 12px 15px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    box-sizing: border-box;
+    box-sizing: border-box; /* Incluye padding y borde en el ancho total */
     font-size: 1rem;
     color: var(--text-dark);
     background-color: var(--main-bg); /* Fondo de input ligeramente gris */
@@ -415,10 +441,12 @@ table tbody tr:hover {
 }
 
 .form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group input[type="password"]:focus,
 .form-group input[type="number"]:focus,
 .form-group input[type="date"]:focus,
-.form-group textarea:focus,
-.form-group select:focus {
+.form-group select:focus,
+.form-group textarea:focus {
     border-color: var(--accent-blue);
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
     outline: none;
@@ -434,6 +462,58 @@ table tbody tr:hover {
     resize: vertical;
     min-height: 100px;
 }
+
+.form-actions {
+    width: 100%; /* Los botones ocupan todo el ancho de la sección de acciones */
+    display: flex; /* Usar flexbox para alinear botones */
+    justify-content: flex-end; /* Alinear a la derecha */
+    gap: 15px; /* Espacio entre los botones */
+    margin-top: 20px; /* Margen superior para separar de los campos */
+    padding-top: 20px; /* Relleno superior para los botones */
+    border-top: 1px solid var(--border-color); /* Línea divisoria sutil */
+}
+
+/* Estilos para el botón de enviar del formulario */
+.form-actions .btn-submit {
+    /* Reutiliza el estilo general de .btn-add-product para consistencia */
+    background-color: var(--primary-green-btn);
+    color: var(--sidebar-active-color);
+    padding: 12px 25px; /* Ajusta el padding para que no sea tan grande */
+    font-size: 1rem;
+    font-weight: 500;
+    box-shadow: none; /* Puedes añadir o quitar sombra según prefieras */
+}
+
+.form-actions .btn-submit:hover {
+    background-color: var(--primary-green-btn-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(139, 195, 74, 0.2);
+}
+
+/* Estilos para el botón de cancelar del formulario */
+.form-actions .btn-cancel {
+    background-color: var(--text-secondary); /* Un gris para el botón de cancelar */
+    color: var(--sidebar-active-color);
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none; /* Asegura que no haya subrayado */
+    display: inline-flex; /* Para alinear icono y texto */
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.form-actions .btn-cancel:hover {
+    background-color: #6C757D; /* Un gris un poco más oscuro */
+    transform: translateY(-2px);
+}
+
+.form-actions .btn-cancel i {
+    margin-right: 8px; /* Espacio para el icono */
+}
+
 
 /* --- Alerts --- */
 .alert {
@@ -547,7 +627,7 @@ table tbody tr:hover {
     }
     .sidebar-nav ul li a.active {
         border-left-color: transparent;
-        border-bottom-color: var(--sidebar-active-bg); /* Resalta el activo */
+        border-bottom-color: var(--primary-green-btn); /* Resalta el activo con el nuevo verde */
     }
     .sidebar-footer {
         width: 100%;
@@ -633,6 +713,31 @@ table tbody tr:hover {
     .action-links a {
         margin-right: 0; /* Quita el margen derecho extra */
     }
+
+    /* Responsive específico para el formulario en pantallas pequeñas */
+    .form-container {
+        padding: 20px;
+        gap: 15px; /* Reduce el gap en pantallas más pequeñas */
+        max-width: 100%; /* Permite que el contenedor del formulario ocupe todo el ancho */
+        margin: 20px 15px; /* Margen a los lados para no pegar a los bordes */
+    }
+
+    .form-group {
+        flex: 1 1 100%; /* Cada campo ocupa todo el ancho en móvil */
+    }
+
+    .form-actions {
+        flex-direction: column; /* Botones apilados en móvil */
+        gap: 10px; /* Espacio entre botones apilados */
+        margin-top: 15px;
+        padding-top: 15px;
+    }
+
+    .form-actions button,
+    .form-actions a {
+        width: 100%; /* Cada botón ocupa todo el ancho */
+        text-align: center; /* Centrar el texto en los botones */
+    }
 }
 
 @media (max-width: 480px) {
@@ -665,35 +770,5 @@ table tbody tr:hover {
     .btn-action-edit, .btn-action-delete {
         padding: 6px 10px;
         font-size: 0.8rem;
-    }
-    
-}
-
-
-/* --- Estilos para organizar filtros en dos columnas --- */
-.form-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px; /* Espacio entre elementos */
-    max-width: 800px; /* Aumentamos un poco el ancho */
-    justify-content: space-between;
-}
-
-.form-group {
-    flex: 1 1 calc(50% - 10px); /* Ocupa el 50% menos el gap */
-    display: flex;
-    flex-direction: column;
-}
-
-/* Botón ocupa todo el ancho en la parte inferior */
-.form-container .btn-submit {
-    flex: 1 1 100%;
-    margin-top: 10px;
-}
-
-/* Ajuste responsive para pantallas pequeñas */
-@media (max-width: 768px) {
-    .form-group {
-        flex: 1 1 100%; /* En pantallas pequeñas, cada uno en su fila */
     }
 }

@@ -514,6 +514,40 @@ INSERT INTO Consulta (ID_Usuario, Tema, Estado, Canal, Mensajes) VALUES
     JSON_OBJECT('role', 'admin', 'text', 'Estamos revisando su caso, le avisaremos pronto.', 'time', '11:15')
 ));
 
+------------------------------------------------------------------
+CREATE TABLE Registro_Actividad (
+    ID_Registro INT AUTO_INCREMENT PRIMARY KEY,
+    ID_Empleado INT NULL,              
+    ID_Usuario INT NULL,              
+    Accion VARCHAR(50) NOT NULL,       
+    Detalle TEXT,                     
+    IP VARCHAR(45),                   
+    Navegador VARCHAR(255),        
+    Fecha_Hora DATETIME DEFAULT CURRENT_TIMESTAMP, 
+    FOREIGN KEY (ID_Empleado) REFERENCES Empleado(ID_Empleado) ON DELETE SET NULL,
+    FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+----------------------------------------------------------------
+ALTER TABLE detalle_pedido
+DROP FOREIGN KEY detalle_pedido_ibfk_2;
+
+ALTER TABLE detalle_pedido
+ADD CONSTRAINT detalle_pedido_ibfk_2
+FOREIGN KEY (ID_Producto) REFERENCES producto(ID_Producto)
+ON DELETE CASCADE;
+
+---------------------------------------------------------------
+ALTER TABLE pedido_producto
+DROP FOREIGN KEY pedido_producto_ibfk_2;
+
+ALTER TABLE pedido_producto
+ADD CONSTRAINT pedido_producto_ibfk_2
+FOREIGN KEY (ID_Producto) REFERENCES producto(ID_Producto)
+ON DELETE CASCADE;
+
+
+
 --  Tienen que ejecutar este comando para que les funcione la parte de pagos
 ALTER TABLE Pedido MODIFY Estado_Envio VARCHAR(100) NOT NULL DEFAULT 'Pedido Recibido';
 ALTER TABLE pedidos MODIFY Estado_Pedido VARCHAR(100);

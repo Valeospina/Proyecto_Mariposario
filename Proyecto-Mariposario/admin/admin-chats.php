@@ -30,37 +30,37 @@ $page_title = 'Soporte (Chats)';
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
-body { margin:0; font-family:'Poppins',sans-serif; background:#f4f4f4; }
-.admin-layout { display:flex; height:100vh; }
-.sidebar { width:250px; background:#2c3e50; color:white; }
-.sidebar-header h3 { text-align:center; padding:15px; margin:0; background:#1a252f; }
-.sidebar-nav a { color:white; display:block; padding:12px 15px; text-decoration:none; }
-.sidebar-nav a.active { background:#8BC34A; }
-.main-panel { flex:1; display:flex; flex-direction:column; }
-.main-panel-header { background:#fff; padding:15px; font-weight:600; border-bottom:1px solid #ddd; }
-.chat-container { flex:1; display:flex; margin:10px; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 4px 8px rgba(0,0,0,0.1); }
-.chat-list { width:30%; border-right:1px solid #ddd; display:flex; flex-direction:column; }
-.filter-bar { display:flex; justify-content:space-around; padding:10px; background:#fff; border-bottom:1px solid #ddd; }
-.filter-btn { background:#eaeaea; border:none; border-radius:20px; padding:6px 12px; cursor:pointer; }
-.filter-btn.active { background:#8BC34A; color:#fff; }
-.chat-items { flex:1; overflow-y:auto; }
-.chat-item { display:flex; padding:10px; border-bottom:1px solid #eee; cursor:pointer; }
-.chat-item:hover { background:#e9f5e9; }
-.chat-item img { width:40px; height:40px; border-radius:50%; margin-right:10px; }
-.status-badge { padding:2px 6px; font-size:11px; border-radius:4px; margin-left:4px; }
-.status-pendiente { background:#ffc107; color:#fff; }
-.status-respondido { background:#17a2b8; color:#fff; }
-.status-cerrado { background:#6c757d; color:#fff; }
-.chat-window { flex:1; display:flex; flex-direction:column; background:#ece5dd; }
-.chat-header { background:#8BC34A; color:white; padding:15px; display:flex; justify-content:space-between; }
-.chat-body { flex:1; padding:15px; overflow-y:auto; display:flex; flex-direction:column; }
-.message { max-width:70%; padding:10px; margin-bottom:10px; border-radius:8px; font-size:14px; }
-.admin-msg { background:#dcf8c6; align-self:flex-end; }
-.client-msg { background:#fff; align-self:flex-start; }
-.chat-footer { background:#fff; padding:10px; display:flex; gap:10px; border-top:1px solid #ddd; }
-.chat-footer input { flex:1; padding:10px; border-radius:25px; border:1px solid #ccc; }
-.chat-footer button { background:#8BC34A; color:white; border:none; border-radius:50%; padding:10px; font-size:18px; cursor:pointer; }
-.chat-footer button:disabled { background:#ccc; cursor:not-allowed; }
+        body { margin:0; font-family:'Poppins',sans-serif; background:#f4f4f4; }
+        .admin-layout { display:flex; height:100vh; }
+        .sidebar { width:250px; background:#2c3e50; color:white; }
+        .sidebar-header h3 { text-align:center; padding:15px; margin:0; background:#1a252f; }
+        .sidebar-nav a { color:white; display:block; padding:12px 15px; text-decoration:none; }
+        .sidebar-nav a.active { background:#8BC34A; }
+        .main-panel { flex:1; display:flex; flex-direction:column; }
+        .main-panel-header { background:#fff; padding:15px; font-weight:600; border-bottom:1px solid #ddd; }
+        .chat-container { flex:1; display:flex; margin:10px; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 4px 8px rgba(0,0,0,0.1); }
+        .chat-list { width:30%; border-right:1px solid #ddd; display:flex; flex-direction:column; }
+        .filter-bar { display:flex; justify-content:space-around; padding:10px; background:#fff; border-bottom:1px solid #ddd; }
+        .filter-btn { background:#eaeaea; border:none; border-radius:20px; padding:6px 12px; cursor:pointer; }
+        .filter-btn.active { background:#8BC34A; color:#fff; }
+        .chat-items { flex:1; overflow-y:auto; }
+        .chat-item { display:flex; padding:10px; border-bottom:1px solid #eee; cursor:pointer; }
+        .chat-item:hover { background:#e9f5e9; }
+        .chat-item img { width:40px; height:40px; border-radius:50%; margin-right:10px; }
+        .status-badge { padding:2px 6px; font-size:11px; border-radius:4px; margin-left:4px; }
+        .status-pendiente { background:#ffc107; color:#fff; }
+        .status-respondido { background:#17a2b8; color:#fff; }
+        .status-cerrado { background:#6c757d; color:#fff; }
+        .chat-window { flex:1; display:flex; flex-direction:column; background:#ece5dd; }
+        .chat-header { background:#8BC34A; color:white; padding:15px; display:flex; justify-content:space-between; }
+        .chat-body { flex:1; padding:15px; overflow-y:auto; display:flex; flex-direction:column; }
+        .message { max-width:70%; padding:10px; margin-bottom:10px; border-radius:8px; font-size:14px; }
+        .admin-msg { background:#dcf8c6; align-self:flex-end; }
+        .client-msg { background:#fff; align-self:flex-start; }
+        .chat-footer { background:#fff; padding:10px; display:flex; gap:10px; border-top:1px solid #ddd; }
+        .chat-footer input { flex:1; padding:10px; border-radius:25px; border:1px solid #ccc; }
+        .chat-footer button { background:#8BC34A; color:white; border:none; border-radius:50%; padding:10px; font-size:18px; cursor:pointer; }
+        .chat-footer button:disabled { background:#ccc; cursor:not-allowed; }
 </style>
 </head>
 <body>
@@ -68,13 +68,25 @@ body { margin:0; font-family:'Poppins',sans-serif; background:#f4f4f4; }
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header"><h3>Admin Panel</h3></div>
-        <nav class="sidebar-nav">
-            <a href="dashboard.php">Dashboard</a>
-            <a href="gestion_empleados.php">Gestionar Empleados</a>
-            <a href="users.php">Gestionar Usuarios</a>
-            <a href="products.php">Gestionar Productos</a>
-            <a href="./admin-chats.php" class="active">Soporte</a>
-        </nav>
+            <nav class="sidebar-nav">
+                <div class="menu-scroll">
+                    <ul>
+                        <li><a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-home"></i> Dashboard</a></li>
+                        <li><a href="gestion_empleados.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['gestion_empleados.php', 'add_empleado.php', 'edit_empleado.php'])) ? 'active' : ''; ?>"><i class="fas fa-user-tie"></i> Gestionar Empleados</a></li>
+                        <li><a href="users.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'users.php') ? 'active' : ''; ?>"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
+                        <li><a href="products.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'products.php') ? 'active' : ''; ?>"><i class="fas fa-box"></i> Gestionar Productos</a></li>
+                        <li><a href="inventarioAdmin.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['inventarioAdmin.php', 'add_inventario.php', 'edit_inventario.php'])) ? 'active' : ''; ?>"><i class="fas fa-warehouse"></i> Gestionar Inventario</a></li>
+                        <li><a href="eventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'eventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Eventos</a></li>
+                        <li><a href="ReservaAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'ReservaAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-check"></i> Gestionar Reservas</a></li>
+                        <li><a href="InsEventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'InsEventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-clipboard-list"></i> Gestionar Asistencia</a></li>
+                        <li><a href="pedidos.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['pedidos.php', 'edit_pedido.php'])) ? 'active' : ''; ?>"><i class="fas fa-shopping-cart"></i> Gestionar Pedidos</a></li>
+                        <li><a href="reporte_ventas.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reporte_ventas.php') ? 'active' : ''; ?>"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li>
+                        <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
+                        <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
+                        <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Soporte</a></li>  
+                    </ul>
+                </div>
+            </nav>
     </div>
 
     <!-- Main -->
