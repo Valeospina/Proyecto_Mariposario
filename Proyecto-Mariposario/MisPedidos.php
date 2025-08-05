@@ -5,11 +5,27 @@ if (session_status() == PHP_SESSION_NONE) {
 
 // Obtén el nombre de la página actual para el estado "active" del menú
 $currentPage = basename($_SERVER['PHP_SELF']);
-?>
-<?php
-// 1) Asegúrate de tener la conexión abierta (si no la incluyes ya en nav.php)
+
+// Conexión a la base de datos
 include 'DB.php';
 
+// Definir el ID del usuario desde la sesión
+$userId = $_SESSION['user_id'] ?? null;
+$userName = $_SESSION['user_name'] ?? 'Usuario';
+
+// Foto de perfil
+$fotoPerfil = "img/default-user.png";
+if ($userId) {
+    $sqlFoto = "SELECT Foto_Perfil FROM Usuario WHERE ID_Usuario = ?";
+    $stmtFoto = $conn->prepare($sqlFoto);
+    $stmtFoto->bind_param('i', $userId);
+    $stmtFoto->execute();
+    $resultFoto = $stmtFoto->get_result()->fetch_assoc();
+    if (!empty($resultFoto['Foto_Perfil'])) {
+        $fotoPerfil = htmlspecialchars($resultFoto['Foto_Perfil']);
+    }
+    $stmtFoto->close();
+}
 // 2) Obtén el ID y el nombre del usuario de la sesión
 $userId   = $_SESSION['user_id']   ?? null;
 $userName = $_SESSION['user_name'] ?? 'Usuario';
@@ -581,7 +597,7 @@ if ($userId) {
                     <div class="col-lg-3 col-md-4 col-12">
                         <div class="user-sidebar">
                             <div class="profile-info">
-                                <img src="img/user-profile.jpg" alt="Foto de perfil">
+                                <img src="<?= $fotoPerfil ?>" alt="Foto de perfil">
                                 <h3>Hola, <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Usuario'); ?></h3>
                                 <p>Miembro desde: Abril 2023</p>
                                 <a href="user-settings.php" class="btn btn-sm btn-primary">Editar Perfil</a>
@@ -591,7 +607,6 @@ if ($userId) {
                                  <li><a href="MisPedidos.php" class="active"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
                                 <li><a href="eventosReservados.php"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
                                 <li><a href="notificaciones.php"><i class="fas fa-bell"></i> Notificaciones <span class="badge badge-primary">3</span></a></li>
-                                <li><a href="user-favorites.php"><i class="fas fa-heart"></i> Favoritos</a></li>
                                 <li><a href="cliente-chat.php"><i class="fas fa-cog"></i> Soporte</a></li>
                                 <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
                             </ul>
@@ -631,7 +646,7 @@ if ($userId) {
                                                 <div class="order-details">
 
                                             <?php
-                                            $totalOriginal = $row['Total_Pedido'] + $row['Monto_Canjeado'];
+                                            $totalOriginal = $row['Total_Pedido'] ;
                                             ?>
 
                                             <p><span>Fecha Pedido:</span>
@@ -650,7 +665,7 @@ if ($userId) {
 
                                             <p><span>Total Pagado:</span>
                                                 <strong style="color:#4CAF50;">
-                                                    ₡<?php echo number_format($row['Total_Pedido'], 2, ',', '.'); ?>
+                                                    ₡<?php echo number_format($row['Total_Pedido'] - $row['Monto_Canjeado'], 2, ',', '.'); ?>
                                                 </strong>
                                             </p>
 

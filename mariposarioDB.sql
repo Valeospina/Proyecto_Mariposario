@@ -37,13 +37,15 @@ CREATE TABLE Usuario (
     Nombre VARCHAR(100) NOT NULL,
     Apellido VARCHAR(100),
     Correo VARCHAR(255) UNIQUE NOT NULL,
-    Contrasena VARCHAR(255) NOT NULL, -- Almacenar contraseñas hasheadas (ej: bcrypt)
+    Contrasena VARCHAR(255) NOT NULL, -- Contraseña hasheada
     Telefono VARCHAR(20),
     Direccion TEXT,
+    Foto_Perfil VARCHAR(255) DEFAULT 'img/default-user.png', -- ✅ Nueva columna para foto de perfil
     Fecha_Registro DATETIME DEFAULT CURRENT_TIMESTAMP,
     Estado ENUM('activo','inactivo') DEFAULT 'activo',
     FOREIGN KEY (ID_Rol) REFERENCES Rol(ID_Rol)
 );
+
 
 -- Tabla: Empleado
 -- Detalles específicos para empleados, vinculados a la tabla Usuario.
@@ -550,7 +552,7 @@ ON DELETE CASCADE;
 
 --  Tienen que ejecutar este comando para que les funcione la parte de pagos
 ALTER TABLE Pedido MODIFY Estado_Envio VARCHAR(100) NOT NULL DEFAULT 'Pedido Recibido';
-ALTER TABLE pedidos MODIFY Estado_Pedido VARCHAR(100);
+ALTER TABLE pedido MODIFY Estado_Pedido VARCHAR(100);
 
 
 -- Este comando tienen que instalarlo en la terminal de visual para el tema de las facturas
@@ -579,3 +581,14 @@ ALTER TABLE pedidos MODIFY Estado_Pedido VARCHAR(100);
 -- SELECT Estado, COUNT(*) AS Total
 -- FROM Consulta
 -- GROUP BY Estado;
+}
+
+
+INSERT INTO Notificacion (ID_Usuario, Tipo_Notificacion, Mensaje)
+VALUES
+(8, 'Bienvenida', '¡Bienvenido a Eco Mariposas! Gracias por registrarte.'),
+(8, 'Pago Confirmado', 'Tu pago ha sido confirmado exitosamente.'),
+(8, 'Pedido Enviado', 'Tu pedido ha sido enviado y está en camino.'),
+(8, 'Evento Recordatorio', 'Recuerda tu evento "Tour al mariposario" el 10/08/2025.'),
+(8, 'Promoción', '¡Descuento especial del 20% en tu próxima compra!'),
+(8, 'Encuesta', '¿Qué te pareció tu compra? Haz clic en el botón para opinar.');

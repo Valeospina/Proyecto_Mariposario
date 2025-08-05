@@ -1,348 +1,359 @@
-<!doctype html>
-<html class="no-js" lang="es">
 <?php
-// Después de verificar credenciales:
-$_SESSION['id_usuario'] = $row['ID_Usuario'];
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+include 'DB.php';
 
-session_start();
-$currentPage = basename($_SERVER['PHP_SELF']);
-
-// 1) Obtén ID de usuario de la sesión y redirige si no existe
-$userID = $_SESSION['id_usuario'] ?? null;
-if (!$userID) {
-    header('Location: logind.php');
+// Validar sesión
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
     exit;
 }
 
-// 2) Conexión a la base de datos
-require_once 'DB.php';
+$userId = $_SESSION['user_id'];
 
-// 3) Procesar envío de formulario
-$msg = '';
-$msgClass = '';
+// Datos del usuario
+$stmt = $conn->prepare("SELECT Nombre, Apellido, Correo, Telefono, Direccion, Foto_Perfil FROM Usuario WHERE ID_Usuario = ?");
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$user = $stmt->get_result()->fetch_assoc();
+
+// Actualizar perfil
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nombre    = trim($_POST['nombre']);
-    $apellido  = trim($_POST['apellido']);
-    $correo    = trim($_POST['correo']);
-    $telefono  = trim($_POST['telefono']);
-    $direccion = trim($_POST['direccion']);
+    $nombre = $_POST['nombre'];
+    $apellido = $_POST['apellido'];
+    $telefono = $_POST['telefono'];
+    $direccion = $_POST['direccion'];
 
-    $sqlUpd = "
-        UPDATE Usuario
-        SET Nombre    = ?,
-            Apellido  = ?,
-            Correo    = ?,
-            Telefono  = ?,
-            Direccion = ?
-        WHERE ID_Usuario = ?
-    ";
-    $stmtUpd = $conn->prepare($sqlUpd);
-    $stmtUpd->bind_param('sssssi', $nombre, $apellido, $correo, $telefono, $direccion, $userID);
-    if ($stmtUpd->execute()) {
-        $msg      = 'Perfil actualizado correctamente.';
-        $msgClass = 'alert-success';
-    } else {
-        $msg      = 'Error al actualizar el perfil. Inténtalo de nuevo.';
-        $msgClass = 'alert-danger';
+    $fotoPerfil = $user['Foto_Perfil'];
+    if (!empty($_FILES['foto']['name'])) {
+        $targetDir = "uploads/";
+        if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
+
+        $fileName = time() . "_" . basename($_FILES['foto']['name']);
+        $targetFile = $targetDir . $fileName;
+
+        if (move_uploaded_file($_FILES['foto']['tmp_name'], $targetFile)) {
+            $fotoPerfil = $targetFile;
+        }
     }
-    $stmtUpd->close();
+
+    $update = $conn->prepare("UPDATE Usuario SET Nombre=?, Apellido=?, Telefono=?, Direccion=?, Foto_Perfil=? WHERE ID_Usuario=?");
+    $update->bind_param("sssssi", $nombre, $apellido, $telefono, $direccion, $fotoPerfil, $userId);
+    if ($update->execute()) {
+        $_SESSION['user_name'] = $nombre;
+        $user['Foto_Perfil'] = $fotoPerfil;
+        $mensaje = "Perfil actualizado correctamente.";
+    } else {
+        $mensaje = "Error al actualizar perfil.";
+    }
 }
 
-// 4) Obtener datos actuales del usuario
-$sqlGet = "
-    SELECT Nombre, Apellido, Correo, Contrasena, Telefono, Direccion
-    FROM Usuario
-    WHERE ID_Usuario = ?
-";
-$stmtGet = $conn->prepare($sqlGet);
-$stmtGet->bind_param('i', $userID);
-$stmtGet->execute();
-$res = $stmtGet->get_result();
-if ($res->num_rows === 0) {
-    die("Usuario no encontrado");
+// Eventos
+$eventos = [];
+$eventQuery = $conn->query("SELECT ID_Evento, Nombre, Fecha, Imagen_URL, Descripcion FROM Evento WHERE Fecha >= CURDATE() ORDER BY Fecha ASC LIMIT 3");
+while ($row = $eventQuery->fetch_assoc()) {
+    $eventos[] = $row;
 }
-$user = $res->fetch_assoc();
-$stmtGet->close();
 ?>
+<!DOCTYPE html>
+<html lang="es">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="keywords" content="Eco Mariposas, perfil de usuario, jardín, naturaleza, mariposas">
-    <meta name="description" content="Panel de usuario de Eco Mariposas, un espacio donde puedes editar tu perfil.">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <title>Editar Perfil | Eco Mariposas</title>
-    <link rel="icon" href="img/favicon.png">
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/nice-select.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="css/slicknav.min.css">
-    <link rel="stylesheet" href="css/owl-carousel.css">
-    <link rel="stylesheet" href="css/datepicker.css">
-    <link rel="stylesheet" href="css/animate.min.css">
-    <link rel="stylesheet" href="css/magnific-popup.css">
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="css/responsive.css">
-
-    <style>
-      :root {
-        --main-green: #8BC34A;
-        --background-light: #f8f9fa;
-        --card-background: #fff;
-        --text-color: #333;
-        --border-color: #e9e9e9;
-      }
-      body {
-        background-color: var(--background-light);
-        color: var(--text-color);
-        font-family: 'Poppins', sans-serif;
-      }
-      .user-sidebar,
-      .user-main-content {
-        background-color: var(--card-background);
-        border-radius: 10px;
-        box-shadow: 0 0 15px rgba(0,0,0,0.05);
-      }
-      .user-sidebar {
-        padding: 25px;
-        margin-bottom: 30px;
-      }
-      .profile-info {
-        text-align: center;
-        margin-bottom: 20px;
-      }
-      .profile-info img {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 4px solid var(--main-green);
-        margin-bottom: 15px;
-      }
-      .sidebar-menu li {
-        margin-bottom: 10px;
-      }
-      .sidebar-menu li a {
-        display: block;
-        padding: 10px 15px;
-        color: var(--text-color);
-        border-radius: 5px;
-        transition: background-color .3s;
-      }
-      .sidebar-menu li a.active,
-      .sidebar-menu li a:hover {
-        background-color: var(--main-green);
-        color: #fff;
-      }
-      .user-main-content {
-        padding: 30px;
-      }
-      .form-heading {
-        color: var(--main-green);
-        margin-bottom: 20px;
-      }
-      .form-group label {
-        font-weight: 500;
-      }
-      .form-control:disabled {
-        background-color: #e9ecef;
-      }
-      .btn-save {
-        background-color: var(--main-green);
-        color: #fff;
-        padding: 10px 25px;
-        border: none;
-        border-radius: 5px;
-        transition: background-color .3s;
-      }
-      .btn-save:hover {
-        background-color: #6faf3f;
-      }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editar Perfil</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #f4f6f9;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    display: flex;
+    max-width: 1200px;
+    margin: 30px auto;
+    gap: 20px;
+    padding: 0 15px;
+}
+.sidebar {
+    width: 220px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    padding: 20px;
+}
+.sidebar h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+.sidebar ul li {
+    margin-bottom: 10px;
+}
+.sidebar ul li a {
+    text-decoration: none;
+    color: #333;
+    display: block;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background 0.3s;
+}
+.sidebar ul li a:hover {
+    background: #8BC34A;
+    color: #fff;
+}
+.profile-section {
+    flex: 1;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    padding: 20px;
+}
+.profile-section h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.profile-photo {
+    text-align: center;
+    margin-bottom: 15px;
+}
+.profile-photo img {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #8BC34A;
+    transition: transform 0.3s;
+}
+.profile-photo img:hover {
+    transform: scale(1.05);
+}
+.change-photo-btn {
+    margin-top: 10px;
+    display: inline-block;
+    background: #8BC34A;
+    color: #fff;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+.change-photo-btn:hover {
+    background: #6fa12d;
+}
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group label {
+    font-weight: 500;
+    display: block;
+    margin-bottom: 5px;
+}
+.form-group input, .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+.btn {
+    background: #8BC34A;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+    display: block;
+    margin: 0 auto;
+}
+.btn:hover {
+    background: #6fa12d;
+}
+.event-section {
+    width: 320px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    padding: 20px;
+}
+.event-section h3 {
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+.event-card {
+    background: #f9f9f9;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    transition: transform 0.3s;
+}
+.event-card:hover {
+    transform: scale(1.02);
+}
+.event-card img {
+    width: 100%;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+.event-card h4 {
+    margin: 0 0 5px;
+    font-size: 16px;
+}
+.event-card p {
+    margin: 0 0 10px;
+    font-size: 14px;
+    color: #555;
+}
+.event-card a {
+    background: #8BC34A;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+}
+#sabiasQue {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    background: #f1f8e9;
+    padding: 15px;
+    margin: 20px auto;
+    border-radius: 8px;
+    color: #4e342e;
+    width: 90%;
+}
+.back-btn {
+    background: #ccc;
+    color: #333;
+    padding: 8px 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+</style>
 </head>
-
 <body>
 
-    <?php include 'layout/nav.php'; ?>
+<div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h3>Mi Panel</h3>
+        <ul>
+            <li><a href="usuario.php">Perfil</a></li>
+            <li><a href="MisPedidos.php">Mis Pedidos</a></li>
+            <li><a href="eventosReservados.php">Mis Eventos</a></li>
+            <li><a href="#" onclick="history.back()">← Regresar</a></li>
+        </ul>
+    </div>
 
-    <section class="user-panel section">
-      <div class="container">
-        <div class="row">
-
-          <!-- Sidebar -->
-          <div class="col-lg-3 col-md-4 col-12">
-            <div class="user-sidebar">
-              <div class="profile-info">
-                <img src="img/user-profile.jpg" alt="Foto de perfil">
-                <h3>Hola, <?= htmlspecialchars($user['Nombre'] . ' ' . $user['Apellido']) ?></h3>
-              </div>
-              <ul class="sidebar-menu">
-                <li><a href="usuario.php"><i class="fas fa-user"></i> Perfil</a></li>
-                <li><a href="MisPedidos.php"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
-                <li><a href="eventosReservados.php"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
-                <li><a href="notificaciones.php"><i class="fas fa-bell"></i> Notificaciones</a></li>
-                <li><a href="editarperfil.php" class="active"><i class="fas fa-edit"></i> Editar Perfil</a></li>
-                <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
-              </ul>
+    <!-- Formulario Perfil -->
+    <div class="profile-section">
+        <a href="#" class="back-btn" onclick="history.back()">← Volver</a>
+        <h2>Editar Perfil</h2>
+        <?php if (!empty($mensaje)): ?>
+            <p style="text-align:center;color:green;"><?php echo $mensaje; ?></p>
+        <?php endif; ?>
+        <form method="POST" enctype="multipart/form-data">
+            <div class="profile-photo">
+                <img src="<?php echo htmlspecialchars($user['Foto_Perfil']); ?>" id="previewImg" alt="Foto de perfil">
+                <label for="foto" class="change-photo-btn">Cambiar Foto</label>
+                <input type="file" name="foto" id="foto" accept="image/*" style="display:none;" onchange="previewImage(event)">
             </div>
-          </div>
+            <div class="form-group">
+                <label>Nombre</label>
+                <input type="text" name="nombre" value="<?php echo htmlspecialchars($user['Nombre']); ?>" required>
+            </div>
+            <div class="form-group">
+                <label>Apellido</label>
+                <input type="text" name="apellido" value="<?php echo htmlspecialchars($user['Apellido']); ?>">
+            </div>
+            <div class="form-group">
+                <label>Correo</label>
+                <input type="email" value="<?php echo htmlspecialchars($user['Correo']); ?>" disabled>
+            </div>
+            <div class="form-group">
+                <label>Teléfono</label>
+                <input type="text" name="telefono" value="<?php echo htmlspecialchars($user['Telefono']); ?>">
+            </div>
+            <div class="form-group">
+                <label>Dirección</label>
+                <textarea name="direccion"><?php echo htmlspecialchars($user['Direccion']); ?></textarea>
+            </div>
+            <button type="submit" class="btn">Guardar Cambios</button>
+        </form>
+    </div>
 
-          <!-- Main Content -->
-          <div class="col-lg-9 col-md-8 col-12">
-            <div class="user-main-content">
-              <h2 class="form-heading">Editar Perfil</h2>
-
-              <?php if ($msg): ?>
-                <div class="alert <?= $msgClass ?>"><?= htmlspecialchars($msg) ?></div>
-              <?php endif; ?>
-
-              <form action="editarperfil.php" method="post">
-                <div class="form-row">
-                  <div class="form-group col-md-6">
-                    <label for="nombre">Nombre</label>
-                    <input type="text" id="nombre" name="nombre" class="form-control"
-                           value="<?= htmlspecialchars($user['Nombre'] ?? '') ?>" required>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="apellido">Apellido</label>
-                    <input type="text" id="apellido" name="apellido" class="form-control"
-                           value="<?= htmlspecialchars($user['Apellido'] ?? '') ?>">
-                  </div>
+    <!-- Eventos Próximos -->
+    <div class="event-section">
+        <h3>Próximos Eventos</h3>
+        <?php if (count($eventos) > 0): ?>
+            <?php foreach ($eventos as $evento): ?>
+                <div class="event-card">
+                    <img src="<?php echo htmlspecialchars($evento['Imagen_URL']); ?>" alt="Evento">
+                    <h4><?php echo htmlspecialchars($evento['Nombre']); ?></h4>
+                    <p><?php echo date("d/m/Y", strtotime($evento['Fecha'])); ?></p>
+                    <p><?php echo substr(htmlspecialchars($evento['Descripcion']), 0, 60); ?>...</p>
+                    <a href="evento_info.php?id=<?php echo $evento['ID_Evento']; ?>">Inscribirme</a>
+                    
                 </div>
-                <div class="form-group">
-                  <label for="correo">Correo electrónico</label>
-                  <input type="email" id="correo" name="correo" class="form-control"
-                         value="<?= htmlspecialchars($user['Correo'] ?? '') ?>" required>
-                </div>
-                <div class="form-group">
-                  <label for="telefono">Teléfono</label>
-                  <input type="tel" id="telefono" name="telefono" class="form-control"
-                         value="<?= htmlspecialchars($user['Telefono'] ?? '') ?>">
-                </div>
-                <div class="form-group">
-                  <label for="direccion">Dirección</label>
-                  <textarea id="direccion" name="direccion" class="form-control" rows="2"><?= htmlspecialchars($user['Direccion'] ?? '') ?></textarea>
-                </div>
-                <div class="form-group">
-                  <label for="contrasena">Contraseña</label>
-                  <input type="password" id="contrasena" class="form-control" value="********" disabled>
-                </div>
-                <button type="submit" class="btn-save btn btn-lg">Guardar Cambios</button>
-              </form>
-            </div>
-          </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p>No hay eventos próximos.</p>
+        <?php endif; ?>
+    </div>
+</div>
 
-        </div>
-      </div>
-    </section>
+<!-- Sabías que -->
+<div id="sabiasQue">¿Sabías que...? Cargando frase...</div>
 
-    <!-- Footer Area -->
-    <footer id="footer" class="footer">
-      <div class="footer-top">
-        <div class="container">
-          <div class="row">
-            <div class="col-lg-3 col-md-6 col-12">
-              <div class="single-footer">
-                <h2>Sobre Nosotros</h2>
-                <p>Eco Mariposas es un emprendimiento dedicado a la conservación de mariposas y educación ambiental en Costa Rica. Trabajamos para promover ecosistemas saludables y sostenibles.</p>
-                <ul class="social">
-                  <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-                  <li><a href="#"><i class="fab fa-instagram"></i></a></li>
-                  <li><a href="#"><i class="fab fa-twitter"></i></a></li>
-                  <li><a href="#"><i class="fab fa-youtube"></i></a></li>
-                  <li><a href="#"><i class="fab fa-pinterest-p"></i></a></li>
-                </ul>
-              </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-12">
-              <div class="single-footer f-link">
-                <h2>Enlaces Rápidos</h2>
-                <div class="row">
-                  <div class="col-lg-6 col-md-6 col-12">
-                    <ul>
-                      <li><a href="index.php">Inicio</a></li>
-                      <li><a href="about.php">Sobre Nosotros</a></li>
-                      <li><a href="services.php">Servicios</a></li>
-                      <li><a href="gallery.php">Galería</a></li>
-                      <li><a href="blog.php">Blog</a></li>
-                    </ul>
-                  </div>
-                  <div class="col-lg-6 col-md-6 col-12">
-                    <ul>
-                      <li><a href="workshops.php">Talleres</a></li>
-                      <li><a href="conservation.php">Conservación</a></li>
-                      <li><a href="testimonials.php">Testimonios</a></li>
-                      <li><a href="faq.php">Preguntas Frecuentes</a></li>
-                      <li><a href="contact.php">Contáctanos</a></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-12">
-              <div class="single-footer">
-                <h2>Boletín Informativo</h2>
-                <p>Suscríbete para recibir actualizaciones sobre eventos, talleres y nuevos productos.</p>
-                <form class="newsletter-form">
-                  <input type="email" placeholder="Tu correo electrónico" required>
-                  <button type="submit" class="btn btn-primary">Suscribir</button>
-                </form>
-              </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-12">
-              <div class="single-footer f-link">
-                <h2>Contáctanos</h2>
-                <ul>
-                  <li><a href="#"><i class="fas fa-map-marker-alt"></i>200 metros sur de la escuela bajo la paz</a></li>
-                  <li><a href="tel:+50662525969"><i class="fas fa-phone-alt"></i>+506 6252-5969</a></li>
-                  <li><a href="mailto:soportejardinlapaz@gmail.com"><i class="fas fa-envelope"></i>soportejardinlapaz@gmail.com</a></li>
-                  <li><a href="#"><i class="fas fa-clock"></i>Lunes - Sábado: 8:00 AM - 5:00 PM</a></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <div class="container">
-          <div class="row">
-            <div class="col-12">
-              <p>&copy; 2023 Eco Mariposas. Todos los derechos reservados.</p>
-            </div>
-            <div class="col-12">
-              <ul class="footer-bottom-links">
-                <li><a href="privacy-policy.php">Política de Privacidad</a></li>
-                <li><a href="terms-conditions.php">Términos y Condiciones</a></li>
-                <li><a href="cookie-policy.php">Política de Cookies</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </footer>
-    <!-- End Footer Area -->
+<script>
+// ✅ Frases reales sobre mariposas, orquídeas y Costa Rica
+const frases = [
+    "¿Sabías que Costa Rica alberga más de 1,200 especies de mariposas?",
+    "¿Sabías que las orquídeas pueden vivir más de 100 años?",
+    "¿Sabías que el 6% de la biodiversidad mundial está en Costa Rica?",
+    "¿Sabías que las mariposas usan sus patas para saborear?",
+    "¿Sabías que las orquídeas son las plantas con más especies en el mundo?",
+    "¿Sabías que las mariposas no pueden volar si hace frío?",
+    "¿Sabías que Costa Rica protege más del 25% de su territorio en parques?",
+    "¿Sabías que el ala de una mariposa está cubierta por escamas microscópicas?",
+    "¿Sabías que algunas mariposas pueden migrar más de 3,000 km?",
+    "¿Sabías que el azul brillante de las Morpho no es pigmento, es luz?",
+    "¿Sabías que Costa Rica tiene más de 1400 especies de orquídeas?",
+    "¿Sabías que las mariposas son polinizadores esenciales para la vida?",
+    "¿Sabías que Costa Rica es uno de los países más biodiversos del planeta?",
+    "¿Sabías que las orquídeas crecen en selvas, montañas y hasta desiertos?",
+    "¿Sabías que las mariposas tienen cuatro alas, no dos?",
+    "¿Sabías que la mariposa Monarca viaja hasta 4,000 km en migración?",
+    "¿Sabías que Costa Rica genera casi toda su energía con fuentes renovables?",
+    "¿Sabías que las mariposas perciben colores que los humanos no ven?",
+    "¿Sabías que algunas orquídeas florecen solo una vez al año?",
+    "¿Sabías que Costa Rica tiene más de 500,000 especies registradas?"
+];
+function cambiarFrase() {
+    const randomIndex = Math.floor(Math.random() * frases.length);
+    document.getElementById('sabiasQue').textContent = frases[randomIndex];
+}
+cambiarFrase();
+setInterval(cambiarFrase, 60000);
 
-    <!-- Scroll Up -->
-    <a href="#" class="scroll-up"><i class="fa fa-chevron-up"></i></a>
-
-    <!-- JS Files -->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.nav.js"></script>
-    <script src="js/slicknav.min.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
-    <script src="js/niceselect.js"></script>
-    <script src="js/tilt.jquery.min.js"></script>
-    <script src="js/owl-carousel.js"></script>
-    <script src="js/jquery.counterup.min.js"></script>
-    <script src="js/steller.js"></script>
-    <script src="js/wow.min.js"></script>
-    <script src="js/jquery.magnific-popup.min.js"></script>
-    <script src="js/waypoints.min.js"></script>
-    <script src="js/main.js"></script>
+// Preview foto
+function previewImage(event) {
+    const reader = new FileReader();
+    reader.onload = function(){
+        document.getElementById('previewImg').src = reader.result;
+    }
+    reader.readAsDataURL(event.target.files[0]);
+}
+</script>
 
 </body>
 </html>

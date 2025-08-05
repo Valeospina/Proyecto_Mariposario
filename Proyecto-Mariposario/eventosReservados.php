@@ -1,5 +1,3 @@
-<!doctype html>
-<html class="no-js" lang="es">
 <?php
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -9,7 +7,25 @@ if (session_status() == PHP_SESSION_NONE) {
 $currentPage = basename($_SERVER['PHP_SELF']);
 
 // Conexión a la base de datos
-require_once 'DB.php';
+include 'DB.php';
+
+// Definir el ID del usuario desde la sesión
+$userId = $_SESSION['user_id'] ?? null;
+$userName = $_SESSION['user_name'] ?? 'Usuario';
+
+// Foto de perfil
+$fotoPerfil = "img/default-user.png";
+if ($userId) {
+    $sqlFoto = "SELECT Foto_Perfil FROM Usuario WHERE ID_Usuario = ?";
+    $stmtFoto = $conn->prepare($sqlFoto);
+    $stmtFoto->bind_param('i', $userId);
+    $stmtFoto->execute();
+    $resultFoto = $stmtFoto->get_result()->fetch_assoc();
+    if (!empty($resultFoto['Foto_Perfil'])) {
+        $fotoPerfil = htmlspecialchars($resultFoto['Foto_Perfil']);
+    }
+    $stmtFoto->close();
+}
 
 
 ?>
@@ -406,7 +422,8 @@ require_once 'DB.php';
                 <div class="col-lg-3 col-md-4 col-12">
                     <div class="user-sidebar">
                         <div class="profile-info">
-                            <img src="img/user-profile.jpg" alt="Foto de perfil">
+                            <img src="<?= $fotoPerfil ?>" alt="Foto de perfil">
+
                             <h3>Hola, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Usuario') ?></h3>
                             <p>Miembro desde: Abril 2023</p>
                             <a href="user-settings.php" class="btn btn-sm btn-primary">Editar Perfil</a>
@@ -416,7 +433,7 @@ require_once 'DB.php';
                             <li><a href="MisPedidos.php" class="<?= $currentPage=='MisPedidos.php'?'active':'' ?>"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
                             <li><a href="eventosReservados.php" class="<?= $currentPage=='eventosReservados.php'?'active':'' ?>"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
                             <li><a href="notificaciones.php" class="<?= $currentPage=='notificaciones.php'?'active':'' ?>"><i class="fas fa-bell"></i> Notificaciones <span class="badge badge-primary">3</span></a></li>
-                            <li><a href="user-favorites.php" class="<?= $currentPage=='user-favorites.php'?'active':'' ?>"><i class="fas fa-heart"></i> Favoritos</a></li>
+                           
                             <li><a href="cliente-chat.php" class="<?= $currentPage=='cliente-chat.php'?'active':'' ?>"><i class="fas fa-cog"></i> Soporte</a></li>
                             <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
                         </ul>
