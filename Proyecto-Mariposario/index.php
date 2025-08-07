@@ -34,10 +34,11 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
     <link rel="stylesheet" href="css/datepicker.css">
     <link rel="stylesheet" href="css/animate.min.css">
     <link rel="stylesheet" href="css/magnific-popup.css">
-    
+    <link rel="stylesheet" href="css/tienda.css">
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="css/responsive.css">
+    
     
 </head>
 
@@ -360,76 +361,9 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
             </div>
         </div>
     </section>          
-    <footer id="footer" class="footer">
-        <div class="footer-top">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-3 col-md-6 col-12">
-                        <div class="single-footer">
-                            <h2>Sobre Nosotros</h2>
-                            <p>Somos un proyecto dedicado a la conservación y apreciación de mariposas y orquídeas en Costa Rica. Promovemos el turismo sostenible y la educación ambiental.</p>
-                            <ul class="social">
-                                <li><a href="#"><i class="icofont-facebook"></i></a></li>
-                                <li><a href="#"><i class="icofont-instagram"></i></a></li>
-                                <li><a href="#"><i class="icofont-twitter"></i></a></li>
-                            </ul>
-                            </div>
-                    </div>
 
-                    <div class="col-lg-3 col-md-6 col-12">
-                        <div class="single-footer f-link">
-                            <h2>Enlaces Rápidos</h2>
-                            <div class="row">
-                                <div class="col-12">
-                                    <ul>
-                                        <li><a href="index.php"><i class="fa fa-caret-right" aria-hidden="true"></i>Inicio</a></li>
-                                        <li><a href="Reserva.php"><i class="fa fa-caret-right" aria-hidden="true"></i>Reservaciones</a></li>
-                                        <li><a href="GaleriaMariposas.php"><i class="fa fa-caret-right" aria-hidden="true"></i>Galería</a></li>
-                                        <li><a href="Info.php"><i class="fa fa-caret-right" aria-hidden="true"></i>Actividades</a></li>
-                                        <li><a href="contact.php"><i class="fa fa-caret-right" aria-hidden="true"></i>Contáctanos</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+ <?php include 'layout/Footer.php'; ?>
 
-                    <div class="col-lg-3 col-md-6 col-12">
-                        <div class="single-footer">
-                            <h2>Horario de Atención</h2>
-                            <p>Visítanos para vivir una experiencia rodeado de naturaleza y belleza.</p>
-                            <ul class="time-sidual">
-                                <li class="day">Lunes - Viernes <span>8:00 - 17:00</span></li>
-                                <li class="day">Sábado <span>9:00 - 16:00</span></li>
-                                <li class="day">Domingo <span>Cerrado</span></li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-6 col-12">
-                        <div class="single-footer">
-                            <h2>Boletín</h2>
-                            <p>Suscríbete para recibir noticias sobre nuestras mariposas, orquídeas y próximos eventos especiales.</p>
-                            <form action="#" method="get" target="_blank" class="newsletter-inner">
-                                <input name="email" placeholder="Tu correo electrónico" class="common-input" required type="email">
-                                <button class="button"><i class="icofont icofont-paper-plane"></i></button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="copyright">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="copyright-content">
-                            <p>© 2025 Mariposas y Orquídeas | Todos los derechos reservados</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        </footer>
     <script src="js/jquery.min.js"></script>
     <script src="js/jquery-migrate-3.0.0.js"></script>
     <script src="js/jquery-ui.min.js"></script>

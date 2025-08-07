@@ -77,6 +77,7 @@ $stmtAct->close();
     <link rel="stylesheet" href="css/animate.min.css">
     <link rel="stylesheet" href="css/magnific-popup.css">
     <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/tienda.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="css/responsive.css">
     
@@ -357,10 +358,7 @@ $stmtAct->close();
         </div>
     </section>
 
-    <!-- Footer (igual al tuyo) -->
-    <footer id="footer" class="footer">
-        <!-- ... tu footer aquí ... -->
-    </footer>
+ <?php include 'layout/Footer.php'; ?>
 
     <!-- Scroll Up -->
     <a href="#" class="scroll-up"><i class="fa fa-chevron-up"></i></a>

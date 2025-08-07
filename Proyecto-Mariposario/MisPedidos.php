@@ -73,18 +73,20 @@ if ($userId) {
         
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-        <link rel="stylesheet" href="css/bootstrap.min.css">
-        <link rel="stylesheet" href="css/nice-select.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-        <link rel="stylesheet" href="css/slicknav.min.css">
-        <link rel="stylesheet" href="css/owl-carousel.css">
-        <link rel="stylesheet" href="css/datepicker.css">
-        <link rel="stylesheet" href="css/animate.min.css">
-        <link rel="stylesheet" href="css/magnific-popup.css">
-        
-        <link rel="stylesheet" href="css/normalize.css">
-        <link rel="stylesheet" href="style.css">
-        <link rel="stylesheet" href="css/responsive.css">
+    <link rel="icon" href="img/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/nice-select.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="css/slicknav.min.css">
+    <link rel="stylesheet" href="css/owl-carousel.css">
+    <link rel="stylesheet" href="css/datepicker.css">
+    <link rel="stylesheet" href="css/animate.min.css">
+    <link rel="stylesheet" href="css/magnific-popup.css">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/tienda.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/responsive.css">
         
         <style>
         /* Estilo general de la página */
@@ -727,95 +729,7 @@ if ($userId) {
         </div>
     </div>
 
-		<!-- Footer Area -->
-		<footer id="footer" class="footer">
-			<!-- Footer Top -->
-			<div class="footer-top">
-				<div class="container">
-					<div class="row">
-						<div class="col-lg-3 col-md-6 col-12">
-							<div class="single-footer">
-								<h2>Sobre Nosotros</h2>
-								<p>Eco Mariposas es un emprendimiento dedicado a la conservación de mariposas y educación ambiental en Costa Rica. Trabajamos para promover ecosistemas saludables y sostenibles.</p>
-								<!-- Social -->
-								<ul class="social">
-									<li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-									<li><a href="#"><i class="fab fa-instagram"></i></a></li>
-									<li><a href="#"><i class="fab fa-twitter"></i></a></li>
-									<li><a href="#"><i class="fab fa-youtube"></i></a></li>
-									<li><a href="#"><i class="fab fa-pinterest-p"></i></a></li>
-								</ul>
-								<!-- End Social -->
-							</div>
-						</div>
-						<div class="col-lg-3 col-md-6 col-12">
-							<div class="single-footer f-link">
-								<h2>Enlaces Rápidos</h2>
-								<div class="row">
-									<div class="col-lg-6 col-md-6 col-12">
-										<ul>
-											<li><a href="index.php">Inicio</a></li>
-											<li><a href="about.php">Sobre Nosotros</a></li>
-											<li><a href="services.php">Servicios</a></li>
-											<li><a href="gallery.php">Galería</a></li>
-											<li><a href="blog.php">Blog</a></li>	
-										</ul>
-									</div>
-									<div class="col-lg-6 col-md-6 col-12">
-										<ul>
-											<li><a href="workshops.php">Talleres</a></li>
-											<li><a href="conservation.php">Conservación</a></li>
-											<li><a href="testimonials.php">Testimonios</a></li>
-											<li><a href="faq.php">Preguntas Frecuentes</a></li>
-											<li><a href="contact.php">Contáctanos</a></li>	
-										</ul>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-lg-3 col-md-6 col-12">
-							<div class="single-footer">
-								<h2>Boletín Informativo</h2>
-								<p>Suscríbete para recibir actualizaciones sobre eventos, talleres y nuevos productos.</p>
-								<form class="newsletter-form">
-									<input type="email" placeholder="Tu correo electrónico" required>
-									<button type="submit" class="btn btn-primary">Suscribir</button>
-								</form>
-							</div>
-						</div>
-						<div class="col-lg-3 col-md-6 col-12">
-							<div class="single-footer f-link">
-								<h2>Contáctanos</h2>
-								<ul>
-									<li><a href="#"><i class="fas fa-map-marker-alt"></i>200 metros sur de la escuela bajo la paz</a></li>
-									<li><a href="tel:+50662525969"><i class="fas fa-phone-alt"></i>+506 6252-5969</a></li>
-									<li><a href="mailto:soportejardinlapaz@gmail.com"><i class="fas fa-envelope"></i>soportejardinlapaz@gmail.com</a></li>
-									<li><a href="#"><i class="fas fa-clock"></i>Lunes - Sábado: 8:00 AM - 5:00 PM</a></li>
-								</ul>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- Footer Bottom -->
-			<div class="footer-bottom">
-				<div class="container">
-					<div class="row">
-						<div class="col-12">
-							<p>&copy; 2023 Eco Mariposas. Todos los derechos reservados.</p>
-						</div>
-						<div class="col-12">
-							<ul class="footer-bottom-links">
-								<li><a href="privacy-policy.php">Política de Privacidad</a></li>
-								<li><a href="terms-conditions.php">Términos y Condiciones</a></li>
-								<li><a href="cookie-policy.php">Política de Cookies</a></li>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		</footer>
-		<!-- End Footer Area -->
+     <?php include 'layout/Footer.php'; ?>
 
 		<!-- Scroll Up -->
 		<a href="#" class="scroll-up"><i class="fa fa-chevron-up"></i></a>
