@@ -415,6 +415,17 @@ CREATE TABLE resenas_evento (
     FOREIGN KEY (ID_Evento) REFERENCES Evento(ID_Evento)
 );
 
+
+
+CREATE TABLE Recuperacion_Contrasena (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    ID_Usuario INT NOT NULL,
+    Token VARCHAR(255) NOT NULL UNIQUE,
+    Expiracion DATETIME NOT NULL,
+    Usado BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
+);
+
 -- ====================================================================
 -- 2. INSERCIÓN DE DATOS INICIALES
 -- ====================================================================
