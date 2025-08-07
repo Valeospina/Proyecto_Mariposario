@@ -36,7 +36,6 @@ try {
 // Procesar el formulario cuando se envía
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Recopilar y sanear los datos del formulario
-    // ATENCIÓN: Los nombres de los campos del formulario ahora son 'nombre' y 'correo'
     $nombre_usuario_input = htmlspecialchars(trim($_POST['nombre'] ?? ''));
     $email_input = filter_var(trim($_POST['correo'] ?? ''), FILTER_SANITIZE_EMAIL);
     $password = $_POST['password'] ?? ''; // La contraseña no se sanea con htmlspecialchars antes de hashear
@@ -56,7 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Hashear la contraseña
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-        // ATENCIÓN: Nombres de columna adaptados a tu DB: 'Nombre', 'Correo', 'Contrasena'
         $insert_query = "INSERT INTO Usuario (Nombre, Correo, Contrasena, ID_Rol) VALUES (?, ?, ?, ?)";
 
         try {
@@ -73,8 +71,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if ($stmt->affected_rows > 0) {
                     $message = "Usuario añadido exitosamente.";
                     $message_type = "success";
-                    // Limpiar el formulario después de un éxito (opcional, pero útil para añadir múltiples)
-                    // $_POST = array(); // Descomenta si quieres limpiar los campos después de añadir
                     
                     // Redirigir a users.php con un mensaje de éxito
                     header('Location: users.php?message=' . urlencode($message) . '&type=' . urlencode($message_type));
@@ -109,173 +105,171 @@ $page_title = 'Añadir Nuevo Usuario';
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../css/admin.css">
-</head>
     <style>
-        /* Variables de color de admin.css para consistencia */
-        :root {
-            --sidebar-bg: #2C3E50; 
-            --sidebar-link-color: #ECF0F1;
-            --sidebar-hover-bg: #34495E;
-            --sidebar-active-bg: #1ABC9C; 
-            --sidebar-active-color: #FFFFFF;
-
-            --main-bg: #F0F2F5; 
-            --card-bg: #FFFFFF;
-            --header-top-bg: #FFFFFF;
-            --border-color: #E0E0E0;
-
-            --text-dark: #333333;
-            --text-secondary: #7F8C8D;
-            --accent-blue: #3498DB; 
-            --danger-red: #E74C3C; 
-
-            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
-            --shadow-medium: 0 6px 16px rgba(0, 0, 0, 0.1);
+        /* ======= ESTILOS GENERALES ======= */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f6fa;
+            margin: 0;
+            color: #333;
         }
 
-        /* Estilos para el contenedor del formulario */
-        .form-container {
-            background-color: var(--card-bg);
-            padding: 30px;
+        .admin-content {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 35px;
             border-radius: 12px;
-            box-shadow: var(--shadow-medium);
-            max-width: 600px; /* Ancho máximo para formularios */
-            margin: 0 auto; /* Centrar el formulario */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         }
 
-        /* Estilos para grupos de formulario */
-        .form-group {
+        .admin-content h2 {
+            font-size: 1.8rem;
             margin-bottom: 20px;
+            text-align: center;
+            color: #2c3e50;
+            font-weight: 600;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        /* ======= FORMULARIO ======= */
+        .admin-form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
         }
 
         .form-group label {
-            display: block;
-            margin-bottom: 8px;
             font-weight: 500;
-            color: var(--text-dark);
+            margin-bottom: 8px;
+            color: #34495e;
             font-size: 0.95rem;
         }
 
-        /* Estilos específicos para input de texto, email y password */
-        .form-group input[type="text"],
-        .form-group input[type="email"], /* Nuevo estilo para email */
-        .form-group input[type="password"], /* Nuevo estilo para password */
-        .form-group input[type="number"],
-        .form-group textarea,
+        .form-group input,
         .form-group select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-sizing: border-box; /* Incluye padding y border en el ancho */
+            padding: 12px 14px;
             font-size: 1rem;
-            color: var(--text-dark);
-            background-color: var(--main-bg); /* Fondo de input ligeramente gris */
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid #dcdcdc;
+            border-radius: 8px;
+            transition: 0.3s;
+            background: #f9f9f9;
         }
 
-        /* Estilos de foco para todos los inputs y selects */
-        .form-group input[type="text"]:focus,
-        .form-group input[type="email"]:focus, /* Estilo de foco para email */
-        .form-group input[type="password"]:focus, /* Estilo de foco para password */
-        .form-group input[type="number"]:focus,
-        .form-group textarea:focus,
+        .form-group input:focus,
         .form-group select:focus {
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            border-color: #3498db;
+            box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
             outline: none;
+            background: #fff;
         }
 
-        /* Estilos para el grupo de botones al final del formulario */
-        .button-group {
+        .form-group small {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        /* ======= BOTONES ======= */
+        .form-actions {
             display: flex;
-            justify-content: space-between;
-            gap: 15px; /* Espacio entre los botones */
-            margin-top: 30px;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 20px;
         }
-
-        /* Estilo general para los botones */
+        
         .btn {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
+            gap: 8px;
             padding: 12px 20px;
-            border-radius: 8px;
-            font-weight: 500;
             font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-            border: none;
+            font-weight: 600;
+            border-radius: 8px;
             text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
         }
 
-        /* Estilo para el botón de Guardar Cambios */
-        .btn-submit {
-            background-color: var(--sidebar-active-bg); /* Verde Turquesa */
-            color: var(--sidebar-active-color);
-            flex-grow: 1; /* Permite que el botón ocupe el espacio disponible */
-            box-shadow: 0 4px 10px rgba(26, 188, 156, 0.2);
+        .btn-primary {
+            background: #28a745;
+            color: #fff;
         }
 
-        .btn-submit:hover {
-            background-color: #16A085; /* Tono más oscuro */
+        .btn-primary:hover {
+            background: #218838;
             transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(26, 188, 156, 0.3);
+            box-shadow: 0 4px 12px rgba(40,167,69,0.2);
         }
 
-        /* Estilo para el botón Volver a la lista */
         .btn-secondary {
-            background-color: var(--text-secondary); /* Gris */
-            color: white;
-            flex-grow: 1; /* Permite que el botón ocupe el espacio disponible */
-            box-shadow: 0 4px 10px rgba(127, 140, 141, 0.2);
+            background: #6c757d;
+            color: #fff;
         }
 
         .btn-secondary:hover {
-            background-color: #6C7A89; /* Gris más oscuro */
+            background: #5a6268;
             transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(127, 140, 141, 0.3);
+            box-shadow: 0 4px 12px rgba(108,117,125,0.2);
         }
 
-        /* Iconos dentro de los botones */
-        .btn .fas {
-            margin-right: 8px;
+        .btn i {
+            font-size: 1rem;
         }
 
-        /* Estilos de alerta (copiados de admin.css para consistencia) */
+        /* ======= ALERTAS ======= */
         .alert {
-            padding: 15px 20px;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-size: 0.95rem;
             margin-bottom: 20px;
-            border-radius: 8px;
-            font-weight: 500;
             display: flex;
             align-items: center;
             gap: 10px;
-            box-shadow: var(--shadow-light);
         }
 
-        .alert-success { background-color: #D4EDDA; color: #155724; border: 1px solid #C3E6CB; }
-        .alert-danger { background-color: #F8D7DA; color: #721C24; border: 1px solid #F5C6CB; }
-        .alert-warning { background-color: #FFF3CD; color: #856404; border: 1px solid #FFEBAe; }
-        .alert-info { background-color: #D1ECF1; color: #0C5460; border: 1px solid #BEE5EB; }
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 5px solid #28a745;
+        }
 
-        /* Responsive adjustments for form */
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 5px solid #dc3545;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 5px solid #ffc107;
+        }
+
+        /* ======= RESPONSIVE ======= */
         @media (max-width: 768px) {
-            .form-container {
+            .admin-content {
+                margin: 20px;
                 padding: 20px;
             }
-            .button-group {
-                flex-direction: column; /* Apila los botones en pantallas pequeñas */
+            .form-actions {
+                flex-direction: column;
+                gap: 10px;
             }
-            .btn-submit, .btn-secondary {
-                width: 100%; /* Ocupa todo el ancho cuando están apilados */
-                margin-bottom: 10px; /* Espacio entre botones apilados */
-            }
-            .btn-secondary {
-                margin-bottom: 0; /* Elimina el margen inferior del último botón apilado */
+            .btn {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
+</head>
 <body>
 
     <div class="admin-dashboard-layout">
@@ -298,7 +292,7 @@ $page_title = 'Añadir Nuevo Usuario';
                         <li><a href="reporte_ventas.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reporte_ventas.php') ? 'active' : ''; ?>"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li>
                         <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
                         <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
-                        <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Soporte</a></li>  
+                        <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-headset"></i> Soporte</a></li>  
                     </ul>
                 </div>
             </nav>
@@ -326,7 +320,7 @@ $page_title = 'Añadir Nuevo Usuario';
 
             <main class="content-area">
                 <div class="admin-content">
-                    <h2>Añadir Nuevo Usuario</h2>
+                    <h3>Añadir Nuevo Usuario</h3>
                     <p>Completa el formulario para registrar un nuevo usuario.</p>
 
                     <?php if (!empty($message)): ?>
@@ -335,41 +329,37 @@ $page_title = 'Añadir Nuevo Usuario';
                         </div>
                     <?php endif; ?>
 
-                    <div class="form-container">
-                        <h3>Datos del Usuario</h3>
-                        <form action="add_user.php" method="POST">
-                            <div class="form-group">
-                                <label for="nombre">Nombre de Usuario:</label>
-                                <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($_POST['nombre'] ?? ''); ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="correo">Email:</label>
-                                <input type="email" id="correo" name="correo" value="<?php echo htmlspecialchars($_POST['correo'] ?? ''); ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="password">Contraseña:</label>
-                                <input type="password" id="password" name="password" required>
-                                <small>Mínimo 6 caracteres.</small>
-                            </div>
-                            <div class="form-group">
-                                <label for="id_rol">Rol:</label>
-                                <select id="id_rol" name="id_rol" required>
-                                    <option value="">Selecciona un rol</option>
-                                    <?php foreach ($roles as $role): ?>
-                                        <option value="<?php echo htmlspecialchars($role['ID_Rol']); ?>"
-                                            <?php echo (($_POST['id_rol'] ?? '') == $role['ID_Rol']) ? 'selected' : ''; ?>>
-                                            <?php echo htmlspecialchars($role['Nombre']); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div class="button-group">
-                                <button type="submit" class="btn btn-submit"><i class="fas fa-user-plus"></i> Añadir Usuario</button>
-                                <a href="users.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver a la lista</a>
-                            </div>
-                        </form>
-                    </div>
-
+                    <form action="add_user.php" method="POST" class="admin-form">
+                        <div class="form-group">
+                            <label for="nombre">Nombre de Usuario:</label>
+                            <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($_POST['nombre'] ?? ''); ?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="correo">Email:</label>
+                            <input type="email" id="correo" name="correo" value="<?php echo htmlspecialchars($_POST['correo'] ?? ''); ?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Contraseña:</label>
+                            <input type="password" id="password" name="password" required>
+                            <small>Mínimo 6 caracteres.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_rol">Rol:</label>
+                            <select id="id_rol" name="id_rol" required>
+                                <option value="">Selecciona un rol</option>
+                                <?php foreach ($roles as $role): ?>
+                                    <option value="<?php echo htmlspecialchars($role['ID_Rol']); ?>"
+                                        <?php echo (($_POST['id_rol'] ?? '') == $role['ID_Rol']) ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($role['Nombre']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-user-plus"></i> Añadir Usuario</button>
+                            <a href="users.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver a la lista</a>
+                        </div>
+                    </form>
                 </div>
             </main>
         </div>

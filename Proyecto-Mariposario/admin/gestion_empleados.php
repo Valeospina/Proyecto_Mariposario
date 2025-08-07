@@ -73,9 +73,9 @@ $paginaActual = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $offset = ($paginaActual - 1) * $registrosPorPagina;
 
 // Contar total de empleados (sin clientes)
-$sqlCount = "SELECT COUNT(*) AS total 
-             FROM Usuario u 
-             JOIN Rol r ON u.ID_Rol = r.ID_Rol 
+$sqlCount = "SELECT COUNT(*) AS total
+             FROM Usuario u
+             JOIN Rol r ON u.ID_Rol = r.ID_Rol
              WHERE r.Nombre != 'Cliente'";
 $totalRegistros = $conn->query($sqlCount)->fetch_assoc()['total'];
 $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
@@ -85,17 +85,17 @@ $empleados = [];
 try {
     if (isset($conn) && $conn instanceof mysqli) {
         // Unir Usuario con Empleado para obtener todos los datos necesarios
-        $sql = "SELECT 
-                    u.ID_Usuario, 
-                    u.Nombre, 
-                    u.Correo, 
-                    r.Nombre AS Rol_Nombre, 
-                    e.Salario, 
-                    e.Horario, 
-                    e.Fecha_Contratacion 
-                FROM Usuario u 
-                JOIN Rol r ON u.ID_Rol = r.ID_Rol 
-                LEFT JOIN Empleado e ON u.ID_Usuario = e.ID_Usuario 
+        $sql = "SELECT
+                    u.ID_Usuario,
+                    u.Nombre,
+                    u.Correo,
+                    r.Nombre AS Rol_Nombre,
+                    e.Salario,
+                    e.Horario,
+                    e.Fecha_Contratacion
+                FROM Usuario u
+                JOIN Rol r ON u.ID_Rol = r.ID_Rol
+                LEFT JOIN Empleado e ON u.ID_Usuario = e.ID_Usuario
                 WHERE r.Nombre != 'Cliente'
                 ORDER BY u.Nombre ASC
                 LIMIT ? OFFSET ?";
@@ -141,29 +141,106 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
     <link rel="stylesheet" href="../css/admin.css">
 
     <style>
-        /* Estilos para la paginación */
+        .admin-content {
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .actions-bar {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .btn-add-product {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #28a745;
+            color: #fff;
+            font-weight: 600;
+            padding: 10px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.3s ease;
+        }
+        .btn-add-product:hover { background: #218838; }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        .data-table th, .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f4f4f4;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .btn-action-edit, .btn-action-delete {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px; /* Reducido de 36px */
+            height: 20px; /* Reducido de 36px */
+            border-radius: 4px; /* Un radio más pequeño para un botón más pequeño */
+            color: #fff;
+            font-size: 0.9rem; /* Tamaño de fuente más pequeño para el ícono */
+            transition: background 0.3s ease;
+        }
+
+        .btn-action-edit { background: #007bff; }
+        .btn-action-edit:hover { background: #0056b3; }
+        .btn-action-delete { background: #dc3545; }
+        .btn-action-delete:hover { background: #c82333; }
+        
         .pagination {
-            margin-top: 20px;
             display: flex;
             justify-content: center;
+            margin-top: 20px;
             gap: 8px;
         }
+
         .pagination a {
-            padding: 8px 12px;
+            padding: 8px 14px;
             border: 1px solid #ccc;
-            text-decoration: none;
+            border-radius: 6px;
             color: #333;
-            border-radius: 5px;
-            transition: background-color 0.2s ease, color 0.2s ease;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
         }
+
         .pagination a.active {
-            background-color: #8BC34A;
+            background: #28a745;
             color: #fff;
-            font-weight: bold;
-            border-color: #8BC34A;
+            border-color: #28a745;
         }
+
         .pagination a:hover {
-            background-color: #f0f0f0;
+            background: #f1f1f1;
         }
     </style>
 </head>
@@ -188,7 +265,7 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
                         <li><a href="reporte_ventas.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reporte_ventas.php') ? 'active' : ''; ?>"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li>
                         <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
                         <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
-                        <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Soporte</a></li>  
+                        <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-headset"></i> Soporte</a></li>  
                     </ul>
                 </div>
             </nav>
@@ -202,10 +279,22 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
             <div class="header-left">
                 <h2><?php echo $page_title; ?></h2>
             </div>
+            <div class="header-right">
+                <div class="search-bar">
+                    <input type="text" placeholder="Buscar...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="user-profile">
+                    <span><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Admin'); ?></span>
+                    <img src="../images/user-avatar.png" alt="User Avatar">
+                </div>
+            </div>
         </header>
 
         <main class="content-area">
             <div class="admin-content">
+                <h2>Listado de Empleados</h2>
+                <p>Aquí puedes ver y gestionar a todos los empleados de la empresa.</p>
             <?php if (!empty($message)): ?>
                 <div class="alert alert-<?php echo htmlspecialchars($message_type); ?>">
                     <?php echo htmlspecialchars($message); ?>
@@ -213,7 +302,7 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
             <?php endif; ?>
 
                 <div class="actions-bar">
-                    <a href="add_empleado.php" class="btn btn-add-product"><i class="fas fa-user-plus"></i> Añadir Nuevo Empleado</a>
+                    <a href="add_empleado.php" class="btn-add-product"><i class="fas fa-user-plus"></i> Añadir Nuevo Empleado</a>
                 </div>
 
                 <?php if (!empty($empleados)): ?>
@@ -221,31 +310,29 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th></th>
                                     <th>Nombre</th>
                                     <th>Correo</th>
                                     <th>Rol</th>
                                     <th>Salario</th>
                                     <th>Horario</th>
                                     <th>Fecha Contratación</th>
-                                    <th>Acciones</th>
+                                    <th class="actions">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($empleados as $empleado): ?>
                                     <tr>
-                                        <td></td>
-                                        <td><?php echo htmlspecialchars($empleado['Nombre']); ?></td>
-                                        <td><?php echo htmlspecialchars($empleado['Correo']); ?></td>
-                                        <td><?php echo htmlspecialchars($empleado['Rol_Nombre']); ?></td>
-                                        <td>₡<?php echo number_format($empleado['Salario'] ?? 0, 2, ',', '.'); ?></td>
-                                        <td><?php echo htmlspecialchars($empleado['Horario'] ?? 'N/A'); ?></td>
-                                        <td><?php echo htmlspecialchars($empleado['Fecha_Contratacion'] ?? 'N/A'); ?></td>
-                                        <td class="actions">
-                                            <a href="edit_empleado.php?id=<?php echo htmlspecialchars($empleado['ID_Usuario']); ?>" class="btn btn-action-edit" title="Editar">
+                                        <td data-label="Nombre"><?php echo htmlspecialchars($empleado['Nombre']); ?></td>
+                                        <td data-label="Correo"><?php echo htmlspecialchars($empleado['Correo']); ?></td>
+                                        <td data-label="Rol"><?php echo htmlspecialchars($empleado['Rol_Nombre']); ?></td>
+                                        <td data-label="Salario">₡<?php echo number_format($empleado['Salario'] ?? 0, 2, ',', '.'); ?></td>
+                                        <td data-label="Horario"><?php echo htmlspecialchars($empleado['Horario'] ?? 'N/A'); ?></td>
+                                        <td data-label="Fecha Contratación"><?php echo htmlspecialchars($empleado['Fecha_Contratacion'] ?? 'N/A'); ?></td>
+                                        <td class="actions" data-label="Acciones">
+                                            <a href="edit_empleado.php?id=<?php echo htmlspecialchars($empleado['ID_Usuario']); ?>" class="btn-action-edit" title="Editar">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="gestion_empleados.php?action=delete&id=<?php echo htmlspecialchars($empleado['ID_Usuario']); ?>" class="btn btn-action-delete" title="Eliminar" onclick="return confirm('¿Estás seguro de eliminar este empleado? Esta acción no se puede deshacer.');">
+                                            <a href="gestion_empleados.php?action=delete&id=<?php echo htmlspecialchars($empleado['ID_Usuario']); ?>" class="btn-action-delete" title="Eliminar" onclick="return confirm('¿Estás seguro de eliminar este empleado? Esta acción no se puede deshacer.');">
                                                 <i class="fas fa-trash-alt"></i>
                                             </a>
                                         </td>

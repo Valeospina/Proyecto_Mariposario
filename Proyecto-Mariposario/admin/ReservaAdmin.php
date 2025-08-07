@@ -293,10 +293,10 @@ $stmt->close();
         }
 
         .pagination a.active {
-            background-color: #8BC34A; /* Verde para la página activa */
+            background-color: #28a745; /* Verde para la página activa */
             color: #fff;
             font-weight: bold;
-            border-color: #8BC34A;
+            border-color: #28a745;
             box-shadow: 0 2px 5px rgba(139, 195, 74, 0.3);
         }
 

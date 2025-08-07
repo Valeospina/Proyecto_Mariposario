@@ -214,10 +214,11 @@ if ($evento_id) {
 <body>
     <div class="admin-dashboard-layout">
         <aside class="sidebar">
-           <div class="sidebar-header">
+            <div class="sidebar-header">
                 <h3>Admin Panel</h3>
             </div>
             <nav class="sidebar-nav">
+                <div class="menu-scroll">
                     <ul>
                         <li><a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-home"></i> Dashboard</a></li>
                         <li><a href="gestion_empleados.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['gestion_empleados.php', 'add_empleado.php', 'edit_empleado.php'])) ? 'active' : ''; ?>"><i class="fas fa-user-tie"></i> Gestionar Empleados</a></li>
@@ -233,7 +234,11 @@ if ($evento_id) {
                         <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
                         <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-headset"></i> Soporte</a></li>  
                     </ul>
+                </div>
             </nav>
+            <div class="sidebar-footer">
+                <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+            </div>
         </aside>
 
         <div class="main-panel">

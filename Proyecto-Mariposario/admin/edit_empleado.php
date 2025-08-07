@@ -115,7 +115,6 @@ try {
                         }
 
                         // Primero, intenta actualizar el registro en Empleado
-                        // CORRECCIÓN: Cambiado "idssi" a "dssi" para que coincida con las 4 variables (Salario, Horario, Fecha_Contratacion, ID_Usuario en WHERE)
                         $stmt_empleado_update = $conn->prepare("UPDATE Empleado SET Salario = ?, Horario = ?, Fecha_Contratacion = ? WHERE ID_Usuario = ?");
                         $stmt_empleado_update->bind_param("dssi", $salario, $horario, $fecha_contratacion_valid, $empleado_usuario_id);
                         $stmt_empleado_update->execute();
@@ -156,19 +155,19 @@ try {
         // --- Obtener datos del empleado (después de posible actualización) ---
         // Se unen Usuario y Empleado para obtener todos los campos relevantes
         $stmt_get_empleado = $conn->prepare("
-            SELECT 
-                u.ID_Usuario, 
-                u.Nombre, 
-                u.Correo, 
-                u.ID_Rol, 
-                e.Salario, 
-                e.Horario, 
-                e.Fecha_Contratacion 
-            FROM 
-                Usuario u 
-            LEFT JOIN 
-                Empleado e ON u.ID_Usuario = e.ID_Usuario 
-            WHERE 
+            SELECT
+                u.ID_Usuario,
+                u.Nombre,
+                u.Correo,
+                u.ID_Rol,
+                e.Salario,
+                e.Horario,
+                e.Fecha_Contratacion
+            FROM
+                Usuario u
+            LEFT JOIN
+                Empleado e ON u.ID_Usuario = e.ID_Usuario
+            WHERE
                 u.ID_Usuario = ?
         ");
         $stmt_get_empleado->bind_param("i", $empleado_usuario_id);
@@ -206,215 +205,29 @@ try {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../css/admin.css">
     <style>
-        /* Estilos generales para formularios */
-        .form-container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            max-width: 700px;
-            margin: 30px auto;
-        }
-
-        .form-container h3 {
-            margin-top: 0;
-            color: #333;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-            margin-bottom: 25px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #555;
-        }
-
-        .form-group input[type="text"],
-        .form-group input[type="email"],
-        .form-group input[type="password"],
-        .form-group input[type="number"],
-        .form-group input[type="date"],
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1em;
-            box-sizing: border-box;
-        }
-
-        .form-group input[type="text"]:focus,
-        .form-group input[type="email"]:focus,
-        .form-group input[type="password"]:focus,
-        .form-group input[type="number"]:focus,
-        .form-group input[type="date"]:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-            outline: none;
-        }
-
-        .form-actions {
-            text-align: right;
-            margin-top: 30px;
-        }
-
-        .form-actions button, .form-actions a {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
-            text-decoration: none;
-            display: inline-flex; /* Usar flex para alinear icono y texto */
-            align-items: center;
-            justify-content: center;
-            gap: 8px; /* Espacio entre icono y texto */
-            margin-left: 10px;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .form-actions .btn-submit {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .form-actions .btn-submit:hover {
-            background-color: #218838;
-            transform: translateY(-1px);
-        }
-
-        .form-actions .btn-cancel {
-            background-color: #6c757d;
-            color: white;
-        }
-
-        .form-actions .btn-cancel:hover {
-            background-color: #5a6268;
-            transform: translateY(-1px);
-        }
-
-        /* Estilos de alerta */
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid transparent;
-            border-radius: 4px;
-            font-size: 1em;
-        }
-        .alert-success {
-            color: #155724;
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-        }
-        .alert-danger {
-            color: #721c24;
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-        }
-        .alert-warning {
-            color: #856404;
-            background-color: #fff3cd;
-            border-color: #ffeeba;
-        }
-
-                /* Estilos para el grupo de botones al final del formulario */
-        .button-group {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px; /* Espacio entre los botones */
-            margin-top: 30px;
-        }
-
-        /* Estilo general para los botones */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-weight: 500;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-            border: none;
-            text-decoration: none;
-        }
-
-        /* Estilo para el botón de Guardar Cambios */
-        .btn-submit {
-            background-color: var(--sidebar-active-bg); /* Verde Turquesa */
-            color: var(--sidebar-active-color);
-            flex-grow: 1; /* Permite que el botón ocupe el espacio disponible */
-            box-shadow: 0 4px 10px rgba(26, 188, 156, 0.2);
-        }
-
-        .btn-submit:hover {
-            background-color: #16A085; /* Tono más oscuro */
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(26, 188, 156, 0.3);
-        }
-
-        /* Estilo para el botón Volver a la lista */
-        .btn-secondary {
-            background-color: var(--text-secondary); /* Gris */
-            color: white;
-            flex-grow: 1; /* Permite que el botón ocupe el espacio disponible */
-            box-shadow: 0 4px 10px rgba(127, 140, 141, 0.2);
-        }
-
-        .btn-secondary:hover {
-            background-color: #6C7A89; /* Gris más oscuro */
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(127, 140, 141, 0.3);
-        }
-
-        /* Iconos dentro de los botones */
-        .btn .fas {
-            margin-right: 8px;
-        }
-
-        /* Estilos de alerta (copiados de admin.css para consistencia) */
-        .alert {
-            padding: 15px 20px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: var(--shadow-light);
-        }
-
-        .alert-success { background-color: #D4EDDA; color: #155724; border: 1px solid #C3E6CB; }
-        .alert-danger { background-color: #F8D7DA; color: #721C24; border: 1px solid #F5C6CB; }
-        .alert-warning { background-color: #FFF3CD; color: #856404; border: 1px solid #FFEBAe; }
-        .alert-info { background-color: #D1ECF1; color: #0C5460; border: 1px solid #BEE5EB; }
-
-        /* Responsive adjustments for form */
-        @media (max-width: 768px) {
-            .form-container {
-                padding: 20px;
-            }
-            .button-group {
-                flex-direction: column; /* Apila los botones en pantallas pequeñas */
-            }
-            .btn-submit, .btn-secondary {
-                width: 100%; /* Ocupa todo el ancho cuando están apilados */
-                margin-bottom: 10px; /* Espacio entre botones apilados */
-            }
-            .btn-secondary {
-                margin-bottom: 0; /* Elimina el margen inferior del último botón apilado */
-            }
+        /* Estilos de edit_inventario.php adaptados para este formulario */
+        body {font-family: 'Poppins', sans-serif;background:#f5f6fa;margin:0;}
+        .admin-content {max-width: 900px;margin:40px auto;background:#fff;padding:35px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.08);}
+        .admin-content h3 {font-size:1.8rem;margin-bottom:20px;text-align:center;color:#2c3e50;border-bottom:1px solid #e0e0e0;padding-bottom:10px;}
+        .admin-form {display:flex;flex-direction:column;gap:18px;}
+        .form-group label {font-weight:500;margin-bottom:8px;color:#34495e; display: block;}
+        .form-group input, .form-group select {padding:12px;width:100%;font-size:1rem;border:1px solid #dcdcdc;border-radius:8px;background:#f9f9f9;box-sizing:border-box;}
+        .form-group input:focus, .form-group select:focus {border-color:#3498db;box-shadow:0 0 8px rgba(52,152,219,0.2);background:#fff;outline:none;}
+        .form-actions {display:flex;justify-content:flex-end;gap:12px;margin-top:20px;}
+        .btn {display:inline-flex;align-items:center;gap:8px;padding:12px 20px;font-weight:600;border-radius:8px;text-decoration:none;transition:0.3s;cursor:pointer;border:none;}
+        .btn-primary {background:#28a745;color:#fff;}
+        .btn-primary:hover {background:#218838;transform: translateY(-2px);}
+        .btn-secondary {background:#6c757d;color:#fff;}
+        .btn-secondary:hover {background:#5a6268;transform: translateY(-2px);}
+        .alert {padding:12px 18px;border-radius:6px;margin-bottom:20px;font-size:0.95rem;display: flex; align-items: center; gap: 10px;}
+        .alert-success {background:#d4edda;color:#155724;border-left:5px solid #28a745;}
+        .alert-danger {background:#f8d7da;color:#721c24;border-left:5px solid #dc3545;}
+        
+        /* Responsive adjustments */
+        @media(max-width:768px){
+            .admin-content{margin:20px;padding:20px;}
+            .form-actions{flex-direction:column;gap:10px;}
+            .btn{width:100%;justify-content:center;}
         }
     </style>
 </head>
@@ -440,7 +253,7 @@ try {
                         <li><a href="reporte_ventas.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reporte_ventas.php') ? 'active' : ''; ?>"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li>
                         <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
                         <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
-                        <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Soporte</a></li>  
+                        <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-headset"></i> Soporte</a></li>  
                     </ul>
                 </div>
             </nav>
@@ -451,19 +264,8 @@ try {
 
         <div class="main-panel">
             <header class="main-panel-header">
-                <div class="header-left">
-                    <h2><?php echo $page_title; ?></h2>
-                </div>
-                <div class="header-right">
-                    <div class="search-bar">
-                        <input type="text" placeholder="Buscar...">
-                        <i class="fas fa-search"></i>
-                    </div>
-                    <div class="user-profile">
-                        <span><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Admin'); ?></span>
-                        <img src="../images/user-avatar.png" alt="User Avatar">
-                    </div>
-                </div>
+                <h2><?php echo $page_title; ?></h2>
+                <div class="user-profile"><span><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Admin'); ?></span><img src="../images/user-avatar.png" alt="User Avatar"></div>
             </header>
 
             <main class="content-area">
@@ -475,55 +277,53 @@ try {
                     <?php endif; ?>
 
                     <?php if ($empleado_data): ?>
-                        <div class="form-container">
-                            <h3>Editar Empleado: <?php echo htmlspecialchars($empleado_data['Nombre']); ?></h3>
-                            <form action="edit_empleado.php?id=<?php echo htmlspecialchars($empleado_usuario_id); ?>" method="POST">
-                                <div class="form-group">
-                                    <label for="nombre">Nombre Completo:</label>
-                                    <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($empleado_data['Nombre']); ?>" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="correo">Correo Electrónico:</label>
-                                    <input type="email" id="correo" name="correo" value="<?php echo htmlspecialchars($empleado_data['Correo']); ?>" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="contrasena">Nueva Contraseña (dejar en blanco para no cambiar):</label>
-                                    <input type="password" id="contrasena" name="contrasena" minlength="6">
-                                </div>
-                                <div class="form-group">
-                                    <label for="id_rol">Rol:</label>
-                                    <select id="id_rol" name="id_rol" required>
-                                        <option value="">Seleccione un Rol</option>
-                                        <?php foreach ($roles as $rol): ?>
-                                            <option value="<?php echo htmlspecialchars($rol['ID_Rol']); ?>"
-                                                <?php echo ($empleado_data['ID_Rol'] == $rol['ID_Rol']) ? 'selected' : ''; ?>>
-                                                <?php echo htmlspecialchars($rol['Nombre']); ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="salario">Salario (₡):</label>
-                                    <input type="number" id="salario" name="salario" step="0.01" min="0" value="<?php echo htmlspecialchars($empleado_data['Salario'] ?? '0.00'); ?>">
-                                </div>
-                                <div class="form-group">
-                                    <label for="horario">Horario:</label>
-                                    <input type="text" id="horario" name="horario" value="<?php echo htmlspecialchars($empleado_data['Horario'] ?? ''); ?>" placeholder="Ej: L-V 8:00 AM - 5:00 PM">
-                                </div>
-                                <div class="form-group">
-                                    <label for="fecha_contratacion">Fecha de Contratación:</label>
-                                    <input type="date" id="fecha_contratacion" name="fecha_contratacion" value="<?php echo htmlspecialchars($empleado_data['Fecha_Contratacion'] ?? ''); ?>">
-                                </div>
-                                <div class="button-group">
-                                    <button type="submit" class="btn btn-submit"><i class="fas fa-save"></i> Guardar Cambios</button>
-                                    <a href="gestion_empleados.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver a la lista</a>
-                                </div>
-                            </form>
-                        </div>
+                        <h3>Editar Empleado: <?php echo htmlspecialchars($empleado_data['Nombre']); ?></h3>
+                        <form action="edit_empleado.php?id=<?php echo htmlspecialchars($empleado_usuario_id); ?>" method="POST" class="admin-form">
+                            <div class="form-group">
+                                <label for="nombre">Nombre Completo:</label>
+                                <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($empleado_data['Nombre']); ?>" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="correo">Correo Electrónico:</label>
+                                <input type="email" id="correo" name="correo" value="<?php echo htmlspecialchars($empleado_data['Correo']); ?>" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contrasena">Nueva Contraseña (dejar en blanco para no cambiar):</label>
+                                <input type="password" id="contrasena" name="contrasena" minlength="6">
+                            </div>
+                            <div class="form-group">
+                                <label for="id_rol">Rol:</label>
+                                <select id="id_rol" name="id_rol" required>
+                                    <option value="">Seleccione un Rol</option>
+                                    <?php foreach ($roles as $rol): ?>
+                                        <option value="<?php echo htmlspecialchars($rol['ID_Rol']); ?>"
+                                            <?php echo ($empleado_data['ID_Rol'] == $rol['ID_Rol']) ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($rol['Nombre']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="salario">Salario (₡):</label>
+                                <input type="number" id="salario" name="salario" step="0.01" min="0" value="<?php echo htmlspecialchars($empleado_data['Salario'] ?? '0.00'); ?>">
+                            </div>
+                            <div class="form-group">
+                                <label for="horario">Horario:</label>
+                                <input type="text" id="horario" name="horario" value="<?php echo htmlspecialchars($empleado_data['Horario'] ?? ''); ?>" placeholder="Ej: L-V 8:00 AM - 5:00 PM">
+                            </div>
+                            <div class="form-group">
+                                <label for="fecha_contratacion">Fecha de Contratación:</label>
+                                <input type="date" id="fecha_contratacion" name="fecha_contratacion" value="<?php echo htmlspecialchars($empleado_data['Fecha_Contratacion'] ?? ''); ?>">
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar Cambios</button>
+                                <a href="gestion_empleados.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver a la lista</a>
+                            </div>
+                        </form>
                     <?php else: ?>
                         <p>No se pudo cargar la información del empleado. Por favor, regrese al listado.</p>
-                        <div class="form-actions" style="text-align: center;">
-                            <a href="gestion_empleados.php" class="btn-cancel"><i class="fas fa-arrow-left"></i> Volver al Listado</a>
+                        <div class="form-actions" style="justify-content: center;">
+                            <a href="gestion_empleados.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver al Listado</a>
                         </div>
                     <?php endif; ?>
                 </div>

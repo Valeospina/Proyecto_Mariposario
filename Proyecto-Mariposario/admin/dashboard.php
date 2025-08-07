@@ -1,35 +1,49 @@
 <?php
 session_start();
+include '../DB.php';
 
-// include '../DB.php'; // Asegúrate de que esta línea esté descomentada si la necesitas para la base de datos
-
-// Inicializar variables de mensaje para evitar warnings SIEMPRE al inicio
 $message = '';
 $message_type = '';
 
-// **Protección de la página de administración:**
-// 1. Verifica si el usuario ha iniciado sesión.
 if (!isset($_SESSION['user_id'])) {
-    header('Location: ../logind.php'); // Redirige a login si no hay sesión
+    header('Location: ../logind.php');
     exit;
 }
 
-// 2. Verifica si el rol del usuario es administrador (ID_Rol = 1).
-// Asumiendo que $_SESSION['user_role'] ya contiene el ID del rol
-if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] != 1) { // Añadido isset para user_role
-    header('Location: ../index.php'); // Redirige a la página principal si no es admin
+if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] != 1) {
+    header('Location: ../index.php');
     exit;
 }
 
-// Si hay un mensaje pasado por la URL (esto ahora sobrescribirá las inicializaciones vacías)
 if (isset($_GET['message']) && isset($_GET['type'])) {
     $message = htmlspecialchars($_GET['message']);
-    $message_type = htmlspecialchars($_GET['type']); // success, danger, info, warning
+    $message_type = htmlspecialchars($_GET['type']);
 }
 
-// Puedes definir el título de la página actual aquí
-$page_title = 'Panel de Administración';
+try {
+    $sqlProductos = "SELECT COUNT(*) AS total FROM Producto";
+    $resultProductos = $conn->query($sqlProductos);
+    $totalProductos = $resultProductos->fetch_assoc()['total'];
 
+    $sqlUsuarios = "SELECT COUNT(*) AS total FROM Usuario WHERE ID_Rol = 2";
+    $resultUsuarios = $conn->query($sqlUsuarios);
+    $totalUsuarios = $resultUsuarios->fetch_assoc()['total'];
+
+    $sqlPedidos = "SELECT COUNT(*) AS total FROM Pedido WHERE Estado_Pedido = 'Pendiente de Pago'";
+    $resultPedidos = $conn->query($sqlPedidos);
+    $totalPedidosPendientes = $resultPedidos->fetch_assoc()['total'];
+
+    $conn->close();
+
+} catch (Exception $e) {
+    $totalProductos = 0;
+    $totalUsuarios = 0;
+    $totalPedidosPendientes = 0;
+    $message = 'Error al obtener datos del dashboard: ' . $e->getMessage();
+    $message_type = 'danger';
+}
+
+$page_title = 'Panel de Administración';
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -42,9 +56,51 @@ $page_title = 'Panel de Administración';
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../css/admin.css">
+    <style>
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-top: 30px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+        }
+        .card h3 {
+            font-size: 1.25rem;
+            color: #2c3e50;
+            margin-bottom: 12px;
+        }
+        .card-value {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .card-text {
+            font-size: 0.95rem;
+            color: #888;
+        }
+        .card-blue .card-value { color: #3498db; }
+        .card-green .card-value { color: #27ae60; }
+        .card-red .card-value { color: #e74c3c; }
+
+        @media (max-width: 768px) {
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-
     <div class="admin-dashboard-layout">
         <aside class="sidebar">
             <div class="sidebar-header">
@@ -64,8 +120,8 @@ $page_title = 'Panel de Administración';
                         <li><a href="pedidos.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['pedidos.php', 'edit_pedido.php'])) ? 'active' : ''; ?>"><i class="fas fa-shopping-cart"></i> Gestionar Pedidos</a></li>
                         <li><a href="reporte_ventas.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reporte_ventas.php') ? 'active' : ''; ?>"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li>
                         <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
-                        <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
-                        <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Soporte</a></li>  
+                        <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reportAsis.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
+                        <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-headset"></i> Soporte</a></li>
                     </ul>
                 </div>
             </nav>
@@ -81,8 +137,8 @@ $page_title = 'Panel de Administración';
                 </div>
                 <div class="header-right">
                     <div class="search-bar">
-                        <input type="text" placeholder="Buscar...">
                         <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Buscar...">
                     </div>
                     <div class="user-profile">
                         <span><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Admin'); ?></span>
@@ -93,7 +149,7 @@ $page_title = 'Panel de Administración';
 
             <main class="content-area">
                 <div class="admin-content">
-                    <?php if (!empty($message)): // ¡Aquí es la línea 80! Usamos !empty() ?>
+                    <?php if (!empty($message)): ?>
                         <div class="alert alert-<?php echo htmlspecialchars($message_type); ?>">
                             <?php echo htmlspecialchars($message); ?>
                         </div>
@@ -102,27 +158,26 @@ $page_title = 'Panel de Administración';
                     <h2>Bienvenido al Panel de Administración</h2>
                     <p>Aquí puedes ver un resumen de tu actividad y acceder a las diferentes secciones.</p>
 
-                    <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 30px;">
-                        <div class="card" style="flex: 1; min-width: 250px; padding: 20px; text-align: center;">
+                    <div class="dashboard-cards">
+                        <div class="card card-blue">
                             <h3>Total Productos</h3>
-                            <p style="font-size: 2.5em; font-weight: 700; color: var(--sidebar-active-bg);">120</p>
-                            <p>Cantidad total de productos registrados.</p>
+                            <p class="card-value blue"><?php echo $totalProductos; ?></p>
+                            <p class="card-text">Cantidad total de productos registrados.</p>
                         </div>
-                        <div class="card" style="flex: 1; min-width: 250px; padding: 20px; text-align: center;">
-                            <h3>Usuarios Activos</h3>
-                            <p style="font-size: 2.5em; font-weight: 700; color: var(--accent-blue);">35</p>
-                            <p>Usuarios con sesión activa en este momento.</p>
+                        <div class="card card-green">
+                            <h3>Usuarios Registrados</h3>
+                            <p class="card-value green"><?php echo $totalUsuarios; ?></p>
+                            <p class="card-text">Clientes que han creado una cuenta.</p>
                         </div>
-                        <div class="card" style="flex: 1; min-width: 250px; padding: 20px; text-align: center;">
-                            <h3>Órdenes Pendientes</h3>
-                            <p style="font-size: 2.5em; font-weight: 700; color: var(--danger-red);">5</p>
-                            <p>Pedidos en espera de procesamiento.</p>
+                        <div class="card card-red">
+                            <h3>Pedidos Pendientes</h3>
+                            <p class="card-value red"><?php echo $totalPedidosPendientes; ?></p>
+                            <p class="card-text">Pedidos en espera de procesamiento.</p>
                         </div>
                     </div>
                 </div>
             </main>
         </div>
     </div>
-
 </body>
 </html>

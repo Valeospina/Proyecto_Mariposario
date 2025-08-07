@@ -19,8 +19,8 @@
     --danger-red: #E74C3C;          /* Rojo para eliminar */
 
     /* Nuevas variables para el verde de los botones, más específico */
-    --primary-green-btn: #8BC34A; /* Verde más claro para botones principales */
-    --primary-green-btn-hover: #7CB342; /* Verde un poco más oscuro para hover */
+    --primary-green-btn: #28a745; /* Verde más claro para botones principales */
+    --primary-green-btn-hover: #28a745; /* Verde un poco más oscuro para hover */
 
 
     /* Sombras */

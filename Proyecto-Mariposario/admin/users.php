@@ -95,12 +95,43 @@ $page_title = 'Gestionar Usuarios';
             border-radius: 5px;
         }
         .pagination a.active {
-            background-color: #8BC34A;
+            background-color: #28a745;
             color: #fff;
             font-weight: bold;
         }
         .pagination a:hover {
             background-color: #f0f0f0;
+        }
+        
+        /* Estilos para los botones de acción de la tabla */
+        .btn-action-edit {
+            background-color: #007bff; /* Azul para editar */
+        }
+        .btn-action-delete {
+            background-color: #dc3545; /* Rojo para eliminar */
+        }
+        .btn-action-edit, .btn-action-delete {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+            text-decoration: none; /* Asegura que no tenga subrayado */
+        }
+        .btn-action-edit:hover {
+            background-color: #2980b9;
+        }
+        .btn-action-delete:hover {
+            background-color: #c0392b;
+        }
+        .actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
         }
     </style>
 </head>
@@ -126,7 +157,7 @@ $page_title = 'Gestionar Usuarios';
                         <li><a href="reporte_ventas.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reporte_ventas.php') ? 'active' : ''; ?>"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li>
                         <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
                         <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
-                        <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Soporte</a></li>  
+                        <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-headset"></i> Soporte</a></li>  
                     </ul>
                 </div>
             </nav>
@@ -187,8 +218,8 @@ $page_title = 'Gestionar Usuarios';
                                             <td><?php echo htmlspecialchars($user['Email']); ?></td>
                                             <td><?php echo htmlspecialchars($user['Nombre_Rol']); ?></td>
                                             <td class="actions">
-                                                <a href="edit_user.php?id=<?php echo htmlspecialchars($user['ID_Usuario']); ?>" class="btn btn-action-edit" title="Editar"><i class="fas fa-edit"></i></a>
-                                                <a href="delete_user.php?id=<?php echo htmlspecialchars($user['ID_Usuario']); ?>" class="btn btn-action-delete" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar a este usuario? Esta acción es irreversible.');"><i class="fas fa-trash-alt"></i></a>
+                                                <a href="edit_user.php?id=<?php echo htmlspecialchars($user['ID_Usuario']); ?>" class="btn-action-edit" title="Editar"><i class="fas fa-edit"></i></a>
+                                                <a href="delete_user.php?id=<?php echo htmlspecialchars($user['ID_Usuario']); ?>" class="btn-action-delete" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar a este usuario? Esta acción es irreversible.');"><i class="fas fa-trash-alt"></i></a>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -196,7 +227,6 @@ $page_title = 'Gestionar Usuarios';
                             </table>
                         </div>
 
-                        <!-- Paginación -->
                         <div class="pagination">
                             <?php if ($paginaActual > 1): ?>
                                 <a href="?page=<?php echo $paginaActual - 1; ?>">Anterior</a>
