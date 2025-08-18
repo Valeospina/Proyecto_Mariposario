@@ -12,7 +12,7 @@ class Chat implements MessageComponentInterface {
         $this->clients = new \SplObjectStorage;
 
         // Conexión a la base de datos
-        $this->db = new \mysqli("localhost", "root", "12345", "mariposariodb");
+        $this->db = new \mysqli("localhost", "root", "", "mariposariodb");
         if ($this->db->connect_error) {
             echo "Error de conexión a MySQL: " . $this->db->connect_error . "\n";
             exit;
