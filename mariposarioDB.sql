@@ -688,8 +688,7 @@ INSERT INTO Usuario (ID_Usuario, ID_Rol, Nombre, Apellido, Correo, Contrasena, T
 (4, 3, 'Pedro', 'Vargas', 'pedro.empleado@mariposario.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '2678-9012', 'Puntarenas, Costa Rica'),
 (5, 2, 'Laura', 'Castillo', 'laura.cliente@gmail.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '2890-1234', 'San José, Escazú'),
 (6, 2, 'Diego', 'Ramírez', 'diego.cliente@hotmail.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '2901-2345', 'Cartago, Paraíso'),
-(7, 2, 'Valeria', 'Solano', 'valeria.cliente@yahoo.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '2012-3456', 'Alajuela, Atenas'),
-(8, 2, 'Usuario', 'Ocho', 'usuario8@mariposario.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '2000-0008', 'San José, Costa Rica'); -- agregado para cumplir FK de Notificacion
+(7, 2, 'Valeria', 'Solano', 'valeria.cliente@yahoo.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '2012-3456', 'Alajuela, Atenas');
 
 -- Empleados
 INSERT INTO Empleado (ID_Usuario, Nombre, Correo, Salario, Rol, Horario, Fecha_Contratacion) VALUES
@@ -797,9 +796,8 @@ CALL sp_agregar_lote(2, 3, 'Juvenil',      NULL ,    60, NOW());
 -- - Para facturas (PHP): composer install
 -- ====================================================================
 
--- ====================================================================
--- VISTAS ADICIONALES SOLICITADAS
--- ====================================================================
+USE mariposarioDB;
+
 CREATE OR REPLACE VIEW parametros_ciclo AS
 SELECT 
   ID_Especie,
@@ -822,3 +820,4 @@ SELECT
   SUM(Cantidad) AS Cantidad
 FROM Lote_Mariposa
 GROUP BY ID_Mariposario, ID_Especie;
+
