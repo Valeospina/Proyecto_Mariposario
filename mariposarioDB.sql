@@ -344,6 +344,31 @@ CREATE TABLE Bitacora (
     FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Tabla: Reseñas de Productos
+-- Permite a los usuarios dejar reseñas y calificaciones para productos.
+CREATE TABLE reseñas (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    ID_Producto INT NOT NULL,
+    Usuario VARCHAR(100) NOT NULL,
+    Calificacion INT NOT NULL DEFAULT 0,
+    Reseña TEXT NOT NULL,
+    Fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ID_Producto) REFERENCES producto(ID_Producto)
+);
+
+-- Tabla: Reseñas de Eventos
+-- Permite a los usuarios dejar reseñas y calificaciones para eventos.
+CREATE TABLE resenas_evento (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    ID_Evento INT NOT NULL,
+    Usuario VARCHAR(100) NOT NULL,
+    Calificacion INT NOT NULL DEFAULT 0,
+    Reseña TEXT NOT NULL,
+    Fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ID_Evento) REFERENCES Evento(ID_Evento)
+);
+
+
 -- Reseñas de Productos
 CREATE TABLE resenas_producto (
     ID INT AUTO_INCREMENT PRIMARY KEY,
@@ -355,16 +380,7 @@ CREATE TABLE resenas_producto (
     FOREIGN KEY (ID_Producto) REFERENCES Producto(ID_Producto)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Reseñas de Eventos
-CREATE TABLE resenas_evento (
-    ID INT AUTO_INCREMENT PRIMARY KEY,
-    ID_Evento INT NOT NULL,
-    Usuario VARCHAR(100) NOT NULL,
-    Calificacion INT NOT NULL DEFAULT 0,
-    Resena TEXT NOT NULL,
-    Fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (ID_Evento) REFERENCES Evento(ID_Evento)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 -- Recuperacion_Contrasena
 CREATE TABLE Recuperacion_Contrasena (
