@@ -11,71 +11,248 @@ $consultaId = $_SESSION['consultaId'];
 $userName = $_SESSION['user_name'] ?? 'Usuario';
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Soporte en Línea</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<!doctype html>
+<html class="no-js" lang="es">
+
+
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="keywords" content="Eco Mariposas, perfil de usuario, jardín, naturaleza, mariposas">
+        <meta name="description" content="Panel de usuario de Eco Mariposas, un espacio donde puedes gestionar tus pedidos, eventos y notificaciones.">
+        <meta name='copyright' content='Eco Mariposas'>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        
+        <title>Mi Perfil | Eco Mariposas</title>
+        
+        <link rel="icon" href="img/favicon.png">
+        
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="img/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/nice-select.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="css/slicknav.min.css">
+    <link rel="stylesheet" href="css/owl-carousel.css">
+    <link rel="stylesheet" href="css/datepicker.css">
+    <link rel="stylesheet" href="css/animate.min.css">
+    <link rel="stylesheet" href="css/magnific-popup.css">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/tienda.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
 <style>
+:root {
+    --main-green: #8BC34A;
+    --darker-green: #6fa12d;
+    --background-light: #f8f9fa;
+    --border-color: #e9e9e9;
+    --text-color: #333;
+}
+
 body {
     font-family: 'Poppins', sans-serif;
-    background: #f4f6f9;
-    margin: 0;
-    padding: 0;
+    background: var(--background-light);
+    color: var(--text-color);
 }
-.container { display:flex; max-width:1200px; margin:30px auto; gap:20px; padding:0 15px; }
-.sidebar { width:250px; background:#fff; padding:20px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.05); text-align:center; }
-.sidebar img { width:100px; height:100px; border-radius:50%; border:3px solid #8BC34A; margin-bottom:10px; }
-.sidebar h3 { font-size:16px; font-weight:600; margin-bottom:15px; }
-.sidebar ul { list-style:none; padding:0; margin:0; }
-.sidebar ul li { margin-bottom:12px; }
-.sidebar ul li a { display:block; padding:12px; background:#f4f6f9; color:#333; text-decoration:none; border-radius:8px; font-weight:bold; transition:0.3s; }
-.sidebar ul li a:hover { background:#8BC34A; color:white; }
-.chat-wrapper { flex:1; background:#fff; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.05); display:flex; flex-direction:column; height:550px; }
-.chat-header { background:#8BC34A; color:#fff; padding:15px; font-size:18px; font-weight:600; display:flex; justify-content:space-between; align-items:center; }
-.chat-header button { display:none; }
-.chat-body { flex:1; padding:15px; overflow-y:auto; background:#f8f9fa; }
-.message { max-width:70%; padding:10px 14px; margin-bottom:12px; border-radius:18px; font-size:14px; animation:fadeIn 0.3s ease; word-wrap:break-word; }
-.cliente { background:#8BC34A; color:#fff; margin-left:auto; border-bottom-right-radius:0; }
-.admin { background:#198754; color:#fff; margin-right:auto; border-bottom-left-radius:0; }
-.system { background:#e0e0e0; color:#333; margin:auto; font-size:13px; text-align:center; }
-.chat-footer { display:flex; flex-direction:column; padding:15px; border-top:1px solid #ddd; gap:10px; }
-.input-box { display:flex; gap:10px; }
-.input-box input { flex:1; padding:12px; border-radius:25px; border:1px solid #ccc; font-size:14px; }
-.input-box button { background:#8BC34A; color:white; border:none; border-radius:50%; width:50px; height:50px; font-size:18px; cursor:pointer; transition:background 0.3s; }
-.input-box button:hover { background:#6fa12d; }
-@keyframes fadeIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+
+.user-sidebar {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    padding: 25px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.user-sidebar img {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 4px solid var(--main-green);
+    margin-bottom: 15px;
+    object-fit: cover;
+}
+
+.user-sidebar h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.user-sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+}
+
+.user-sidebar ul li {
+    margin-bottom: 10px;
+}
+
+.user-sidebar ul li a {
+    display: block;
+    color: var(--text-color);
+    padding: 10px 15px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.user-sidebar ul li a:hover {
+    background: var(--main-green);
+    color: #fff;
+}
+
+.chat-wrapper {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    height: 550px;
+}
+
+.chat-header {
+    background: var(--main-green);
+    color: #fff;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: 600;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.chat-body {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background: var(--background-light);
+}
+
+.message {
+    max-width: 70%;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    border-radius: 18px;
+    font-size: 14px;
+    animation: fadeIn 0.3s ease;
+    word-wrap: break-word;
+}
+
+.cliente {
+    background: var(--main-green);
+    color: #fff;
+    margin-left: auto;
+    border-bottom-right-radius: 0;
+}
+
+.admin {
+    background: #198754;
+    color: #fff;
+    margin-right: auto;
+    border-bottom-left-radius: 0;
+}
+
+.system {
+    background: #e0e0e0;
+    color: #333;
+    margin: auto;
+    font-size: 13px;
+    text-align: center;
+}
+
+.chat-footer {
+    padding: 15px;
+    border-top: 1px solid var(--border-color);
+    background: #fff;
+}
+
+.input-box {
+    display: flex;
+    gap: 10px;
+}
+
+.input-box input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.input-box button {
+    background: var(--main-green);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.input-box button:hover {
+    background: var(--darker-green);
+}
+
+@keyframes fadeIn {
+    from {opacity:0;transform:translateY(10px);}
+    to {opacity:1;transform:translateY(0);}
+}
 </style>
 </head>
 <body>
 
-<div class="container">
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <img src="img/user-profile.jpg" alt="Usuario">
-        <h3><?php echo htmlspecialchars($userName); ?></h3>
-        <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="MisPedidos.php">Mis Pedidos</a></li>
-            <li><a href="#" onclick="history.back()">← Devolver</a></li>
-        </ul>
-    </div>
+<?php include 'layout/nav.php'; ?>
 
-    <!-- Chat -->
-    <div class="chat-wrapper">
-        <div class="chat-header">Soporte en Línea</div>
-        <div class="chat-body" id="chatBox">
-            <div class="message system">Cargando historial...</div>
-        </div>
-        <div class="chat-footer">
-            <div class="input-box">
-                <input type="text" id="msgInput" placeholder="Escribe tu mensaje...">
-                <button id="sendBtn">➤</button>
+        <section class="user-panel section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 col-12">
+                        <div class="user-sidebar">
+                            <div class="profile-info">
+                                <img src="<?= $fotoPerfil ?>" alt="Foto de perfil">
+                                <h3>Hola, <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Usuario'); ?></h3>
+                                <p>Miembro desde: Abril 2023</p>
+                                <a href="user-settings.php" class="btn btn-sm btn-primary">Editar Perfil</a>
+                            </div>
+                            <ul class="sidebar-menu">
+                            <li><a href="usuario.php" class="<?= $currentPage=='user-profile.php'?'active':'' ?>"><i class="fas fa-user"></i> Perfil</a></li>
+                            <li><a href="MisPedidos.php" class="<?= $currentPage=='MisPedidos.php'?'active':'' ?>"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
+                            <li><a href="eventosReservados.php" class="<?= $currentPage=='eventosReservados.php'?'active':'' ?>"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
+                            <li><a href="notificaciones.php" class="<?= $currentPage=='notificaciones.php'?'active':'' ?>"><i class="fas fa-bell"></i> Notificaciones <span class="badge badge-primary">3</span></a></li>
+                            <li><a href="cliente-chat.php" class="<?= $currentPage=='cliente-chat.php'?'active':'' ?>"><i class="fas fa-cog"></i> Soporte</a></li>
+                            <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
+                            </ul>
+                        </div>
+                        </div>
+            <!-- Chat -->
+            <div class="col-lg-9 col-md-8 col-12">
+                <div class="chat-wrapper">
+                    <div class="chat-header">Soporte en Línea</div>
+                    <div class="chat-body" id="chatBox">
+                        <div class="message system">Cargando historial...</div>
+                    </div>
+                    <div class="chat-footer">
+                        <div class="input-box">
+                            <input type="text" id="msgInput" placeholder="Escribe tu mensaje...">
+                            <button id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+<?php include 'layout/Footer.php'; ?>
 
 <script>
 let consultaId = <?php echo $consultaId; ?>;
@@ -85,14 +262,14 @@ const msgInput = document.getElementById('msgInput');
 const sendBtn = document.getElementById('sendBtn');
 let conn = new WebSocket('ws://localhost:8080/chat');
 
-// ✅ Paso 1: Registrar el chat en BD automáticamente con tema fijo "Consulta"
+// Registrar chat
 fetch('crear_chat.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: `tema=Consulta&consultaId=${consultaId}`
 });
 
-// ✅ Cargar historial
+// Cargar historial
 window.onload = () => {
     fetch('./admin/get_chat.php?id=' + consultaId)
         .then(r => r.json())
@@ -112,7 +289,7 @@ window.onload = () => {
         });
 };
 
-// WebSocket: recibir mensajes
+// WebSocket: recibir
 conn.onmessage = (e) => {
     const data = JSON.parse(e.data);
     if (data.consultaId === consultaId && data.user !== user) {

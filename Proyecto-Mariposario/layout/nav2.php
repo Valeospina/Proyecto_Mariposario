@@ -45,7 +45,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <div class="container">
             <div class="inner">
                 <div class="row">
-                    <div class="col-lg-3 col-md-3 col-12">
+                    <div class="col-auto">
                         <div class="logo">
                             <a href="index.php"><img src="img/logo.png" alt="Logo Mariposario"></a>
                         </div>

@@ -195,18 +195,26 @@
     padding: 20px 0;
 }
 
-.header .header-inner .inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+/* Fuerza que las filas del header estén centradas verticalmente */
+.header .header-inner .row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* menú cerca del logo */
+}
+
+.header .logo {
+  margin-right: 20px; /* pequeño espacio entre logo y menú */
+  display: flex;
+  align-items: center;
 }
 
 .header .logo img {
-    max-height: 60px; /* Limita la altura máxima */
-    height: 60px;     /* Fuerza la altura a 60px */
-    width: auto;      /* Mantiene la proporción */
-    transition: all 0.3s ease;
+  max-height: 40px;
+  height: auto;   /* ya no lo fuerces fijo */
+  width: auto;
+  display: block;
 }
+
 
 .header .logo img:hover {
     opacity: 0.9;
@@ -1450,3 +1458,4 @@
 #calendarContainer button:hover {
   background-color: #007acc;
 }
+
