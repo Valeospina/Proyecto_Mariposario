@@ -750,12 +750,12 @@ INSERT INTO Consulta (ID_Usuario, Tema, Estado, Canal, Mensajes) VALUES
 -- Notificaciones iniciales (ejemplo para usuario 8 si existiera)
 INSERT INTO Notificacion (ID_Usuario, Tipo_Notificacion, Mensaje)
 VALUES
-(8, 'Bienvenida', '¡Bienvenido a Eco Mariposas! Gracias por registrarte.'),
-(8, 'Pago Confirmado', 'Tu pago ha sido confirmado exitosamente.'),
-(8, 'Pedido Enviado', 'Tu pedido ha sido enviado y está en camino.'),
-(8, 'Evento Recordatorio', 'Recuerda tu evento "Tour al mariposario" el 10/08/2025.'),
-(8, 'Promoción', '¡Descuento especial del 20% en tu próxima compra!'),
-(8, 'Encuesta', '¿Qué te pareció tu compra? Haz clic en el botón para opinar.');
+(5, 'Bienvenida', '¡Bienvenido a Eco Mariposas! Gracias por registrarte.'),
+(5, 'Pago Confirmado', 'Tu pago ha sido confirmado exitosamente.'),
+(5, 'Pedido Enviado', 'Tu pedido ha sido enviado y está en camino.'),
+(5, 'Evento Recordatorio', 'Recuerda tu evento "Tour al mariposario" el 10/08/2025.'),
+(5, 'Promoción', '¡Descuento especial del 20% en tu próxima compra!'),
+(5, 'Encuesta', '¿Qué te pareció tu compra? Haz clic en el botón para opinar.');
 
 -- ====================================================================
 -- 4.8 DATOS INICIALES DEL MÓDULO DE MARIPOSAS
@@ -820,4 +820,5 @@ SELECT
   SUM(Cantidad) AS Cantidad
 FROM Lote_Mariposa
 GROUP BY ID_Mariposario, ID_Especie;
+
 
