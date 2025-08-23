@@ -190,6 +190,9 @@ $reseñas = $revStmt->get_result();
     });
   });
 
+  const EVENTO_ID = <?= (int)$id ?>;
+
+
     $(function(){
     const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
                         'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -232,11 +235,12 @@ $reseñas = $revStmt->get_result();
       $('#calendarContainer').html(html);
     }
 
-    function loadCalendar() {
-      $.getJSON(`?accion=fechas&year=${year}&month=${month}`)
-        .done(renderCalendar)
-        .fail(err=> console.error('Error al cargar fechas:', err));
-    }
+function loadCalendar() {
+  $.getJSON(`?accion=fechas&year=${year}&month=${month}&eventoID=${EVENTO_ID}`)
+    .done(renderCalendar)
+    .fail(err=> console.error('Error al cargar fechas:', err));
+}
+
 
     $('#toggleCalendarBtn').on('click', function(){
       const cont = $('#calendarContainer');

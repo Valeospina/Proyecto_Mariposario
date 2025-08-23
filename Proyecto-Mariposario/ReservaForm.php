@@ -4,7 +4,6 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-
 $currentPage = basename($_SERVER['PHP_SELF']);
 ?>
 
@@ -39,14 +38,28 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="css/responsive.css">
-
 </head>
 <body>
 </header>
 <!DOCTYPE html>
 <html lang="es">
 
-    <?php include 'layout/nav2.php'; ?>
+<?php include 'layout/nav2.php'; ?>
+<?php
+// ========= CAMBIO: preparar el evento fijo si viene por GET =========
+require_once 'DB.php';
+$eventoIdFijo = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$eventoFijoNombre = '';
+
+if ($eventoIdFijo > 0) {
+    $stmt = $conn->prepare("SELECT Nombre FROM Evento WHERE ID_Evento = ?");
+    $stmt->bind_param("i", $eventoIdFijo);
+    $stmt->execute();
+    $stmt->bind_result($eventoFijoNombre);
+    $stmt->fetch();
+    $stmt->close();
+}
+?>
 
 <head>
     <meta charset="UTF-8">
@@ -56,85 +69,102 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
 <body>
 
-    <section class="appointment">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="section-title">
-                        <br>
-                        <br>
-                        <h2>Reserva tu Evento con Nosotros</h2>
-                        <p>Selecciona tu evento para realizar tu reserva.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12 col-md-12 col-12"> <form class="form" action="reserva.php" method="post">
-                        <div class="row">
-                            <div class="col-lg-6 col-md-6 col-12">
-                                <div class="form-group">
-                                    <input name="nombre" type="text" placeholder="Nombre Completo" required>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-md-6 col-12">
-                                <div class="form-group">
-                                    <input name="email" type="email" placeholder="Correo Electrónico" required>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-md-6 col-12">
-                                <div class="form-group">
-                                    <input name="telefono" type="text" placeholder="Teléfono" required>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-md-6 col-12">
-                                <div class="form-group">
-                                    <select name="evento" class="form-control" id="evento" required>
-                                        <option value="">-- Selecciona un evento --</option>
-                                        <?php
-                                        include 'DB.php';
-                                        $resultado = $conn->query("SELECT ID_Evento, Nombre FROM Evento");
-                                        while ($fila = $resultado->fetch_assoc()) {
-                                            echo '<option value="' . $fila['ID_Evento'] . '">' . htmlspecialchars($fila['Nombre']) . '</option>';
-                                        }
-                                        $conn->close();
-                                        ?>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-md-6 col-12">
-                                <div class="form-group">
-                                    <input name="personas" type="number" placeholder="Cantidad de Personas" required>
-                                </div>
-                            </div>
-                            <div class="col-lg-12 col-md-12 col-12">
-                                <div class="form-group">
-                                    <textarea name="mensaje" placeholder="¿Algo más que debamos saber? (opcional)"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-5 col-md-4 col-12">
-                                <div class="form-group">
-                                    <div class="button">
-                                        <button type="submit" class="btn">Reservar Evento</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-7 col-md-8 col-12">
-                                <p>(Nos pondremos en contacto contigo para confirmar tu reserva)</p>
-                            </div>
-                        </div>
-                    </form>
+<section class="appointment">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="section-title">
+                    <br>
+                    <br>
+                    <h2>Reserva tu Evento con Nosotros</h2>
+                    <p>Selecciona tu evento para realizar tu reserva.</p>
                 </div>
             </div>
         </div>
-    </section>
+
+        <div class="row">
+        <div class="col-lg-12 col-md-12 col-12">
+        <form class="form" action="reserva.php" method="post">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-12">
+                    <div class="form-group">
+                        <input name="nombre" type="text" placeholder="Nombre Completo" required>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-12">
+                    <div class="form-group">
+                        <input name="email" type="email" placeholder="Correo Electrónico" required>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-12">
+                    <div class="form-group">
+                        <input name="telefono" type="text" placeholder="Teléfono" required>
+                    </div>
+                </div>
+
+                <!-- ========= CAMBIO: campo Evento ========= -->
+                <div class="col-lg-6 col-md-6 col-12">
+                    <div class="form-group">
+                        <?php if ($eventoIdFijo > 0 && $eventoFijoNombre): ?>
+                            <!-- Enviado a reserva.php pero sin permitir cambiar -->
+                            <input type="hidden" name="evento" value="<?= $eventoIdFijo ?>">
+                            <input class="form-control" value="<?= htmlspecialchars($eventoFijoNombre) ?>" disabled>
+                            <small class="text-muted">En caso de que desee otro evento vuelva a la pagina anterior.</small>
+                        <?php else: ?>
+                            <select name="evento" class="form-control" id="evento" required>
+                                <option value="">-- Selecciona un evento --</option>
+                                <?php
+                                // Listado normal de eventos (mismo diseño)
+                                $resultado = $conn->query("SELECT ID_Evento, Nombre FROM Evento");
+                                while ($fila = $resultado->fetch_assoc()) {
+                                    echo '<option value="' . $fila['ID_Evento'] . '">' . htmlspecialchars($fila['Nombre']) . '</option>';
+                                }
+                                ?>
+                            </select>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <!-- ========= /CAMBIO ========= -->
+
+                <div class="col-lg-6 col-md-6 col-12">
+                    <div class="form-group">
+                        <input name="personas" type="number" placeholder="Cantidad de Personas" required>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 col-md-12 col-12">
+                    <div class="form-group">
+                        <textarea name="mensaje" placeholder="¿Algo más que debamos saber? (opcional)"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-5 col-md-4 col-12">
+                    <div class="form-group">
+                        <div class="button">
+                            <button type="submit" class="btn">Reservar Evento</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-7 col-md-8 col-12">
+                    <p>(Nos pondremos en contacto contigo para confirmar tu reserva)</p>
+                </div>
+            </div>
+        </form>
+        </div>
+        </div>
+    </div>
+</section>
+
+<?php $conn->close(); ?>
 
 </body>
-
 </html>
 
- <?php include 'layout/Footer.php'; ?>
+<?php include 'layout/Footer.php'; ?>
 
 <script src="js/jquery.min.js"></script>
 <script src="js/jquery-migrate-3.0.0.js"></script>
@@ -157,5 +187,4 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 <script src="js/bootstrap.min.js"></script>
 <script src="js/main.js"></script>
 </body>
-
 </html>
