@@ -76,34 +76,9 @@
 								<!-- Form -->
 								<form class="form" method="post" action="mail/mail.php">
 									<div class="row">
-										<div class="col-lg-6">
-											<div class="form-group">
-												<input type="text" name="name" placeholder="Nombre" required="">
-											</div>
-										</div>
-										<div class="col-lg-6">
-											<div class="form-group">
-												<input type="email" name="email" placeholder="Email" required="">
-											</div>
-										</div>
-										<div class="col-lg-6">
-											<div class="form-group">
-												<input type="text" name="phone" placeholder="Télefono" required="">
-											</div>
-										</div>
-										<div class="col-lg-6">
-											<div class="form-group">
-												<input type="text" name="subject" placeholder="Asunto" required="">
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<div class="form-group">
-												<textarea name="message" placeholder="Su mensaje" required=""></textarea>
-											</div>
-										</div>
 										<div class="col-12">
 											<div class="form-group login-btn">
-												<button class="btn btn-success mt-2" type="submit">Enviar</button>
+												<a href="cliente-chat.php" class="btn btn-success mt-2" type="submit">Contactar Soporte</a>
 											</div>
 									
 										</div>

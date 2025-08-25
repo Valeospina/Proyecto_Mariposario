@@ -192,7 +192,6 @@ $reseñas = $revStmt->get_result();
 
   const EVENTO_ID = <?= (int)$id ?>;
 
-
     $(function(){
     const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
                         'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -219,7 +218,7 @@ $reseñas = $revStmt->get_result();
           const estado = data[key];
           const cls    = estado === 'disponible' ? 'celeste' : 'rojo';
           const idEv   = data[key + '_id'] || '#';
-          html += `<td class="${cls}"><a href="detalle_evento.php?id=${idEv}">${d}</a></td>`;
+          html += `<td class="${cls}" data-cupos="${data[key + '_cupos']}"><a href="javascript:void(0)">${d}</a></td>`;
         } else {
           html += `<td class="gris">${d}</td>`;
         }
@@ -233,14 +232,19 @@ $reseñas = $revStmt->get_result();
         </div>
       `;
       $('#calendarContainer').html(html);
+
+      // Evento hover para mostrar el tooltip con los cupos
+      $('td[data-cupos]').hover(function() {
+        const cupos = $(this).data('cupos');
+        $(this).attr('title', `Cupos disponibles: ${cupos}`);
+      });
     }
 
-function loadCalendar() {
-  $.getJSON(`?accion=fechas&year=${year}&month=${month}&eventoID=${EVENTO_ID}`)
-    .done(renderCalendar)
-    .fail(err=> console.error('Error al cargar fechas:', err));
-}
-
+    function loadCalendar() {
+      $.getJSON(`?accion=fechas&year=${year}&month=${month}&eventoID=${EVENTO_ID}`)
+        .done(renderCalendar)
+        .fail(err=> console.error('Error al cargar fechas:', err));
+    }
 
     $('#toggleCalendarBtn').on('click', function(){
       const cont = $('#calendarContainer');
@@ -262,7 +266,9 @@ function loadCalendar() {
         loadCalendar();
       });
   });
-  </script>
+</script>
+
+
 
   <script>
     // estrella-rating
