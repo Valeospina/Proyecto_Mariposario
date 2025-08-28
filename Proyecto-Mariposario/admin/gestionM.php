@@ -70,7 +70,7 @@ $total_especies = 0;
 $total_mariposas = 0;
 $total_pupas = 0;
 $ing_7 = 0;
-$ig_30 = 0;
+$ing_30 = 0;
 
 if ($conn instanceof mysqli) {
     // total especies activas (con cantidad > 0 en lotes)
@@ -134,129 +134,555 @@ if ($conn instanceof mysqli) {
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="../css/admin.css"><!-- tu css base -->
 <style>
-/* ======= Overrides de look & feel solicitados ======= */
-:root{
+/* ===== Paleta base ===== */
+:root {
   --bg-main:#ffffff;
   --text:#1f2937;
   --muted:#6b7280;
-  --primary:#2563eb;
-  --primary-600:#1d4ed8;
-  --ok:#16a34a;
-  --warn:#f59e0b;
-  --danger:#ef4444;
+  --primary:#2563eb;       
+  --primary-600:#1d4ed8;   
+  --primary-light:#dbeafe;
+  --ok:#16a34a;            
+  --ok-light:#dcfce7;
+  --warn:#f59e0b;          
+  --warn-light:#fef3c7;
+  --danger:#ef4444;        
+  --danger-600:#dc2626;    
+  --danger-light:#fef2f2;
   --card:#ffffff;
   --border:#e5e7eb;
   --shadow:0 6px 18px rgba(0,0,0,.08);
+  --shadow-hover:0 12px 28px rgba(0,0,0,.15);
+  --radius:12px;
+  --radius-sm:8px;
 }
 
-/* Fondo general blanco */
-body{ background:#f7f8fa; font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial; color:var(--text); }
-
-/* Sidebar gris claro como antes */
-.sidebar{
-  background:#f0f2f5 !important;
-  color:#111;
-  border-right:1px solid #e3e5ea;
-}
-.sidebar .sidebar-header h3{ color:#111; }
-.sidebar-nav ul li a{
-  color:#222;
-  background:transparent;
-  border-radius:10px;
-  padding:.85rem 1rem;
-  display:flex; align-items:center; gap:.65rem;
-}
-.sidebar-nav ul li a:hover{
-  background:#e7eaf1;
-}
-.sidebar-nav ul li a.active{
-  background:#28a745; color:#fff;
-}
-.sidebar-footer a{ color:#0f172a; }
-.menu-scroll{ max-height:calc(100vh - 180px); overflow:auto; }
-
-/* Main panel blanco */
-.main-panel{ background:var(--bg-main); }
-
-/* Header */
-.main-panel-header{
-  background:#fff; border-bottom:1px solid var(--border);
+/* ===== MEJORAS GENERALES ===== */
+body {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
 }
 
-/* KPI cards */
-.kpis{ display:grid; grid-template-columns:repeat(4, minmax(200px,1fr)); gap:16px; margin-bottom:22px;}
-.kpi{
-  background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; box-shadow:var(--shadow);
+.admin-content {
+  padding: 24px;
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
 }
-.kpi h6{ margin:0 0 6px; font-weight:600; color:var(--muted); font-size:.9rem;}
-.kpi .val{ font-size:1.8rem; font-weight:700; }
 
-/* Filtros */
-.filters{
-  display:grid; grid-template-columns: repeat(6, minmax(140px,1fr)); gap:12px;
-  margin-bottom:18px;
+/* ===== KPIs MEJORADOS ===== */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
 }
-.input, select{
-  width:100%; padding:.75rem .9rem; border:1px solid var(--border); border-radius:10px; background:#fff; outline:none;
-}
-select:focus, .input:focus{ border-color:var(--primary); box-shadow:0 0 0 3px rgba(37,99,235,.15); }
 
-/* === Card Agregar Lote (mejorada) === */
-.card-add{
-  background:linear-gradient(#fff, #fff) padding-box,
-             linear-gradient(135deg, #e2e8f0, #cbd5e1) border-box;
-  border:2px solid transparent;
-  border-radius:16px; padding:18px; box-shadow:var(--shadow); margin-bottom:22px;
+.kpi {
+  background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
-.card-add h4{ margin:0 0 14px; font-size:1.1rem; }
-.add-grid{
-  display:grid; grid-template-columns: 1.2fr 1.6fr 1.1fr 1fr 140px; gap:14px; align-items:end;
-}
-.form-group label{ display:block; font-size:.9rem; color:var(--muted); margin-bottom:6px;}
-.btn{
-  display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
-  padding:.8rem 1rem; border-radius:10px; border:1px solid transparent; cursor:pointer; font-weight:600;
-}
-.btn-primary{ background:var(--primary); color:#fff; }
-.btn-primary:hover{ background:var(--primary-600); }
-.badge{ font-size:.72rem; padding:.3rem .5rem; border-radius:999px; border:1px solid var(--border); color:#334155; background:#f8fafc; }
 
-/* Tabla cohortes */
-.table{
-  width:100%; border-collapse:separate; border-spacing:0 10px;
+.kpi:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--primary);
 }
-.table thead th{
-  text-align:left; font-size:.85rem; color:#64748b; font-weight:600; padding:0 14px 6px;
+
+.kpi:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--ok) 100%);
+  border-radius: var(--radius) var(--radius) 0 0;
 }
-.table tbody tr{
-  background:#fff; border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow);
+
+.kpi h6 {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
-.table tbody td{
-  padding:14px; vertical-align:middle;
+
+.kpi .val {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
 }
-.row-flex{ display:flex; align-items:center; gap:12px; }
 
-/* Alertas */
-.alert{ padding:.9rem 1rem; border-radius:10px; margin-bottom:16px; border:1px solid;}
-.alert-success{ background:#ecfdf5; color:#065f46; border-color:#a7f3d0;}
-.alert-danger{ background:#fef2f2; color:#7f1d1d; border-color:#fecaca;}
+.kpi .badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: var(--primary-light);
+  color: var(--primary-600);
+  padding: 4px 8px;
+  border-radius: 20px;
+  border: 1px solid var(--primary);
+}
 
-/* Chips etapas */
-.chip{ font-size:.75rem; padding:.3rem .55rem; border-radius:999px; }
-.chip.recien{ background:#e0f2fe; color:#075985; }
-.chip.juv{ background:#dcfce7; color:#065f46; }
-.chip.adul{ background:#fef9c3; color:#92400e; }
-.chip.pupa{ background:#fae8ff; color:#6b21a8; }
+/* ===== TARJETAS MEJORADAS ===== */
+.card {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
 
-/* Utilidades */
-.card{ background:#fff; border:1px solid var(--border); border-radius:14px; padding:16px; box-shadow:var(--shadow);}
-.section-title{ font-size:1.05rem; font-weight:700; margin:0 0 10px; }
+.card:hover {
+  box-shadow: var(--shadow-hover);
+}
 
-/* Responsive */
-@media (max-width:1100px){
-  .kpis{ grid-template-columns:repeat(2,1fr); }
-  .filters{ grid-template-columns: repeat(2,1fr); }
-  .add-grid{ grid-template-columns:1fr; }
+.card-add {
+  background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 30px;
+  box-shadow: var(--shadow);
+  border: 2px solid var(--primary-light);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-add:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--ok) 50%, var(--warn) 100%);
+}
+
+.card-add h4 {
+  color: var(--text);
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.card-add h4 i {
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border);
+}
+
+.section-title i {
+  color: var(--primary);
+}
+
+/* ===== BOTONES MEJORADOS ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s;
+}
+
+.btn:hover:before {
+  left: 100%;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-600) 100%);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+}
+
+.btn {
+  background: #f8fafc;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn:hover {
+  background: #e2e8f0;
+  transform: translateY(-1px);
+}
+
+.btn i {
+  font-size: 0.85rem;
+}
+
+/* ===== FORMULARIOS MEJORADOS ===== */
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  align-items: end;
+}
+
+.add-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  align-items: end;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label,
+.form-group span {
+  font-weight: 500;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.input,
+select {
+  padding: 12px 16px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  background: #fff;
+  color: var(--text);
+}
+
+.input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  transform: translateY(-1px);
+}
+
+.input:hover,
+select:hover {
+  border-color: var(--primary);
+}
+
+/* ===== CHIPS Y BADGES MEJORADOS ===== */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid;
+}
+
+.chip.recien {
+  background: var(--ok-light);
+  color: var(--ok);
+  border-color: var(--ok);
+}
+
+.chip.juv {
+  background: var(--warn-light);
+  color: var(--warn);
+  border-color: var(--warn);
+}
+
+.chip.adul {
+  background: var(--primary-light);
+  color: var(--primary-600);
+  border-color: var(--primary);
+}
+
+.chip.pupa {
+  background: var(--danger-light);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: var(--primary-light);
+  color: var(--primary-600);
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid var(--primary);
+}
+
+/* ===== TABLA MEJORADA ===== */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.table th {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-600) 100%);
+  color: #fff;
+  padding: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+}
+
+.table td {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  background: #fff;
+  transition: background 0.2s ease;
+}
+
+.table tbody tr:hover td {
+  background: #f8fafc;
+}
+
+.table tbody tr:nth-child(even) td {
+  background: #fafbfc;
+}
+
+.table tbody tr:nth-child(even):hover td {
+  background: #f1f5f9;
+}
+
+.row-flex {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.row-flex img {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  border: 2px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.row-flex > div > div:first-child {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.row-flex > div > div:last-child {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* ===== ALERTAS MEJORADAS ===== */
+.alert {
+  padding: 16px 20px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 24px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: slideInFromTop 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.9rem;
+  border-left: 4px solid;
+}
+
+@keyframes slideInFromTop {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.alert i { 
+  font-size: 1.2rem; 
+  flex-shrink: 0;
+}
+
+.alert-success {
+  background: var(--ok-light);
+  color: var(--ok);
+  border-left-color: var(--ok);
+  border: 1px solid rgba(22, 163, 74, 0.2);
+}
+
+.alert-danger {
+  background: var(--danger-light);
+  color: var(--danger);
+  border-left-color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.alert-warning {
+  background: var(--warn-light);
+  color: var(--warn);
+  border-left-color: var(--warn);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+/* ===== ANIMACIONES ADICIONALES ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card, .kpi {
+  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:nth-child(2) { animation-delay: 0.1s; }
+.card:nth-child(3) { animation-delay: 0.2s; }
+.card:nth-child(4) { animation-delay: 0.3s; }
+
+/* ===== RESPONSIVE MEJORADO ===== */
+@media (max-width: 768px) {
+  .admin-content { padding: 16px; }
+  .card, .card-add { padding: 16px; }
+  .kpi { padding: 16px; }
+  
+  .filters, .add-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .kpis {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .kpi .val { font-size: 1.5rem; }
+  
+  .btn { padding: 10px 16px; font-size: 0.85rem; }
+  
+  /* Tabla responsive mejorada */
+  .table, thead, tbody, th, td, tr { display: block; }
+  thead tr { position: absolute; top: -9999px; left: -9999px; }
+  
+  tr {
+    border: 1px solid var(--border);
+    margin-bottom: 12px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: #fff;
+    box-shadow: var(--shadow);
+  }
+  
+  td {
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+    position: relative;
+    padding: 12px 16px 12px 50%;
+    text-align: right;
+  }
+  
+  td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 16px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    text-align: left;
+    font-weight: 600;
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+  }
+  
+  .row-flex { justify-content: flex-end; }
+}
+
+/* ===== LOADING STATES ===== */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn:disabled:before { display: none; }
+
+/* ===== TOOLTIP STYLES ===== */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]:hover:after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 1000;
+  margin-bottom: 5px;
+}
+
+[data-tooltip]:hover:before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--text);
+  z-index: 1000;
 }
 </style>
 </head>
@@ -264,32 +690,34 @@ select:focus, .input:focus{ border-color:var(--primary); box-shadow:0 0 0 3px rg
 
 <div class="admin-dashboard-layout">
   <aside class="sidebar">
-    <div class="sidebar-header"><h3>Admin Panel</h3></div>
-    <nav class="sidebar-nav">
-      <div class="menu-scroll">
-        <ul>
-          <li><a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-home"></i> Dashboard</a></li>
-          <li><a href="gestion_empleados.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['gestion_empleados.php', 'add_empleado.php', 'edit_empleado.php'])) ? 'active' : ''; ?>"><i class="fas fa-user-tie"></i> Gestionar Empleados</a></li>
-          <li><a href="users.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'users.php') ? 'active' : ''; ?>"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
-          <li><a href="products.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'products.php') ? 'active' : ''; ?>"><i class="fas fa-box"></i> Gestionar Productos</a></li>
-          <li><a href="inventarioAdmin.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['inventarioAdmin.php', 'add_inventario.php', 'edit_inventario.php'])) ? 'active' : ''; ?>"><i class="fas fa-warehouse"></i> Gestionar Inventario</a></li>
+        <div class="sidebar-header">
+            <h3>Admin Panel</h3>
+        </div>
+            <nav class="sidebar-nav">
+                <div class="menu-scroll">
+                    <ul>
+                        <li><a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>"><i class="fas fa-home"></i> Dashboard</a></li>
+                        <li><a href="gestion_empleados.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['gestion_empleados.php', 'add_empleado.php', 'edit_empleado.php'])) ? 'active' : ''; ?>"><i class="fas fa-user-tie"></i> Gestionar Empleados</a></li>
+                        <li><a href="users.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'users.php') ? 'active' : ''; ?>"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
+                        <li><a href="products.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'products.php') ? 'active' : ''; ?>"><i class="fas fa-box"></i> Gestionar Productos</a></li>
+                        <li><a href="inventarioAdmin.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['inventarioAdmin.php', 'add_inventario.php', 'edit_inventario.php'])) ? 'active' : ''; ?>"><i class="fas fa-warehouse"></i> Gestionar Inventario</a></li>
+                        <li><a href="eventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'eventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Eventos</a></li>
+                        <li><a href="ReservaAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'ReservaAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-check"></i> Gestionar Reservas</a></li>
+                        <li><a href="InsEventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'InsEventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-clipboard-list"></i> Gestionar Asistencia</a></li>
+                        <li><a href="pedidos.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['pedidos.php', 'edit_pedido.php'])) ? 'active' : ''; ?>"><i class="fas fa-shopping-cart"></i> Gestionar Pedidos</a></li>
+                        <li><a href="reporte_ventas.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reporte_ventas.php') ? 'active' : ''; ?>"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li>
+                        <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
+                        <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reportAsis.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
+                        <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-headset"></i> Soporte</a></li>
+                        <li><a href="gestionM.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'gestionM.php') ? 'active' : ''; ?>"><i class="fas fa-butterfly"></i> Gestión Mariposas</a></li> 
+                    </ul>
+                </div>
+                        <div class="sidebar-footer">
+            <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+        </div>
+            </nav>
 
-          <!-- NUEVO: Gestión de Mariposas -->
-          <li><a href="gestionM.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'gestionM.php') ? 'active' : ''; ?>"><i class="fa-solid fa-butterfly"></i> Gestión de Mariposas</a></li>
-
-          <li><a href="eventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'eventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Gestionar Eventos</a></li>
-          <li><a href="ReservaAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'ReservaAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-check"></i> Gestionar Reservas</a></li>
-          <li><a href="InsEventoAdmin.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'InsEventoAdmin.php') ? 'active' : ''; ?>"><i class="fas fa-clipboard-list"></i> Gestionar Asistencia</a></li>
-          <li><a href="pedidos.php" class="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['pedidos.php', 'edit_pedido.php'])) ? 'active' : ''; ?>"><i class="fas fa-shopping-cart"></i> Gestionar Pedidos</a></li>
-          <li><a href="reporte_ventas.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reporte_ventas.php') ? 'active' : ''; ?>"><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</a></li>
-          <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
-          <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
-          <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-headset"></i> Soporte</a></li>  
-        </ul>
-      </div>
-    </nav>
-    <div class="sidebar-footer"><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></div>
-  </aside>
+    </aside>
 
   <div class="main-panel">
     <header class="main-panel-header">
@@ -309,26 +737,47 @@ select:focus, .input:focus{ border-color:var(--primary); box-shadow:0 0 0 3px rg
       <div class="admin-content">
 
         <?php if($message): ?>
-          <div class="alert alert-<?php echo h($message_type); ?>"><?php echo h($message); ?></div>
+          <div class="alert alert-<?php echo h($message_type); ?>">
+            <i class="fas fa-<?php echo ($message_type === 'success') ? 'check-circle' : (($message_type === 'danger') ? 'exclamation-triangle' : 'info-circle'); ?>"></i>
+            <?php echo h($message); ?>
+          </div>
         <?php endif; ?>
 
         <!-- KPIs -->
         <div class="kpis">
-          <div class="kpi"><h6>Total de especies</h6><div class="val"><?php echo $total_especies ?></div></div>
-          <div class="kpi"><h6>Mariposas actuales</h6><div class="val"><?php echo $total_mariposas ?></div></div>
-          <div class="kpi"><h6>Pupas actuales</h6><div class="val"><?php echo $total_pupas ?></div></div>
-          <div class="kpi"><h6>Ingresos 7d / 30d</h6><div class="val"><?php echo $ing_7 ?> <span class="badge">/ <?php echo $ing_30 ?></span></div></div>
+          <div class="kpi" data-tooltip="Especies diferentes con mariposas activas">
+            <h6><i class="fas fa-dna"></i> Total de especies</h6>
+            <div class="val"><?php echo number_format($total_especies) ?></div>
+          </div>
+          <div class="kpi" data-tooltip="Mariposas en todas las etapas excepto pupa">
+            <h6><i class="fas fa-butterfly"></i> Mariposas actuales</h6>
+            <div class="val"><?php echo number_format($total_mariposas) ?></div>
+          </div>
+          <div class="kpi" data-tooltip="Pupas en proceso de transformación">
+            <h6><i class="fas fa-egg"></i> Pupas actuales</h6>
+            <div class="val"><?php echo number_format($total_pupas) ?></div>
+          </div>
+          <div class="kpi" data-tooltip="Ingresos recientes al mariposario">
+            <h6><i class="fas fa-chart-line"></i> Ingresos recientes</h6>
+            <div class="val">
+              <?php echo number_format($ing_7) ?> 
+              <span class="badge"><i class="fas fa-calendar-week"></i> 7d / <?php echo number_format($ing_30) ?> <i class="fas fa-calendar-month"></i> 30d</span>
+            </div>
+          </div>
         </div>
 
         <!-- Filtros -->
         <form method="get" class="card">
-          <div class="section-title">Filtros</div>
+          <div class="section-title">
+            <i class="fas fa-filter"></i>
+            Filtros de búsqueda
+          </div>
           <div class="filters">
             <div>
               <label class="form-group">
-                <span>Mariposario</span>
+                <span><i class="fas fa-home"></i> Mariposario</span>
                 <select name="f_mariposario">
-                  <option value="0">Todos</option>
+                  <option value="0">Todos los mariposarios</option>
                   <?php foreach($mariposarios as $m): ?>
                     <option value="<?php echo $m['ID_Mariposario'] ?>" <?php echo ($f_mariposario==$m['ID_Mariposario']?'selected':''); ?>>
                       #<?php echo $m['ID_Mariposario'] ?> — <?php echo h($m['Nombre']) ?>
@@ -339,9 +788,9 @@ select:focus, .input:focus{ border-color:var(--primary); box-shadow:0 0 0 3px rg
             </div>
             <div>
               <label class="form-group">
-                <span>Especie</span>
+                <span><i class="fas fa-dna"></i> Especie</span>
                 <select name="f_especie">
-                  <option value="0">Todas</option>
+                  <option value="0">Todas las especies</option>
                   <?php foreach($especies as $e): ?>
                     <option value="<?php echo $e['ID_Especie'] ?>" <?php echo ($f_especie==$e['ID_Especie']?'selected':''); ?>>
                       <?php echo h($e['Nombre_Cientifico']) ?>
@@ -352,9 +801,9 @@ select:focus, .input:focus{ border-color:var(--primary); box-shadow:0 0 0 3px rg
             </div>
             <div>
               <label class="form-group">
-                <span>Etapa</span>
+                <span><i class="fas fa-layer-group"></i> Etapa</span>
                 <select name="f_etapa">
-                  <option value="">Todas</option>
+                  <option value="">Todas las etapas</option>
                   <?php foreach($etapas as $et): ?>
                     <option value="<?php echo $et ?>" <?php echo ($f_etapa===$et?'selected':''); ?>><?php echo $et ?></option>
                   <?php endforeach; ?>
@@ -363,46 +812,51 @@ select:focus, .input:focus{ border-color:var(--primary); box-shadow:0 0 0 3px rg
             </div>
             <div>
               <label class="form-group">
-                <span>Desde</span>
+                <span><i class="fas fa-calendar-alt"></i> Fecha desde</span>
                 <input type="date" name="f_desde" class="input" value="<?php echo h($f_desde) ?>">
               </label>
             </div>
             <div>
               <label class="form-group">
-                <span>Hasta</span>
+                <span><i class="fas fa-calendar-alt"></i> Fecha hasta</span>
                 <input type="date" name="f_hasta" class="input" value="<?php echo h($f_hasta) ?>">
               </label>
             </div>
-            <div style="display:flex; align-items:end; gap:8px;">
-              <button class="btn btn-primary" type="submit"><i class="fa-solid fa-filter"></i> Filtrar</button>
-              <a class="btn" href="gestionM.php"><i class="fa-solid fa-eraser"></i> Limpiar</a>
+            <div style="display:flex; align-items:end; gap:12px;">
+              <button class="btn btn-primary" type="submit">
+                <i class="fas fa-filter"></i> Aplicar filtros
+              </button>
+              <a class="btn" href="gestionM.php">
+                <i class="fas fa-eraser"></i> Limpiar
+              </a>
             </div>
           </div>
         </form>
 
-        <!-- Agregar lote (DISEÑO MEJORADO) -->
+        <!-- Agregar lote -->
         <form method="post" class="card-add">
-          <h4><i class="fa-solid fa-layer-group"></i> Agregar lote</h4>
+          <h4><i class="fas fa-plus-circle"></i> Agregar nuevo lote</h4>
           <input type="hidden" name="accion" value="agregar_lote">
           <div class="add-grid">
             <div class="form-group">
-              <label>Mariposario</label>
+              <label><i class="fas fa-home"></i> Mariposario *</label>
               <select name="id_mariposario" required>
-                <option value="">Seleccione…</option>
+                <option value="">Seleccione un mariposario</option>
                 <?php foreach($mariposarios as $m): ?>
                   <option value="<?php echo $m['ID_Mariposario'] ?>">
                     #<?php echo $m['ID_Mariposario'] ?> — <?php echo h($m['Nombre']) ?>
+                    <?php if(!$m['Activo']): ?> (Inactivo)<?php endif; ?>
                   </option>
                 <?php endforeach; ?>
               </select>
             </div>
 
             <div class="form-group">
-              <label>Especie</label>
+              <label><i class="fas fa-dna"></i> Especie *</label>
               <select name="id_especie" required>
-                <option value="">Seleccione…</option>
+                <option value="">Seleccione una especie</option>
                 <?php foreach($especies as $e): ?>
-                  <option value="<?php echo $e['ID_Especie'] ?>">
+                  <option value="<?php echo $e['ID_Especie'] ?>" data-image="<?php echo h($e['Imagen_URL']) ?>">
                     <?php echo h($e['Nombre_Cientifico']) ?><?php echo $e['Nombre_Comun']?(' — '.h($e['Nombre_Comun'])):''; ?>
                   </option>
                 <?php endforeach; ?>
@@ -410,9 +864,9 @@ select:focus, .input:focus{ border-color:var(--primary); box-shadow:0 0 0 3px rg
             </div>
 
             <div class="form-group">
-              <label>Etapa</label>
+              <label><i class="fas fa-layer-group"></i> Etapa de desarrollo *</label>
               <select name="etapa" id="etapaSelect" required>
-                <option value="">Seleccione…</option>
+                <option value="">Seleccione una etapa</option>
                 <?php foreach($etapas as $et): ?>
                   <option value="<?php echo $et ?>"><?php echo $et ?></option>
                 <?php endforeach; ?>
@@ -420,9 +874,9 @@ select:focus, .input:focus{ border-color:var(--primary); box-shadow:0 0 0 3px rg
             </div>
 
             <div class="form-group" id="pupaEdadGroup" style="display:none;">
-              <label>Edad de pupa</label>
+              <label><i class="fas fa-hourglass-half"></i> Edad de la pupa *</label>
               <select name="pupa_edad" id="pupaEdad">
-                <option value="">Seleccione…</option>
+                <option value="">Seleccione la edad</option>
                 <?php foreach($pupasEdad as $pe): ?>
                   <option value="<?php echo $pe ?>"><?php echo ucfirst($pe) ?></option>
                 <?php endforeach; ?>
@@ -430,76 +884,112 @@ select:focus, .input:focus{ border-color:var(--primary); box-shadow:0 0 0 3px rg
             </div>
 
             <div class="form-group">
-              <label>Cantidad</label>
-              <input type="number" min="1" class="input" name="cantidad" required placeholder="Ej. 100">
+              <label><i class="fas fa-calculator"></i> Cantidad *</label>
+              <input type="number" min="1" max="10000" class="input" name="cantidad" required placeholder="Ej: 150" data-tooltip="Ingrese la cantidad de individuos">
             </div>
 
-            <div style="grid-column: 1/-1; display:flex; gap:10px;">
-              <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Agregar</button>
-              <span class="badge"><i class="fa-regular fa-lightbulb"></i> Si eliges “Pupa”, especifica la edad (tierna/joven/vieja).</span>
+            <div style="grid-column: 1/-1; display:flex; gap:12px; align-items:center; margin-top:12px;">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Agregar lote
+              </button>
+              <div class="badge" style="background: var(--warn-light); color: var(--warn); border-color: var(--warn);">
+                <i class="fas fa-info-circle"></i> Si eliges "Pupa", debes especificar la edad (tierna/joven/vieja)
+              </div>
             </div>
           </div>
         </form>
 
         <!-- Cohortes -->
         <div class="card">
-          <div class="section-title"><i class="fa-solid fa-list-ul"></i> Cohortes (lotes)</div>
+          <div class="section-title">
+            <i class="fas fa-table"></i> 
+            Cohortes actuales (<?php echo count($cohortes) ?> lotes)
+          </div>
           <?php if(!$cohortes): ?>
-            <p style="color:var(--muted); margin:0;">No hay lotes con los filtros aplicados.</p>
+            <div style="text-align:center; padding:40px; color:var(--muted);">
+              <i class="fas fa-search" style="font-size:3rem; margin-bottom:16px; opacity:0.5;"></i>
+              <p style="margin:0; font-size:1.1rem;">No hay lotes que coincidan con los filtros aplicados</p>
+              <p style="margin:8px 0 0 0; font-size:0.9rem;">Intenta ajustar los criterios de búsqueda</p>
+            </div>
           <?php else: ?>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Mariposario</th>
-                  <th>Especie</th>
-                  <th>Etapa</th>
-                  <th>Cantidad</th>
-                  <th>Ingreso</th>
-                  <th>Próx. transición</th>
-                  <th>Cuenta regresiva</th>
-                </tr>
-              </thead>
-              <tbody>
-                <?php foreach($cohortes as $c): 
-                  $chip=''; $cls='';
-                  switch($c['Etapa']){
-                    case 'Recién Nacida': $cls='recien'; break;
-                    case 'Juvenil': $cls='juv'; break;
-                    case 'Adulta': $cls='adul'; break;
-                    case 'Pupa': $cls='pupa'; break;
-                  }
-                ?>
-                <tr>
-                  <td>#<?php echo $c['ID_Lote'] ?></td>
-                  <td><?php echo h($c['Mariposario']) ?></td>
-                  <td>
-                    <div class="row-flex">
-                      <img src="<?php echo h($c['Imagen_URL'] ?: 'https://via.placeholder.com/40x40?text=') ?>" style="width:40px;height:40px;border-radius:8px;object-fit:cover;border:1px solid var(--border);" alt="">
-                      <div>
-                        <div style="font-weight:600;"><?php echo h($c['Nombre_Cientifico']) ?></div>
-                        <div style="font-size:.8rem; color:var(--muted);"><?php echo h($c['Nombre_Comun']) ?></div>
+            <div style="overflow-x: auto;">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th><i class="fas fa-hashtag"></i> ID Lote</th>
+                    <th><i class="fas fa-home"></i> Mariposario</th>
+                    <th><i class="fas fa-dna"></i> Especie</th>
+                    <th><i class="fas fa-layer-group"></i> Etapa</th>
+                    <th><i class="fas fa-calculator"></i> Cantidad</th>
+                    <th><i class="fas fa-calendar-plus"></i> Fecha ingreso</th>
+                    <th><i class="fas fa-clock"></i> Próx. transición</th>
+                    <th><i class="fas fa-stopwatch"></i> Cuenta regresiva</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php foreach($cohortes as $c): 
+                    $chip=''; $cls='';
+                    switch($c['Etapa']){
+                      case 'Recién Nacida': $cls='recien'; break;
+                      case 'Juvenil': $cls='juv'; break;
+                      case 'Adulta': $cls='adul'; break;
+                      case 'Pupa': $cls='pupa'; break;
+                    }
+                  ?>
+                  <tr data-lote-id="<?php echo $c['ID_Lote'] ?>">
+                    <td data-label="ID:">#<?php echo $c['ID_Lote'] ?></td>
+                    <td data-label="Mariposario:"><?php echo h($c['Mariposario']) ?></td>
+                    <td data-label="Especie:">
+                      <div class="row-flex">
+                        <img src="<?php echo h($c['Imagen_URL'] ?: 'https://via.placeholder.com/48x48/e2e8f0/64748b?text=🦋') ?>" alt="<?php echo h($c['Nombre_Cientifico']) ?>">
+                        <div>
+                          <div><?php echo h($c['Nombre_Cientifico']) ?></div>
+                          <div><?php echo h($c['Nombre_Comun'] ?: 'Sin nombre común') ?></div>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="chip <?php echo $cls ?>">
-                      <?php echo h($c['Etapa']) ?>
-                      <?php if($c['Etapa']==='Pupa' && $c['Pupa_Edad']): ?>
-                        · <?php echo ucfirst(h($c['Pupa_Edad'])) ?>
-                      <?php endif; ?>
-                    </span>
-                  </td>
-                  <td><strong><?php echo (int)$c['Cantidad'] ?></strong></td>
-                  <td><?php echo h($c['Fecha_Ingreso']) ?></td>
-                  <td><?php echo h($c['Fecha_Siguiente_Transicion']) ?></td>
-                  <td>
-                    <span class="badge" data-countdown="<?php echo h($c['Fecha_Siguiente_Transicion']) ?>">—</span>
-                  </td>
-                </tr>
-                <?php endforeach; ?>
-              </tbody>
-            </table>
+                    </td>
+                    <td data-label="Etapa:">
+                      <span class="chip <?php echo $cls ?>">
+                        <?php echo h($c['Etapa']) ?>
+                        <?php if($c['Etapa']==='Pupa' && $c['Pupa_Edad']): ?>
+                          <i class="fas fa-circle" style="font-size:0.5rem;"></i>
+                          <?php echo ucfirst(h($c['Pupa_Edad'])) ?>
+                        <?php endif; ?>
+                      </span>
+                    </td>
+                    <td data-label="Cantidad:">
+                      <strong style="font-size:1.1rem; color:var(--primary);"><?php echo number_format((int)$c['Cantidad']) ?></strong>
+                    </td>
+                    <td data-label="Ingreso:">
+                      <div>
+                        <div><?php echo date('d/m/Y', strtotime($c['Fecha_Ingreso'])) ?></div>
+                        <div style="font-size:0.8rem; color:var(--muted);"><?php echo date('H:i', strtotime($c['Fecha_Ingreso'])) ?></div>
+                      </div>
+                    </td>
+                    <td data-label="Próx. transición:">
+                      <div>
+                        <div><?php echo date('d/m/Y', strtotime($c['Fecha_Siguiente_Transicion'])) ?></div>
+                        <div style="font-size:0.8rem; color:var(--muted);"><?php echo date('H:i', strtotime($c['Fecha_Siguiente_Transicion'])) ?></div>
+                      </div>
+                    </td>
+                    <td data-label="Cuenta regresiva:">
+                      <span class="badge" data-countdown="<?php echo h($c['Fecha_Siguiente_Transicion']) ?>" style="font-family: monospace;">
+                        <i class="fas fa-clock"></i> Calculando...
+                      </span>
+                    </td>
+                  </tr>
+                  <?php endforeach; ?>
+                </tbody>
+              </table>
+            </div>
+            
+            <!-- Estadísticas rápidas de la tabla -->
+            <div style="margin-top:20px; padding:16px; background:var(--primary-light); border-radius:var(--radius-sm); display:flex; gap:20px; flex-wrap:wrap; font-size:0.9rem;">
+              <div><strong>Total mostrado:</strong> <?php echo count($cohortes) ?> lotes</div>
+              <div><strong>Suma cantidad:</strong> <?php echo number_format(array_sum(array_column($cohortes, 'Cantidad'))) ?> individuos</div>
+              <div><strong>Mariposarios únicos:</strong> <?php echo count(array_unique(array_column($cohortes, 'ID_Mariposario'))) ?></div>
+              <div><strong>Especies únicas:</strong> <?php echo count(array_unique(array_column($cohortes, 'ID_Especie'))) ?></div>
+            </div>
           <?php endif; ?>
         </div>
 
@@ -509,35 +999,181 @@ select:focus, .input:focus{ border-color:var(--primary); box-shadow:0 0 0 3px rg
 </div>
 
 <script>
-// Mostrar/ocultar edad de pupa
+// Mostrar/ocultar edad de pupa con animación suave
 const etapaSel = document.getElementById('etapaSelect');
 const pupaGroup = document.getElementById('pupaEdadGroup');
-if (etapaSel){
-  etapaSel.addEventListener('change', ()=>{
-    pupaGroup.style.display = (etapaSel.value==='Pupa') ? 'block' : 'none';
-    if (etapaSel.value!=='Pupa') document.getElementById('pupaEdad').value='';
+const pupaSelect = document.getElementById('pupaEdad');
+
+if (etapaSel) {
+  etapaSel.addEventListener('change', function() {
+    if (this.value === 'Pupa') {
+      pupaGroup.style.display = 'block';
+      pupaGroup.style.animation = 'fadeIn 0.3s ease-out';
+      pupaSelect.required = true;
+    } else {
+      pupaGroup.style.display = 'none';
+      pupaSelect.value = '';
+      pupaSelect.required = false;
+    }
   });
 }
 
-// Cuenta regresiva vivo
-function startCountdowns(){
+// Cuenta regresiva en tiempo real mejorada
+function startCountdowns() {
   const items = document.querySelectorAll('[data-countdown]');
-  function fmt(n){ return n.toString().padStart(2,'0'); }
-  function tick(){
+  
+  function formatTime(num) {
+    return num.toString().padStart(2, '0');
+  }
+  
+  function updateCountdowns() {
     const now = new Date().getTime();
-    items.forEach(el=>{
-      const target = new Date(el.dataset.countdown.replace(' ','T')).getTime();
-      let diff = Math.max(0, target - now);
-      const d = Math.floor(diff / (1000*60*60*24)); diff -= d*24*60*60*1000;
-      const h = Math.floor(diff / (1000*60*60)); diff -= h*60*60*1000;
-      const m = Math.floor(diff / (1000*60)); diff -= m*60*1000;
-      const s = Math.floor(diff / 1000);
-      el.textContent = `${d}d ${fmt(h)}h ${fmt(m)}m ${fmt(s)}s`;
+    
+    items.forEach(element => {
+      const targetDate = element.dataset.countdown.replace(' ', 'T');
+      const target = new Date(targetDate).getTime();
+      let timeDiff = Math.max(0, target - now);
+      
+      // Calcular tiempo restante
+      const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+      timeDiff -= days * 24 * 60 * 60 * 1000;
+      
+      const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+      timeDiff -= hours * 60 * 60 * 1000;
+      
+      const minutes = Math.floor(timeDiff / (1000 * 60));
+      timeDiff -= minutes * 60 * 1000;
+      
+      const seconds = Math.floor(timeDiff / 1000);
+      
+      // Formatear y mostrar
+      if (days > 0) {
+        element.innerHTML = `<i class="fas fa-clock"></i> ${days}d ${formatTime(hours)}h ${formatTime(minutes)}m`;
+      } else if (hours > 0) {
+        element.innerHTML = `<i class="fas fa-clock"></i> ${formatTime(hours)}h ${formatTime(minutes)}m ${formatTime(seconds)}s`;
+      } else if (minutes > 0) {
+        element.innerHTML = `<i class="fas fa-clock"></i> ${formatTime(minutes)}m ${formatTime(seconds)}s`;
+      } else if (seconds > 0) {
+        element.innerHTML = `<i class="fas fa-clock"></i> ${formatTime(seconds)}s`;
+      } else {
+        element.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ¡Ya!';
+        element.style.background = 'var(--danger-light)';
+        element.style.color = 'var(--danger)';
+        element.style.borderColor = 'var(--danger)';
+        element.style.animation = 'pulse 2s infinite';
+      }
+      
+      // Cambiar color según proximidad
+      if (days === 0 && hours < 6) {
+        element.style.background = 'var(--warn-light)';
+        element.style.color = 'var(--warn)';
+        element.style.borderColor = 'var(--warn)';
+      } else if (days === 0) {
+        element.style.background = 'var(--warn-light)';
+        element.style.color = 'var(--warn)';
+        element.style.borderColor = 'var(--warn)';
+      }
     });
   }
-  tick(); setInterval(tick, 1000);
+  
+  // Actualizar inmediatamente y luego cada segundo
+  updateCountdowns();
+  const interval = setInterval(updateCountdowns, 1000);
+  
+  // Limpiar intervalo si la página se oculta
+  document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+      clearInterval(interval);
+    } else {
+      startCountdowns();
+    }
+  });
 }
-startCountdowns();
+
+// Añadir animación de pulso para elementos críticos
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+`;
+document.head.appendChild(style);
+
+// Inicializar cuenta regresiva cuando el DOM esté listo
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startCountdowns);
+} else {
+  startCountdowns();
+}
+
+// Mejorar la experiencia de los formularios
+document.addEventListener('DOMContentLoaded', function() {
+  // Validación en tiempo real
+  const requiredFields = document.querySelectorAll('[required]');
+  requiredFields.forEach(field => {
+    field.addEventListener('blur', function() {
+      if (this.value.trim() === '') {
+        this.style.borderColor = 'var(--danger)';
+        this.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+      } else {
+        this.style.borderColor = 'var(--ok)';
+        this.style.boxShadow = '0 0 0 3px rgba(22, 163, 74, 0.1)';
+      }
+    });
+    
+    field.addEventListener('input', function() {
+      if (this.value.trim() !== '') {
+        this.style.borderColor = 'var(--ok)';
+        this.style.boxShadow = '0 0 0 3px rgba(22, 163, 74, 0.1)';
+      }
+    });
+  });
+  
+  // Mejorar selects con búsqueda visual
+  const selects = document.querySelectorAll('select');
+  selects.forEach(select => {
+    select.addEventListener('focus', function() {
+      this.style.transform = 'translateY(-1px)';
+      this.style.boxShadow = '0 4px 12px rgba(37, 99, 235, 0.15)';
+    });
+    
+    select.addEventListener('blur', function() {
+      this.style.transform = '';
+      this.style.boxShadow = '';
+    });
+  });
+});
+
+// Función para exportar datos (opcional)
+function exportTableData() {
+  const table = document.querySelector('.table');
+  if (!table) return;
+  
+  let csv = [];
+  const rows = table.querySelectorAll('tr');
+  
+  rows.forEach(row => {
+    const cols = row.querySelectorAll('th, td');
+    const rowData = [];
+    cols.forEach(col => {
+      rowData.push('"' + col.textContent.replace(/"/g, '""') + '"');
+    });
+    csv.push(rowData.join(','));
+  });
+  
+  const csvContent = csv.join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', 'cohortes_mariposas.csv');
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
 </script>
 
 <?php

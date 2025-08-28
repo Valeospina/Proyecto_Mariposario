@@ -223,12 +223,14 @@ if (isset($_GET['message']) && isset($_GET['type'])) {
                         <li><a href="reports.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Ver Reportes</a></li>
                         <li><a href="reportAsis.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'reports.php') ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> Reportes Asistencia</a></li>
                         <li><a href="admin-chats.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'admin-chats.php') ? 'active' : ''; ?>"><i class="fas fa-headset"></i> Soporte</a></li>  
+                   <li><a href="gestionM.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'gestionM.php') ? 'active' : ''; ?>"><i class="fas fa-headset"></i> Gestion Mariposas</a></li>
                     </ul>
                 </div>
-            </nav>
-            <div class="sidebar-footer">
+                            <div class="sidebar-footer">
                 <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
             </div>
+            </nav>
+
         </aside>
 
         <div class="main-panel">
