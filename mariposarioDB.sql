@@ -302,15 +302,27 @@ CREATE TABLE Consulta (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Notificacion
+
 CREATE TABLE Notificacion (
-    ID_Notificacion INT PRIMARY KEY AUTO_INCREMENT,
-    ID_Usuario INT,
-    Tipo_Notificacion VARCHAR(100),
-    Mensaje TEXT NOT NULL,
-    Fecha_Notificacion DATETIME DEFAULT CURRENT_TIMESTAMP,
-    Leida BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
+  ID_Notificacion     INT PRIMARY KEY AUTO_INCREMENT,
+  ID_Usuario          INT NOT NULL,
+  Categoria           ENUM('Bienvenida','Pedido','Evento','Sistema','Promoción') NOT NULL DEFAULT 'Sistema',
+  Subtipo             VARCHAR(100) NULL,                     -- p.ej.: 'Realizado','En preparación','Enviado','Entregado','Próximo','Recordatorio','Completado','Productos nuevos','Mantenimiento','Actualización'
+  Tipo_Notificacion   VARCHAR(100) GENERATED ALWAYS AS (Categoria) VIRTUAL,
+  Mensaje             TEXT NOT NULL,
+  Mostrar_Desde       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, -- desde cuándo debe aparecer
+  Fecha_Notificacion  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, -- cuándo se creó
+  Leida               BOOLEAN NOT NULL DEFAULT FALSE,
+  ID_Referencia       INT NULL,                                -- id del pedido/evento u otro
+  Accion_URL          VARCHAR(255) NULL,                       -- link útil (seguir pedido, ver evento, etc.)
+  FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Índices que aceleran tu SELECT y los contadores
+CREATE INDEX idx_user_fecha   ON Notificacion (ID_Usuario, Fecha_Notificacion DESC);
+CREATE INDEX idx_user_leida   ON Notificacion (ID_Usuario, Leida, Fecha_Notificacion DESC);
+CREATE INDEX idx_user_mostrar ON Notificacion (ID_Usuario, Mostrar_Desde, Fecha_Notificacion DESC);
+CREATE INDEX idx_categoria    ON Notificacion (Categoria, Subtipo);
 
 -- Bitacora
 CREATE TABLE Bitacora (
@@ -783,15 +795,7 @@ INSERT INTO Consulta (ID_Usuario, Tema, Estado, Canal, Mensajes) VALUES
     JSON_OBJECT('role', 'admin', 'text', 'Estamos revisando su caso, le avisaremos pronto.', 'time', '11:15')
 ));
 
--- Notificaciones iniciales (ejemplo para usuario 8 si existiera)
-INSERT INTO Notificacion (ID_Usuario, Tipo_Notificacion, Mensaje)
-VALUES
-(5, 'Bienvenida', '¡Bienvenido a Eco Mariposas! Gracias por registrarte.'),
-(5, 'Pago Confirmado', 'Tu pago ha sido confirmado exitosamente.'),
-(5, 'Pedido Enviado', 'Tu pedido ha sido enviado y está en camino.'),
-(5, 'Evento Recordatorio', 'Recuerda tu evento "Tour al mariposario" el 10/08/2025.'),
-(5, 'Promoción', '¡Descuento especial del 20% en tu próxima compra!'),
-(5, 'Encuesta', '¿Qué te pareció tu compra? Haz clic en el botón para opinar.');
+
 
 -- ====================================================================
 -- 4.8 DATOS INICIALES DEL MÓDULO DE MARIPOSAS
