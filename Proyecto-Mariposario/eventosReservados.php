@@ -425,7 +425,7 @@ if ($userId) {
                             <img src="<?= $fotoPerfil ?>" alt="Foto de perfil">
 
                             <h3>Hola, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Usuario') ?></h3>
-                            <p>Miembro desde: Abril 2023</p>
+                            
                             <a href="user-settings.php" class="btn btn-sm btn-primary">Editar Perfil</a>
                         </div>
                         <ul class="sidebar-menu">

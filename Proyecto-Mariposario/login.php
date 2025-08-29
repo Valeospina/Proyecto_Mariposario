@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'DB.php';
+require_once 'notifications_helper.php'; // << añade el helper
 
 // Mostrar errores en desarrollo (puedes quitar esto en producción)
 ini_set('display_errors', 1);
@@ -50,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_role'] = $user['ID_Rol'];
             $_SESSION['role_name'] = $user['NombreRol'];
 
-            // Comprobar si el usuario tiene registro en Puntos_Usuario
+            // Asegurar entrada en Puntos_Usuario
             $puntos_stmt = $conn->prepare("SELECT COUNT(*) FROM Puntos_Usuario WHERE ID_Usuario = ?");
             $puntos_stmt->bind_param("i", $_SESSION['user_id']);
             $puntos_stmt->execute();
@@ -65,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $crear_puntos_stmt->close();
             }
 
-            // Registrar actividad si es Admin
+            // (Opcional) Registrar actividad si es Admin
             if ($user['ID_Rol'] == 1) {
                 $emp_stmt = $conn->prepare("SELECT ID_Empleado FROM Empleado WHERE ID_Usuario = ?");
                 $emp_stmt->bind_param("i", $user['ID_Usuario']);
@@ -74,13 +75,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 if ($emp_result->num_rows > 0) {
                     $empleado = $emp_result->fetch_assoc();
+                    // Si tu BD NO tiene Registro_Actividad, comenta este bloque
                     $act_stmt = $conn->prepare("INSERT INTO Registro_Actividad (ID_Empleado, Fecha_Hora, Accion, Detalle) VALUES (?, NOW(), 'Login', 'Usuario inició sesión exitosamente')");
-                    $act_stmt->bind_param("i", $empleado['ID_Empleado']);
-                    $act_stmt->execute();
-                    $act_stmt->close();
+                    if ($act_stmt) {
+                        $act_stmt->bind_param("i", $empleado['ID_Empleado']);
+                        $act_stmt->execute();
+                        $act_stmt->close();
+                    }
                 }
                 $emp_stmt->close();
             }
+
+            // 🔔 Bienvenida (solo si no existe ya una previa de bienvenida)
+// 🔔 Bienvenida (solo si no existe ya una previa de bienvenida)
+$chk = $conn->prepare("SELECT COUNT(*) FROM Notificacion WHERE ID_Usuario = ? AND Tipo_Notificacion = 'Bienvenida'");
+$chk->bind_param("i", $_SESSION['user_id']);
+$chk->execute();
+$chk->bind_result($n);
+$chk->fetch();
+$chk->close();
+
+if ((int)$n === 0) {
+    addNotification(
+        $conn,
+        $_SESSION['user_id'],
+        'Bienvenida',
+        buildMessage('Bienvenida')
+    );
+}
+
 
             // Redirección según el rol
             if ($_SESSION['user_role'] == 1) { 

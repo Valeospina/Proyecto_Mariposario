@@ -1,5 +1,6 @@
 <?php
 include 'DB.php';
+require_once 'notifications_helper.php'; // << añade el helper
 
 if ($_POST) {
     $nombre = $_POST['nombre'];
@@ -16,7 +17,7 @@ if ($_POST) {
     }
 
     // Verificar si el email ya existe
-    $check_query = "SELECT * FROM Usuario WHERE Correo = ?";
+    $check_query = "SELECT 1 FROM Usuario WHERE Correo = ?";
     $check_stmt = $conn->prepare($check_query);
     $check_stmt->bind_param("s", $email);
     $check_stmt->execute();
@@ -52,6 +53,16 @@ if ($_POST) {
         $puntos_stmt = $conn->prepare($puntos_query);
         $puntos_stmt->bind_param("i", $new_user_id);
         $puntos_stmt->execute();
+
+
+// 🔔 Notificación de bienvenida al registrarse
+addNotification(
+    $conn,
+    $new_user_id,
+    'Bienvenida',
+    buildMessage('Bienvenida')
+);
+
 
         echo "<script>
                 alert('Registro exitoso. Ahora puedes iniciar sesión.');
