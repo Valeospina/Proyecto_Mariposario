@@ -1,16 +1,15 @@
 <?php
 class Calendario {
     private $conn;
+    public function __construct($conn) { $this->conn = $conn; }
 
-    public function __construct($conn) {
-        $this->conn = $conn;
-    }
+    // capacidad por día
+    private int $CAPACIDAD = 10;
 
-    // AHORA RECIBE $eventoID
     public function obtenerFechasEstado(int $year, int $month, int $eventoID): array {
         $eventos = [];
 
-        // 1) Fechas del evento seleccionado (solo ese ID)
+        // 1) Fechas del evento seleccionado
         $sql = "SELECT ID_Evento, DATE(Fecha) AS fecha
                 FROM Evento
                 WHERE YEAR(Fecha)=? AND MONTH(Fecha)=? AND ID_Evento=?";
@@ -20,38 +19,36 @@ class Calendario {
         $res = $stmt->get_result();
         while ($row = $res->fetch_assoc()) {
             $eventos[$row['fecha']] = [
-                'id'     => $row['ID_Evento'],
-                'estado' => 'disponible'
+                'id'       => (int)$row['ID_Evento'],
+                'estado'   => 'disponible',
+                'ocupados' => 0
             ];
         }
         $stmt->close();
 
-        // 2) Si hay fechas del evento, ver ocupación SOLO de este evento
+        // 2) Ocupación SOLO de este evento
         if (!empty($eventos)) {
-            $fechas = array_values(array_keys($eventos));
-            $placeholders = implode(',', array_fill(0, count($fechas), '?'));
-            $typesDates   = str_repeat('s', count($fechas));
+            $fechas = array_keys($eventos);
+            $ph     = implode(',', array_fill(0, count($fechas), '?'));
+            $types  = 'i' . str_repeat('s', count($fechas));
 
-            // IMPORTANTE: filtrar por ID_Evento también (la tabla Reserva debe tener ese campo)
             $sql2 = "SELECT DATE(Fecha_Reserva) AS fecha, SUM(cantidad_personas) AS total
                      FROM Reserva
-                     WHERE ID_Evento = ? AND Fecha_Reserva IN ($placeholders)
-                     GROUP BY Fecha_Reserva";
+                     WHERE ID_Evento = ? AND DATE(Fecha_Reserva) IN ($ph)
+                     GROUP BY DATE(Fecha_Reserva)";
             $stmt2 = $this->conn->prepare($sql2);
 
-            // bind_param dinámico: primero el eventoID (i) y luego las fechas (s...)
-            $types = 'i' . $typesDates;
+            // bind dinámico: primero eventoID y luego fechas
             $params = [$types, $eventoID];
-            foreach ($fechas as $k => $v) {
-                $params[] = &$fechas[$k];
-            }
+            foreach ($fechas as $k => $f) { $params[] = &$fechas[$k]; }
             call_user_func_array([$stmt2, 'bind_param'], $this->refValues($params));
 
             $stmt2->execute();
             $res2 = $stmt2->get_result();
             while ($r = $res2->fetch_assoc()) {
-                // Pon rojo si alcanzó el cupo (ajusta 10 a tu capacidad real)
-                $eventos[$r['fecha']]['estado'] = ((int)$r['total'] >= 10) ? 'lleno' : 'disponible';
+                $ocup = (int)$r['total'];
+                $eventos[$r['fecha']]['ocupados'] = $ocup;
+                $eventos[$r['fecha']]['estado']   = ($ocup >= $this->CAPACIDAD) ? 'lleno' : 'disponible';
             }
             $stmt2->close();
         }
@@ -59,13 +56,9 @@ class Calendario {
         return $eventos;
     }
 
-    // Helper para bind_param variable
     private function refValues(array $arr) {
-        // PHP 8 ya no lo requiere, pero lo dejamos por compatibilidad
         $refs = [];
-        foreach ($arr as $key => $value) {
-            $refs[$key] = &$arr[$key];
-        }
+        foreach ($arr as $k => $v) { $refs[$k] = &$arr[$k]; }
         return $refs;
     }
 
@@ -75,22 +68,21 @@ class Calendario {
             $month    = isset($_GET['month'])    ? (int)$_GET['month']    : (int)date('m');
             $eventoID = isset($_GET['eventoID']) ? (int)$_GET['eventoID'] : 0;
 
-            // Sin evento => no pintamos nada
-            if ($eventoID <= 0) {
-                header('Content-Type: application/json');
-                echo json_encode([]);
-                exit;
-            }
+            header('Content-Type: application/json');
+
+            if ($eventoID <= 0) { echo json_encode([]); exit; }
 
             $ev  = $this->obtenerFechasEstado($year, $month, $eventoID);
             $out = [];
             foreach ($ev as $d => $info) {
-                $out[$d]         = $info['estado']; // 'disponible'|'lleno'
-                $out[$d . '_id'] = $info['id'];
+                $cupos = max(0, $this->CAPACIDAD - (int)$info['ocupados']);
+                $out[$d]              = $info['estado'];      // 'disponible'|'lleno'
+                $out[$d . '_id']      = (int)$info['id'];
+                $out[$d . '_cupos']   = $cupos;               // <<< NECESARIO PARA EL TOOLTIP
             }
-            header('Content-Type: application/json');
             echo json_encode($out);
             exit;
         }
     }
 }
+

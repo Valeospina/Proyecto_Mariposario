@@ -213,12 +213,14 @@ $reseñas = $revStmt->get_result();
       }
       for (let d = 1; d <= daysInMonth; d++) {
         if ((d + offset - 1) % 7 === 0 && d !== 1) html += '</tr><tr>';
-        const key = `${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+       const key = `${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
         if (data[key]) {
           const estado = data[key];
           const cls    = estado === 'disponible' ? 'celeste' : 'rojo';
-          const idEv   = data[key + '_id'] || '#';
-          html += `<td class="${cls}" data-cupos="${data[key + '_cupos']}"><a href="javascript:void(0)">${d}</a></td>`;
+          const cupos  = Number(data[key + '_cupos'] ?? 0);
+          const title  = (estado === 'lleno') ? 'Lleno' : `Cupos disponibles: ${cupos}`;
+
+          html += `<td class="${cls}" title="${title}">${d}</td>`;
         } else {
           html += `<td class="gris">${d}</td>`;
         }
