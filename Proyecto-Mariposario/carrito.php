@@ -210,7 +210,7 @@ $total_usd = convertirColonesADolares($total_carrito_final);
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://www.paypal.com/sdk/js?client-id=ATaviM4-qfB_deZSXciXwtIalyjoNEseNB0FsCJ2riwp6fLYZzaVKTe4jjoY53IjHJx6UWQy48APsJ_H&currency=USD"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=AcLsA6mYTt4Ud_AAvOaBws5g158MYs0mkIS_Ldd5FCKmSvOwnMZIrzv9dmzU9Uzso-Qlj9ghp0ICbOe4"></script>
 </head>
 
 <body>

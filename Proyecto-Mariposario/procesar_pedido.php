@@ -140,7 +140,7 @@ try {
 
     $conn->commit();
 
-// ✅ SUMAR PUNTOS DESPUÉS DE LA COMPRA (solo SINPE o Efectivo)
+//  SUMAR PUNTOS DESPUÉS DE LA COMPRA (solo SINPE o Efectivo)
 if (in_array($metodoPago, ['SINPE Movil', 'Efectivo Tienda'])) {
     // Calcular puntos sobre el monto final (después del canje)
     $totalParaPuntos = max(0, $totalPedido);
@@ -172,7 +172,7 @@ if (in_array($metodoPago, ['SINPE Movil', 'Efectivo Tienda'])) {
     }
 }
 
-// ✅ Generar factura y enviar SOLO si es efectivo (no SINPE)
+//  Generar factura y enviar SOLO si es efectivo (no SINPE)
 if ($metodoPago !== 'SINPE Movil') {
     require_once __DIR__ . '/FacturaService.php';
     $numeroFactura = 'FAC-' . strtoupper(uniqid());

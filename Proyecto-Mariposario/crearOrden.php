@@ -17,13 +17,13 @@ try {
     if (!$orderID) throw new Exception('ID de orden no recibido.');
 
     // Configuración PayPal
-    $clientId = "ATaviM4-qfB_deZSXciXwtIalyjoNEseNB0FsCJ2riwp6fLYZzaVKTe4jjoY53IjHJx6UWQy48APsJ_H";
-    $secret = "EEwY88QBM9WlzB1LK6g_03u3kHlwPvnUpL_mp4khsizEgE8NuYYU_cFxs4B57h9jjDO8EsQBD_Z2BeXT";
+    $clientId = "AcLsA6mYTt4Ud_AAvOaBws5g158MYs0mkIS_Ldd5FCKmSvOwnMZIrzv9dmzU9Uzso-Qlj9ghp0ICbOe4";
+    $secret = "EAWb1amyVFvpwAtlnAYXv6AA7UkMsuL0pnErh7expMsgaRkAtdS549fQrKBimPBjegyImes0cwdvmTBb";
 
     // 1. Obtener token PayPal
     $ch = curl_init();
     curl_setopt_array($ch, [
-        CURLOPT_URL => "https://api-m.sandbox.paypal.com/v1/oauth2/token",
+        CURLOPT_URL => "https://api-m.paypal.com/v1/oauth2/token",
         CURLOPT_RETURNTRANSFER => 1,
         CURLOPT_USERPWD => "$clientId:$secret",
         CURLOPT_POSTFIELDS => "grant_type=client_credentials",
@@ -40,7 +40,7 @@ try {
     // 2. Capturar orden PayPal
     $ch = curl_init();
     curl_setopt_array($ch, [
-        CURLOPT_URL => "https://api-m.sandbox.paypal.com/v2/checkout/orders/$orderID/capture",
+        CURLOPT_URL => "https://api-m.paypal.com/v2/checkout/orders/$orderID/capture",
         CURLOPT_RETURNTRANSFER => 1,
         CURLOPT_POST => 1,
         CURLOPT_HTTPHEADER => [
@@ -126,7 +126,7 @@ try {
     // Confirmar transacción
     $conn->commit();
 
-    // ✅ Generar y enviar factura con protección para evitar errores fatales
+    //  Generar y enviar factura con protección para evitar errores fatales
     try {
         $numeroFactura = 'FAC-' . strtoupper(uniqid());
         $rutaFacturaDir = "uploads/facturas/";
