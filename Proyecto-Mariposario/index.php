@@ -55,7 +55,7 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
                                 <h1>Descubrí la <span>Magia</span> de las mariposas y la belleza de las <span>Orquídeas</span></h1>
                                 <p>Viví una experiencia única en nuestro mariposario y llevate a casa la elegancia natural de nuestras orquídeas cultivadas con amor.</p>
                                 <div class="button">
-                                    <a href="Reserva.php" class="btn">Reservar visita</a>
+                                    <a href="eventos.php" class="btn">Reservar visita</a>
                                     <a href="tienda.php" class="btn primary">Ver tienda</a>
                                 </div>
                             </div>
@@ -87,8 +87,8 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
                                 <h1>Un <span>Refugio</span> natural donde las mariposas vuelan libres</h1>
                                 <p>Conocé nuestro mariposario, un espacio de conservación y aprendizaje para todas las edades. ¡Una visita que no vas a olvidar!</p>
                                 <div class="button">
-                                    <a href="Reserva.php" class="btn">Reservar recorrido</a>
-                                    <a href="Info.php" class="btn primary">Más información</a>
+                                    <a href="eventos.php" class="btn">Reservar recorrido</a>
+                                    <a href="contact.php" class="btn primary">Más información</a>
                                 </div>
                             </div>
                         </div>
@@ -110,7 +110,7 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
                                     <span>Explorá la naturaleza</span>
                                     <h4>Visitas guiadas</h4>
                                     <p>Disfrutá de un recorrido educativo por el mariposario y conocé el ciclo de vida de nuestras mariposas.</p><br><br>
-                                    <a href="Reserva.php">Reservar ahora <i class="fa fa-long-arrow-right"></i></a>
+                                    <a href="eventos.php">Reservar ahora <i class="fa fa-long-arrow-right"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -122,7 +122,7 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
                                     <span>Aprendé y divertite</span>
                                     <h4>Talleres y actividades</h4>
                                     <p>Ofrecemos talleres sobre cuidado de orquídeas, crianza de mariposas y actividades para todas las edades.</p>
-                                    <a href="Info.php">Ver actividades <i class="fa fa-long-arrow-right"></i></a>
+                                    <a href="eventos.php">Ver actividades <i class="fa fa-long-arrow-right"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -161,7 +161,6 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
             </div>
             <div class="row">
                 <div class="col-lg-4 col-12">
-                    <a href="Info.php">
                         <div class="single-features">
                             <div class="signle-icon">
                                 <i class="icofont icofont-butterfly-alt"></i>
@@ -297,7 +296,7 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1) {
                 <h2 class="text-belleza">¿Te apasiona la naturaleza? Ven a ver nuestras mariposas y orquídeas únicas</h2>
                 <p>Explora un mundo lleno de mariposas coloridas y orquídeas únicas. En nuestro mariposario podrás disfrutar de un ambiente natural y aprender sobre estas maravillosas criaturas. ¡No esperes más y ven a vivir esta experiencia!</p>
                 <div class="button">
-                <a href="Reserva.php" class="btn">Visítanos Ahora</a>
+                <a href="eventos.php" class="btn">Visítanos Ahora</a>
                 <a href="tienda.php" class="btn second">Descubre Nuestras Orquídeas<i class="fa fa-long-arrow-right"></i></a>
                 </div>
             </div>
