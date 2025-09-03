@@ -97,401 +97,33 @@ function getNotificationColor($tipo) {
     
     <title>Notificaciones | Eco Mariposas</title>
     
-    <link rel="icon" href="img/favicon.png">
+<!-- Favicon -->
+<link rel="icon" href="img/favicon.png">
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Librerías externas -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<!-- CSS base -->
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/nice-select.css">
+<link rel="stylesheet" href="css/slicknav.min.css">
+<link rel="stylesheet" href="css/owl-carousel.css">
+<link rel="stylesheet" href="css/datepicker.css">
+<link rel="stylesheet" href="css/animate.min.css">
+<link rel="stylesheet" href="css/magnific-popup.css">
+<link rel="stylesheet" href="css/normalize.css">
+
+<!-- Estilos personalizados -->
+
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="./css/notificaciones.css">
+<link rel="stylesheet" href="css/responsive.css">
+
     
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/nice-select.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="css/slicknav.min.css">
-    <link rel="stylesheet" href="css/owl-carousel.css">
-    <link rel="stylesheet" href="css/datepicker.css">
-    <link rel="stylesheet" href="css/animate.min.css">
-    <link rel="stylesheet" href="css/magnific-popup.css">
-    
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="css/responsive.css">
-    
-    <style>
-    /* Estilo general de la página */
-    body {
-        font-family: 'Poppins', sans-serif;
-        background-color: #f8f9fa;
-        color: #333;
-        margin: 0;
-        padding: 0;
-    }
-
-    /* Estilos del contenedor */
-    .containerNotificaciones {
-        max-width: 1200px;
-        margin: 40px auto;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Título de la página */
-    h1 {
-        text-align: center;
-        margin-bottom: 40px;
-        font-size: 2.5em;
-        color: #42764D;
-    }
-
-    /* Header de notificaciones */
-    .notifications-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 30px;
-        padding-bottom: 15px;
-        border-bottom: 2px solid #e9ecef;
-    }
-
-    .notifications-stats {
-        display: flex;
-        gap: 20px;
-    }
-
-    .stat-item {
-        text-align: center;
-        padding: 10px 20px;
-        background: linear-gradient(135deg, #8BC34A, #66bb6a);
-        border-radius: 10px;
-        color: white;
-        min-width: 100px;
-    }
-
-    .stat-number {
-        font-size: 24px;
-        font-weight: 600;
-        display: block;
-    }
-
-    .stat-label {
-        font-size: 12px;
-        opacity: 0.9;
-    }
-
-    /* Filtros */
-    .notification-filters {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-    }
-
-    .filter-btn {
-        padding: 8px 16px;
-        border: 1px solid #ddd;
-        background: #fff;
-        border-radius: 20px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 14px;
-    }
-
-    .filter-btn:hover, .filter-btn.active {
-        background: #8BC34A;
-        color: white;
-        border-color: #8BC34A;
-    }
-
-    .notification-list {
-        list-style: none;
-        padding: 0;
-    }
-
-    .notification-item {
-        background-color: #fff;
-        border-radius: 12px;
-        margin-bottom: 15px;
-        padding: 20px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease-in-out;
-        border-left: 4px solid transparent;
-        display: flex;
-        align-items: flex-start;
-        gap: 15px;
-        position: relative;
-    }
-
-    .notification-item:hover {
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
-        transform: translateY(-2px);
-    }
-
-    .notification-item.unread {
-        background: linear-gradient(135deg, #f8fff4, #ffffff);
-        border-left-color: #8BC34A;
-    }
-
-    .notification-item.unread::before {
-        content: '';
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        width: 8px;
-        height: 8px;
-        background: #8BC34A;
-        border-radius: 50%;
-    }
-
-    .notification-icon {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 20px;
-        flex-shrink: 0;
-    }
-
-    .notification-content {
-        flex: 1;
-    }
-
-    .notification-content h3 {
-        margin: 0 0 5px 0;
-        font-size: 16px;
-        font-weight: 600;
-        color: #333;
-    }
-
-    .notification-content p {
-        margin: 0 0 8px 0;
-        font-size: 14px;
-        color: #666;
-        line-height: 1.5;
-    }
-
-    .notification-meta {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        font-size: 12px;
-        color: #999;
-    }
-
-    .notification-time {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .notification-type {
-        background: #e9ecef;
-        padding: 2px 8px;
-        border-radius: 12px;
-        font-size: 11px;
-        font-weight: 500;
-    }
-
-    /* Acciones de notificación */
-    .notification-actions {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        align-items: center;
-    }
-
-    .action-btn {
-        background: none;
-        border: none;
-        padding: 8px;
-        border-radius: 50%;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        color: #999;
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .action-btn:hover {
-        background: #f0f0f0;
-        color: #8BC34A;
-    }
-
-    .mark-read-btn:hover {
-        background: #e8f5e8;
-        color: #4caf50;
-    }
-
-    .delete-btn:hover {
-        background: #ffebee;
-        color: #f44336;
-    }
-
-    /* Botones de acción especiales */
-    .special-action-btn {
-        display: inline-block;
-        background: linear-gradient(135deg, #ff9800, #f57c00);
-        color: white;
-        padding: 8px 16px;
-        border-radius: 20px;
-        text-decoration: none;
-        font-size: 12px;
-        font-weight: 500;
-        margin-top: 10px;
-        transition: all 0.3s ease;
-    }
-
-    .special-action-btn:hover {
-        background: linear-gradient(135deg, #f57c00, #e65100);
-        color: white;
-        text-decoration: none;
-        transform: translateY(-1px);
-    }
-
-    /* Estado vacío */
-    .empty-state {
-        text-align: center;
-        padding: 60px 20px;
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    }
-
-    .empty-state i {
-        font-size: 4em;
-        color: #ddd;
-        margin-bottom: 20px;
-    }
-
-    .empty-state h3 {
-        color: #666;
-        margin-bottom: 10px;
-    }
-
-    .empty-state p {
-        color: #999;
-        margin-bottom: 30px;
-    }
-
-    /* Estilos del sidebar (copiados del primer script) */
-    :root {
-        --primary-color: #8BC34A;
-        --secondary-color: #8BC34A;
-        --text-color: #333;
-        --light-color: #f9f9f9;
-        --dark-color: #222;
-        --grey-color: #f4f4f4;
-        --border-color: #e9e9e9;
-    }
-            
-    .user-sidebar {
-        background-color: white;
-        border-radius: 10px;
-        box-shadow: 0 0 15px rgba(0,0,0,0.05);
-        padding: 25px;
-        margin-bottom: 30px;
-    }
-    
-    .profile-info {
-        text-align: center;
-        padding-bottom: 20px;
-        border-bottom: 1px solid var(--border-color);
-        margin-bottom: 20px;
-    }
-    
-    .profile-info img {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 4px solid var(--primary-color);
-        margin-bottom: 15px;
-    }
-    
-    .sidebar-menu li {
-        margin-bottom: 10px;
-    }
-    
-    .sidebar-menu li a {
-        color: var(--text-color);
-        padding: 10px 15px;
-        display: block;
-        border-radius: 5px;
-        transition: all 0.3s ease;
-    }
-    
-    .sidebar-menu li a:hover, .sidebar-menu li a.active {
-        background-color: var(--primary-color);
-        color: white;
-    }
-    
-    .sidebar-menu li a i {
-        margin-right: 10px;
-    }
-    
-    .user-main-content {
-        background-color: white;
-        border-radius: 10px;
-        padding: 30px;
-        box-shadow: 0 0 15px rgba(0,0,0,0.05);
-    }
-
-    .btn-primary {
-        background-color: var(--primary-color);
-        border-color: var(--primary-color);
-        padding: 10px 25px;
-        font-weight: 500;
-        border-radius: 5px;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-primary:hover {
-        background-color: var(--secondary-color);
-        border-color: var(--secondary-color);
-    }
-
-    /* Badge para notificaciones no leídas */
-    .badge {
-        background-color: #dc3545;
-        color: white;
-        font-size: 11px;
-        padding: 2px 6px;
-        border-radius: 10px;
-        margin-left: 5px;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .notifications-header {
-            flex-direction: column;
-            gap: 15px;
-            align-items: stretch;
-        }
-        
-        .notifications-stats {
-            justify-content: center;
-        }
-        
-        .notification-filters {
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .notification-item {
-            flex-direction: column;
-            text-align: center;
-        }
-        
-        .notification-actions {
-            flex-direction: row;
-            justify-content: center;
-            margin-top: 15px;
-        }
-    }
-    </style>
 </head>
 
 <body>
@@ -506,7 +138,7 @@ function getNotificationColor($tipo) {
                         <div class="profile-info">
                             <img src="<?= $fotoPerfil ?>" alt="Foto de perfil">
                             <h3>Hola, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Usuario') ?></h3>
-                            <a href="user-settings.php" class="btn btn-sm btn-primary">Editar Perfil</a>
+                            <a href="editarperfil.php" class="btn btn-sm btn-primary">Editar Perfil</a>
                         </div>
                         <ul class="sidebar-menu">
                             <li><a href="usuario.php" class="<?= $currentPage=='usuario.php'?'active':'' ?>"><i class="fas fa-user"></i> Perfil</a></li>
@@ -624,10 +256,7 @@ function getNotificationColor($tipo) {
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer id="footer" class="footer">
-        <!-- Tu footer aquí -->
-    </footer>
+<?php include 'layout/Footer.php'; ?>
 
     <!-- Scroll Up -->
     <a href="#" class="scroll-up"><i class="fa fa-chevron-up"></i></a>

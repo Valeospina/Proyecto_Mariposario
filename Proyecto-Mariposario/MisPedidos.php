@@ -263,6 +263,67 @@ if ($userId) {
 } else {
     $pedidos = false;
 }
+
+// Consultar notificaciones del usuario
+$notificaciones = [];
+$totalNoLeidas = 0;
+
+if ($userId) {
+$sql = "
+  SELECT 
+    ID_Notificacion,
+    Categoria AS Tipo_Notificacion,  -- para ser 100% compatible con tu UI actual
+    Subtipo,
+    Mensaje,
+    Fecha_Notificacion,
+    Mostrar_Desde,
+    Leida,
+    ID_Referencia,
+    Accion_URL
+  FROM Notificacion
+  WHERE ID_Usuario = ? 
+    AND Mostrar_Desde <= NOW()
+  ORDER BY Fecha_Notificacion DESC
+";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('i', $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    while ($row = $result->fetch_assoc()) {
+        $notificaciones[] = $row;
+        if (!$row['Leida']) {
+            $totalNoLeidas++;
+        }
+    }
+    $stmt->close();
+}
+
+// Función para obtener el icono según el tipo de notificación
+function getNotificationIcon($tipo) {
+    switch($tipo) {
+        case 'Bienvenida': return 'fa-heart';
+        case 'Pedido': return 'fa-shopping-cart';
+        case 'Evento': return 'fa-calendar-alt';
+        case 'Sistema': return 'fa-cog';
+        case 'Promoción': return 'fa-tag';
+        default: return 'fa-bell';
+    }
+}
+
+// Función para obtener la clase de color según el tipo
+function getNotificationColor($tipo) {
+    switch($tipo) {
+        case 'Bienvenida': return '#e91e63';
+        case 'Pedido': return '#4caf50';
+        case 'Evento': return '#2196f3';
+        case 'Sistema': return '#ff9800';
+        case 'Promoción': return '#9c27b0';
+        default: return '#8BC34A';
+    }
+}
+
 ?>
 <!doctype html>
 <html class="no-js" lang="es">
@@ -276,337 +337,31 @@ if ($userId) {
 
     <title>Mi Perfil | Eco Mariposas</title>
 
-    <link rel="icon" href="img/favicon.png">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<!-- Favicon -->
+<link rel="icon" href="img/favicon.png">
 
-    <!-- CSS base del sitio -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/nice-select.css">
-    <link rel="stylesheet" href="css/slicknav.min.css">
-    <link rel="stylesheet" href="css/owl-carousel.css">
-    <link rel="stylesheet" href="css/datepicker.css">
-    <link rel="stylesheet" href="css/animate.min.css">
-    <link rel="stylesheet" href="css/magnific-popup.css">
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/tienda.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="css/responsive.css">
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <style>
-        /* ============================================================
-           Estilos específicos/afinados para MisPedidos.php
-           ============================================================ */
+<!-- Librerías externas -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-        :root {
-            --primary-color: #8BC34A;
-            --secondary-color: #6fb033;
-            --accent-color: #4cc1d7;
-            --danger-color: #e74c3c;
-            --text-color: #333;
-            --muted-color: #666;
-            --light-bg: #f8f9fa;
-            --border-color: #e9e9e9;
-            --shadow-1: 0 4px 12px rgba(0,0,0,.08);
-            --shadow-2: 0 8px 20px rgba(0,0,0,.12);
-        }
+<!-- CSS base -->
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/nice-select.css">
+<link rel="stylesheet" href="css/slicknav.min.css">
+<link rel="stylesheet" href="css/owl-carousel.css">
+<link rel="stylesheet" href="css/datepicker.css">
+<link rel="stylesheet" href="css/animate.min.css">
+<link rel="stylesheet" href="css/magnific-popup.css">
+<link rel="stylesheet" href="css/normalize.css">
 
-        /* Layout base */
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--light-bg);
-            color: var(--text-color);
-            margin: 0;
-            padding: 0;
-        }
+<!-- Estilos personalizados -->
 
-        /* Contenedor principal de pedidos */
-        .containerPedidos {
-            max-width: 1200px;
-            margin: 40px auto 60px auto;
-            padding: 24px;
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: var(--shadow-1);
-        }
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="./css/Mispedidos.css">
+<link rel="stylesheet" href="css/responsive.css">
 
-        /* Título */
-        h1 {
-            text-align: center;
-            margin: 0 0 32px 0;
-            font-weight: 700;
-            font-size: 2.3rem;
-            color: var(--primary-color);
-            letter-spacing: .3px;
-        }
-
-        /* Lista de pedidos */
-        .order-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        /* Tarjeta de pedido */
-        .order-item {
-            position: relative;
-            background-color: #fff;
-            border-radius: 12px;
-            margin-bottom: 22px;
-            padding: 18px 20px 22px 20px;
-            box-shadow: var(--shadow-1);
-            border: 1px solid #f1f1f1;
-            transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
-        }
-        .order-item:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-2);
-            border-color: #eee;
-        }
-
-        /* Título del pedido */
-        .order-item h2 {
-            margin: 0 0 10px 0;
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #222;
-        }
-
-        /* Badge cancelado */
-        .badge-cancelado {
-            position: absolute;
-            right: 20px;
-            top: 20px;
-            background: var(--danger-color);
-            color: #fff;
-            font-weight: 600;
-            padding: 6px 10px;
-            border-radius: 6px;
-            box-shadow: 0 2px 6px rgba(231, 76, 60, .35);
-        }
-
-        /* Barra de progreso */
-        .progress-bar {
-            display: flex;
-            align-items: stretch;
-            justify-content: space-between;
-            gap: 10px;
-            margin: 18px 0 16px 0;
-        }
-        .progress-step {
-            flex: 1 1 0%;
-            text-align: center;
-            padding: 12px 8px;
-            background-color: #f4f6f8;
-            border-radius: 8px;
-            font-size: .92rem;
-            font-weight: 600;
-            color: #7a7a7a;
-            border: 1px dashed #e5e7ea;
-            transition: all .25s ease;
-            user-select: none;
-        }
-        .progress-step.active {
-            background-color: var(--primary-color);
-            color: white;
-            border-color: transparent;
-            box-shadow: 0 6px 14px rgba(139, 195, 74, .25);
-        }
-        .progress-step.completed {
-            background-color: var(--accent-color);
-            color: white;
-            border-color: transparent;
-            box-shadow: 0 6px 14px rgba(76, 193, 215, .22);
-        }
-
-        /* Detalles del pedido */
-        .order-details {
-            margin-top: 6px;
-            font-size: .98rem;
-            color: var(--muted-color);
-        }
-        .order-details p {
-            margin: 6px 0;
-        }
-        .order-details span {
-            font-weight: 700;
-            color: #222;
-        }
-
-        /* Botones */
-        .btn {
-            display: inline-block;
-            background-color: var(--primary-color);
-            color: white !important;
-            padding: 10px 16px;
-            border-radius: 8px;
-            text-decoration: none;
-            margin-top: 14px;
-            margin-right: 10px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: background-color .2s ease, transform .08s ease;
-            box-shadow: 0 2px 6px rgba(139, 195, 74, .35);
-        }
-        .btn:hover { background-color: var(--secondary-color); transform: translateY(-1px); }
-        .btn:active { transform: translateY(0); }
-        .btn-review { background-color: #f39c12; box-shadow: 0 2px 6px rgba(243, 156, 18, .35); }
-        .btn-review:hover { background-color: #e67e22; }
-
-        /* Sidebar usuario (coincide con tu estilo general) */
-        .user-sidebar {
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: var(--shadow-1);
-            padding: 22px;
-            margin-bottom: 30px;
-        }
-        .profile-info {
-            text-align: center;
-            padding-bottom: 18px;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 18px;
-        }
-        .profile-info img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid var(--primary-color);
-            margin-bottom: 12px;
-        }
-        .sidebar-menu { list-style: none; margin: 0; padding: 0; }
-        .sidebar-menu li { margin-bottom: 10px; }
-        .sidebar-menu li a {
-            display: block;
-            color: var(--text-color);
-            padding: 10px 12px;
-            border-radius: 8px;
-            text-decoration: none;
-            transition: background .2s ease, color .2s ease;
-            font-weight: 500;
-        }
-        .sidebar-menu li a:hover,
-        .sidebar-menu li a.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        .sidebar-menu li a i { margin-right: 10px; }
-
-        /* Contenido principal */
-        .user-main-content {
-            background-color: white;
-            border-radius: 12px;
-            padding: 26px;
-            box-shadow: var(--shadow-1);
-        }
-
-        /* Modal de reseñas */
-        .review-modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0; top: 0; width: 100%; height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,.55);
-        }
-        .review-modal-content {
-            background-color: #fff;
-            margin: 5% auto;
-            padding: 28px;
-            border: none;
-            border-radius: 14px;
-            width: 92%;
-            max-width: 520px;
-            box-shadow: var(--shadow-2);
-            animation: mp-slide-in .25s ease;
-        }
-        @keyframes mp-slide-in {
-            from { transform: translateY(-10px); opacity: .0; }
-            to   { transform: translateY(0);     opacity: 1;  }
-        }
-        .close {
-            color: #999;
-            float: right;
-            font-size: 28px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: color .2s ease;
-        }
-        .close:hover { color: var(--primary-color); }
-
-        .review-form h3 {
-            color: var(--primary-color);
-            text-align: center;
-            margin: 0 0 16px 0;
-            font-size: 1.35rem;
-            font-weight: 700;
-        }
-        .star-rating { text-align: center; margin: 16px 0; }
-        .star {
-            font-size: 28px;
-            color: #ddd;
-            cursor: pointer;
-            margin: 0 2px;
-            transition: color .15s ease, transform .08s ease;
-            user-select: none;
-        }
-        .star:hover, .star.active {
-            color: #ffc107;
-            transform: translateY(-1px);
-        }
-
-        .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; color: #333; }
-        .form-control {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #eef0f3;
-            border-radius: 8px;
-            font-size: .98rem;
-            transition: border-color .2s ease, box-shadow .2s ease;
-            resize: vertical;
-            font-family: 'Poppins', sans-serif;
-        }
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(139,195,74,.12);
-        }
-        .btn-submit {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color .2s ease, transform .08s ease;
-            box-shadow: 0 2px 6px rgba(139,195,74,.35);
-        }
-        .btn-submit:hover { background-color: var(--secondary-color); transform: translateY(-1px); }
-
-        /* Utilidades */
-        .text-center { text-align: center; }
-        .mb-0 { margin-bottom: 0 !important; }
-        .mt-0 { margin-top: 0 !important; }
-        .mt-8 { margin-top: 8px !important; }
-        .mt-12{ margin-top: 12px !important; }
-        .mt-16{ margin-top: 16px !important; }
-
-        /* Responsive */
-        @media (max-width: 991.98px) {
-            .order-item { padding: 16px; }
-            .progress-step { font-size: .88rem; padding: 10px 8px; }
-        }
-        @media (max-width: 575.98px) {
-            .progress-bar { gap: 6px; }
-            .progress-step { font-size: .8rem; padding: 8px 6px; }
-            .order-item h2 { font-size: 1.1rem; }
-        }
-    </style>
 </head>
 
 <body>
@@ -620,16 +375,19 @@ if ($userId) {
                     <div class="user-sidebar">
                         <div class="profile-info">
                             <img src="<?= $fotoPerfil ?>" alt="Foto de perfil">
-                            <h3 class="mt-8">Hola, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Usuario') ?></h3>
-                            <p class="mb-0">Miembro desde: Abril 2023</p>
-                            <a href="user-settings.php" class="btn btn-sm btn-primary" style="margin-top:12px;">Editar Perfil</a>
+                            <h3>Hola, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Usuario') ?></h3>
+                            <a href="editarperfil.php" class="btn btn-sm btn-primary">Editar Perfil</a>
                         </div>
                         <ul class="sidebar-menu">
-                            <li><a href="usuario.php"><i class="fas fa-user"></i> Perfil</a></li>
-                            <li><a href="MisPedidos.php" class="active"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
-                            <li><a href="eventosReservados.php"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
-                            <li><a href="notificaciones.php"><i class="fas fa-bell"></i> Notificaciones <span class="badge badge-primary">3</span></a></li>
-                            <li><a href="cliente-chat.php"><i class="fas fa-cog"></i> Soporte</a></li>
+                            <li><a href="usuario.php" class="<?= $currentPage=='usuario.php'?'active':'' ?>"><i class="fas fa-user"></i> Perfil</a></li>
+                            <li><a href="MisPedidos.php" class="<?= $currentPage=='MisPedidos.php'?'active':'' ?>"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
+                            <li><a href="eventosReservados.php" class="<?= $currentPage=='eventosReservados.php'?'active':'' ?>"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
+                            <li><a href="notificaciones.php" class="<?= $currentPage=='notificaciones.php'?'active':'' ?>"><i class="fas fa-bell"></i> Notificaciones 
+                                <?php if ($totalNoLeidas > 0): ?>
+                                    <span class="badge"><?= $totalNoLeidas ?></span>
+                                <?php endif; ?>
+                            </a></li>
+                            <li><a href="cliente-chat.php" class="<?= $currentPage=='cliente-chat.php'?'active':'' ?>"><i class="fas fa-cog"></i> Soporte</a></li>
                             <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
                         </ul>
                     </div>

@@ -2,13 +2,89 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
+include 'DB.php';
 
 // Mantener el mismo ID de consulta en la sesión
 if (!isset($_SESSION['consultaId'])) {
     $_SESSION['consultaId'] = rand(1000, 9999);
 }
+$userId = $_SESSION['user_id'] ?? null;
 $consultaId = $_SESSION['consultaId'];
 $userName = $_SESSION['user_name'] ?? 'Usuario';
+
+// Foto de perfil
+$fotoPerfil = "img/default-user.png";
+if ($userId) {
+    $sqlFoto = "SELECT Foto_Perfil FROM Usuario WHERE ID_Usuario = ?";
+    $stmtFoto = $conn->prepare($sqlFoto);
+    $stmtFoto->bind_param('i', $userId);
+    $stmtFoto->execute();
+    $resultFoto = $stmtFoto->get_result()->fetch_assoc();
+    if (!empty($resultFoto['Foto_Perfil'])) {
+        $fotoPerfil = htmlspecialchars($resultFoto['Foto_Perfil']);
+    }
+    $stmtFoto->close();
+}
+
+// Consultar notificaciones del usuario
+$notificaciones = [];
+$totalNoLeidas = 0;
+
+if ($userId) {
+$sql = "
+  SELECT 
+    ID_Notificacion,
+    Categoria AS Tipo_Notificacion,  -- para ser 100% compatible con tu UI actual
+    Subtipo,
+    Mensaje,
+    Fecha_Notificacion,
+    Mostrar_Desde,
+    Leida,
+    ID_Referencia,
+    Accion_URL
+  FROM Notificacion
+  WHERE ID_Usuario = ? 
+    AND Mostrar_Desde <= NOW()
+  ORDER BY Fecha_Notificacion DESC
+";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('i', $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    while ($row = $result->fetch_assoc()) {
+        $notificaciones[] = $row;
+        if (!$row['Leida']) {
+            $totalNoLeidas++;
+        }
+    }
+    $stmt->close();
+}
+
+// Función para obtener el icono según el tipo de notificación
+function getNotificationIcon($tipo) {
+    switch($tipo) {
+        case 'Bienvenida': return 'fa-heart';
+        case 'Pedido': return 'fa-shopping-cart';
+        case 'Evento': return 'fa-calendar-alt';
+        case 'Sistema': return 'fa-cog';
+        case 'Promoción': return 'fa-tag';
+        default: return 'fa-bell';
+    }
+}
+
+// Función para obtener la clase de color según el tipo
+function getNotificationColor($tipo) {
+    switch($tipo) {
+        case 'Bienvenida': return '#e91e63';
+        case 'Pedido': return '#4caf50';
+        case 'Evento': return '#2196f3';
+        case 'Sistema': return '#ff9800';
+        case 'Promoción': return '#9c27b0';
+        default: return '#8BC34A';
+    }
+}
 ?>
 
 <!doctype html>
@@ -24,189 +100,31 @@ $userName = $_SESSION['user_name'] ?? 'Usuario';
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         
         <title>Mi Perfil | Eco Mariposas</title>
-        
-        <link rel="icon" href="img/favicon.png">
-        
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<!-- Favicon -->
+<link rel="icon" href="img/favicon.png">
 
-    <link rel="icon" href="img/favicon.png">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/nice-select.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="css/slicknav.min.css">
-    <link rel="stylesheet" href="css/owl-carousel.css">
-    <link rel="stylesheet" href="css/datepicker.css">
-    <link rel="stylesheet" href="css/animate.min.css">
-    <link rel="stylesheet" href="css/magnific-popup.css">
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/tienda.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="css/responsive.css">
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<style>
-:root {
-    --main-green: #8BC34A;
-    --darker-green: #6fa12d;
-    --background-light: #f8f9fa;
-    --border-color: #e9e9e9;
-    --text-color: #333;
-}
+<!-- Librerías externas -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-body {
-    font-family: 'Poppins', sans-serif;
-    background: var(--background-light);
-    color: var(--text-color);
-}
+<!-- CSS base -->
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/nice-select.css">
+<link rel="stylesheet" href="css/slicknav.min.css">
+<link rel="stylesheet" href="css/owl-carousel.css">
+<link rel="stylesheet" href="css/datepicker.css">
+<link rel="stylesheet" href="css/animate.min.css">
+<link rel="stylesheet" href="css/magnific-popup.css">
+<link rel="stylesheet" href="css/normalize.css">
 
-.user-sidebar {
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.05);
-    padding: 25px;
-    margin-bottom: 30px;
-    text-align: center;
-}
+<!-- Estilos personalizados -->
+<link rel="stylesheet" href="css/tienda.css">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="./css/soporte.css">
+<link rel="stylesheet" href="css/responsive.css">
 
-.user-sidebar img {
-    width: 110px;
-    height: 110px;
-    border-radius: 50%;
-    border: 4px solid var(--main-green);
-    margin-bottom: 15px;
-    object-fit: cover;
-}
-
-.user-sidebar h3 {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 15px;
-}
-
-.user-sidebar ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    text-align: left;
-}
-
-.user-sidebar ul li {
-    margin-bottom: 10px;
-}
-
-.user-sidebar ul li a {
-    display: block;
-    color: var(--text-color);
-    padding: 10px 15px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: 500;
-    transition: 0.3s;
-}
-
-.user-sidebar ul li a:hover {
-    background: var(--main-green);
-    color: #fff;
-}
-
-.chat-wrapper {
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 12px rgba(0,0,0,0.05);
-    display: flex;
-    flex-direction: column;
-    height: 550px;
-}
-
-.chat-header {
-    background: var(--main-green);
-    color: #fff;
-    padding: 15px;
-    font-size: 18px;
-    font-weight: 600;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-}
-
-.chat-body {
-    flex: 1;
-    padding: 15px;
-    overflow-y: auto;
-    background: var(--background-light);
-}
-
-.message {
-    max-width: 70%;
-    padding: 10px 14px;
-    margin-bottom: 12px;
-    border-radius: 18px;
-    font-size: 14px;
-    animation: fadeIn 0.3s ease;
-    word-wrap: break-word;
-}
-
-.cliente {
-    background: var(--main-green);
-    color: #fff;
-    margin-left: auto;
-    border-bottom-right-radius: 0;
-}
-
-.admin {
-    background: #198754;
-    color: #fff;
-    margin-right: auto;
-    border-bottom-left-radius: 0;
-}
-
-.system {
-    background: #e0e0e0;
-    color: #333;
-    margin: auto;
-    font-size: 13px;
-    text-align: center;
-}
-
-.chat-footer {
-    padding: 15px;
-    border-top: 1px solid var(--border-color);
-    background: #fff;
-}
-
-.input-box {
-    display: flex;
-    gap: 10px;
-}
-
-.input-box input {
-    flex: 1;
-    padding: 12px;
-    border-radius: 25px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-}
-
-.input-box button {
-    background: var(--main-green);
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    font-size: 18px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.input-box button:hover {
-    background: var(--darker-green);
-}
-
-@keyframes fadeIn {
-    from {opacity:0;transform:translateY(10px);}
-    to {opacity:1;transform:translateY(0);}
-}
-</style>
 </head>
 <body>
 
@@ -215,24 +133,27 @@ body {
         <section class="user-panel section">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-3 col-md-4 col-12">
-                        <div class="user-sidebar">
-                            <div class="profile-info">
-                                <img src="<?= $fotoPerfil ?>" alt="Foto de perfil">
-                                <h3>Hola, <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Usuario'); ?></h3>
-                                <p>Miembro desde: Abril 2023</p>
-                                <a href="user-settings.php" class="btn btn-sm btn-primary">Editar Perfil</a>
-                            </div>
-                            <ul class="sidebar-menu">
-                            <li><a href="usuario.php" class="<?= $currentPage=='user-profile.php'?'active':'' ?>"><i class="fas fa-user"></i> Perfil</a></li>
+                <div class="col-lg-3 col-md-4 col-12">
+                    <div class="user-sidebar">
+                        <div class="profile-info">
+                            <img src="<?= $fotoPerfil ?>" alt="Foto de perfil">
+                            <h3>Hola, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Usuario') ?></h3>
+                            <a href="editarperfil.php" class="btn btn-sm btn-primary">Editar Perfil</a>
+                        </div>
+                        <ul class="sidebar-menu">
+                            <li><a href="usuario.php" class="<?= $currentPage=='usuario.php'?'active':'' ?>"><i class="fas fa-user"></i> Perfil</a></li>
                             <li><a href="MisPedidos.php" class="<?= $currentPage=='MisPedidos.php'?'active':'' ?>"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
                             <li><a href="eventosReservados.php" class="<?= $currentPage=='eventosReservados.php'?'active':'' ?>"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
-                            <li><a href="notificaciones.php" class="<?= $currentPage=='notificaciones.php'?'active':'' ?>"><i class="fas fa-bell"></i> Notificaciones <span class="badge badge-primary">3</span></a></li>
+                            <li><a href="notificaciones.php" class="<?= $currentPage=='notificaciones.php'?'active':'' ?>"><i class="fas fa-bell"></i> Notificaciones 
+                                <?php if ($totalNoLeidas > 0): ?>
+                                    <span class="badge"><?= $totalNoLeidas ?></span>
+                                <?php endif; ?>
+                            </a></li>
                             <li><a href="cliente-chat.php" class="<?= $currentPage=='cliente-chat.php'?'active':'' ?>"><i class="fas fa-cog"></i> Soporte</a></li>
                             <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
-                            </ul>
-                        </div>
-                        </div>
+                        </ul>
+                    </div>
+                </div>
             <!-- Chat -->
             <div class="col-lg-9 col-md-8 col-12">
                 <div class="chat-wrapper">

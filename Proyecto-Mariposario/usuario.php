@@ -10,14 +10,15 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 // Conexión a la base de datos
 require_once 'DB.php';
 
-$userID = $_SESSION['user_id'] ?? null;
+$userId = $_SESSION['user_id'] ?? null;
+$userName = $_SESSION['user_name'] ?? 'Usuario';
 
 // Consultar foto de perfil desde BD
 $fotoPerfil = "img/default-user.png"; // Por defecto
-if ($userID) {
+if ($userId) {
     $sqlFoto = "SELECT Foto_Perfil FROM Usuario WHERE ID_Usuario = ?";
     $stmtFoto = $conn->prepare($sqlFoto);
-    $stmtFoto->bind_param('i', $userID);
+    $stmtFoto->bind_param('i', $userId);
     $stmtFoto->execute();
     $resultFoto = $stmtFoto->get_result()->fetch_assoc();
     if (!empty($resultFoto['Foto_Perfil'])) {
@@ -25,6 +26,69 @@ if ($userID) {
     }
     $stmtFoto->close();
 }
+
+// Consultar notificaciones del usuario
+$notificaciones = [];
+$totalNoLeidas = 0;
+
+if ($userId) {
+$sql = "
+  SELECT 
+    ID_Notificacion,
+    Categoria AS Tipo_Notificacion,  -- para ser 100% compatible con tu UI actual
+    Subtipo,
+    Mensaje,
+    Fecha_Notificacion,
+    Mostrar_Desde,
+    Leida,
+    ID_Referencia,
+    Accion_URL
+  FROM Notificacion
+  WHERE ID_Usuario = ? 
+    AND Mostrar_Desde <= NOW()
+  ORDER BY Fecha_Notificacion DESC
+";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('i', $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    while ($row = $result->fetch_assoc()) {
+        $notificaciones[] = $row;
+        if (!$row['Leida']) {
+            $totalNoLeidas++;
+        }
+    }
+    $stmt->close();
+}
+
+// Función para obtener el icono según el tipo de notificación
+function getNotificationIcon($tipo) {
+    switch($tipo) {
+        case 'Bienvenida': return 'fa-heart';
+        case 'Pedido': return 'fa-shopping-cart';
+        case 'Evento': return 'fa-calendar-alt';
+        case 'Sistema': return 'fa-cog';
+        case 'Promoción': return 'fa-tag';
+        default: return 'fa-bell';
+    }
+}
+
+// Función para obtener la clase de color según el tipo
+function getNotificationColor($tipo) {
+    switch($tipo) {
+        case 'Bienvenida': return '#e91e63';
+        case 'Pedido': return '#4caf50';
+        case 'Evento': return '#2196f3';
+        case 'Sistema': return '#ff9800';
+        case 'Promoción': return '#9c27b0';
+        default: return '#8BC34A';
+    }
+}
+
+
+
 
 // 3.1) Pedidos Totales
 $sqlPed = "SELECT COUNT(*) AS total_pedidos FROM Pedido WHERE ID_Usuario = ?";
@@ -66,180 +130,31 @@ $stmtAct->close();
     
     <title>Mi Perfil | Eco Mariposas</title>
     
-    <link rel="icon" href="img/favicon.png">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/nice-select.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="css/slicknav.min.css">
-    <link rel="stylesheet" href="css/owl-carousel.css">
-    <link rel="stylesheet" href="css/datepicker.css">
-    <link rel="stylesheet" href="css/animate.min.css">
-    <link rel="stylesheet" href="css/magnific-popup.css">
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/tienda.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="css/responsive.css">
-    
-    <style>
-        :root {
-            --main-yellow: #8BC34A;
-            --darker-yellow: #8BC34A;
-            --main-green: #8BC34A;
-            --darker-green: #8BC34A;
-            --light-green-background: #E8F5E9;
-            --text-color: #333;
-            --light-text-color: #777;
-            --card-background: #fff;
-            --background-light: #f8f9fa;
-            --border-color: #e9e9e9;
-        }
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--background-light);
-            color: var(--text-color);
-        }
-        .containerUsuario {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: var(--card-background);
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        .user-sidebar {
-            background-color: var(--card-background);
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.05);
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-        .profile-info {
-            text-align: center;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 20px;
-        }
-        .profile-info img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid var(--main-green);
-            margin-bottom: 15px;
-        }
-        .sidebar-menu li {
-            margin-bottom: 10px;
-        }
-        .sidebar-menu li a {
-            color: var(--text-color);
-            padding: 10px 15px;
-            display: block;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-        .sidebar-menu li a:hover,
-        .sidebar-menu li a.active {
-            background-color: var(--main-green);
-            color: white;
-        }
-        .sidebar-menu li a i {
-            margin-right: 10px;
-        }
-        .user-main-content {
-            background-color: var(--card-background);
-            border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.05);
-        }
-        .user-dashboard .card {
-            border: none;
-            border-radius: 10px;
-            padding: 25px 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            background-color: var(--card-background);
-        }
-        .user-dashboard .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-        .user-dashboard .card h3 {
-            color: var(--text-color);
-            margin-bottom: 15px;
-            font-size: 22px;
-        }
-        .user-dashboard .card p {
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: var(--light-text-color);
-        }
-        .user-dashboard .card .card-icon {
-            font-size: 36px;
-            margin-bottom: 15px;
-            color: var(--main-green);
-        }
-        .btn-primary {
-            background-color: var(--main-green);
-            border-color: var(--main-green);
-            padding: 10px 25px;
-            font-weight: 500;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-            color: white;
-        }
-        .btn-primary:hover {
-            background-color: var(--darker-green);
-            border-color: var(--darker-green);
-        }
-        .stats-number {
-            font-size: 32px;
-            font-weight: 600;
-            color: var(--main-yellow);
-            margin-bottom: 5px;
-        }
-        .stats-text {
-            color: var(--text-color);
-        }
-        .activity-feed {
-            margin-top: 30px;
-        }
-        .activity-item {
-            padding: 15px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-        }
-        .activity-icon {
-            width: 40px;
-            height: 40px;
-            background-color: var(--main-green);
-            border-radius: 50%;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-        }
-        .activity-content {
-            flex: 1;
-        }
-        .activity-content h4 {
-            font-size: 16px;
-            margin-bottom: 5px;
-            color: var(--text-color);
-        }
-        .activity-content p {
-            font-size: 12px;
-            color: var(--light-text-color);
-            margin: 0;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+<!-- Favicon -->
+<link rel="icon" href="img/favicon.png">
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Librerías externas -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<!-- CSS base -->
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/nice-select.css">
+<link rel="stylesheet" href="css/slicknav.min.css">
+<link rel="stylesheet" href="css/owl-carousel.css">
+<link rel="stylesheet" href="css/datepicker.css">
+<link rel="stylesheet" href="css/animate.min.css">
+<link rel="stylesheet" href="css/magnific-popup.css">
+<link rel="stylesheet" href="css/normalize.css">
+
+<!-- Estilos personalizados -->
+
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="./css/usuario.css">
+<link rel="stylesheet" href="css/responsive.css">
+
 </head>
 <body>
 
@@ -254,14 +169,17 @@ $stmtAct->close();
                         <div class="profile-info">
                             <img src="<?= $fotoPerfil ?>" alt="Foto de perfil">
                             <h3>Hola, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Usuario') ?></h3>
-                            <p>Miembro desde: Abril 2023</p>
                             <a href="editarperfil.php" class="btn btn-sm btn-primary">Editar Perfil</a>
                         </div>
                         <ul class="sidebar-menu">
-                            <li><a href="usuario.php" class="<?= $currentPage=='user-profile.php'?'active':'' ?>"><i class="fas fa-user"></i> Perfil</a></li>
+                            <li><a href="usuario.php" class="<?= $currentPage=='usuario.php'?'active':'' ?>"><i class="fas fa-user"></i> Perfil</a></li>
                             <li><a href="MisPedidos.php" class="<?= $currentPage=='MisPedidos.php'?'active':'' ?>"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a></li>
                             <li><a href="eventosReservados.php" class="<?= $currentPage=='eventosReservados.php'?'active':'' ?>"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
-                            <li><a href="notificaciones.php" class="<?= $currentPage=='notificaciones.php'?'active':'' ?>"><i class="fas fa-bell"></i> Notificaciones <span class="badge badge-primary">3</span></a></li>
+                            <li><a href="notificaciones.php" class="<?= $currentPage=='notificaciones.php'?'active':'' ?>"><i class="fas fa-bell"></i> Notificaciones 
+                                <?php if ($totalNoLeidas > 0): ?>
+                                    <span class="badge"><?= $totalNoLeidas ?></span>
+                                <?php endif; ?>
+                            </a></li>
                             <li><a href="cliente-chat.php" class="<?= $currentPage=='cliente-chat.php'?'active':'' ?>"><i class="fas fa-cog"></i> Soporte</a></li>
                             <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
                         </ul>
@@ -287,12 +205,7 @@ $stmtAct->close();
                                     <div class="stats-text">Eventos Asistidos</div>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-12 mt-md-0 mt-3">
-                                <div class="text-center">
-                                    <div class="stats-number">8</div>
-                                    <div class="stats-text">Productos Favoritos</div>
-                                </div>
-                            </div>
+
                         </div>
 
                         <!-- Actividad Reciente dinámica -->
