@@ -1,6 +1,9 @@
 <?php
 require_once 'DB.php';
 
+// Iniciar sesión para obtener el ID del usuario logueado
+session_start();
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nombre      = htmlspecialchars(trim($_POST['nombre']));
     $email       = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
@@ -8,6 +11,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $evento_id   = intval($_POST['evento']);
     $personas    = intval($_POST['personas']);
     $mensaje     = htmlspecialchars(trim($_POST['mensaje'])); // descripción
+
+if (session_status() === PHP_SESSION_NONE) session_start();
+
+$id_usuario = null;
+if (isset($_SESSION['user_id']))      $id_usuario = (int)$_SESSION['user_id'];
+elseif (isset($_SESSION['ID_Usuario'])) $id_usuario = (int)$_SESSION['ID_Usuario'];
+
+if (!$id_usuario) {
+    die("<div style='color:red;font-weight:bold;'>Error: Debes estar logueado para hacer una reserva. <a href='loginD.php'>Iniciar sesión</a></div>");
+}
+
 
     // 1) Obtener nombre y fecha del evento
     $stmt = $conn->prepare("SELECT Nombre, Fecha FROM Evento WHERE ID_Evento = ?");
@@ -44,13 +58,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <a href='eventos.php' style='display: inline-block; margin-top: 15px; background-color: #dc3545; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>Volver al Menú</a>
         </div>";
     } else {
-        // 4) Insertar la nueva reserva
+        // 4) Insertar la nueva reserva CON el ID_Usuario
         $stmt = $conn->prepare("
             INSERT INTO Reserva 
-                (ID_Evento, cantidad_personas, Fecha_Reserva, telefono, correo, descripcion) 
-            VALUES (?, ?, ?, ?, ?, ?)
+                (ID_Evento, ID_Usuario, cantidad_personas, Fecha_Reserva, telefono, correo, descripcion) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         ");
-        $stmt->bind_param("iissss", $evento_id, $personas, $fecha_evento, $telefono, $email, $mensaje);
+        $stmt->bind_param("iiissss", $evento_id, $id_usuario, $personas, $fecha_evento, $telefono, $email, $mensaje);
 
         if ($stmt->execute()) {
             echo "
@@ -134,6 +148,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 			<script src="js/main.js"></script>
 		</body>
 	</html>
-
-
-  

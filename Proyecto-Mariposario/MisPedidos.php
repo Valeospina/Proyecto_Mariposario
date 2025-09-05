@@ -428,29 +428,37 @@ function getNotificationColor($tipo) {
                                             <?php endfor; ?>
                                         </div>
 
-                                        <div class="order-details">
-                                            <?php $totalOriginal = $row['Total_Pedido']; ?>
-                                            <p class="mb-0"><span>Estado actual:</span> <?= htmlspecialchars($estadoActual ?: 'Pendiente') ?></p>
-                                            <p><span>Fecha Pedido:</span> <?= date("j \\d\\e F, Y", strtotime($row['Fecha_Pedido'])) ?></p>
+<div class="order-details">
+    <?php
+    // Asegura valores numéricos
+    $descuento    = isset($row['Monto_Canjeado']) ? (float)$row['Monto_Canjeado'] : 0.0;
+    $totalPagado  = isset($row['Total_Pedido'])   ? (float)$row['Total_Pedido']   : 0.0;
 
-                                            <?php if ($row['Monto_Canjeado'] > 0): ?>
-                                                <p><span>Total Original:</span>
-                                                    <s>₡<?= number_format($totalOriginal, 2, ',', '.') ?></s>
-                                                </p>
-                                                <p><span>Descuento por puntos:</span>
-                                                    -₡<?= number_format($row['Monto_Canjeado'], 2, ',', '.') ?>
-                                                    <small>(<?= (int)$row['Puntos_Canjeados'] ?> pts)</small>
-                                                </p>
-                                            <?php endif; ?>
+    // Si Total_Pedido es NETO (lo que realmente pagó), el original se infiere sumando el descuento
+    $totalOriginal = $totalPagado + $descuento;
+    ?>
 
-                                            <p><span>Total Pagado:</span>
-                                                <strong style="color:#4CAF50;">
-                                                    ₡<?= number_format($row['Total_Pedido'] - $row['Monto_Canjeado'], 2, ',', '.') ?>
-                                                </strong>
-                                            </p>
-                                        </div>
+    <p class="mb-0"><span>Estado actual:</span> <?= htmlspecialchars($estadoActual ?: 'Pendiente') ?></p>
+    <p><span>Fecha Pedido:</span> <?= date("j \\d\\e F, Y", strtotime($row['Fecha_Pedido'])) ?></p>
 
-                                        <a href="detallePedido.php?id=<?= (int)$row['ID_Pedido'] ?>" class="btn">Ver Detalles</a>
+    <?php if ($descuento > 0): ?>
+        <p><span>Total Original:</span>
+            <s>₡<?= number_format($totalOriginal, 2, ',', '.') ?></s>
+        </p>
+        <p><span>Descuento por puntos:</span>
+            -₡<?= number_format($descuento, 2, ',', '.') ?>
+            <small>(<?= (int)$row['Puntos_Canjeados'] ?> pts)</small>
+        </p>
+    <?php endif; ?>
+
+    <p><span>Total Pagado:</span>
+        <strong style="color:#4CAF50;">
+            ₡<?= number_format($totalPagado, 2, ',', '.') ?>
+        </strong>
+    </p>
+</div>
+
+
                                         <button class="btn btn-review" onclick="openReviewModal('<?= (int)$row['ID_Pedido'] ?>')">
                                             <i class="fas fa-star"></i> Dar mi Opinión
                                         </button>

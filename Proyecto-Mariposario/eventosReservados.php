@@ -3,6 +3,12 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+// Verificar si el usuario está logueado
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit();
+}
+
 // Obtén el nombre de la página actual para el estado "active" del menú
 $currentPage = basename($_SERVER['PHP_SELF']);
 
@@ -26,7 +32,6 @@ if ($userId) {
     }
     $stmtFoto->close();
 }
-
 
 // Consultar notificaciones del usuario
 $notificaciones = [];
@@ -88,6 +93,8 @@ function getNotificationColor($tipo) {
     }
 }
 ?>
+<!DOCTYPE html>
+<html lang="es">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -117,17 +124,12 @@ function getNotificationColor($tipo) {
 <link rel="stylesheet" href="css/normalize.css">
 
 <!-- Estilos personalizados -->
-
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="./css/eventosR.css">
 <link rel="stylesheet" href="css/responsive.css">
-
-    
-
 </head>
 
 <body>
-
     <?php include 'layout/nav.php'; ?>
 
     <section class="user-panel section">
@@ -156,77 +158,69 @@ function getNotificationColor($tipo) {
                 </div>
                 <div class="col-lg-9 col-md-8 col-12">
                     <div class="user-main-content">
-                        <!-- Contenido de reservas -->
-                        <div class="user-main-content">
-                            <h1>Mis Reservas</h1>
+                        <h1>Mis Reservas</h1>
 
-                            <?php
-                            // Consulta dinámica de reservas
-                            $sql = "
-                                SELECT
-                                    r.ID_Reserva,
-                                    e.Nombre       AS evento,
-                                    e.Fecha        AS fecha_evento,
-                                    e.Hora         AS hora_evento,
-                                    r.Cantidad_Personas,
-                                    r.Fecha_Reserva,
-                                    r.Estado
-                                FROM Reserva r
-                                JOIN Evento e ON r.ID_Evento = e.ID_Evento
-                                WHERE r.ID_Usuario = ?
-                                ORDER BY e.Fecha DESC
-                            ";
-                            $stmt = $conn->prepare($sql);
-                            $stmt->bind_param('i', $userID);
+                        <?php
+                        // Consulta dinámica de reservas
+                        $sql = "
+                            SELECT
+                                r.ID_Reserva,
+                                e.Nombre       AS evento,
+                                e.Fecha        AS fecha_evento,
+                                e.Hora         AS hora_evento,
+                                r.Cantidad_Personas,
+                                r.Fecha_Reserva,
+                                r.Estado
+                            FROM Reserva r
+                            JOIN Evento e ON r.ID_Evento = e.ID_Evento
+                            WHERE r.ID_Usuario = ?
+                            ORDER BY e.Fecha DESC
+                        ";
+                        
+                        $stmt = $conn->prepare($sql);
+                        if (!$stmt) {
+                            echo "<div class='alert alert-danger'>Error en la consulta: " . $conn->error . "</div>";
+                        } else {
+                            $stmt->bind_param('i', $userId); // CORRECCIÓN: cambié $userID por $userId
                             $stmt->execute();
                             $result = $stmt->get_result();
 
                             if ($result->num_rows > 0):
                                 while ($row = $result->fetch_assoc()):
-                            ?>
+                        ?>
                                 <div class="reservation-item order-item">
-                                    <h2><?= htmlspecialchars($row['evento']) ?></h2>
+                                    <h2><?= htmlspecialchars($row['evento']) ?></h2> <!-- CORRECCIÓN: cambié 'Evento' por 'evento' -->
                                     <div class="reservation-details order-details">
                                         <p><span>Fecha:</span> <?= date('d/m/Y', strtotime($row['fecha_evento'])) ?></p>
                                         <p><span>Hora:</span> <?= htmlspecialchars($row['hora_evento']) ?></p>
                                         <p><span>Cantidad de personas:</span> <?= (int)$row['Cantidad_Personas'] ?></p>
                                     </div>
-                                    <div class="progress-bar">
-                                        <?php
-                                        $steps = ['Solicitada','Confirmada','En curso','Finalizada'];
-                                        $current = array_search($row['Estado'], $steps);
-                                        foreach ($steps as $i => $label) {
-                                            $class = $i < $current ? 'completed' : ($i === $current ? 'active' : '');
-                                            echo "<div class='progress-step $class'>{$label}</div>";
-                                        }
-                                        ?>
-                                    </div>
                                     <p class="status-date">Última actualización: <?= date('d/m/Y', strtotime($row['Fecha_Reserva'])) ?></p>
                                 </div>
-                            <?php
+                        <?php
                                 endwhile;
+                                $stmt->close();
                             else:
-                            ?>
+                        ?>
                                 <div class="reservation-item text-center">
                                     <i class="fas fa-calendar-times fa-3x mb-3 text-muted"></i>
                                     <h2>¡Aún no tienes reservas!</h2>
                                     <p>Parece que todavía no has realizado ninguna reserva con nosotros.<br>¡Explora nuestros eventos y reserva tu experiencia!</p>
                                     <a href="eventos.php" class="btn">Ver eventos disponibles</a>
                                 </div>
-                            <?php
+                        <?php
                             endif;
-                            $stmt->close();
-                            $conn->close();
-                            ?>
+                        }
+                        $conn->close();
+                        ?>
 
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-<?php include 'layout/Footer.php'; ?>
+    <?php include 'layout/Footer.php'; ?>
 
     <!-- Scroll Up -->
     <a href="#" class="scroll-up"><i class="fa fa-chevron-up"></i></a>
@@ -246,6 +240,5 @@ function getNotificationColor($tipo) {
     <script src="js/jquery.magnific-popup.min.js"></script>
     <script src="js/waypoints.min.js"></script>
     <script src="js/main.js"></script>
-
 </body>
 </html>

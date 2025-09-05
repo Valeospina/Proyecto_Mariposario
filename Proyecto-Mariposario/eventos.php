@@ -1,4 +1,11 @@
 <?php
+
+require_once 'DB.php';
+
+// Iniciar sesión para obtener el ID del usuario logueado
+
+session_start();
+
 // eventos.php
 require_once 'DB.php';
 include 'layout/nav2.php';

@@ -208,32 +208,7 @@ $stmtAct->close();
 
                         </div>
 
-                        <!-- Actividad Reciente dinámica -->
-                        <div class="activity-feed">
-                            <h3>Actividad Reciente</h3>
 
-                            <?php if ($resultAct->num_rows > 0): ?>
-                                <?php while ($act = $resultAct->fetch_assoc()): ?>
-                                    <div class="activity-item">
-                                        <div class="activity-icon">
-                                            <i class="fas fa-history"></i>
-                                        </div>
-                                        <div class="activity-content">
-                                            <h4><?= htmlspecialchars($act['Tipo_Evento']) ?></h4>
-                                            <p><?= htmlspecialchars($act['Descripcion']) ?></p>
-                                        </div>
-                                        <div class="activity-time">
-                                            <?= date('d/m/Y H:i', strtotime($act['Fecha_Hora'])) ?>
-                                        </div>
-                                    </div>
-                                <?php endwhile; ?>
-                            <?php else: ?>
-                                <div class="text-center py-4">
-                                    <i class="fas fa-clock fa-2x text-muted mb-2"></i>
-                                    <p class="mb-0">No hay actividad reciente.</p>
-                                </div>
-                            <?php endif; ?>
-                        </div>
 
                         <!-- Dashboard Cards -->
                         <div class="user-dashboard">
