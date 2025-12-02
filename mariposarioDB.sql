@@ -861,4 +861,26 @@ SELECT
 FROM Lote_Mariposa
 GROUP BY ID_Mariposario, ID_Especie;
 
+-- Tabla de mensajes individuales
+CREATE TABLE chat_mensajes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_consulta INT NOT NULL,
+    id_usuario INT NOT NULL,
+    tipo ENUM('texto','imagen','video','documento') DEFAULT 'texto',
+    contenido TEXT NOT NULL,
+    ruta_archivo VARCHAR(255),
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    leido BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (id_consulta) REFERENCES Consulta(ID_Consulta)
+);
+
+-- Tabla para tracking de sesiones
+CREATE TABLE chat_sesiones (
+    id_sesion INT AUTO_INCREMENT PRIMARY KEY,
+    id_consulta INT NOT NULL,
+    id_usuario INT NOT NULL,
+    ultimo_ping DATETIME DEFAULT CURRENT_TIMESTAMP,
+    estado ENUM('activo','inactivo') DEFAULT 'activo',
+    FOREIGN KEY (id_consulta) REFERENCES Consulta(ID_Consulta)
+);
 
