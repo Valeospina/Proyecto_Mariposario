@@ -1,6 +1,9 @@
 <?php
 session_start();
 include '../DB.php';
+include '../DB.php';
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
 
 // --- Protección: solo admin ---
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 1) {
@@ -23,7 +26,7 @@ if ($event_id <= 0) {
 // Obtener datos del evento
 try {
     // Removed 'Activo' from SELECT query
-    $stmt = $conn->prepare("SELECT ID_Evento, Nombre, Fecha, Hora, Ubicacion, Descripcion, Precio FROM Evento WHERE ID_Evento = ?");
+    $stmt = $conn->prepare("SELECT ID_Evento, Nombre, Fecha, Hora, Ubicacion, Descripcion, Precio, Capacidad, Activo FROM Evento WHERE ID_Evento = ?");
     $stmt->bind_param("i", $event_id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -47,6 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $evento_item) {
     $ubicacion = trim($_POST['ubicacion'] ?? '');
     $descripcion = trim($_POST['descripcion'] ?? '');
     $precio = filter_var($_POST['precio'] ?? '', FILTER_VALIDATE_FLOAT); // Use FLOAT for decimal
+    $capacidad = filter_var($_POST['capacidad'] ?? '', FILTER_VALIDATE_INT);
+    $activo = isset($_POST['activo']) ? 1 : 0;
+
+
+
     // Removed $activo variable
 
     // Validations (no change needed here related to 'Activo')
@@ -59,11 +67,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $evento_item) {
     } elseif (!preg_match("/^\d{2}:\d{2}$/", $hora)) {
         $message = "El formato de la hora debe ser HH:MM.";
         $message_type = "danger";
+        } elseif ($capacidad < 1) {
+        $message = "La capacidad debe ser un número mayor a 0.";
+        $message_type = "danger";
     } else {
         try {
             // Removed 'Activo' from UPDATE query and bind_param
-            $stmt = $conn->prepare("UPDATE Evento SET Nombre=?, Fecha=?, Hora=?, Ubicacion=?, Descripcion=?, Precio=? WHERE ID_Evento=?");
-            $stmt->bind_param("sssssdi", $nombre, $fecha, $hora, $ubicacion, $descripcion, $precio, $event_id);
+            $stmt = $conn->prepare("UPDATE Evento SET Nombre=?, Fecha=?, Hora=?, Ubicacion=?, Descripcion=?, Precio=?, Capacidad=?, Activo=? WHERE ID_Evento=?");
+            $stmt->bind_param("sssssdiii", $nombre, $fecha, $hora, $ubicacion, $descripcion, $precio, $capacidad, $activo, $event_id);
 
             if ($stmt->execute()) {
                 $message = "Evento actualizado correctamente.";
@@ -75,6 +86,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $evento_item) {
                 $evento_item['Ubicacion'] = $ubicacion;
                 $evento_item['Descripcion'] = $descripcion;
                 $evento_item['Precio'] = $precio;
+                $evento_item['capacidad'] = $capacidad;
+                $evento_item['Activo'] = $activo;
+
+
                 // Removed $evento_item['Activo'] update
             } else {
                 if ($conn->errno == 1062) {
@@ -187,6 +202,15 @@ $page_title = 'Editar Evento';
                         <div class="form-group">
                             <label for="precio">Precio:</label>
                             <input type="number" step="0.01" id="precio" name="precio" value="<?php echo htmlspecialchars($evento_item['Precio']); ?>" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="capacidad">Cupos Disponibles:</label>
+                            <input type="number" id="capacidad" name="capacidad" value="<?php echo htmlspecialchars($evento_item['Capacidad']); ?>" min="1" required>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label for="activo">¿Evento activo?</label>
+                            <input type="checkbox" id="activo" name="activo" value="1" 
+                                <?php echo ($evento_item['Activo'] == 1 ? 'checked' : ''); ?>>
                         </div>
                         <div class="form-actions">
                             <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar Cambios</button>

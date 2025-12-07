@@ -10,7 +10,7 @@ session_start();
 require_once 'DB.php';
 include 'layout/nav2.php';
 
-$sql       = "SELECT ID_Evento, Nombre, Descripcion, Imagen_URL FROM Evento";
+$sql       = "SELECT ID_Evento, Nombre, Descripcion, Imagen_URL FROM Evento WHERE Activo = 1";
 $resultado = $conn->query($sql);
 ?>
 <!doctype html>

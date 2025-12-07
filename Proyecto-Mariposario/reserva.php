@@ -49,11 +49,21 @@ if (!$id_usuario) {
     $stmt->fetch();
     $stmt->close();
 
+
+    // Obtener capacidad REAL del evento
+    $stmtCap = $conn->prepare("SELECT capacidad FROM Evento WHERE ID_Evento = ?");
+    $stmtCap->bind_param("i", $evento_id);
+    $stmtCap->execute();
+    $resultCap = $stmtCap->get_result();
+    $dataCap = $resultCap->fetch_assoc();
+    $capacidadEvento = (int)$dataCap['capacidad']; // ← esta es la capacidad real
+    $stmtCap->close(); 
+
     // 3) Comprobar si al añadir esta reserva se supera el máximo de 10
-    if ($total_personas + $personas > 10) {
+    if ($total_personas + $personas > $capacidadEvento) {
         echo "
         <div style='background-color: #ffe6e6; padding: 15px; border-radius: 10px; border: 1px solid red;'>
-            <h3 style='color: red;'>Lo siento, ya no hay cupo para este día (máximo 10 personas).</h3>
+            <h3 style='color: red;'>Lo siento, ya no hay cupo para este día (máximo {$capacidadEvento} personas).</h3>
             <p>Plazas ocupadas: <strong>{$total_personas}</strong>. Intentas añadir: <strong>{$personas}</strong>.</p>
             <a href='eventos.php' style='display: inline-block; margin-top: 15px; background-color: #dc3545; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>Volver al Menú</a>
         </div>";

@@ -31,7 +31,7 @@ $totalRegistros = $totalResult->fetch_assoc()['total'];
 $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
 
 // Consulta para obtener los eventos con paginación
-$eventos_query = "SELECT ID_Evento, Nombre, Descripcion, Precio, Imagen_URL FROM Evento ORDER BY ID_Evento DESC LIMIT ? OFFSET ?";
+$eventos_query = "SELECT ID_Evento, Nombre, Descripcion, Precio, Imagen_URL, Activo FROM Evento ORDER BY ID_Evento DESC LIMIT ? OFFSET ?";
 $eventos_result = null;
 $eventos = [];
 
@@ -394,8 +394,20 @@ $page_title = 'Gestionar Eventos';
                                             <a href="edit_evento.php?id=<?php echo htmlspecialchars($evento['ID_Evento']); ?>" class="btn-edit" title="Editar">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="delete_evento.php?id=<?php echo htmlspecialchars($evento['ID_Evento']); ?>" class="btn-delete" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar este evento? Esta acción es irreversible.');">
-                                                <i class="fas fa-trash-alt"></i>
+                                     <?php if ($evento['Activo'] == 1): ?>
+                                         <!-- ACTIVAR -->
+                                        <a href="toggle_event.php?id=<?php echo $evento['ID_Evento']; ?>&state=1" 
+                                        class="btn btn-success" title="Activar">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+
+                                    <?php else: ?>
+                                          <!-- DESACTIVAR -->
+                                        <a href="toggle_event.php?id=<?php echo $evento['ID_Evento']; ?>&state=0" 
+                                        class="btn btn-danger" title="Desactivar">
+                                            <i class="fas fa-eye-slash"></i>
+                                        </a>
+                                    <?php endif; ?>
                                             </a>
                                         </td>
                                     </tr>

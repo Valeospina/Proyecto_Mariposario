@@ -3,14 +3,12 @@ class Calendario {
     private $conn;
     public function __construct($conn) { $this->conn = $conn; }
 
-    // capacidad por día
-    private int $CAPACIDAD = 10;
 
     public function obtenerFechasEstado(int $year, int $month, int $eventoID): array {
         $eventos = [];
 
         // 1) Fechas del evento seleccionado
-        $sql = "SELECT ID_Evento, DATE(Fecha) AS fecha
+        $sql = "SELECT ID_Evento, DATE(Fecha) AS fecha, Capacidad
                 FROM Evento
                 WHERE YEAR(Fecha)=? AND MONTH(Fecha)=? AND ID_Evento=?";
         $stmt = $this->conn->prepare($sql);
@@ -20,6 +18,7 @@ class Calendario {
         while ($row = $res->fetch_assoc()) {
             $eventos[$row['fecha']] = [
                 'id'       => (int)$row['ID_Evento'],
+                'capacidad' => (int)$row['capacidad'],
                 'estado'   => 'disponible',
                 'ocupados' => 0
             ];
@@ -48,7 +47,8 @@ class Calendario {
             while ($r = $res2->fetch_assoc()) {
                 $ocup = (int)$r['total'];
                 $eventos[$r['fecha']]['ocupados'] = $ocup;
-                $eventos[$r['fecha']]['estado']   = ($ocup >= $this->CAPACIDAD) ? 'lleno' : 'disponible';
+                $cap = $eventos[$r['fecha']]['capacidad'];
+                $eventos[$r['fecha']]['estado'] = ($ocup >= $cap) ? 'lleno' : 'disponible';
             }
             $stmt2->close();
         }
@@ -75,10 +75,12 @@ class Calendario {
             $ev  = $this->obtenerFechasEstado($year, $month, $eventoID);
             $out = [];
             foreach ($ev as $d => $info) {
-                $cupos = max(0, $this->CAPACIDAD - (int)$info['ocupados']);
+                $capacidad = (int)$info['capacidad'];
+                $cupos = max(0, $capacidad - (int)$info['ocupados']);
                 $out[$d]              = $info['estado'];      // 'disponible'|'lleno'
                 $out[$d . '_id']      = (int)$info['id'];
                 $out[$d . '_cupos']   = $cupos;               // <<< NECESARIO PARA EL TOOLTIP
+                $out[$d . '_capacidad'] = $capacidad;
             }
             echo json_encode($out);
             exit;
